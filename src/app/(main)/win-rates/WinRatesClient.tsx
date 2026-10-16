@@ -313,7 +313,11 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
     return (
       <th
         scope='col'
-        className={cn(TABLE_CELL_CLASS_NAME, 'p-0')}
+        className={cn(
+          TABLE_CELL_CLASS_NAME,
+          'p-0',
+          effectiveSortColumn === col && 'text-blue-600 dark:text-blue-400'
+        )}
         aria-sort={
           effectiveSortColumn === col
             ? effectiveSortDirection === 'asc'
@@ -517,7 +521,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
                   return (
                     <tr
                       key={`${row.rank}-${row.faction}-${row.character}-${idx}`}
-                      className='hover:bg-control'
+                      className='hover:bg-surface-muted/50'
                     >
                       <td className={cn(cellClass, 'tabular-nums')}>{row.no}</td>
                       {isColVisible('rank') && (
@@ -594,7 +598,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
                       index > 0 && summary.rank !== summaryData[index - 1]?.rank && 'border-t-3'
                     );
                     return (
-                      <tr key={index} className='hover:bg-control'>
+                      <tr key={index} className='hover:bg-surface-muted/50'>
                         <td className={cellClass}>{getRankLabel(summary.rank)}</td>
                         <td className={cellClass}>{summary.teamType}</td>
                         <td className={cellClass}>{summary.catWin}</td>
