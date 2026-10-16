@@ -62,6 +62,7 @@ it('exports the selected columns in order and escapes commas, quotes, and line b
       characterTables: [
         {
           rank: '全部',
+          faction: '鼠',
           rows: [{ character: '名称,"引号"\n下一行', pickRate: '2.00%', winRate: '50.00%' }],
         },
       ],

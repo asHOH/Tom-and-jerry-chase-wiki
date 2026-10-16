@@ -1,5 +1,5 @@
-import { buildWinRateCharacterLookup } from './characterLookup';
-import { normalizeWinRateRows } from './normalize';
+import { normalizeWinRateCharacterName } from './characterLookup';
+import { getCharacterTables, getRankLabel } from './normalize';
 import s24Data from './s24';
 import s25Data from './s25';
 import s26Data from './s26';
@@ -17,47 +17,28 @@ export const winRatesData: WinRatesEntry[] = [
   s24Data,
 ];
 
-/**
- * Transform rank name based on faction
- */
-function transformRankByFaction(rank: string, factionId: 'cat' | 'mouse'): string {
-  const faction = factionId === 'cat' ? '猫' : '鼠';
-
-  if (rank === '无敌猫鼠皇') {
-    return `无敌${faction}皇`;
-  }
-
-  if (rank === '皇2000分以上') {
-    return `${faction}皇2000分以上`;
-  }
-
-  if (rank === '皇0分-皇2000分') {
-    return `${faction}皇0分-${faction}皇2000分`;
-  }
-
-  return rank;
-}
-
 export function getCharacterWinRates(
   characterNames: string[],
   factionId?: 'cat' | 'mouse'
 ): CharacterWinRateEntry[] {
   const results: CharacterWinRateEntry[] = [];
-  const [id, ...aliases] = characterNames;
+  const [id] = characterNames;
   if (!id) return results;
-  const lookup = buildWinRateCharacterLookup([{ id, aliases, factionId }]);
+  const names = new Set(characterNames.map(normalizeWinRateCharacterName));
 
   for (const entry of winRatesData) {
-    for (const row of normalizeWinRateRows(entry, lookup)) {
-      if (row.characterId !== id) continue;
-      results.push({
-        timeRange: entry.timeRange,
-        rank: factionId ? transformRankByFaction(row.rank, factionId) : row.rank,
-        ...(row.sourceFaction && { faction: row.sourceFaction }),
-        pickRate: row.pickRate,
-        winRate: row.winRate,
-        ...(row.banRate !== null && { banRate: row.banRate }),
-      });
+    for (const table of getCharacterTables(entry)) {
+      for (const row of table.rows) {
+        if (!names.has(normalizeWinRateCharacterName(row.character))) continue;
+        results.push({
+          timeRange: entry.timeRange,
+          rank: getRankLabel(table.rank, factionId),
+          ...(table.faction && { faction: table.faction }),
+          pickRate: row.pickRate,
+          winRate: row.winRate,
+          ...(row.banRate !== undefined && { banRate: row.banRate }),
+        });
+      }
     }
   }
 

@@ -35,7 +35,17 @@ export function getRankOrder(rank: string): number {
   return index === -1 ? Number.MAX_SAFE_INTEGER : index;
 }
 
-function getCharacterTables(entry: WinRatesEntry): CharacterTable[] {
+export function getRankLabel(rank: string, factionId?: FactionId): string {
+  if (rank === '全部') return '全段位';
+  if (!factionId) return rank;
+  const faction = factionId === 'cat' ? '猫' : '鼠';
+  if (rank === '无敌猫鼠皇') return `无敌${faction}皇`;
+  if (rank === '皇2000分以上') return `${faction}皇2000分以上`;
+  if (rank === '皇0分-皇2000分') return `${faction}皇0分-${faction}皇2000分`;
+  return rank;
+}
+
+export function getCharacterTables(entry: WinRatesEntry): CharacterTable[] {
   return [
     ...(entry.characterTables ?? []),
     ...(entry.tables ?? []).filter(
@@ -58,11 +68,19 @@ export function normalizeWinRateRows(
   return getCharacterTables(entry).flatMap((table) =>
     table.rows.map((row) => {
       const character = characterLookup[normalizeWinRateCharacterName(row.character)];
+      const faction =
+        character?.factionId ??
+        (table.faction === '猫' ? 'cat' : table.faction === '鼠' ? 'mouse' : undefined);
+      if (!faction) {
+        throw new Error(
+          `Cannot resolve win-rate faction: ${entry.timeRange} / ${table.rank} / ${row.character}`
+        );
+      }
       return {
         rank: table.rank,
         character: row.character,
         characterId: character?.id ?? null,
-        faction: character?.factionId ?? (table.faction === '猫' ? 'cat' : 'mouse'),
+        faction,
         sourceFaction: table.faction,
         pickRate: row.pickRate,
         winRate: row.winRate,

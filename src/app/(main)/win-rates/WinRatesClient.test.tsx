@@ -242,11 +242,28 @@ describe('WinRatesClient', () => {
     expect(table().getByRole('cell', { name: '无敌鼠皇' })).toBeInTheDocument();
     const summary = within(screen.getByRole('table', { name: '赛季总览' }));
     expect(summary.getByRole('cell', { name: '无敌猫鼠皇' })).toBeInTheDocument();
+  });
+
+  it('leaves filters unchanged when rank and faction cells are double-clicked', () => {
+    clickOption('S23');
+    clickOption('无敌猫鼠皇');
     fireEvent.doubleClick(table().getByRole('cell', { name: '无敌猫皇' }));
+    fireEvent.doubleClick(table().getByRole('cell', { name: '猫' }));
     expect(screen.getByRole('button', { name: '无敌猫鼠皇' })).toHaveAttribute(
       'aria-pressed',
-      'false'
+      'true'
     );
+    expect(screen.getByRole('button', { name: '猫' })).toHaveAttribute('aria-pressed', 'false');
+    expect(characterNames()).toEqual(['杰瑞', '蓝猫']);
+  });
+
+  it('preserves character link identity when sorting rows', () => {
+    clickOption('至尊传奇');
+    clickOption('鼠');
+    const characterLink = table().getByRole('link', { name: '表演者▪杰瑞' });
+    fireEvent.click(table().getByRole('button', { name: '胜率' }));
+    expect(characterNames()).toEqual(['海盗杰瑞', '大表哥', '表演者▪杰瑞']);
+    expect(table().getByRole('link', { name: '表演者▪杰瑞' })).toBe(characterLink);
   });
 
   it('exports each table with its own displayed columns and missing values as empty cells', async () => {

@@ -1,6 +1,6 @@
 import { buildWinRateCharacterLookup } from './characterLookup';
 import { getCharacterWinRates } from './index';
-import { getWinRateRanks, normalizeWinRateRows } from './normalize';
+import { getRankLabel, getWinRateRanks, normalizeWinRateRows } from './normalize';
 import type { WinRatesEntry } from './types';
 
 describe('win rate normalization', () => {
@@ -61,24 +61,51 @@ describe('win rate normalization', () => {
     expect(getWinRateRanks(entry)).toEqual(['全部', '至尊传奇', '机智黄金']);
   });
 
-  it('uses the source faction for unresolved historical names without inventing a link', () => {
-    expect(
+  it.each(['猫', '鼠'] as const)(
+    'uses source faction %s for unresolved historical names without inventing a link',
+    (sourceFaction) => {
+      expect(
+        normalizeWinRateRows(
+          {
+            timeRange: 'Test season',
+            tables: [
+              {
+                rank: '至尊传奇',
+                faction: sourceFaction,
+                rows: [{ character: '历史名称', pickRate: '1.00%', winRate: '50.00%' }],
+              },
+            ],
+          },
+          {}
+        )
+      ).toEqual([
+        expect.objectContaining({
+          characterId: null,
+          faction: sourceFaction === '猫' ? 'cat' : 'mouse',
+          character: '历史名称',
+        }),
+      ]);
+    }
+  );
+
+  it.each([
+    ['missing character', {}],
+    ['missing faction', buildWinRateCharacterLookup([{ id: '历史名称' }])],
+  ] as const)('throws for %s when the source faction is also missing', (_, lookup) => {
+    expect(() =>
       normalizeWinRateRows(
         {
           timeRange: 'Test season',
-          tables: [
+          characterTables: [
             {
               rank: '至尊传奇',
-              faction: '猫',
               rows: [{ character: '历史名称', pickRate: '1.00%', winRate: '50.00%' }],
             },
           ],
         },
-        {}
+        lookup
       )
-    ).toEqual([
-      expect.objectContaining({ characterId: null, faction: 'cat', character: '历史名称' }),
-    ]);
+    ).toThrow('Cannot resolve win-rate faction: Test season / 至尊传奇 / 历史名称');
   });
 
   it('includes punctuation variants in character details while retaining faction rank labels', () => {
@@ -90,6 +117,11 @@ describe('win rate normalization', () => {
       ])
     );
     expect(getCharacterWinRates(['未知角色'], 'cat')).toEqual([]);
+    expect(getCharacterWinRates(['表演者杰瑞'], 'mouse')).toEqual(rates);
+    expect(getCharacterWinRates(['历史名称', '表演者杰瑞'], 'mouse')).toEqual(rates);
+    expect(rates).toEqual(
+      expect.arrayContaining([expect.objectContaining({ timeRange: 'S28', rank: '全段位' })])
+    );
   });
 
   it('preserves source faction metadata when the character faction is omitted', () => {
@@ -102,5 +134,22 @@ describe('win rate normalization', () => {
         expect.objectContaining({ timeRange: 'S25 (2025.7.10-2025.8.10)', faction: '猫' }),
       ])
     );
+  });
+});
+
+describe('rank labels', () => {
+  it.each([
+    ['全部', undefined, '全段位'],
+    ['全部', 'cat', '全段位'],
+    ['无敌猫鼠皇', undefined, '无敌猫鼠皇'],
+    ['无敌猫鼠皇', 'cat', '无敌猫皇'],
+    ['无敌猫鼠皇', 'mouse', '无敌鼠皇'],
+    ['皇2000分以上', 'cat', '猫皇2000分以上'],
+    ['皇2000分以上', 'mouse', '鼠皇2000分以上'],
+    ['皇0分-皇2000分', 'cat', '猫皇0分-猫皇2000分'],
+    ['皇0分-皇2000分', 'mouse', '鼠皇0分-鼠皇2000分'],
+    ['至尊传奇', 'mouse', '至尊传奇'],
+  ] as const)('%s / %s displays as %s', (rank, faction, label) => {
+    expect(getRankLabel(rank, faction)).toBe(label);
   });
 });

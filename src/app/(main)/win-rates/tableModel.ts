@@ -1,5 +1,5 @@
 import type { FactionId } from '@/data/types';
-import { getRankOrder, type WinRateRow } from '@/data/winRates/normalize';
+import { getRankLabel, getRankOrder, type WinRateRow } from '@/data/winRates/normalize';
 import type { WinRatesEntry } from '@/data/winRates/types';
 
 export type ColumnKey = 'rank' | 'faction' | 'character' | 'pickRate' | 'winRate' | 'banRate';
@@ -14,11 +14,6 @@ type WinRateColumn = {
   sortKey?: SortColumn;
   getValue: (row: WinRateRow) => string | null;
 };
-
-export function getRankLabel(rank: string, faction?: FactionId): string {
-  if (rank === '无敌猫鼠皇' && faction) return faction === 'cat' ? '无敌猫皇' : '无敌鼠皇';
-  return rank === '全部' ? '全段位' : rank;
-}
 
 export const WIN_RATE_COLUMNS: readonly WinRateColumn[] = [
   {

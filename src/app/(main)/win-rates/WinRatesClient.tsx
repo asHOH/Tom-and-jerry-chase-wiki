@@ -8,7 +8,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data/types';
 import { winRatesData } from '@/data/winRates';
 import type { WinRateCharacterLookup } from '@/data/winRates/characterLookup';
-import { getWinRateRanks, normalizeWinRateRows } from '@/data/winRates/normalize';
+import { getRankLabel, getWinRateRanks, normalizeWinRateRows } from '@/data/winRates/normalize';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import ClearFiltersButton from '@/components/ui/ClearFiltersButton';
@@ -19,7 +19,6 @@ import SectionHeader from '@/components/ui/SectionHeader';
 import Link from '@/components/Link';
 
 import {
-  getRankLabel,
   getWinRateDisplayRows,
   sanitizeFileName,
   toWinRatesCsv,
@@ -307,7 +306,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
 
                   return (
                     <tr
-                      key={`${row.rank}-${row.faction}-${row.character}-${idx}`}
+                      key={`${seasons[selectedSeason]}-${row.rank}-${row.faction}-${row.character}`}
                       className='hover:bg-surface-muted/50'
                     >
                       <td className={cn(cellClass, 'tabular-nums')}>{row.no}</td>
@@ -318,13 +317,6 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
                           <td
                             key={column.key}
                             className={cn(cellClass, column.key === 'character' && 'font-medium')}
-                            onDoubleClick={
-                              column.key === 'rank'
-                                ? () => toggleRank(row.rank)
-                                : column.key === 'faction'
-                                  ? () => toggleFaction(row.faction)
-                                  : undefined
-                            }
                           >
                             {column.key === 'character' && row.characterId ? (
                               <Link href={`/characters/${encodeURIComponent(row.characterId)}`}>
@@ -392,7 +384,10 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
                       index > 0 && summary.rank !== summaryData[index - 1]?.rank && 'border-t-3'
                     );
                     return (
-                      <tr key={index} className='hover:bg-surface-muted/50'>
+                      <tr
+                        key={`${seasons[selectedSeason]}-${summary.rank}-${summary.teamType}`}
+                        className='hover:bg-surface-muted/50'
+                      >
                         <td className={cellClass}>{getRankLabel(summary.rank)}</td>
                         <td className={cellClass}>{summary.teamType}</td>
                         <td className={cellClass}>{summary.catWin}</td>

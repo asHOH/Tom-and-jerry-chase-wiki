@@ -3,6 +3,7 @@ import { catCharactersWithImages } from '@/features/characters/data/catCharacter
 import { mouseCharactersWithImages } from '@/features/characters/data/mouseCharacters';
 
 import { buildWinRateCharacterLookup, normalizeWinRateCharacterName } from './characterLookup';
+import { normalizeWinRateRows } from './normalize';
 
 describe('win rate character lookup', () => {
   const characters = [
@@ -21,21 +22,21 @@ describe('win rate character lookup', () => {
     }
   );
 
-  it('resolves every historical name in the checked-in datasets', () => {
-    for (const season of winRatesData) {
-      for (const table of [...(season.tables ?? []), ...(season.characterTables ?? [])]) {
-        for (const row of table.rows) {
-          if ('character' in row) {
-            const character = lookup[normalizeWinRateCharacterName(row.character)];
-            expect(character).toBeDefined();
-            expect(characters.find(({ id }) => id === character?.id)?.factionId).toBe(
-              character?.factionId
-            );
-          }
-        }
+  it.each(winRatesData)(
+    'validates character mappings and row identities for $timeRange',
+    (season) => {
+      const rows = normalizeWinRateRows(season, lookup);
+      expect(rows.length).toBeGreaterThan(0);
+      expect(rows.filter((row) => row.characterId === null)).toEqual([]);
+      for (const row of rows) {
+        expect(row.faction).toBe(characters.find(({ id }) => id === row.characterId)?.factionId);
       }
+      const rowKeys = rows.map((row) => `${row.rank}-${row.faction}-${row.character}`);
+      expect(new Set(rowKeys).size).toBe(rows.length);
+      const summaryKeys = (season.winRateSummary ?? []).map((row) => `${row.rank}-${row.teamType}`);
+      expect(new Set(summaryKeys).size).toBe(summaryKeys.length);
     }
-  });
+  );
 
   it('gives canonical names precedence over aliases', () => {
     const result = buildWinRateCharacterLookup([
