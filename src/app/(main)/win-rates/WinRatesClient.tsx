@@ -6,7 +6,9 @@ import { cn, getFactionButtonColors } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data/types';
-import { CharacterTable, winRatesData } from '@/data/winRates';
+import { winRatesData } from '@/data/winRates';
+import type { WinRateCharacterLookup } from '@/data/winRates/characterLookup';
+import { getWinRateRanks, normalizeWinRateRows } from '@/data/winRates/normalize';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import ClearFiltersButton from '@/components/ui/ClearFiltersButton';
@@ -16,165 +18,39 @@ import PageShell from '@/components/ui/PageShell';
 import SectionHeader from '@/components/ui/SectionHeader';
 import Link from '@/components/Link';
 
-import { normalizeWinRateCharacterName, type WinRateCharacterLookup } from './characterLookup';
-
-type ColumnKey = 'rank' | 'faction' | 'character' | 'pickRate' | 'winRate' | 'banRate';
-type SortColumn = 'pickRate' | 'winRate' | 'banRate';
-type SortDirection = 'asc' | 'desc';
+import {
+  getRankLabel,
+  getWinRateDisplayRows,
+  sanitizeFileName,
+  toWinRatesCsv,
+  WIN_RATE_COLUMNS,
+  type ColumnKey,
+  type SortColumn,
+  type SortDirection,
+} from './tableModel';
 
 const TABLE_CLASS_NAME = 'w-full table-fixed border-collapse text-left';
 const TABLE_CELL_CLASS_NAME = 'border-border border px-4 py-2';
-
-interface EnrichedCharacterRow {
-  rank: string;
-  rankOrder: number;
-  character: string;
-  characterId: string | null;
-  faction: FactionId;
-  pickRate: string;
-  winRate: string;
-  banRate: string | null;
-  pickRateNum: number;
-  winRateNum: number;
-  banRateNum: number | null;
-}
-
-interface WinRatesClientProps {
-  description: string;
-  characterLookup: WinRateCharacterLookup;
-}
-
-function escapeCsvCell(value: unknown): string {
-  const str = value == null ? '' : String(value);
-  const mustQuote = /[",\n\r]/.test(str);
-  const escaped = str.replace(/"/g, '""');
-  return mustQuote ? `"${escaped}"` : escaped;
-}
-
-function toCsv(rows: Array<Record<string, unknown>>, header: string[]): string {
-  const lines: string[] = [];
-  lines.push(header.map(escapeCsvCell).join(','));
-  for (const row of rows) {
-    lines.push(header.map((key) => escapeCsvCell(row[key])).join(','));
-  }
-  return lines.join('\n');
-}
-
-function sanitizeFileName(input: string): string {
-  return input
-    .replace(/[\\/:*?"<>|]/g, '_')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function parseRate(rate: string): number {
-  return parseFloat(rate.replace('%', ''));
-}
-
-const RANK_ORDER: readonly string[] = [
-  '全部',
-  '无敌猫鼠皇',
-  '皇2000分以上',
-  '皇0分-皇2000分',
-  '至尊传奇',
-  '霸气钻石',
-  '酷炫铂金',
-  '机智黄金',
-  '顽皮白银',
-  '呆萌青铜',
-];
-
-const FACTION_ORDER_VALUE: Readonly<Record<FactionId, number>> = {
-  mouse: 0,
-  cat: 1,
-};
-
-type DisplayRow = EnrichedCharacterRow & { no: number; groupStart: boolean };
-
-function getRankOrder(rank: string): number {
-  const idx = RANK_ORDER.indexOf(rank);
-  return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
-}
-
-function getRankLabel(rank: string, faction?: FactionId): string {
-  if (rank === '无敌猫鼠皇' && faction) return faction === 'cat' ? '无敌猫皇' : '无敌鼠皇';
-  return rank === '全部' ? '全段位' : rank;
-}
-
-function normalizeTableFaction(tableFaction: unknown): FactionId | null {
-  if (tableFaction === '猫') return 'cat';
-  if (tableFaction === '鼠') return 'mouse';
-  return null;
-}
-
-function enrichCharacterData(
-  tables: CharacterTable[],
-  characterLookup: WinRateCharacterLookup
-): EnrichedCharacterRow[] {
-  const enriched: EnrichedCharacterRow[] = [];
-
-  for (const table of tables) {
-    const rank = String(table.rank);
-    const rankOrder = getRankOrder(rank);
-    const factionFromTable = normalizeTableFaction(table.faction);
-
-    for (const row of table.rows) {
-      const character = characterLookup[normalizeWinRateCharacterName(row.character)];
-      const faction = character?.factionId ?? factionFromTable ?? 'mouse';
-      enriched.push({
-        rank,
-        rankOrder,
-        character: row.character,
-        characterId: character?.id ?? null,
-        faction,
-        pickRate: row.pickRate,
-        winRate: row.winRate,
-        banRate: row.banRate ?? null,
-        pickRateNum: parseRate(row.pickRate),
-        winRateNum: parseRate(row.winRate),
-        banRateNum: row.banRate === undefined ? null : parseRate(row.banRate),
-      });
-    }
-  }
-
-  return enriched;
-}
-
-function getSeasons(): string[] {
-  return winRatesData.map((entry) => entry.timeRange);
-}
+const seasons = winRatesData.map((entry) => entry.timeRange);
 
 function getRanksFromSeason(seasonIndex: number): string[] {
   const entry = winRatesData[seasonIndex];
-  if (!entry) return [];
-
-  const ranks = new Set<string>();
-
-  if (entry.characterTables) {
-    entry.characterTables.forEach((table) => {
-      ranks.add(String(table.rank));
-    });
-  }
-
-  if (entry.tables) {
-    entry.tables.forEach((table) => {
-      if ('rank' in table) ranks.add(String(table.rank));
-    });
-  }
-
-  return Array.from(ranks).sort((a, b) => getRankOrder(a) - getRankOrder(b));
+  return entry ? getWinRateRanks(entry) : [];
 }
+
+type WinRatesClientProps = {
+  description: string;
+  characterLookup: WinRateCharacterLookup;
+};
 
 export default function WinRatesClient({ description, characterLookup }: WinRatesClientProps) {
   const [isDarkMode] = useDarkMode();
 
-  const seasons = useMemo(() => getSeasons(), []);
-
   const [selectedSeason, setSelectedSeason] = useState(0);
-  const [sortColumn, setSortColumn] = useState<SortColumn>('winRate');
+  const [sortColumn, setSortColumn] = useState<SortColumn>('winRateNum');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [visibleColumns, setVisibleColumns] = useState<Set<ColumnKey>>(
-    new Set<ColumnKey>(['rank', 'character', 'pickRate', 'winRate', 'banRate', 'faction'])
+    () => new Set(WIN_RATE_COLUMNS.map((column) => column.key))
   );
 
   const {
@@ -205,79 +81,24 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
     const entry = winRatesData[selectedSeason];
     if (!entry) return [];
 
-    const tables: CharacterTable[] = [];
-
-    if (entry.characterTables) tables.push(...entry.characterTables);
-
-    if (entry.tables) {
-      entry.tables.forEach((table) => {
-        if (!('rows' in table)) return;
-        if (table.rows.length === 0) return;
-        const first = table.rows[0];
-        if (!first || !('character' in first)) return;
-        tables.push(table as CharacterTable);
-      });
-    }
-
-    return enrichCharacterData(tables, characterLookup);
+    return normalizeWinRateRows(entry, characterLookup);
   }, [selectedSeason, characterLookup]);
 
   const hasBanRates = enrichedData.some((row) => row.banRateNum !== null);
-  const effectiveSortColumn = sortColumn === 'banRate' && !hasBanRates ? 'winRate' : sortColumn;
+  const effectiveSortColumn =
+    sortColumn === 'banRateNum' && !hasBanRates ? 'winRateNum' : sortColumn;
   const effectiveSortDirection = effectiveSortColumn === sortColumn ? sortDirection : 'desc';
 
-  const filteredAndSortedData = useMemo(() => {
-    let filtered = enrichedData;
-
-    if (hasAnyFactionFilters) {
-      filtered = filtered.filter((row) => selectedFactions.has(row.faction));
-    }
-
-    if (hasAnyRankFilters) {
-      filtered = filtered.filter((row) => selectedRanks.has(row.rank));
-    }
-
-    return filtered;
-  }, [enrichedData, hasAnyFactionFilters, selectedFactions, hasAnyRankFilters, selectedRanks]);
-
-  const displayRows = useMemo((): DisplayRow[] => {
-    const compareMetric = (a: EnrichedCharacterRow, b: EnrichedCharacterRow) => {
-      let comparison = 0;
-      switch (effectiveSortColumn) {
-        case 'pickRate':
-          comparison = a.pickRateNum - b.pickRateNum;
-          break;
-        case 'winRate':
-          comparison = a.winRateNum - b.winRateNum;
-          break;
-        case 'banRate':
-          if (a.banRateNum === null) return b.banRateNum === null ? 0 : 1;
-          if (b.banRateNum === null) return -1;
-          comparison = a.banRateNum - b.banRateNum;
-          break;
-      }
-      return effectiveSortDirection === 'asc' ? comparison : -comparison;
-    };
-
-    const sorted = [...filteredAndSortedData].sort((a, b) => {
-      const rankCompare = a.rankOrder - b.rankOrder;
-      if (rankCompare !== 0) return rankCompare;
-
-      const factionCompare =
-        (FACTION_ORDER_VALUE[a.faction] ?? 0) - (FACTION_ORDER_VALUE[b.faction] ?? 0);
-      if (factionCompare !== 0) return factionCompare;
-
-      return compareMetric(a, b);
-    });
-
-    const counts = new Map<string, number>();
-    return sorted.map((row) => {
-      const key = `${row.rank}__${row.faction}`;
-      const nextNo = (counts.get(key) ?? 0) + 1;
-      counts.set(key, nextNo);
-      return { ...row, no: nextNo, groupStart: nextNo === 1 };
-    });
-  }, [filteredAndSortedData, effectiveSortColumn, effectiveSortDirection]);
+  const displayRows = useMemo(
+    () =>
+      getWinRateDisplayRows(enrichedData, {
+        ranks: selectedRanks,
+        factions: selectedFactions,
+        sortColumn: effectiveSortColumn,
+        sortDirection: effectiveSortDirection,
+      }),
+    [enrichedData, selectedRanks, selectedFactions, effectiveSortColumn, effectiveSortDirection]
+  );
 
   const summaryData = useMemo(() => {
     const entry = winRatesData[selectedSeason];
@@ -299,6 +120,12 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
   const isColVisible = (col: ColumnKey) =>
     visibleColumns.has(col) && (col !== 'banRate' || hasBanRates);
 
+  const availableColumns = WIN_RATE_COLUMNS.filter(
+    (column) => column.key !== 'banRate' || hasBanRates
+  );
+  const displayedColumns = availableColumns.filter((column) => isColVisible(column.key));
+  const toggleableColumns = availableColumns.filter((column) => column.key !== 'character');
+
   const toggleVisibleColumn = (col: ColumnKey) => {
     if (col === 'character') return;
     setVisibleColumns((prev) => {
@@ -312,6 +139,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
   const renderSortableTh = (label: string, col: SortColumn) => {
     return (
       <th
+        key={col}
         scope='col'
         className={cn(
           TABLE_CELL_CLASS_NAME,
@@ -338,7 +166,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
   };
 
   const renderTh = (label: string, className?: string) => (
-    <th scope='col' className={cn(TABLE_CELL_CLASS_NAME, className)}>
+    <th key={label} scope='col' className={cn(TABLE_CELL_CLASS_NAME, className)}>
       {label}
     </th>
   );
@@ -346,47 +174,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
   const showPercent = summaryData.some((s) => s.percent);
 
   const handleExportCsv = () => {
-    const orderedColumns: Array<ColumnKey> = [
-      'rank',
-      'faction',
-      'character',
-      'pickRate',
-      'winRate',
-      'banRate',
-    ];
-
-    const header: string[] = ['No.'];
-    for (const col of orderedColumns) {
-      if (!isColVisible(col)) continue;
-      header.push(
-        col === 'rank'
-          ? '段位'
-          : col === 'faction'
-            ? '阵营'
-            : col === 'character'
-              ? '角色'
-              : col === 'pickRate'
-                ? '登场率'
-                : col === 'winRate'
-                  ? '胜率'
-                  : '禁用率'
-      );
-    }
-
-    const rows = displayRows.map((row) => {
-      const record: Record<string, unknown> = {
-        'No.': row.no,
-      };
-      if (isColVisible('rank')) record['段位'] = getRankLabel(row.rank, row.faction);
-      if (isColVisible('faction')) record['阵营'] = row.faction === 'cat' ? '猫' : '鼠';
-      if (isColVisible('character')) record['角色'] = row.character;
-      if (isColVisible('pickRate')) record['登场率'] = row.pickRate;
-      if (isColVisible('winRate')) record['胜率'] = row.winRate;
-      if (isColVisible('banRate')) record['禁用率'] = row.banRate;
-      return record;
-    });
-
-    const csv = `\uFEFF${toCsv(rows, header)}`;
+    const csv = `\uFEFF${toWinRatesCsv(displayRows, displayedColumns)}`;
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
 
@@ -450,26 +238,12 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
             </div>
           )}
 
-          <FilterRow<Exclude<ColumnKey, 'character'>>
+          <FilterRow<ColumnKey>
             label='显示列:'
-            options={
-              hasBanRates
-                ? ['rank', 'faction', 'pickRate', 'winRate', 'banRate']
-                : ['rank', 'faction', 'pickRate', 'winRate']
-            }
-            isActive={(opt) => isColVisible(opt)}
-            onToggle={(opt) => toggleVisibleColumn(opt)}
-            getOptionLabel={(opt) =>
-              opt === 'rank'
-                ? '段位'
-                : opt === 'faction'
-                  ? '阵营'
-                  : opt === 'pickRate'
-                    ? '登场率'
-                    : opt === 'winRate'
-                      ? '胜率'
-                      : '禁用率'
-            }
+            options={toggleableColumns.map((column) => column.key)}
+            isActive={isColVisible}
+            onToggle={toggleVisibleColumn}
+            getOptionLabel={(key) => WIN_RATE_COLUMNS.find((column) => column.key === key)?.label}
           />
 
           <div className='mt-2 flex justify-center md:mt-4'>
@@ -488,7 +262,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
       </PageHeader>
 
       <section>
-        <SectionHeader title={`角色数据 (${filteredAndSortedData.length} 条记录)`} />
+        <SectionHeader title={`角色数据 (${displayRows.length} 条记录)`} />
 
         {!hasBanRates ? (
           <p className='text-muted-foreground mb-2 text-sm'>本赛季未提供禁用率数据。</p>
@@ -503,12 +277,11 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
               <thead>
                 <tr className='bg-surface-muted'>
                   {renderTh('No.', 'w-16')}
-                  {isColVisible('rank') && renderTh('段位', 'w-44')}
-                  {isColVisible('faction') && renderTh('阵营', 'w-20')}
-                  {isColVisible('character') && renderTh('角色')}
-                  {isColVisible('pickRate') && renderSortableTh('登场率', 'pickRate')}
-                  {isColVisible('winRate') && renderSortableTh('胜率', 'winRate')}
-                  {isColVisible('banRate') && renderSortableTh('禁用率', 'banRate')}
+                  {displayedColumns.map((column) =>
+                    column.sortKey
+                      ? renderSortableTh(column.label, column.sortKey)
+                      : renderTh(column.label, column.widthClassName)
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -524,44 +297,41 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
                       className='hover:bg-surface-muted/50'
                     >
                       <td className={cn(cellClass, 'tabular-nums')}>{row.no}</td>
-                      {isColVisible('rank') && (
-                        <td className={cellClass} onDoubleClick={() => toggleRank(row.rank)}>
-                          {getRankLabel(row.rank, row.faction)}
-                        </td>
-                      )}
-                      {isColVisible('faction') && (
-                        <td className={cellClass} onDoubleClick={() => toggleFaction(row.faction)}>
-                          {row.faction === 'cat' ? '猫' : '鼠'}
-                        </td>
-                      )}
-                      {isColVisible('character') && (
-                        <td className={cn(cellClass, 'font-medium')}>
-                          {row.characterId ? (
-                            <Link href={`/characters/${encodeURIComponent(row.characterId)}`}>
-                              {row.character}
-                            </Link>
-                          ) : (
-                            row.character
-                          )}
-                        </td>
-                      )}
-                      {isColVisible('pickRate') && <td className={cellClass}>{row.pickRate}</td>}
-                      {isColVisible('winRate') && (
-                        <td className={cellClass}>
-                          <span
-                            className={
-                              row.winRateNum >= 50
-                                ? 'font-semibold text-green-600 dark:text-green-400'
-                                : 'text-red-600 dark:text-red-400'
+                      {displayedColumns.map((column) => {
+                        const value = column.getValue(row);
+                        const content = value ?? '—';
+                        return (
+                          <td
+                            key={column.key}
+                            className={cn(cellClass, column.key === 'character' && 'font-medium')}
+                            onDoubleClick={
+                              column.key === 'rank'
+                                ? () => toggleRank(row.rank)
+                                : column.key === 'faction'
+                                  ? () => toggleFaction(row.faction)
+                                  : undefined
                             }
                           >
-                            {row.winRate}
-                          </span>
-                        </td>
-                      )}
-                      {isColVisible('banRate') && (
-                        <td className={cellClass}>{row.banRate ?? '—'}</td>
-                      )}
+                            {column.key === 'character' && row.characterId ? (
+                              <Link href={`/characters/${encodeURIComponent(row.characterId)}`}>
+                                {content}
+                              </Link>
+                            ) : column.key === 'winRate' ? (
+                              <span
+                                className={
+                                  row.winRateNum >= 50
+                                    ? 'font-semibold text-green-600 dark:text-green-400'
+                                    : 'text-red-600 dark:text-red-400'
+                                }
+                              >
+                                {content}
+                              </span>
+                            ) : (
+                              content
+                            )}
+                          </td>
+                        );
+                      })}
                     </tr>
                   );
                 })}

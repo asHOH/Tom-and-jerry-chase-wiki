@@ -1,3 +1,5 @@
+import { buildWinRateCharacterLookup } from './characterLookup';
+import { normalizeWinRateRows } from './normalize';
 import s24Data from './s24';
 import s25Data from './s25';
 import s26Data from './s26';
@@ -41,35 +43,21 @@ export function getCharacterWinRates(
   factionId?: 'cat' | 'mouse'
 ): CharacterWinRateEntry[] {
   const results: CharacterWinRateEntry[] = [];
+  const [id, ...aliases] = characterNames;
+  if (!id) return results;
+  const lookup = buildWinRateCharacterLookup([{ id, aliases, factionId }]);
 
   for (const entry of winRatesData) {
-    const timeRange = entry.timeRange;
-
-    const allTables = [...(entry.tables || []), ...(entry.characterTables || [])];
-
-    for (const table of allTables) {
-      if ('rows' in table && table.rows.length > 0) {
-        const firstRow = table.rows[0];
-        if (firstRow && 'character' in firstRow) {
-          const charTable = table as CharacterTable;
-          for (const row of charTable.rows) {
-            if (characterNames.includes(row.character)) {
-              const rank = factionId
-                ? transformRankByFaction(charTable.rank, factionId)
-                : charTable.rank;
-
-              results.push({
-                timeRange,
-                rank,
-                ...(charTable.faction && { faction: charTable.faction }),
-                pickRate: row.pickRate,
-                winRate: row.winRate,
-                ...(row.banRate && { banRate: row.banRate }),
-              });
-            }
-          }
-        }
-      }
+    for (const row of normalizeWinRateRows(entry, lookup)) {
+      if (row.characterId !== id) continue;
+      results.push({
+        timeRange: entry.timeRange,
+        rank: factionId ? transformRankByFaction(row.rank, factionId) : row.rank,
+        ...(row.sourceFaction && { faction: row.sourceFaction }),
+        pickRate: row.pickRate,
+        winRate: row.winRate,
+        ...(row.banRate !== null && { banRate: row.banRate }),
+      });
     }
   }
 

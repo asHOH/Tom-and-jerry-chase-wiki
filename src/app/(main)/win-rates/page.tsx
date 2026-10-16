@@ -3,9 +3,9 @@ import { Metadata } from 'next';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import { buildWinRateCharacterLookup } from '@/data/winRates/characterLookup';
 import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 
-import { buildWinRateCharacterLookup } from './characterLookup';
 import WinRatesClient from './WinRatesClient';
 
 export const dynamic = 'force-static';

@@ -2,8 +2,8 @@ import type { AnchorHTMLAttributes } from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import type { WinRatesEntry } from '@/data/winRates';
+import { buildWinRateCharacterLookup } from '@/data/winRates/characterLookup';
 
-import { buildWinRateCharacterLookup } from './characterLookup';
 import WinRatesClient from './WinRatesClient';
 
 jest.mock('@/context/DarkModeContext', () => ({ useDarkMode: () => [false] }));
