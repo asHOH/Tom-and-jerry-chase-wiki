@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { cn, getFactionButtonColors } from '@/lib/design';
+import { cn, getFactionButtonColors, getFilterButtonActiveToneClasses } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data/types';
@@ -23,6 +23,7 @@ import {
   getWinRateDisplayRows,
   sanitizeFileName,
   toWinRatesCsv,
+  toWinRateSummaryCsv,
   WIN_RATE_COLUMNS,
   type ColumnKey,
   type SortColumn,
@@ -31,6 +32,10 @@ import {
 
 const TABLE_CLASS_NAME = 'w-full table-fixed border-collapse text-left';
 const TABLE_CELL_CLASS_NAME = 'border-border border px-1 py-2 sm:px-2 lg:px-4';
+const EXPORT_BUTTON_CLASS_NAME = cn(
+  'filter-button shrink-0 cursor-pointer rounded-lg border-none font-medium',
+  getFilterButtonActiveToneClasses()
+);
 const seasons = winRatesData.map((entry) => entry.timeRange);
 
 function getRanksFromSeason(seasonIndex: number): string[] {
@@ -175,8 +180,12 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
 
   const showPercent = summaryData.some((s) => s.percent);
 
-  const handleExportCsv = () => {
-    const csv = `\uFEFF${toWinRatesCsv(displayRows, displayedColumns)}`;
+  const handleExportCsv = (tableTitle: '角色数据' | '赛季总览') => {
+    const csv = `\uFEFF${
+      tableTitle === '角色数据'
+        ? toWinRatesCsv(displayRows, displayedColumns)
+        : toWinRateSummaryCsv(summaryData)
+    }`;
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
 
@@ -185,7 +194,9 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
     const yyyy = String(date.getFullYear());
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const dd = String(date.getDate()).padStart(2, '0');
-    const fileName = sanitizeFileName(`胜率数据_${seasonLabel}_${yyyy}-${mm}-${dd}.csv`);
+    const fileName = sanitizeFileName(
+      `胜率数据_${seasonLabel}_${tableTitle}_${yyyy}-${mm}-${dd}.csv`
+    );
 
     const a = document.createElement('a');
     a.href = url;
@@ -247,24 +258,25 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
             onToggle={toggleVisibleColumn}
             getOptionLabel={(key) => WIN_RATE_COLUMNS.find((column) => column.key === key)?.label}
           />
-
-          <div className='mt-2 flex justify-center md:mt-4'>
-            <Button
-              variant='secondary'
-              size='sm'
-              type='button'
-              onClick={handleExportCsv}
-              disabled={displayRows.length === 0}
-              aria-label='导出当前表格为 CSV'
-            >
-              导出 CSV
-            </Button>
-          </div>
         </div>
       </PageHeader>
 
       <section className='mx-auto w-full max-w-150 lg:max-w-none'>
-        <SectionHeader title={`角色数据 (${displayRows.length} 条记录)`} />
+        <SectionHeader
+          title={`角色数据 (${displayRows.length} 条记录)`}
+          className='flex-wrap justify-start gap-x-3 gap-y-1'
+        >
+          <Button
+            variant='ghost'
+            size='sm'
+            className={EXPORT_BUTTON_CLASS_NAME}
+            onClick={() => handleExportCsv('角色数据')}
+            disabled={displayRows.length === 0}
+            aria-label='导出角色数据为 CSV'
+          >
+            导出 CSV
+          </Button>
+        </SectionHeader>
 
         {!hasBanRates ? (
           <p className='text-muted-foreground mb-2 text-sm'>本赛季未提供禁用率数据。</p>
@@ -349,7 +361,17 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
 
       {summaryData.length > 0 && (
         <section className='mx-auto w-full max-w-150 lg:max-w-none'>
-          <SectionHeader title='赛季总览' />
+          <SectionHeader title='赛季总览' className='flex-wrap justify-start gap-x-3 gap-y-1'>
+            <Button
+              variant='ghost'
+              size='sm'
+              className={EXPORT_BUTTON_CLASS_NAME}
+              onClick={() => handleExportCsv('赛季总览')}
+              aria-label='导出赛季总览为 CSV'
+            >
+              导出 CSV
+            </Button>
+          </SectionHeader>
           <Card bordered className='overflow-hidden p-0'>
             <div className='overflow-x-auto'>
               <table className={cn(TABLE_CLASS_NAME, 'min-w-120')}>

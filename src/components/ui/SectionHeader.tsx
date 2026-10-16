@@ -10,6 +10,7 @@ type SectionHeaderProps = {
   children?: ReactNode;
   id?: string;
   variant?: 'standard' | 'compact';
+  className?: string;
 };
 
 const variantClasses = {
@@ -28,11 +29,12 @@ export default function SectionHeader({
   children,
   id,
   variant = 'standard',
+  className,
 }: SectionHeaderProps) {
   const classes = variantClasses[variant];
 
   return (
-    <div className={cn('flex items-center justify-between', classes.container)}>
+    <div className={cn('flex items-center justify-between', classes.container, className)}>
       <div className='flex min-w-0 items-center gap-1'>
         <h2 id={id} className={cn('scroll-mt-24', classes.title)}>
           {title}

@@ -1,5 +1,6 @@
 import type { FactionId } from '@/data/types';
 import { getRankOrder, type WinRateRow } from '@/data/winRates/normalize';
+import type { WinRatesEntry } from '@/data/winRates/types';
 
 export type ColumnKey = 'rank' | 'faction' | 'character' | 'pickRate' | 'winRate' | 'banRate';
 export type SortColumn = 'pickRateNum' | 'winRateNum' | 'banRateNum';
@@ -93,12 +94,28 @@ export function toWinRatesCsv(
   rows: readonly DisplayRow[],
   columns: readonly WinRateColumn[]
 ): string {
-  return [
+  return toCsv([
     ['No.', ...columns.map((column) => column.label)],
     ...rows.map((row) => [row.no, ...columns.map((column) => column.getValue(row))]),
-  ]
-    .map((row) => row.map(escapeCsvCell).join(','))
-    .join('\n');
+  ]);
+}
+
+export function toWinRateSummaryCsv(rows: NonNullable<WinRatesEntry['winRateSummary']>): string {
+  const showPercent = rows.some((row) => row.percent);
+  return toCsv([
+    ['段位', '组队类型', '猫胜率', '鼠胜率', ...(showPercent ? ['占比'] : [])],
+    ...rows.map((row) => [
+      getRankLabel(row.rank),
+      row.teamType,
+      row.catWin,
+      row.mouseWin,
+      ...(showPercent ? [row.percent ?? null] : []),
+    ]),
+  ]);
+}
+
+function toCsv(rows: (string | number | null)[][]): string {
+  return rows.map((row) => row.map(escapeCsvCell).join(',')).join('\n');
 }
 
 export function sanitizeFileName(input: string): string {

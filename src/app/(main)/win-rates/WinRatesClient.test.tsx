@@ -249,7 +249,7 @@ describe('WinRatesClient', () => {
     );
   });
 
-  it('exports missing ban rates as empty cells and omits the column when unavailable', async () => {
+  it('exports each table with its own displayed columns and missing values as empty cells', async () => {
     const originalCreate = URL.createObjectURL;
     const originalRevoke = URL.revokeObjectURL;
     const createUrl = jest.fn((_blob: Blob) => 'blob:export');
@@ -257,8 +257,8 @@ describe('WinRatesClient', () => {
     URL.revokeObjectURL = jest.fn();
     jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
 
-    const exportCsv = async () => {
-      fireEvent.click(screen.getByRole('button', { name: '导出当前表格为 CSV' }));
+    const exportCsv = async (title = '角色数据') => {
+      fireEvent.click(screen.getByRole('button', { name: `导出${title}为 CSV` }));
       const blob = createUrl.mock.lastCall![0];
       return new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
@@ -271,11 +271,15 @@ describe('WinRatesClient', () => {
     try {
       clickOption('至尊传奇');
       clickOption('鼠');
+      expect(await exportCsv('赛季总览')).toBe(
+        '段位,组队类型,猫胜率,鼠胜率,占比\n至尊传奇,总体,55.00%,45.00%,20.00%\n机智黄金,总体,60.00%,40.00%,'
+      );
       const csv = await exportCsv();
       expect(csv).toContain('角色,登场率,胜率,禁用率');
       expect(csv).toContain('表演者▪杰瑞,3.00%,70.00%,\n');
       expect(csv).toContain('大表哥,1.00%,60.00%,0.00%');
       clickOption('S24 (2025.4.30-5.25)');
+      expect(screen.queryByRole('button', { name: '导出赛季总览为 CSV' })).not.toBeInTheDocument();
       expect(await exportCsv()).toBe(
         'No.,段位,阵营,角色,登场率,胜率\n1,至尊传奇,鼠,海盗杰瑞,3.00%,40.00%'
       );
@@ -288,6 +292,9 @@ describe('WinRatesClient', () => {
         'No.,段位,阵营,角色,登场率,胜率,禁用率\n1,全段位,鼠,杰瑞,3.00%,50.00%,'
       );
       clickOption('S23');
+      expect(await exportCsv('赛季总览')).toBe(
+        '段位,组队类型,猫胜率,鼠胜率\n无敌猫鼠皇,总体,55.00%,45.00%'
+      );
       const emperorCsv = await exportCsv();
       expect(emperorCsv).toContain('1,无敌鼠皇,鼠,杰瑞');
       expect(emperorCsv).toContain('1,无敌猫皇,猫,蓝猫');
