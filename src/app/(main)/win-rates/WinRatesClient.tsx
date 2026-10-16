@@ -22,7 +22,7 @@ type ColumnKey = 'rank' | 'faction' | 'character' | 'pickRate' | 'winRate' | 'ba
 type SortColumn = 'pickRate' | 'winRate' | 'banRate';
 type SortDirection = 'asc' | 'desc';
 
-const TABLE_CLASS_NAME = 'min-w-full border-collapse text-left';
+const TABLE_CLASS_NAME = 'w-full table-fixed border-collapse text-left';
 const TABLE_CELL_CLASS_NAME = 'border-border border px-4 py-2';
 
 interface EnrichedCharacterRow {
@@ -96,7 +96,8 @@ function getRankOrder(rank: string): number {
   return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
 }
 
-function getRankLabel(rank: string): string {
+function getRankLabel(rank: string, faction?: FactionId): string {
+  if (rank === '无敌猫鼠皇' && faction) return faction === 'cat' ? '无敌猫皇' : '无敌鼠皇';
   return rank === '全部' ? '全段位' : rank;
 }
 
@@ -332,8 +333,8 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
     );
   };
 
-  const renderTh = (label: string) => (
-    <th scope='col' className={TABLE_CELL_CLASS_NAME}>
+  const renderTh = (label: string, className?: string) => (
+    <th scope='col' className={cn(TABLE_CELL_CLASS_NAME, className)}>
       {label}
     </th>
   );
@@ -372,7 +373,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
       const record: Record<string, unknown> = {
         'No.': row.no,
       };
-      if (isColVisible('rank')) record['段位'] = getRankLabel(row.rank);
+      if (isColVisible('rank')) record['段位'] = getRankLabel(row.rank, row.faction);
       if (isColVisible('faction')) record['阵营'] = row.faction === 'cat' ? '猫' : '鼠';
       if (isColVisible('character')) record['角色'] = row.character;
       if (isColVisible('pickRate')) record['登场率'] = row.pickRate;
@@ -408,6 +409,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
           <FilterRow<string>
             label='赛季筛选:'
             options={seasons}
+            getOptionLabel={(season) => season.replace(/-\d{4}\./, '-')}
             isActive={(opt) => seasons[selectedSeason] === opt}
             onToggle={handleSeasonChange}
           />
@@ -429,7 +431,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
               options={availableRanks}
               isActive={(opt) => selectedRanks.has(opt)}
               onToggle={(opt) => toggleRank(opt)}
-              getOptionLabel={getRankLabel}
+              getOptionLabel={(rank) => getRankLabel(rank)}
             />
           )}
 
@@ -490,15 +492,15 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
 
         <Card bordered className='overflow-hidden p-0'>
           <div className='overflow-x-auto'>
-            <table className={TABLE_CLASS_NAME}>
+            <table className={cn(TABLE_CLASS_NAME, 'min-w-200')}>
               <caption className='sr-only'>
                 角色数据：按段位和阵营分组，使用表头按钮进行组内排序。
               </caption>
               <thead>
                 <tr className='bg-surface-muted'>
-                  {renderTh('No.')}
-                  {isColVisible('rank') && renderTh('段位')}
-                  {isColVisible('faction') && renderTh('阵营')}
+                  {renderTh('No.', 'w-16')}
+                  {isColVisible('rank') && renderTh('段位', 'w-44')}
+                  {isColVisible('faction') && renderTh('阵营', 'w-20')}
                   {isColVisible('character') && renderTh('角色')}
                   {isColVisible('pickRate') && renderSortableTh('登场率', 'pickRate')}
                   {isColVisible('winRate') && renderSortableTh('胜率', 'winRate')}
@@ -520,7 +522,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
                       <td className={cn(cellClass, 'tabular-nums')}>{row.no}</td>
                       {isColVisible('rank') && (
                         <td className={cellClass} onDoubleClick={() => toggleRank(row.rank)}>
-                          {getRankLabel(row.rank)}
+                          {getRankLabel(row.rank, row.faction)}
                         </td>
                       )}
                       {isColVisible('faction') && (
@@ -574,7 +576,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
           <SectionHeader title='赛季总览' />
           <Card bordered className='overflow-hidden p-0'>
             <div className='overflow-x-auto'>
-              <table className={TABLE_CLASS_NAME}>
+              <table className={cn(TABLE_CLASS_NAME, 'min-w-120')}>
                 <caption className='sr-only'>赛季总览</caption>
                 <thead>
                   <tr className='bg-surface-muted'>

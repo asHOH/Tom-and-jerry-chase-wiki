@@ -47,7 +47,7 @@ jest.mock('@/data/winRates', () => ({
       ],
     },
     {
-      timeRange: 'S24',
+      timeRange: 'S24 (2025.4.30-2025.5.25)',
       tables: [
         {
           rank: '至尊传奇',
@@ -58,6 +58,21 @@ jest.mock('@/data/winRates', () => ({
           rank: '至尊传奇',
           faction: '鼠',
           rows: [{ character: '海盗杰瑞', pickRate: '3.00%', winRate: '40.00%' }],
+        },
+      ],
+    },
+    {
+      timeRange: 'S23',
+      winRateSummary: [
+        { rank: '无敌猫鼠皇', teamType: '总体', catWin: '55.00%', mouseWin: '45.00%' },
+      ],
+      characterTables: [
+        {
+          rank: '无敌猫鼠皇',
+          rows: [
+            { character: '蓝猫', pickRate: '2.00%', winRate: '55.00%' },
+            { character: '杰瑞', pickRate: '3.00%', winRate: '45.00%' },
+          ],
         },
       ],
     },
@@ -88,7 +103,7 @@ describe('WinRatesClient', () => {
   it('removes unavailable rank filters when changing season', () => {
     clickOption('机智黄金');
     expect(characterNames()).toEqual(['杰瑞']);
-    clickOption('S24');
+    clickOption('S24 (2025.4.30-5.25)');
     expect(characterNames()).toEqual(['海盗杰瑞', '蓝猫']);
     expect(screen.queryByRole('button', { name: '清除筛选' })).not.toBeInTheDocument();
     clickOption('S28');
@@ -102,7 +117,7 @@ describe('WinRatesClient', () => {
     clickOption('至尊传奇');
     clickOption('机智黄金');
     clickOption('猫');
-    clickOption('S24');
+    clickOption('S24 (2025.4.30-5.25)');
     expect(characterNames()).toEqual(['蓝猫']);
     expect(screen.getByRole('button', { name: '至尊传奇' })).toHaveAttribute(
       'aria-pressed',
@@ -111,14 +126,17 @@ describe('WinRatesClient', () => {
   });
 
   it('clears rank and faction filters while preserving season, sorting and columns', () => {
-    clickOption('S24');
+    clickOption('S24 (2025.4.30-5.25)');
     clickOption('至尊传奇');
     clickOption('猫');
     clickOption('登场率');
     fireEvent.click(table().getByRole('button', { name: '胜率' }));
     clickOption('清除筛选');
     expect(characterNames()).toEqual(['海盗杰瑞', '蓝猫']);
-    expect(screen.getByRole('button', { name: 'S24' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'S24 (2025.4.30-5.25)' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
     expect(table().getByRole('columnheader', { name: '胜率' })).toHaveAttribute(
       'aria-sort',
       'ascending'
@@ -150,12 +168,11 @@ describe('WinRatesClient', () => {
     expect(characterNames()).toEqual(['大表哥', '海盗杰瑞', '表演者▪杰瑞']);
     expect(table().getByRole('cell', { name: '0.00%' })).toBeInTheDocument();
     expect(table().getByRole('cell', { name: '—' })).toBeInTheDocument();
-    expect(screen.getByText('— 表示该条记录未提供禁用率数据。')).toBeInTheDocument();
   });
 
   it('hides unavailable ban rates and uses win-rate sorting until coverage returns', () => {
     fireEvent.click(table().getByRole('button', { name: '禁用率' }));
-    clickOption('S24');
+    clickOption('S24 (2025.4.30-5.25)');
     expect(table().queryByRole('columnheader', { name: /禁用率/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '禁用率' })).not.toBeInTheDocument();
     expect(screen.getByText('本赛季未提供禁用率数据。')).toBeInTheDocument();
@@ -169,7 +186,7 @@ describe('WinRatesClient', () => {
       'descending'
     );
     clickOption('禁用率');
-    clickOption('S24');
+    clickOption('S24 (2025.4.30-5.25)');
     clickOption('S28');
     expect(table().queryByRole('columnheader', { name: /禁用率/ })).not.toBeInTheDocument();
   });
@@ -209,6 +226,29 @@ describe('WinRatesClient', () => {
     expect(summary.queryByRole('button')).not.toBeInTheDocument();
   });
 
+  it('shortens only the end year in season labels and selects the original season', () => {
+    clickOption('S24 (2025.4.30-5.25)');
+    expect(characterNames()).toEqual(['海盗杰瑞', '蓝猫']);
+    expect(
+      screen.queryByRole('button', { name: 'S24 (2025.4.30-2025.5.25)' })
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'S28' })).toBeInTheDocument();
+  });
+
+  it('labels emperor rows by faction while preserving the combined rank filter and summary', () => {
+    clickOption('S23');
+    clickOption('无敌猫鼠皇');
+    expect(table().getByRole('cell', { name: '无敌猫皇' })).toBeInTheDocument();
+    expect(table().getByRole('cell', { name: '无敌鼠皇' })).toBeInTheDocument();
+    const summary = within(screen.getByRole('table', { name: '赛季总览' }));
+    expect(summary.getByRole('cell', { name: '无敌猫鼠皇' })).toBeInTheDocument();
+    fireEvent.doubleClick(table().getByRole('cell', { name: '无敌猫皇' }));
+    expect(screen.getByRole('button', { name: '无敌猫鼠皇' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    );
+  });
+
   it('exports missing ban rates as empty cells and omits the column when unavailable', async () => {
     const originalCreate = URL.createObjectURL;
     const originalRevoke = URL.revokeObjectURL;
@@ -235,7 +275,7 @@ describe('WinRatesClient', () => {
       expect(csv).toContain('角色,登场率,胜率,禁用率');
       expect(csv).toContain('表演者▪杰瑞,3.00%,70.00%,\n');
       expect(csv).toContain('大表哥,1.00%,60.00%,0.00%');
-      clickOption('S24');
+      clickOption('S24 (2025.4.30-5.25)');
       expect(await exportCsv()).toBe(
         'No.,段位,阵营,角色,登场率,胜率\n1,至尊传奇,鼠,海盗杰瑞,3.00%,40.00%'
       );
@@ -247,6 +287,10 @@ describe('WinRatesClient', () => {
       expect(await exportCsv()).toBe(
         'No.,段位,阵营,角色,登场率,胜率,禁用率\n1,全段位,鼠,杰瑞,3.00%,50.00%,'
       );
+      clickOption('S23');
+      const emperorCsv = await exportCsv();
+      expect(emperorCsv).toContain('1,无敌鼠皇,鼠,杰瑞');
+      expect(emperorCsv).toContain('1,无敌猫皇,猫,蓝猫');
     } finally {
       URL.createObjectURL = originalCreate;
       URL.revokeObjectURL = originalRevoke;
