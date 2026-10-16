@@ -5,6 +5,7 @@ import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalAchievement } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { FACTION_FULL_NAMES, FACTION_NAMES } from '@/constants/factions';
 import { Achievement } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
@@ -33,7 +34,7 @@ export default function AchievementAttributesCard({ achievement }: { achievement
       imageUrl={achievement.imageUrl}
       alt={achievement.name}
       title={achievement.name}
-      subtitle={`(对局成就·${effectiveAchievement.factionId === 'cat' ? '猫' : '鼠'})`}
+      subtitle={`(对局成就·${FACTION_NAMES[effectiveAchievement.factionId]})`}
       aliases={isEditMode ? undefined : achievement.aliases}
       aliasesContent={
         isEditMode ? (
@@ -97,7 +98,7 @@ export default function AchievementAttributesCard({ achievement }: { achievement
               margin='compact'
               colorStyles={getFactionButtonColors(effectiveAchievement.factionId, isDarkMode)}
             >
-              {effectiveAchievement.factionId === 'cat' ? '猫阵营' : '鼠阵营'}
+              {FACTION_FULL_NAMES[effectiveAchievement.factionId]}
             </Tag>
           </div>
         </>

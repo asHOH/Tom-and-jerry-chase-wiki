@@ -7,6 +7,7 @@ import { formatDateKey, getDailyCharacterId, getGameDate, getPuzzleNumber } from
 import { StorageKey } from '@/lib/localStorage';
 import { buildSkillCluesForCharacter } from '@/lib/skillEffectUtils';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import {
   getPositioningTagLevel,
   isPositioningTagVisible,
@@ -142,7 +143,7 @@ export default function GuessCharacterClient({ description, characters: charsSna
     const entries: ClueEntry[] = [];
 
     // Clue 0: Faction + weapon count
-    const factionLabel = character.factionId === 'cat' ? '猫阵营' : '鼠阵营';
+    const factionLabel = character.faction.name;
     const weaponCount =
       character.skills?.filter((s) => s.type === 'weapon1' || s.type === 'weapon2').length ?? 0;
     entries.push({
@@ -440,7 +441,7 @@ export default function GuessCharacterClient({ description, characters: charsSna
         puzzleNumber={puzzleNumber}
         characterName={activeCharacterId}
         characterImageUrl={targetCharacter?.imageUrl ?? ''}
-        characterFaction={targetCharacter?.factionId === 'cat' ? '猫阵营' : '鼠阵营'}
+        characterFaction={FACTION_FULL_NAMES[targetCharacter?.factionId ?? 'mouse']}
         guesses={guesses}
         correctGuessIndex={correctGuessIndex}
         maxClues={clues.length}

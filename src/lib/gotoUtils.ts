@@ -12,6 +12,7 @@ import type {
   GotoResponse,
   GotoResult,
 } from '@/lib/types';
+import { getFactionLabel } from '@/constants/factions';
 import { buffs as staticBuffs, characters as staticCharacters } from '@/data/static';
 import type { Skill } from '@/data/types';
 
@@ -243,13 +244,10 @@ export async function getGotoResult(
   const nameMatchKeys = new Set(nameMatched.map(candidateKey));
   const aliasOnlyMatched = aliasMatched.filter((entry) => !nameMatchKeys.has(candidateKey(entry)));
 
-  const factionLabel = (factionId?: string): '猫' | '鼠' | undefined =>
-    factionId === 'cat' ? '猫' : factionId === 'mouse' ? '鼠' : undefined;
-
   const kindLabel = (
     entry: (typeof deduped)[number]
   ): { categoryLabel: string; kindDescription: string } => {
-    const f = factionLabel((entry.goto as { factionId?: string }).factionId);
+    const f = getFactionLabel((entry.goto as { factionId?: string }).factionId);
     const kind = entry.kind;
 
     if (kind === 'character')

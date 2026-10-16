@@ -1,4 +1,5 @@
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { FACTION_NAMES } from '@/constants/factions';
 import { cards, characters, maps, modes, specialSkills } from '@/data/static';
 import type {
   CharacterRelation,
@@ -70,8 +71,8 @@ const DEFAULT_RELATION_MATRIX_ROW_FACTION = 'mouse' satisfies RelationMatrixRowF
 const DEFAULT_RELATION_MATRIX_COLUMN_CATEGORY = 'cat' satisfies RelationMatrixColumnCategory;
 
 const COLUMN_CATEGORY_OPTIONS: readonly RelationMatrixColumnCategoryOption[] = [
-  { id: 'mouse', label: '鼠' },
-  { id: 'cat', label: '猫' },
+  { id: 'mouse', label: FACTION_NAMES.mouse },
+  { id: 'cat', label: FACTION_NAMES.cat },
   { id: 'knowledgeCard', label: '知识卡' },
   { id: 'specialSkill', label: '特技' },
   { id: 'map', label: '地图' },

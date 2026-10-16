@@ -11,6 +11,7 @@ import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { cards } from '@/data/static';
 import type { FactionId } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
@@ -77,7 +78,7 @@ export default function KnowledgeCardGrid({ description, data = cards, published
             options={['cat', 'mouse'] as const}
             isActive={(opt) => selectedFaction === opt}
             onToggle={(opt) => setSelectedFaction(selectedFaction === opt ? null : opt)}
-            getOptionLabel={(opt) => (opt === 'cat' ? '猫阵营' : '鼠阵营')}
+            getOptionLabel={(opt) => FACTION_FULL_NAMES[opt]}
             getButtonStyle={(opt, active) =>
               active ? getFactionButtonColors(opt, isDarkMode) : undefined
             }

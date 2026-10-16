@@ -3,13 +3,14 @@
 import Link from 'next/link';
 
 import { cn } from '@/lib/design';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 
 import type { GameMode } from './ModeSelector';
 
 const MODES: { id: GameMode; label: string }[] = [
   { id: 'all', label: '全部角色' },
-  { id: 'cats', label: '猫阵营' },
-  { id: 'mice', label: '鼠阵营' },
+  { id: 'cats', label: FACTION_FULL_NAMES.cat },
+  { id: 'mice', label: FACTION_FULL_NAMES.mouse },
   { id: 'blitz', label: '限时挑战' },
 ];
 

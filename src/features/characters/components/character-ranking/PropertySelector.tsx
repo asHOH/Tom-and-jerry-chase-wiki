@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { getFactionButtonColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { FactionId } from '@/data/types';
 import {
   getPropertiesForFaction,
@@ -69,11 +70,9 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
           {factionSpecificProperties.length > 0 && (
             <FilterRow<RankableProperty>
               label={
-                factionId === 'cat'
-                  ? '猫阵营专属:'
-                  : factionId === 'mouse'
-                    ? '鼠阵营专属:'
-                    : '阵营专属:'
+                factionId === 'cat' || factionId === 'mouse'
+                  ? `${FACTION_FULL_NAMES[factionId]}专属:`
+                  : '阵营专属:'
               }
               options={factionSpecificProperties.map((p) => p.key)}
               isActive={(opt) => currentProperty === opt}
@@ -102,9 +101,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
                 router.push(url);
               }
             }}
-            getOptionLabel={(opt) =>
-              opt === 'all' ? '全部角色' : opt === 'cat' ? '仅猫阵营' : '仅鼠阵营'
-            }
+            getOptionLabel={(opt) => (opt === 'all' ? '全部角色' : `仅${FACTION_FULL_NAMES[opt]}`)}
             getButtonClassName={(opt, active) =>
               active && opt === 'all'
                 ? 'bg-gray-200 text-gray-700 dark:bg-gray-200 dark:text-gray-700'

@@ -1,3 +1,5 @@
+import { FACTION_FULL_NAMES } from './factions';
+
 export type NavItem = {
   id: string;
   label: string;
@@ -29,7 +31,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
     children: [
       {
         id: 'mouse',
-        label: '鼠阵营',
+        label: FACTION_FULL_NAMES.mouse,
         description: '鼠方角色属性、技能、攻略',
         href: '/factions/mouse',
         iconSrc: '/images/icons/mouse-faction.png',
@@ -37,7 +39,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
       },
       {
         id: 'cat',
-        label: '猫阵营',
+        label: FACTION_FULL_NAMES.cat,
         description: '猫方角色属性、技能、攻略',
         href: '/factions/cat',
         iconSrc: '/images/icons/cat-faction.png',

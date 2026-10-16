@@ -1,7 +1,8 @@
 import { cn, getTypeLabelColors } from '@/lib/design';
-import { getFactionLabel, getOwnerSuffix } from '@/lib/singleItemTools';
+import { getOwnerSuffix } from '@/lib/singleItemTools';
 import type { GotoDisambiguationCandidate } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { getFactionLabel } from '@/constants/factions';
 import type { FactionId, SkillType } from '@/data/types';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import Image from '@/components/Image';

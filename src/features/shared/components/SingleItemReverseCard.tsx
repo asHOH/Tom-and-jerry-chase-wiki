@@ -3,13 +3,13 @@ import { useMemo } from 'react';
 import { cn, getTypeLabelColors } from '@/lib/design';
 import singleItemRreverse, { getCategorizedKeywords } from '@/lib/singleItemReverse';
 import {
-  getFactionLabel,
   getSingleItemHref,
   getSingleItemImageUrl,
   getSingleItemOwnerSuffix,
 } from '@/lib/singleItemTools';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { getFactionLabel } from '@/constants/factions';
 import {
   FactionId,
   SingleItem,

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useEditableDomain, type EditableUpdate } from '@/hooks/useEditableGameData';
 import { useToast } from '@/context/ToastContext';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import type { FactionId, SingleItemOrGroup, Trait, TraitGroup } from '@/data/types';
 import Button from '@/components/ui/Button';
 import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormControls';
@@ -105,8 +106,8 @@ function TraitItemEditor({
         }}
       >
         <option value=''>通用</option>
-        <option value='cat'>猫阵营</option>
-        <option value='mouse'>鼠阵营</option>
+        <option value='cat'>{FACTION_FULL_NAMES.cat}</option>
+        <option value='mouse'>{FACTION_FULL_NAMES.mouse}</option>
       </FormSelect>
       <Button variant='danger' size='sm' onClick={onRemove} aria-label='删除成员' className='px-2'>
         <TrashIcon className='h-4 w-4' />
@@ -277,8 +278,8 @@ function TraitCard({
                 }}
               >
                 <option value=''>不排除</option>
-                <option value='cat'>猫阵营</option>
-                <option value='mouse'>鼠阵营</option>
+                <option value='cat'>{FACTION_FULL_NAMES.cat}</option>
+                <option value='mouse'>{FACTION_FULL_NAMES.mouse}</option>
               </FormSelect>
             </label>
             <Button

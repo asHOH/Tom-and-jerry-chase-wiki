@@ -7,6 +7,7 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { specialSkills } from '@/data/static';
 import type { FactionId } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
@@ -72,7 +73,7 @@ export default function SpecialSkillClient({
           options={['cat', 'mouse']}
           isActive={(f) => selectedFaction === f}
           onToggle={(f) => setSelectedFaction(selectedFaction === f ? null : f)}
-          getOptionLabel={(f) => (f === 'cat' ? '猫阵营' : '鼠阵营')}
+          getOptionLabel={(f) => FACTION_FULL_NAMES[f]}
           getButtonStyle={(f, active) =>
             active ? getFactionButtonColors(f, isDarkMode) : undefined
           }

@@ -1,3 +1,4 @@
+import { FACTION_NAMES } from '@/constants/factions';
 import type { FactionId, Skill, SkillType } from '@/data/types';
 
 /**
@@ -43,7 +44,7 @@ export class AssetManager {
 
     if (skill.type === 'passive') {
       // Passive skills use faction-based naming: 被动-猫.png or 被动-鼠.png
-      const factionName = this.getFactionDisplayName(factionId);
+      const factionName = FACTION_NAMES[factionId];
       return `/images/${factionId}Skills/被动-${factionName}.png`;
     }
 
@@ -66,7 +67,7 @@ export class AssetManager {
       throw new Error(`Invalid faction ID: ${factionId}. Expected 'cat' or 'mouse'.`);
     }
 
-    const factionName = this.getFactionDisplayName(factionId);
+    const factionName = FACTION_NAMES[factionId];
     return `/images/specialSkills/${skillName}-${factionName}.png`;
   }
 
@@ -122,13 +123,5 @@ export class AssetManager {
       default:
         return '';
     }
-  }
-
-  /**
-   * Get faction display name for Chinese text
-   * @private
-   */
-  private static getFactionDisplayName(factionId: FactionId): string {
-    return factionId === 'cat' ? '猫' : '鼠';
   }
 }

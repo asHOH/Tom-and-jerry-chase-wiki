@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { SITE_URL } from '@/constants/seo';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
@@ -29,7 +30,7 @@ const MODES = [
   },
   {
     id: 'cats',
-    label: '猫阵营',
+    label: FACTION_FULL_NAMES.cat,
     desc: '21 只猫 · 5 项属性',
     href: '/games/stat-showdown/cats/',
     icon: (
@@ -44,7 +45,7 @@ const MODES = [
   },
   {
     id: 'mice',
-    label: '鼠阵营',
+    label: FACTION_FULL_NAMES.mouse,
     desc: '39 只鼠 · 6 项属性',
     href: '/games/stat-showdown/mice/',
     icon: (

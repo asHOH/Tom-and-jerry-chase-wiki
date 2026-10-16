@@ -9,6 +9,7 @@ import { proxy, snapshot } from 'valtio';
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
 import { CharacterWithFaction } from '@/lib/types';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import type { FactionId, Skill } from '@/data/types';
 
 /**
@@ -117,7 +118,7 @@ function validateAndEnhanceCharacter(
   if (!charObj.faction || typeof charObj.faction !== 'object') {
     charObj.faction = {
       id: validFactionId,
-      name: validFactionId === 'cat' ? '猫阵营' : '鼠阵营',
+      name: FACTION_FULL_NAMES[validFactionId],
     };
   }
 

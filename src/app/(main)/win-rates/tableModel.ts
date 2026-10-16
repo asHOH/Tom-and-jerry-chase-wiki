@@ -1,3 +1,4 @@
+import { FACTION_NAMES } from '@/constants/factions';
 import type { FactionId } from '@/data/types';
 import { getRankLabel, getRankOrder, type WinRateRow } from '@/data/winRates/normalize';
 import type { WinRatesEntry } from '@/data/winRates/types';
@@ -26,7 +27,7 @@ export const WIN_RATE_COLUMNS: readonly WinRateColumn[] = [
     key: 'faction',
     label: '阵营',
     widthClassName: 'w-11 sm:w-14 lg:w-20',
-    getValue: (row) => (row.faction === 'cat' ? '猫' : '鼠'),
+    getValue: (row) => FACTION_NAMES[row.faction],
   },
   {
     key: 'character',

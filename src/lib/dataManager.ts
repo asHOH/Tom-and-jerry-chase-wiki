@@ -1,4 +1,5 @@
 import { DeepReadonly } from '@/types/deep-readonly';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import historyDates from '@/data/generated/historyDates.json';
 import { Card, Character, Faction, FactionId } from '@/data/types';
 import { createCatCharactersWithImages } from '@/features/characters/data/catCharacters';
@@ -25,14 +26,14 @@ const rawCardData = {
 const rawFactionData: Record<FactionId, Faction> = {
   cat: {
     id: 'cat',
-    name: '猫阵营',
+    name: FACTION_FULL_NAMES.cat,
     description: '猫阵营需要阻止老鼠推奶酪，并将老鼠绑上火箭放飞',
     generalKnowledgeCardGroups: catGeneralKnowledgeCardGroups,
     generalSpecialSkills: catGeneralSpecialSkills,
   },
   mouse: {
     id: 'mouse',
-    name: '鼠阵营',
+    name: FACTION_FULL_NAMES.mouse,
     description: '鼠阵营共四名角色，需要合作躲避猫的攻击、推完5块奶酪并砸开墙缝',
     generalKnowledgeCardGroups: mouseGeneralKnowledgeCardGroups,
     generalSpecialSkills: mouseGeneralSpecialSkills,

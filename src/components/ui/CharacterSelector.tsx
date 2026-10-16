@@ -6,6 +6,7 @@ import type { ArticleCharacterOption } from '@/lib/articles/articleCharacterOpti
 import { AssetManager } from '@/lib/assetManager';
 import { cn } from '@/lib/design';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
+import { FACTION_NAMES } from '@/constants/factions';
 import { characters } from '@/data/static';
 import type { CharacterRelationItem, FactionId } from '@/data/types';
 import { BaseDialog } from '@/components/ui/BaseDialog';
@@ -397,7 +398,7 @@ export function ArticleCharacterSelector({
                           : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
                       )}
                     >
-                      {char.factionId === 'cat' ? '猫' : '鼠'}
+                      {FACTION_NAMES[char.factionId]}
                     </span>
                   </Button>
                 ))

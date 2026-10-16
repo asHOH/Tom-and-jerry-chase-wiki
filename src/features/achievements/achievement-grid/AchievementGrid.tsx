@@ -7,6 +7,7 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { achievements } from '@/data/static';
 import type { Achievement } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
@@ -60,7 +61,7 @@ export default function AchievementGridClient({
               prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
             )
           }
-          getOptionLabel={(f) => (f === 'cat' ? '猫阵营' : '鼠阵营')}
+          getOptionLabel={(f) => FACTION_FULL_NAMES[f]}
           getButtonStyle={(f, active) =>
             active ? getFactionButtonColors(f, isDarkMode) : undefined
           }

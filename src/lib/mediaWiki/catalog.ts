@@ -1,3 +1,5 @@
+import { getFactionLabel } from '@/constants/factions';
+
 import 'server-only';
 
 import { createHash } from 'node:crypto';
@@ -197,7 +199,7 @@ function categoryFor(
   categoryLabel: string;
   kindDescription: string;
 } {
-  const faction = factionId === 'cat' ? '猫' : factionId === 'mouse' ? '鼠' : undefined;
+  const faction = getFactionLabel(factionId);
 
   if (kind === 'character')
     return { categoryLabel: faction ? `${faction}角色` : '角色', kindDescription: '角色' };

@@ -9,6 +9,7 @@ import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { FACTION_FULL_NAMES, FACTION_NAMES } from '@/constants/factions';
 import { items } from '@/data/static';
 import type { Item, Itemsourcelist, Itemtypelist } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
@@ -134,17 +135,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
               )
             }
             getOptionLabel={(f) =>
-              isMobile
-                ? f === 'cat'
-                  ? '猫专用'
-                  : f === 'mouse'
-                    ? '鼠专用'
-                    : '通用'
-                : f === 'cat'
-                  ? '猫阵营专用'
-                  : f === 'mouse'
-                    ? '鼠阵营专用'
-                    : '通用'
+              f === 'none' ? '通用' : `${isMobile ? FACTION_NAMES[f] : FACTION_FULL_NAMES[f]}专用`
             }
             getButtonStyle={(f, active) =>
               active && f !== 'none' ? getFactionButtonColors(f, isDarkMode) : undefined

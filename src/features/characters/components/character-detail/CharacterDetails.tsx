@@ -15,6 +15,7 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import { useTraitsData } from '@/context/TraitsContext';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { Skill } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import { characterRelationTagPairs } from '@/features/characters/utils/characterRelationTags';
@@ -180,7 +181,7 @@ export default function CharacterDetails({
                           data-tutorial-id='character-name-edit'
                         />{' '}
                         <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                          ({localCharacter.factionId == 'cat' ? '猫' : '鼠'}阵营)
+                          ({FACTION_FULL_NAMES[localCharacter.factionId ?? 'mouse']})
                         </span>
                       </PageTitle>
                       <DiscussEditButtons compact isEditMode={isEditMode} className='ml-2' />
@@ -222,11 +223,9 @@ export default function CharacterDetails({
                             </PageTitle>
                             <p className='text-lg font-normal text-gray-400 dark:text-gray-500'>
                               (
-                              {localCharacter.factionId === 'cat'
-                                ? '猫阵营'
-                                : localCharacter.factionId === 'mouse'
-                                  ? '鼠阵营'
-                                  : ''}
+                              {localCharacter.factionId
+                                ? FACTION_FULL_NAMES[localCharacter.factionId]
+                                : ''}
                               )
                             </p>
                           </div>

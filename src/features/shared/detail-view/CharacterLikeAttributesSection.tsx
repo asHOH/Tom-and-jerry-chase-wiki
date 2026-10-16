@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { getTooltipContent } from '@/lib/tooltipUtils';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import type { FactionId, ItemAttributesAsCharacter } from '@/data/types';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import Tooltip from '@/components/ui/Tooltip';
@@ -49,11 +50,11 @@ const ATTRIBUTE_ROWS = [
 
 const renderFactionBelong = (factionBelong: ItemAttributesAsCharacter['factionBelong']) => {
   if (factionBelong === 'cat') {
-    return <span className='text-sky-600 dark:text-sky-400'>猫阵营</span>;
+    return <span className='text-sky-600 dark:text-sky-400'>{FACTION_FULL_NAMES.cat}</span>;
   }
 
   if (factionBelong === 'mouse') {
-    return <span className='text-amber-700 dark:text-amber-600'>鼠阵营</span>;
+    return <span className='text-amber-700 dark:text-amber-600'>{FACTION_FULL_NAMES.mouse}</span>;
   }
 
   return <span className='text-fuchsia-600 dark:text-fuchsia-400'>第三阵营</span>;
@@ -156,8 +157,8 @@ export default function CharacterLikeAttributesSection({
                     })
                   }
                 >
-                  <option value='cat'>猫阵营</option>
-                  <option value='mouse'>鼠阵营</option>
+                  <option value='cat'>{FACTION_FULL_NAMES.cat}</option>
+                  <option value='mouse'>{FACTION_FULL_NAMES.mouse}</option>
                   <option value='other'>第三阵营</option>
                 </FormSelect>
               </label>

@@ -6,9 +6,9 @@ import { getEntityTypeColors, getFactionButtonColors } from '@/lib/design';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { entities } from '@/data/static';
 import type { Entity, Entitytaglist, Entitytypelist } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
@@ -78,7 +78,6 @@ export default function EntityClient({ description, data = entities, publishedRe
   // 筛选逻辑开关：true = AND（所有选中项都必须满足），false = OR（满足任一即可）
   const [andMode, setAndMode] = useState(false);
 
-  const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
   // 辅助函数：检查 entitytype 是否匹配（根据 andMode 决定逻辑）
@@ -201,12 +200,7 @@ export default function EntityClient({ description, data = entities, publishedRe
                 prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
               )
             }
-            getOptionLabel={(f) => {
-              if (isMobile) {
-                return f === 'cat' ? '猫阵营' : f === 'mouse' ? '鼠阵营' : '其它';
-              }
-              return f === 'cat' ? '猫阵营' : f === 'mouse' ? '鼠阵营' : '其它';
-            }}
+            getOptionLabel={(f) => (f === 'other' ? '其它' : FACTION_FULL_NAMES[f])}
             getButtonStyle={(f, active) => {
               if (f === 'other') {
                 return undefined;

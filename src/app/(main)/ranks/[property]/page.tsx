@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { SITE_URL } from '@/constants/seo';
 import { FactionId } from '@/data/types';
 import { CharacterRankingGrid } from '@/features/characters/components';
@@ -32,13 +33,17 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   const resolvedSearchParams = await searchParams;
 
   const propertyInfo = getPropertyInfo(resolvedParams.property as RankableProperty);
-  const factionId = resolvedSearchParams.faction as FactionId | undefined;
+  const factionId = resolvedSearchParams.faction;
 
   if (!propertyInfo) {
     return {};
   }
 
-  const factionSuffix = factionId ? ` - ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}` : '';
+  if (factionId !== undefined && factionId !== '' && factionId !== 'cat' && factionId !== 'mouse') {
+    return {};
+  }
+
+  const factionSuffix = factionId ? ` - ${FACTION_FULL_NAMES[factionId]}` : '';
 
   return generatePageMetadata({
     title: `${propertyInfo.label}排行榜${factionSuffix}`,

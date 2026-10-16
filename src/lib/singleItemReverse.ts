@@ -1,3 +1,4 @@
+import { FACTION_NAMES } from '@/constants/factions';
 import { autoWrapNames } from '@/data/autoWrapNames';
 import { FactionId, SingleItem, SingleItemTypeName } from '@/data/types';
 import {
@@ -51,7 +52,7 @@ function getChineseTypeNames(type: SingleItemTypeName, factionId?: FactionId): s
   // If factionId is defined, return:
   // 1. Overall type names (without faction prefix)
   // 2. Names matching this faction only
-  const faction = factionId === 'cat' ? '猫' : '鼠';
+  const faction = FACTION_NAMES[factionId];
 
   return baseNames.filter((name) => {
     // Include if it doesn't have faction prefix (overall name)

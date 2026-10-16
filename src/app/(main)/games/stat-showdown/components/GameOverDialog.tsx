@@ -1,5 +1,6 @@
 'use client';
 
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import ShareButton from '@/features/games/components/ShareButton';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
@@ -17,8 +18,8 @@ type GameOverDialogProps = {
 };
 
 const MODE_LABELS: Record<GameMode, string> = {
-  cats: '猫阵营',
-  mice: '鼠阵营',
+  cats: FACTION_FULL_NAMES.cat,
+  mice: FACTION_FULL_NAMES.mouse,
   all: '全部角色',
   blitz: '限时挑战',
 };

@@ -1,5 +1,6 @@
 // Utility functions for skill allocation parsing and validation
 
+import { FACTION_NAMES } from '@/constants/factions';
 import type { FactionId } from '@/data/types';
 
 export type ParsedSkillLevel = {
@@ -268,7 +269,7 @@ export const getSkillAllocationImageUrl = (
   skillName?: string
 ): string => {
   if (skillTypeNum === '0') {
-    const factionName = factionId === 'cat' ? '猫' : '鼠';
+    const factionName = FACTION_NAMES[factionId];
     return `/images/${factionId}Skills/被动-${factionName}.png`;
   }
 

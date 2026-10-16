@@ -1,3 +1,4 @@
+import { FACTION_NAMES } from '@/constants/factions';
 import type { FactionId } from '@/data/types';
 
 import { normalizeWinRateCharacterName, type WinRateCharacterLookup } from './characterLookup';
@@ -38,7 +39,7 @@ export function getRankOrder(rank: string): number {
 export function getRankLabel(rank: string, factionId?: FactionId): string {
   if (rank === '全部') return '全段位';
   if (!factionId) return rank;
-  const faction = factionId === 'cat' ? '猫' : '鼠';
+  const faction = FACTION_NAMES[factionId];
   if (rank === '无敌猫鼠皇') return `无敌${faction}皇`;
   if (rank === '皇2000分以上') return `${faction}皇2000分以上`;
   if (rank === '皇0分-皇2000分') return `${faction}皇0分-${faction}皇2000分`;

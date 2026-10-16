@@ -8,6 +8,7 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { characters } from '@/data/static';
 import { FactionId } from '@/data/types';
 import {
@@ -159,7 +160,7 @@ export default function CharacterRankingGrid({
           description={
             <>
               {description ?? ''}
-              {factionId && `，当前为: ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}角色`}
+              {factionId && `，当前为: ${FACTION_FULL_NAMES[factionId]}角色`}
             </>
           }
           className='mb-8'
@@ -198,7 +199,7 @@ export default function CharacterRankingGrid({
         title={
           <>
             {propertyInfo?.label}排行榜
-            {factionId && ` - ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}`}
+            {factionId && ` - ${FACTION_FULL_NAMES[factionId]}`}
           </>
         }
         description={

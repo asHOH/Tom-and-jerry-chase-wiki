@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { cn, getFactionButtonColors, getFilterButtonActiveToneClasses } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { FACTION_NAMES } from '@/constants/factions';
 import type { FactionId } from '@/data/types';
 import { winRatesData } from '@/data/winRates';
 import type { WinRateCharacterLookup } from '@/data/winRates/characterLookup';
@@ -223,7 +224,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
             options={['cat', 'mouse']}
             isActive={(opt) => selectedFactions.has(opt)}
             onToggle={(opt) => toggleFaction(opt)}
-            getOptionLabel={(opt) => (opt === 'cat' ? '猫' : '鼠')}
+            getOptionLabel={(opt) => FACTION_NAMES[opt]}
             getButtonStyle={(opt, active) =>
               active ? getFactionButtonColors(opt, isDarkMode) : undefined
             }

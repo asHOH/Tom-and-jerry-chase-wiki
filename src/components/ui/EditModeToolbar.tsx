@@ -16,6 +16,7 @@ import {
   type GameDataSubmitMode,
 } from '@/lib/gameData/submitMode';
 import { useEditMode } from '@/context/EditModeContext';
+import { FACTION_NAMES } from '@/constants/factions';
 import Button from '@/components/ui/Button';
 import { FormTextarea } from '@/components/ui/FormControls';
 import {
@@ -427,7 +428,7 @@ export default function EditModeToolbar({
                         <div className='flex items-center justify-between'>
                           <span>
                             {item.entityLabel} · {item.itemLabel}
-                            {item.factionId && ` (${item.factionId === 'cat' ? '猫' : '鼠'})`}
+                            {item.factionId && ` (${FACTION_NAMES[item.factionId]})`}
                           </span>
                           <span className='text-amber-600 dark:text-amber-300'>
                             {item.count} 条

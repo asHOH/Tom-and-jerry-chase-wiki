@@ -3,6 +3,7 @@
 import Image from 'next/image';
 
 import { cn } from '@/lib/design';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import Button from '@/components/ui/Button';
 import { ClockIcon, TargetIcon } from '@/components/icons/CommonIcons';
 
@@ -23,7 +24,7 @@ type ModeDef = {
 const MODES: ModeDef[] = [
   {
     id: 'cats',
-    label: '猫阵营',
+    label: FACTION_FULL_NAMES.cat,
     desc: '21 只猫',
     icon: (
       <Image
@@ -37,7 +38,7 @@ const MODES: ModeDef[] = [
   },
   {
     id: 'mice',
-    label: '鼠阵营',
+    label: FACTION_FULL_NAMES.mouse,
     desc: '39 只鼠',
     icon: (
       <Image

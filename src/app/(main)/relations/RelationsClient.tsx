@@ -14,6 +14,7 @@ import {
   usePendingActionAwarenessSource,
 } from '@/context/PendingActionAwarenessContext';
 import { useToast } from '@/context/ToastContext';
+import { FACTION_NAMES } from '@/constants/factions';
 import {
   cards as staticCards,
   characters as staticCharacters,
@@ -52,11 +53,6 @@ type RelationsClientProps = {
 
 const ROW_FACTION_OPTIONS = ['mouse', 'cat'] as const satisfies readonly RelationMatrixRowFaction[];
 
-const ROW_FACTION_LABELS = {
-  mouse: '鼠',
-  cat: '猫',
-} satisfies Record<RelationMatrixRowFaction, string>;
-
 const MATRIX_SIZE_MIN = 22;
 const MATRIX_SIZE_MAX = 40;
 const MATRIX_SIZE_STEP = 2;
@@ -89,7 +85,7 @@ function RowFactionSelector({
       options={ROW_FACTION_OPTIONS}
       isActive={(option) => selected === option}
       onToggle={onSelect}
-      getOptionLabel={(option) => ROW_FACTION_LABELS[option]}
+      getOptionLabel={(option) => FACTION_NAMES[option]}
       getButtonStyle={(option, active) =>
         active ? getFactionButtonColors(option, isDarkMode) : undefined
       }

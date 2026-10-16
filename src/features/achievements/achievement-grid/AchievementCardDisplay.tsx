@@ -1,5 +1,6 @@
 import { getFactionButtonColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { Achievement } from '@/data/types';
 import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
@@ -22,7 +23,7 @@ export default function AchievementCardDisplay({ achievement }: { achievement: A
             margin='compact'
             colorStyles={getFactionButtonColors(achievement.factionId, isDarkMode)}
           >
-            {achievement.factionId === 'cat' ? '猫阵营' : '鼠阵营'}
+            {FACTION_FULL_NAMES[achievement.factionId]}
           </Tag>
           <Tag
             size='xs'

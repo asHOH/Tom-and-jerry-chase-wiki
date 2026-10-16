@@ -1,3 +1,4 @@
+import { getFactionLabel } from '@/constants/factions';
 import type { FactionId, SingleItem, SingleItemOrGroup } from '@/data/types';
 import getEntityFactionId from '@/features/entities/lib/getEntityFactionId';
 import {
@@ -167,12 +168,6 @@ export const getSingleItemFactionId = (
   }
 
   return findFactionId();
-};
-
-export const getFactionLabel = (factionId: FactionId | undefined): '猫' | '鼠' | undefined => {
-  if (factionId === 'cat') return '猫';
-  if (factionId === 'mouse') return '鼠';
-  return undefined;
 };
 
 const formatOwnerName = (ownerName: string, ownerFactionId?: FactionId): string => {

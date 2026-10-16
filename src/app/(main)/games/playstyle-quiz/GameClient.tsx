@@ -4,6 +4,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
 import ShareButton from '@/features/games/components/ShareButton';
@@ -163,7 +164,7 @@ export default function PlaystyleQuizClient({ description, characters: charsSnap
             <ShareButton
               getShareText={() =>
                 generateQuizShareText(
-                  faction === 'cat' ? '猫阵营' : '鼠阵营',
+                  FACTION_FULL_NAMES[faction ?? 'mouse'],
                   result.topMatch.characterId,
                   result.similarMatches.map((match) => match.characterId)
                 )

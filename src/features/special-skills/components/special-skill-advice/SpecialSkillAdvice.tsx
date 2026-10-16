@@ -9,6 +9,7 @@ import { CharacterWithFaction } from '@/lib/types';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { characters, specialSkills } from '@/data/static';
 import type { FactionId, SpecialSkill } from '@/data/types';
 import { getSpecialSkillRelationSummary } from '@/features/characters/utils/relationReadModel';
@@ -133,7 +134,7 @@ export default function SpecialSkillAdviceClient({
             options={['cat', 'mouse']}
             isActive={(f) => selectedFaction === f}
             onToggle={(f) => setSelectedFaction(selectedFaction === f ? null : f)}
-            getOptionLabel={(f) => (f === 'cat' ? '猫阵营' : '鼠阵营')}
+            getOptionLabel={(f) => FACTION_FULL_NAMES[f]}
             getButtonStyle={(f, active) =>
               active ? getFactionButtonColors(f, isDarkMode) : undefined
             }
