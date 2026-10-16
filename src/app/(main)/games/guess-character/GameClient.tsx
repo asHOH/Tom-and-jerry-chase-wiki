@@ -7,7 +7,6 @@ import { formatDateKey, getDailyCharacterId, getGameDate, getPuzzleNumber } from
 import { StorageKey } from '@/lib/localStorage';
 import { buildSkillCluesForCharacter } from '@/lib/skillEffectUtils';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { FACTION_FULL_NAMES } from '@/constants/factions';
 import {
   getPositioningTagLevel,
   isPositioningTagVisible,
@@ -357,7 +356,7 @@ export default function GuessCharacterClient({ description, characters: charsSna
     () =>
       allCharacterIds.map((id) => ({
         id,
-        factionId: charsSnap[id]?.factionId ?? 'mouse',
+        factionId: charsSnap[id]!.factionId,
       })),
     [allCharacterIds, charsSnap]
   );
@@ -441,7 +440,7 @@ export default function GuessCharacterClient({ description, characters: charsSna
         puzzleNumber={puzzleNumber}
         characterName={activeCharacterId}
         characterImageUrl={targetCharacter?.imageUrl ?? ''}
-        characterFaction={FACTION_FULL_NAMES[targetCharacter?.factionId ?? 'mouse']}
+        characterFaction={targetCharacter?.faction.name ?? ''}
         guesses={guesses}
         correctGuessIndex={correctGuessIndex}
         maxClues={clues.length}

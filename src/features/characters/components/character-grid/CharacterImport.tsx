@@ -47,12 +47,14 @@ function handleUploadedData(
     // Add skill image URLs
     character.skills = AssetManager.addSkillImageUrls(character.id, character.skills, factionId);
     character.imageUrl = AssetManager.getCharacterImageUrl(character.id, factionId);
-    character.factionId = factionId;
 
     console.log(`Enhanced imported character ${character.id} with complete data structure`);
   }
 
-  newCharacters = processCharacters(newCharacters) as Record<string, CharacterWithFaction>;
+  newCharacters = processCharacters(newCharacters, factionId) as Record<
+    string,
+    CharacterWithFaction
+  >;
   updateCharacters((characters) => Object.assign(characters, newCharacters));
 
   // Trigger success callback - no reload needed, let's see if UI updates automatically

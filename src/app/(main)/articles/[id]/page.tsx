@@ -104,7 +104,7 @@ export default async function ArticlePage({
   const boundCharacter = publishedCharacter
     ? {
         id: publishedCharacter.id,
-        ...(publishedCharacter.factionId ? { factionId: publishedCharacter.factionId } : {}),
+        factionId: publishedCharacter.factionId,
       }
     : null;
 

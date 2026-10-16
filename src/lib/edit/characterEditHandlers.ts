@@ -87,13 +87,13 @@ export function handleCharacterIdChange(
  *
  * @param character The character object to validate
  * @param characterId The character's ID
- * @param factionId Override faction ID (defaults to character.factionId)
+ * @param factionId Faction supplied by the character's current context
  * @returns The validated and enhanced character
  */
 function validateAndEnhanceCharacter(
   character: unknown,
   characterId: string,
-  factionId?: FactionId
+  factionId: FactionId
 ): CharacterWithFaction {
   if (!character || typeof character !== 'object') {
     throw new Error(`Character ${characterId} is invalid`);
@@ -108,9 +108,7 @@ function validateAndEnhanceCharacter(
 
   // Determine and validate faction ID
   const validFactionId: FactionId =
-    (charObj.factionId === 'cat' || charObj.factionId === 'mouse'
-      ? (charObj.factionId as FactionId)
-      : factionId) || 'mouse';
+    charObj.factionId === 'cat' || charObj.factionId === 'mouse' ? charObj.factionId : factionId;
 
   charObj.factionId = validFactionId;
 

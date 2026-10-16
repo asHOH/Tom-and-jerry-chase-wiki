@@ -100,7 +100,7 @@ describe('character ranking utilities', () => {
     if (!tom) throw new Error('Missing 汤姆 fixture');
     const { factionId: _factionId, ...character } = tom;
 
-    expect(() => rankCharactersByProperty([character], 'maxHp')).toThrow(
+    expect(() => rankCharactersByProperty([character as Character], 'maxHp')).toThrow(
       'Character 汤姆 is missing its factionId'
     );
   });

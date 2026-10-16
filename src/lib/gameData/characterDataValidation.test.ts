@@ -5,6 +5,7 @@ import { InvalidGameDataValueError, validateCharacterData } from './characterDat
 const valid = () => ({
   Tom: {
     id: 'Tom',
+    factionId: 'cat',
     description: '',
     skills: [
       {
@@ -23,6 +24,16 @@ it('accepts every canonical character, including optional nested fields', () => 
   const canonical = buildCharacterGameData();
   expect(() => validateCharacterData(canonical, Object.keys(canonical))).not.toThrow();
 });
+
+it.each([undefined, null, '', 'unknown'])(
+  'rejects invalid faction %s in edits and character replacements',
+  (factionId) => {
+    const target = { Tom: { ...valid().Tom, factionId } };
+    for (const path of ['Tom.factionId', 'Tom']) {
+      expect(() => validateCharacterData(target, [path])).toThrow(InvalidGameDataValueError);
+    }
+  }
+);
 
 it.each([
   { path: 'Tom.relations', value: { relations: { advantageMaps: [] } } },

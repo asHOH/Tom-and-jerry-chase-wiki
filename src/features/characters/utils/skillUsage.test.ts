@@ -94,6 +94,7 @@ describe('skill usage parts', () => {
     const skill = createLegacySkill({ parts: [{ canMoveWhileUsing: true }] } as Partial<Skill>);
     const character: CharacterWithFaction = {
       id: '测试角色',
+      factionId: 'cat',
       description: '',
       imageUrl: '/test.png',
       createDate: null,

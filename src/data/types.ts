@@ -193,7 +193,7 @@ export type PartialCharacterDefinition = { hidden: true } & Partial<CharacterDef
 // Final processed character (with ID and processed skills)
 export type Character = CharacterDefinition & {
   id: string; // Chinese name (e.g., '汤姆')
-  factionId?: FactionId; // Optional in base definition, will be assigned in bulk
+  factionId: FactionId;
   skills: Skill[]; // Processed skills with IDs
 };
 

@@ -48,7 +48,7 @@ export default async function ArticlesPage({
       const character = characters.data[id];
       return character ? [[id, { id: character.id, factionId: character.factionId }]] : [];
     })
-  ) as Record<string, { id: string; factionId?: FactionId }>;
+  ) as Record<string, { id: string; factionId: FactionId }>;
 
   return (
     <PageShell width='wide'>

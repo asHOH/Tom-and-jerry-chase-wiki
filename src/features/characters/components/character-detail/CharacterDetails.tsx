@@ -181,7 +181,7 @@ export default function CharacterDetails({
                           data-tutorial-id='character-name-edit'
                         />{' '}
                         <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                          ({FACTION_FULL_NAMES[localCharacter.factionId ?? 'mouse']})
+                          ({FACTION_FULL_NAMES[localCharacter.factionId]})
                         </span>
                       </PageTitle>
                       <DiscussEditButtons compact isEditMode={isEditMode} className='ml-2' />
@@ -222,11 +222,7 @@ export default function CharacterDetails({
                               {localCharacter.id}{' '}
                             </PageTitle>
                             <p className='text-lg font-normal text-gray-400 dark:text-gray-500'>
-                              (
-                              {localCharacter.factionId
-                                ? FACTION_FULL_NAMES[localCharacter.factionId]
-                                : ''}
-                              )
+                              ({FACTION_FULL_NAMES[localCharacter.factionId]})
                             </p>
                           </div>
                           <DiscussEditButtons compact isEditMode={false} />

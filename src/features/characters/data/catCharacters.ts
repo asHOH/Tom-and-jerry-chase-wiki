@@ -4627,15 +4627,14 @@ const catCharacterDefinitions = {
 } as const satisfies Readonly<Record<string, CharacterDefinition | PartialCharacterDefinition>>;
 
 // Process character definitions to assign IDs and process skills
-const catCharacters = processCharacters(catCharacterDefinitions);
+const catCharacters = processCharacters(catCharacterDefinitions, 'cat');
 
-// Generate characters with faction ID and image URLs applied in bulk
+// Generate character image URLs in bulk
 const pristineCatCharactersWithImages = Object.fromEntries(
   Object.entries(catCharacters).map(([characterId, character]) => [
     characterId,
     {
       ...character,
-      factionId: 'cat' as const,
       imageUrl: AssetManager.getCharacterImageUrl(characterId, 'cat'),
       skills: AssetManager.addSkillImageUrls(characterId, character.skills, 'cat'),
     },

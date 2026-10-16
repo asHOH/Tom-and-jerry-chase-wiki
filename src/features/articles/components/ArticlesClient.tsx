@@ -30,7 +30,7 @@ import ArticlePagination from './ArticlePagination';
 interface ArticlesClientProps {
   articles: ArticleListPageData;
   listParams: ArticleListParams;
-  characterSummaries: Readonly<Record<string, { id: string; factionId?: FactionId }>>;
+  characterSummaries: Readonly<Record<string, { id: string; factionId: FactionId }>>;
   description?: string;
 }
 
@@ -320,7 +320,7 @@ export default function ArticlesClient({
                         <Image
                           src={AssetManager.getCharacterImageUrl(
                             boundCharacter.id,
-                            boundCharacter.factionId ?? 'cat'
+                            boundCharacter.factionId
                           )}
                           alt={boundCharacter.id}
                           width={32}

@@ -7297,15 +7297,14 @@ const mouseCharacterDefinitions = {
 } as const satisfies Readonly<Record<string, CharacterDefinition>>;
 
 // Process character definitions to assign IDs and process skills
-const mouseCharacters = processCharacters(mouseCharacterDefinitions);
+const mouseCharacters = processCharacters(mouseCharacterDefinitions, 'mouse');
 
-// Generate characters with faction ID and image URLs applied in bulk
+// Generate character image URLs in bulk
 const pristineMouseCharactersWithImages = Object.fromEntries(
   Object.entries(mouseCharacters).map(([characterId, character]) => [
     characterId,
     {
       ...character,
-      factionId: 'mouse' as const,
       imageUrl: AssetManager.getCharacterImageUrl(characterId, 'mouse'),
       skills: AssetManager.addSkillImageUrls(characterId, character.skills, 'mouse'),
     },

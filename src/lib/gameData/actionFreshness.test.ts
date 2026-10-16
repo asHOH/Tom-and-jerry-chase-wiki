@@ -27,6 +27,7 @@ describe('new action freshness', () => {
     baseline = {
       Tom: {
         id: 'Tom',
+        factionId: 'cat',
         description: 'original',
         skills: [],
         knowledgeCardGroups: [],
@@ -49,6 +50,24 @@ describe('new action freshness', () => {
         [row('stale', set('Tom.description', 'original', 'my edit'))]
       )
     ).toThrow(StaleGameDataEditError);
+  });
+
+  it('rejects removing a character faction without mutating the published baseline', () => {
+    const before = structuredClone(baseline);
+    expect(() =>
+      validateActionFreshness(
+        [],
+        [
+          row('remove-faction', {
+            op: 'delete',
+            path: 'Tom.factionId',
+            oldValue: 'cat',
+            newValue: undefined,
+          }),
+        ]
+      )
+    ).toThrow(InvalidGameDataValueError);
+    expect(baseline).toEqual(before);
   });
 
   it('rejects stale whole-list addition that would erase newer descriptions (Wind Tom)', () => {

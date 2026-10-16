@@ -66,7 +66,7 @@ export type CardGameData = Record<
 export function buildCharacterGameData(): CharacterGameData {
   const built = Object.fromEntries(
     Object.entries(rawCharacterData).map(([characterId, character]) => {
-      const factionId = character.factionId as FactionId;
+      const factionId = character.factionId;
       const faction = rawFactionData[factionId];
       const recommendations = mergeCharacterRecommendations(character, faction);
 

@@ -63,7 +63,7 @@ const character = z.strictObject({
   description: text,
   imageUrl: text.optional(),
   aliases: z.array(text).optional(),
-  factionId: z.enum(['cat', 'mouse']).optional(),
+  factionId: z.enum(['cat', 'mouse']),
   faction: z.strictObject({ id: z.enum(['cat', 'mouse']), name: text }).optional(),
   createDate: text.nullable().optional(),
   EnglishName: text.optional(),

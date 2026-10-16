@@ -5,6 +5,7 @@
 import type {
   Character,
   CharacterDefinition,
+  FactionId,
   PartialCharacterDefinition,
   Skill,
   SkillDefinition,
@@ -27,13 +28,18 @@ function processSkillsWithIds(
 }
 
 /**
- * Process character definitions to assign IDs and process skills
+ * Process character definitions to assign IDs, faction and processed skills
  * @param characterDefinitions - Record of character definitions keyed by name
+ * @param factionId - Faction shared by this collection
  * @returns Record of processed characters with IDs and processed skills
  */
 export function processCharacters<
   T extends Readonly<Record<string, CharacterDefinition | PartialCharacterDefinition>>,
->(characterDefinitions: T): { [K in keyof T]: Character & { id: K } } {
+>(characterDefinitions: T, factionId: FactionId): { [K in keyof T]: Character & { id: K } } {
+  if (factionId !== 'cat' && factionId !== 'mouse') {
+    throw new Error('Character faction must be cat or mouse');
+  }
+
   return Object.fromEntries(
     Object.entries(characterDefinitions)
       .filter(([, character]) => !('hidden' in character && character.hidden === true))
@@ -42,6 +48,7 @@ export function processCharacters<
         {
           ...character,
           id: characterName,
+          factionId,
           skills: processSkillsWithIds(characterName, character.skills ?? []),
         },
       ])

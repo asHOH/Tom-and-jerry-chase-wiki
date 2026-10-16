@@ -51,7 +51,7 @@ export default function ArticleClient({
   sanitizedContent,
 }: {
   article: ArticleData;
-  boundCharacter: { id: string; factionId?: FactionId } | null;
+  boundCharacter: { id: string; factionId: FactionId } | null;
   sanitizedContent: string;
 }) {
   const permissions = usePermissions();
@@ -191,7 +191,7 @@ export default function ArticleClient({
                       <Image
                         src={AssetManager.getCharacterImageUrl(
                           boundCharacter.id,
-                          boundCharacter.factionId ?? 'cat'
+                          boundCharacter.factionId
                         )}
                         alt={boundCharacter.id}
                         width={24}
