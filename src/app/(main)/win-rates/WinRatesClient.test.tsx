@@ -30,6 +30,10 @@ jest.mock('@/data/winRates', () => ({
           rank: '机智黄金',
           rows: [{ character: '杰瑞', pickRate: '2.00%', winRate: '40.00%' }],
         },
+        {
+          rank: '全部',
+          rows: [{ character: '杰瑞', pickRate: '3.00%', winRate: '50.00%' }],
+        },
       ],
     },
     {
@@ -86,7 +90,7 @@ describe('WinRatesClient', () => {
   it('retains supported ranks and faction selections across seasons', () => {
     clickOption('至尊传奇');
     clickOption('机智黄金');
-    clickOption('猫阵营');
+    clickOption('猫');
     clickOption('S24');
     expect(characterNames()).toEqual(['蓝猫']);
     expect(screen.getByRole('button', { name: '至尊传奇' })).toHaveAttribute(
@@ -98,7 +102,7 @@ describe('WinRatesClient', () => {
   it('clears rank and faction filters while preserving season, sorting and columns', () => {
     clickOption('S24');
     clickOption('至尊传奇');
-    clickOption('猫阵营');
+    clickOption('猫');
     clickOption('登场率');
     fireEvent.click(table().getByRole('columnheader', { name: '胜率 ↓' }));
     clickOption('清除筛选');
@@ -125,7 +129,7 @@ describe('WinRatesClient', () => {
 
   it('keeps missing ban rates last in both directions and preserves genuine zeroes', () => {
     clickOption('至尊传奇');
-    clickOption('鼠阵营');
+    clickOption('鼠');
     fireEvent.click(table().getByRole('columnheader', { name: '禁用率 ↕' }));
     expect(characterNames()).toEqual(['海盗杰瑞', '大表哥', '表演者▪杰瑞']);
     fireEvent.click(table().getByRole('columnheader', { name: '禁用率 ↓' }));
@@ -171,14 +175,22 @@ describe('WinRatesClient', () => {
 
     try {
       clickOption('至尊传奇');
-      clickOption('鼠阵营');
+      clickOption('鼠');
       const csv = await exportCsv();
       expect(csv).toContain('角色,登场率,胜率,禁用率');
       expect(csv).toContain('表演者▪杰瑞,3.00%,70.00%,\n');
       expect(csv).toContain('大表哥,1.00%,60.00%,0.00%');
       clickOption('S24');
       expect(await exportCsv()).toBe(
-        'No.,段位,阵营,角色,登场率,胜率\n1,至尊传奇,鼠阵营,海盗杰瑞,3.00%,40.00%'
+        'No.,段位,阵营,角色,登场率,胜率\n1,至尊传奇,鼠,海盗杰瑞,3.00%,40.00%'
+      );
+      clickOption('S28');
+      clickOption('清除筛选');
+      clickOption('全段位');
+      expect(characterNames()).toEqual(['杰瑞']);
+      expect(table().getByRole('cell', { name: '全段位' })).toBeInTheDocument();
+      expect(await exportCsv()).toBe(
+        'No.,段位,阵营,角色,登场率,胜率,禁用率\n1,全段位,鼠,杰瑞,3.00%,50.00%,'
       );
     } finally {
       URL.createObjectURL = originalCreate;

@@ -92,6 +92,10 @@ function getRankOrder(rank: string): number {
   return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
 }
 
+function getRankLabel(rank: string): string {
+  return rank === '全部' ? '全段位' : rank;
+}
+
 function normalizeTableFaction(tableFaction: unknown): FactionId | null {
   if (tableFaction === '猫') return 'cat';
   if (tableFaction === '鼠') return 'mouse';
@@ -349,8 +353,8 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
       const record: Record<string, unknown> = {
         'No.': row.no,
       };
-      if (isColVisible('rank')) record['段位'] = row.rank;
-      if (isColVisible('faction')) record['阵营'] = row.faction === 'cat' ? '猫阵营' : '鼠阵营';
+      if (isColVisible('rank')) record['段位'] = getRankLabel(row.rank);
+      if (isColVisible('faction')) record['阵营'] = row.faction === 'cat' ? '猫' : '鼠';
       if (isColVisible('character')) record['角色'] = row.character;
       if (isColVisible('pickRate')) record['登场率'] = row.pickRate;
       if (isColVisible('winRate')) record['胜率'] = row.winRate;
@@ -394,7 +398,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
             options={['cat', 'mouse']}
             isActive={(opt) => selectedFactions.has(opt)}
             onToggle={(opt) => toggleFaction(opt)}
-            getOptionLabel={(opt) => (opt === 'cat' ? '猫阵营' : '鼠阵营')}
+            getOptionLabel={(opt) => (opt === 'cat' ? '猫' : '鼠')}
             getButtonStyle={(opt, active) =>
               active ? getFactionButtonColors(opt, isDarkMode) : undefined
             }
@@ -406,6 +410,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
               options={availableRanks}
               isActive={(opt) => selectedRanks.has(opt)}
               onToggle={(opt) => toggleRank(opt)}
+              getOptionLabel={getRankLabel}
             />
           )}
 
@@ -489,7 +494,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
             <tbody>
               {displayRows.map((row, idx) => {
                 const cellBase = 'border border-gray-300 px-4 py-2 dark:border-gray-600';
-                const groupDivider = row.groupStart && idx !== 0 ? 'border-t-2' : '';
+                const groupDivider = row.groupStart && idx !== 0 ? 'border-t-3' : '';
                 const cellClass = `${cellBase} ${groupDivider}`;
 
                 return (
@@ -500,12 +505,12 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
                     <td className={cn(cellClass, 'tabular-nums')}>{row.no}</td>
                     {isColVisible('rank') && (
                       <td className={cellClass} onDoubleClick={() => toggleRank(row.rank)}>
-                        {row.rank}
+                        {getRankLabel(row.rank)}
                       </td>
                     )}
                     {isColVisible('faction') && (
                       <td className={cellClass} onDoubleClick={() => toggleFaction(row.faction)}>
-                        {row.faction === 'cat' ? '猫阵营' : '鼠阵营'}
+                        {row.faction === 'cat' ? '猫' : '鼠'}
                       </td>
                     )}
                     {isColVisible('character') && (
@@ -586,7 +591,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
                   ) => (
                     <tr key={index} className='hover:bg-control'>
                       <td className='border border-gray-300 px-4 py-2 dark:border-gray-600'>
-                        {String(summary.rank)}
+                        {getRankLabel(String(summary.rank))}
                       </td>
                       <td className='border border-gray-300 px-4 py-2 dark:border-gray-600'>
                         {summary.teamType}
