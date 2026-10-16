@@ -10,11 +10,11 @@ import WinRatesClient from './WinRatesClient';
 
 export const dynamic = 'force-static';
 
-const DESCRIPTION = '查看各赛季角色在不同段位的胜率、登场率和禁用率数据';
+const DESCRIPTION = '查看角色在各赛季各段位的登场率、胜率和禁用率';
 
 export async function generateMetadata(): Promise<Metadata> {
   return generatePageMetadata({
-    title: '胜率数据统计',
+    title: '胜率统计',
     description: DESCRIPTION,
     keywords: ['胜率', '登场率', '禁用率', '角色数据', '赛季统计'],
     canonicalUrl: `${SITE_URL}/win-rates`,

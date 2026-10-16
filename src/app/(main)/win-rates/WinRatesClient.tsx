@@ -403,7 +403,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
 
   return (
     <PageShell width='maximum' className='space-y-2 md:space-y-8'>
-      <PageHeader title='胜率数据统计' description={description} className='mb-4 md:mb-8'>
+      <PageHeader title='胜率统计' description={description} className='mb-4 md:mb-8'>
         <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           <FilterRow<string>
             label='赛季筛选:'
