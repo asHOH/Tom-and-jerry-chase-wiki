@@ -10,7 +10,7 @@ import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { entities } from '@/data/static';
-import type { Entity, Entitytaglist, Entitytypelist } from '@/data/types';
+import type { Entity, Entitytaglist, Entitytypelist, FactionId } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
@@ -69,7 +69,7 @@ export default function EntityClient({ description, data = entities, publishedRe
   usePublishedRevision(publishedRevision);
   // 基础筛选状态
   const [selectedTypes, setSelectedTypes] = useState<Entitytypelist[]>([]);
-  const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse' | 'other')[]>([]);
+  const [selectedFactions, setSelectedFactions] = useState<(FactionId | 'other')[]>([]);
 
   // 标签筛选相关状态
   const [showTagFilter, setShowTagFilter] = useState(false);
@@ -190,7 +190,7 @@ export default function EntityClient({ description, data = entities, publishedRe
           />
 
           {/* 阵营筛选 */}
-          <FilterRow<'cat' | 'mouse' | 'other'>
+          <FilterRow<FactionId | 'other'>
             label='阵营筛选:'
             options={['cat', 'mouse', 'other']}
             isActive={(f) => selectedFactions.includes(f)}

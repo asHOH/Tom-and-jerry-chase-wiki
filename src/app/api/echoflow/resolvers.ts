@@ -16,7 +16,7 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { contributors } from '@/data/contributors';
 import { historyData } from '@/data/history';
 import { itemGroups } from '@/data/static';
-import { WikiChangeType } from '@/data/types';
+import { WikiChangeType, type FactionId } from '@/data/types';
 import { wikiHistoryData } from '@/data/wikiHistory';
 import { winRatesData } from '@/data/winRates';
 import type { ActorProfile } from '@/features/actor-profiles/schema';
@@ -552,7 +552,7 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
       detail: async (id: string) => {
         const decodedId = decodeURIComponent(id);
         let skill = specialSkills.cat[decodedId];
-        let factionId: 'cat' | 'mouse' = 'cat';
+        let factionId: FactionId = 'cat';
         if (!skill) {
           skill = specialSkills.mouse[decodedId];
           factionId = 'mouse';

@@ -1,3 +1,4 @@
+import type { FactionId } from '@/data/types';
 import { buildWinRateCharacterLookup } from '@/data/winRates/characterLookup';
 import { normalizeWinRateRows } from '@/data/winRates/normalize';
 
@@ -28,7 +29,7 @@ it('sorts within rank and faction groups, resets numbering, and leaves source ro
   const original = structuredClone(rows);
   const options = {
     ranks: new Set<string>(),
-    factions: new Set<'cat' | 'mouse'>(),
+    factions: new Set<FactionId>(),
     sortColumn: 'winRateNum',
     sortDirection: 'desc',
   } as const;

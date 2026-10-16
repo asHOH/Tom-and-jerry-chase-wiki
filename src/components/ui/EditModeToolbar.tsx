@@ -5,6 +5,7 @@ import { AnimatePresence, m, useDragControls, useReducedMotion } from 'motion/re
 import { createPortal } from 'react-dom';
 
 import { cn } from '@/lib/design';
+import type { DraftSummaryItem } from '@/lib/edit/editModeDrafts';
 import type {
   PendingActionOverlapResponse,
   PendingActionOverlapSummary,
@@ -37,14 +38,7 @@ export interface EditModeToolbarProps {
   /** Draft info for current entity */
   draftInfo?: { actionCount: number } | null;
   /** Summary of drafts for all entity types */
-  draftsSummary?: {
-    entityType: string;
-    entityLabel: string;
-    entityId: string;
-    itemLabel: string;
-    count: number;
-    factionId?: 'cat' | 'mouse';
-  }[];
+  draftsSummary?: DraftSummaryItem[];
   /** Whether publish is in progress */
   isPublishing: boolean;
   /** Called when user clicks discard */

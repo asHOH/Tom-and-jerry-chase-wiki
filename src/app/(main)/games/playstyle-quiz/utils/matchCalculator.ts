@@ -91,7 +91,7 @@ export function findClosestCharacters(
     string,
     {
       id: string;
-      factionId?: FactionId;
+      factionId: FactionId;
       catPositioningTags?: readonly PositioningTag[];
       mousePositioningTags?: readonly PositioningTag[];
     }

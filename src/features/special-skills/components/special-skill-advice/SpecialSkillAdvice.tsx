@@ -129,7 +129,7 @@ export default function SpecialSkillAdviceClient({
       >
         {/* Filters wrapper */}
         <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
-          <FilterRow<'cat' | 'mouse'>
+          <FilterRow<FactionId>
             label='阵营筛选:'
             options={['cat', 'mouse']}
             isActive={(f) => selectedFaction === f}

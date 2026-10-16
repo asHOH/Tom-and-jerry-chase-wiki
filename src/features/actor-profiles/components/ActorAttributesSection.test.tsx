@@ -1,5 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import type { FactionId } from '@/data/types';
+
 import { ACTOR_ATTRIBUTE_KEYS, ACTOR_ATTRIBUTE_PRESENTATION } from '../attributePresentation';
 import ActorAttributesSection from './ActorAttributesSection';
 
@@ -24,7 +26,7 @@ jest.mock('@/components/ui/Tooltip', () => {
 const getRankingLink = (
   container: HTMLElement,
   property: string,
-  factionId: 'cat' | 'mouse'
+  factionId: FactionId
 ): HTMLAnchorElement | undefined =>
   Array.from(container.querySelectorAll('a')).find((link) => {
     const url = new URL(link.href);

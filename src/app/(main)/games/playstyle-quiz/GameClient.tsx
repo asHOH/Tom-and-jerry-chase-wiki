@@ -5,6 +5,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
+import type { FactionId } from '@/data/types';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
 import ShareButton from '@/features/games/components/ShareButton';
@@ -43,7 +44,7 @@ export default function PlaystyleQuizClient({ description, characters: charsSnap
   const [isDarkMode] = useDarkMode();
 
   const [phase, setPhase] = useState<GamePhase>('select');
-  const [faction, setFaction] = useState<'cat' | 'mouse' | null>(null);
+  const [faction, setFaction] = useState<FactionId | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<QuizOption[]>([]);
   const [selectedAnswers, setSelectedAnswers] = useState<Set<number>>(new Set());
@@ -71,7 +72,7 @@ export default function PlaystyleQuizClient({ description, characters: charsSnap
     };
   }, [phase, faction, answers, playableCharacters]);
 
-  const handleFactionSelect = useCallback((f: 'cat' | 'mouse') => {
+  const handleFactionSelect = useCallback((f: FactionId) => {
     setFaction(f);
     setPhase('quiz');
     setCurrentQuestion(0);

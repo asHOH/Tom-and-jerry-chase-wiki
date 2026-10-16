@@ -9,7 +9,7 @@ import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { achievements } from '@/data/static';
-import type { Achievement } from '@/data/types';
+import type { Achievement, FactionId } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
@@ -26,7 +26,7 @@ export default function AchievementGridClient({
   publishedRevision,
 }: AchievementGridProps) {
   usePublishedRevision(publishedRevision);
-  const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse')[]>([]);
+  const [selectedFactions, setSelectedFactions] = useState<FactionId[]>([]);
   const [isDarkMode] = useDarkMode();
 
   const [achievementsSnapshot] = useEditableDomain('achievements', data);
@@ -52,7 +52,7 @@ export default function AchievementGridClient({
       title='对局成就'
       description='获取对局评分的方式'
       filters={
-        <FilterRow<'cat' | 'mouse'>
+        <FilterRow<FactionId>
           label='阵营筛选:'
           options={['cat', 'mouse']}
           isActive={(f) => selectedFactions.includes(f)}

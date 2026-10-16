@@ -3,10 +3,11 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@/lib/design';
+import type { FactionId } from '@/data/types';
 
 type GuessInputProps = {
   /** All guessable character IDs and factions */
-  allCharacters: readonly { id: string; factionId: 'cat' | 'mouse' }[];
+  allCharacters: readonly { id: string; factionId: FactionId }[];
   /** IDs already guessed (excluded) */
   guessedIds: ReadonlySet<string>;
   /** Called when the user submits a guess */

@@ -1,3 +1,5 @@
+import type { FactionId } from '@/data/types';
+
 import { normalizeActorProfiles, serializeActorProfiles } from './normalization';
 import {
   assertValidActorProfiles,
@@ -36,7 +38,7 @@ const createRawProfile = (overrides: Partial<RawActorProfile> = {}): RawActorPro
 
 const createContext = (
   id = '测试角色',
-  factionId: 'cat' | 'mouse' = 'mouse'
+  factionId: FactionId = 'mouse'
 ): Omit<ActorProfileValidationContext, 'excludedNames'> => ({
   playableCharacters: [{ id, factionId }],
   references: [],

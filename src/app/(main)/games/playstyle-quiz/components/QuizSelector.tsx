@@ -2,10 +2,11 @@
 
 import Image from 'next/image';
 
+import type { FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
 
 type QuizSelectorProps = {
-  onSelect: (faction: 'cat' | 'mouse') => void;
+  onSelect: (faction: FactionId) => void;
 };
 
 /**

@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 
+import type { FactionId } from '@/data/types';
+
 import CharacterRelationsMatrix, { RelationMatrixLegend } from './CharacterRelationsMatrix';
 import {
   buildRelationMatrixViewModel,
@@ -50,7 +52,7 @@ const getCellTestId = (viewModel: RelationMatrixViewModel, rowId: string, column
   `relation-cell-${getEntityKey(viewModel.rows, rowId)}-${getEntityKey(viewModel.columns, columnId)}`;
 
 // The header test renders the full catalog; cell behavior only needs these real rows and columns.
-function buildFocusedMatrix(columnCategory: 'cat' | 'mouse'): RelationMatrixViewModel {
+function buildFocusedMatrix(columnCategory: FactionId): RelationMatrixViewModel {
   const viewModel = buildRelationMatrixViewModel({ rowFaction: 'mouse', columnCategory });
   const rowIds = new Set(['杰瑞', '鲍姆', '罗宾汉杰瑞']);
   const emptyColumn = viewModel.columns.find(

@@ -68,7 +68,7 @@ export default function SpecialSkillClient({
       title='特技'
       description={description ?? ''}
       filters={
-        <FilterRow<'cat' | 'mouse'>
+        <FilterRow<FactionId>
           label='阵营筛选:'
           options={['cat', 'mouse']}
           isActive={(f) => selectedFaction === f}

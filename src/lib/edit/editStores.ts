@@ -6,6 +6,7 @@ import type {
   Achievement,
   Buff,
   Entity,
+  FactionId,
   Fixture,
   Map as GameMap,
   Item,
@@ -23,8 +24,8 @@ export type EditStores = {
   fixtures: Record<string, Fixture>;
   maps: Record<string, GameMap>;
   modes: Record<string, Mode>;
-  specialSkills: Record<'cat' | 'mouse', Record<string, SpecialSkill>>;
-  achievements: Record<'cat' | 'mouse', Record<string, Achievement>>;
+  specialSkills: Record<FactionId, Record<string, SpecialSkill>>;
+  achievements: Record<FactionId, Record<string, Achievement>>;
   traits: Record<string, Trait>;
 };
 

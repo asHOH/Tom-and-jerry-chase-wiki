@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getFactionButtonColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
-import { FactionId } from '@/data/types';
+import type { FactionId } from '@/data/types';
 import {
   getPropertiesForFaction,
   PropertyInfo,
@@ -86,7 +86,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
           )}
 
           {/* 阵营筛选 */}
-          <FilterRow<'all' | 'cat' | 'mouse'>
+          <FilterRow<'all' | FactionId>
             label='阵营筛选:'
             options={['all', 'cat', 'mouse']}
             isActive={(opt) => (opt === 'all' ? !factionId : factionId === opt)}

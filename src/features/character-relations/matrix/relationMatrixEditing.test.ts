@@ -1,4 +1,4 @@
-import type { TraitRelationKind } from '@/data/types';
+import type { FactionId, TraitRelationKind } from '@/data/types';
 
 import {
   getInverseCharacterRelationKind,
@@ -30,7 +30,7 @@ const createTarget = (
   ...(factionId ? { factionId } : {}),
 });
 
-type NonCharacterColumnCategory = Exclude<RelationMatrixColumnCategory, 'mouse' | 'cat'>;
+type NonCharacterColumnCategory = Exclude<RelationMatrixColumnCategory, FactionId>;
 
 const TARGET_TYPE_BY_COLUMN_CATEGORY = {
   knowledgeCard: 'knowledgeCard',

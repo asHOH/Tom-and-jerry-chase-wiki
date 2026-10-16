@@ -3,14 +3,14 @@
 import React from 'react';
 
 import { cards } from '@/data/static';
-import type { CharacterRelationItem } from '@/data/types';
+import type { CharacterRelationItem, FactionId } from '@/data/types';
 
 import RelationItemSelector from '../character-relations/RelationItemSelector';
 
 type Props = {
   selected: CharacterRelationItem[];
   onSelect: (cardName: string) => void;
-  factionId: 'cat' | 'mouse';
+  factionId: FactionId;
   disabled?: boolean;
 };
 

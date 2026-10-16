@@ -245,7 +245,7 @@ export type Itemsourcelist = '常规道具' | '地图道具'; //list of items' s
 
 export type ItemAttributesAsCharacter = {
   type: 'cat' | 'mouse' | 'special'; //which kind of character does item close to
-  factionBelong: 'cat' | 'mouse' | 'other'; //which faction does item belong to
+  factionBelong: FactionId | 'other'; //which faction does item belong to
 
   // Common attributes for all characters
   maxHp?: number | '一击即溃'; // Hp上限

@@ -1,5 +1,6 @@
 import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
+import type { FactionId } from '@/data/types';
 
 import type { Action, ActionHistoryEntry } from './diffUtils';
 
@@ -11,13 +12,13 @@ export type DraftSummaryItem = {
   entityId: string;
   itemLabel: string;
   count: number;
-  factionId?: 'cat' | 'mouse';
+  factionId?: FactionId;
 };
 
 export type DraftItemLabelResolver = (draftPathParts: {
   entityType: DraftEntityType;
   entityId: string;
-  factionId?: 'cat' | 'mouse';
+  factionId?: FactionId;
 }) => string | undefined;
 
 function formatEntityLabel(entityType: DraftEntityType): string {
@@ -87,7 +88,7 @@ export function splitActionHistoryByEntity(
 
 type DraftPathParts = {
   entityId: string;
-  factionId?: 'cat' | 'mouse';
+  factionId?: FactionId;
 };
 
 function normalizeActionEntryToList(entry: ActionHistoryEntry): Action[] {
@@ -123,7 +124,7 @@ export function buildDraftSummaryItemsForType(
     {
       entityId: string;
       count: number;
-      factionId?: 'cat' | 'mouse';
+      factionId?: FactionId;
     }
   >();
 
@@ -142,7 +143,7 @@ export function buildDraftSummaryItemsForType(
       const nextCounter: {
         entityId: string;
         count: number;
-        factionId?: 'cat' | 'mouse';
+        factionId?: FactionId;
       } = {
         entityId: pathParts.entityId,
         count: 1,

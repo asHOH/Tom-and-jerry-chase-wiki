@@ -1,3 +1,5 @@
+import type { FactionId } from '@/data/types';
+
 import { normalizeWinRateCharacterName } from './characterLookup';
 import { getCharacterTables, getRankLabel } from './normalize';
 import s24Data from './s24';
@@ -19,7 +21,7 @@ export const winRatesData: WinRatesEntry[] = [
 
 export function getCharacterWinRates(
   characterNames: string[],
-  factionId?: 'cat' | 'mouse'
+  factionId?: FactionId
 ): CharacterWinRateEntry[] {
   const results: CharacterWinRateEntry[] = [];
   const [id] = characterNames;
