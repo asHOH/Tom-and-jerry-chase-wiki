@@ -16,6 +16,16 @@ jest.mock('@/data/winRates', () => ({
   winRatesData: [
     {
       timeRange: 'S28',
+      winRateSummary: [
+        {
+          rank: '至尊传奇',
+          teamType: '总体',
+          catWin: '55.00%',
+          mouseWin: '45.00%',
+          percent: '20.00%',
+        },
+        { rank: '机智黄金', teamType: '总体', catWin: '60.00%', mouseWin: '40.00%' },
+      ],
       characterTables: [
         {
           rank: '至尊传奇',
@@ -62,8 +72,9 @@ const characterLookup = buildWinRateCharacterLookup([
   { id: '汤姆', factionId: 'cat', aliases: ['蓝猫'] },
 ]);
 
-const clickOption = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
-const table = () => within(screen.getByRole('table'));
+const clickOption = (name: string) =>
+  fireEvent.click(within(screen.getByRole('banner')).getByRole('button', { name }));
+const table = () => within(screen.getByRole('table', { name: /^角色数据/ }));
 const characterNames = () =>
   table()
     .getAllByRole('link')
@@ -104,11 +115,14 @@ describe('WinRatesClient', () => {
     clickOption('至尊传奇');
     clickOption('猫');
     clickOption('登场率');
-    fireEvent.click(table().getByRole('columnheader', { name: '胜率 ↓' }));
+    fireEvent.click(table().getByRole('button', { name: '胜率' }));
     clickOption('清除筛选');
     expect(characterNames()).toEqual(['海盗杰瑞', '蓝猫']);
     expect(screen.getByRole('button', { name: 'S24' })).toHaveAttribute('aria-pressed', 'true');
-    expect(table().getByRole('columnheader', { name: '胜率 ↑' })).toBeInTheDocument();
+    expect(table().getByRole('columnheader', { name: '胜率' })).toHaveAttribute(
+      'aria-sort',
+      'ascending'
+    );
     expect(table().queryByRole('columnheader', { name: /登场率/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '清除筛选' })).not.toBeInTheDocument();
   });
@@ -130,9 +144,9 @@ describe('WinRatesClient', () => {
   it('keeps missing ban rates last in both directions and preserves genuine zeroes', () => {
     clickOption('至尊传奇');
     clickOption('鼠');
-    fireEvent.click(table().getByRole('columnheader', { name: '禁用率 ↕' }));
+    fireEvent.click(table().getByRole('button', { name: '禁用率' }));
     expect(characterNames()).toEqual(['海盗杰瑞', '大表哥', '表演者▪杰瑞']);
-    fireEvent.click(table().getByRole('columnheader', { name: '禁用率 ↓' }));
+    fireEvent.click(table().getByRole('button', { name: '禁用率' }));
     expect(characterNames()).toEqual(['大表哥', '海盗杰瑞', '表演者▪杰瑞']);
     expect(table().getByRole('cell', { name: '0.00%' })).toBeInTheDocument();
     expect(table().getByRole('cell', { name: '—' })).toBeInTheDocument();
@@ -140,18 +154,59 @@ describe('WinRatesClient', () => {
   });
 
   it('hides unavailable ban rates and uses win-rate sorting until coverage returns', () => {
-    fireEvent.click(table().getByRole('columnheader', { name: '禁用率 ↕' }));
+    fireEvent.click(table().getByRole('button', { name: '禁用率' }));
     clickOption('S24');
     expect(table().queryByRole('columnheader', { name: /禁用率/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '禁用率' })).not.toBeInTheDocument();
     expect(screen.getByText('本赛季未提供禁用率数据。')).toBeInTheDocument();
-    expect(table().getByRole('columnheader', { name: '胜率 ↓' })).toBeInTheDocument();
+    expect(table().getByRole('columnheader', { name: '胜率' })).toHaveAttribute(
+      'aria-sort',
+      'descending'
+    );
     clickOption('S28');
-    expect(table().getByRole('columnheader', { name: '禁用率 ↓' })).toBeInTheDocument();
+    expect(table().getByRole('columnheader', { name: '禁用率' })).toHaveAttribute(
+      'aria-sort',
+      'descending'
+    );
     clickOption('禁用率');
     clickOption('S24');
     clickOption('S28');
     expect(table().queryByRole('columnheader', { name: /禁用率/ })).not.toBeInTheDocument();
+  });
+
+  it('exposes focusable sort buttons and updates the announced direction while retaining focus', () => {
+    clickOption('至尊传奇');
+    clickOption('鼠');
+    const winHeader = table().getByRole('columnheader', { name: '胜率' });
+    const pickHeader = table().getByRole('columnheader', { name: '登场率' });
+    const winButton = within(winHeader).getByRole('button', { name: '胜率' });
+    expect(winHeader).toHaveAttribute('aria-sort', 'descending');
+    expect(pickHeader).not.toHaveAttribute('aria-sort');
+    expect(winButton).toHaveProperty('tabIndex', 0);
+    winButton.focus();
+    fireEvent.click(winButton);
+    expect(winButton).toHaveFocus();
+    expect(winHeader).toHaveAttribute('aria-sort', 'ascending');
+    expect(characterNames()).toEqual(['海盗杰瑞', '大表哥', '表演者▪杰瑞']);
+
+    fireEvent.click(within(pickHeader).getByRole('button', { name: '登场率' }));
+    expect(pickHeader).toHaveAttribute('aria-sort', 'descending');
+    expect(winHeader).not.toHaveAttribute('aria-sort');
+    expect(characterNames()).toEqual(['表演者▪杰瑞', '海盗杰瑞', '大表哥']);
+  });
+
+  it('labels both tables and preserves the summary columns and missing percentages', () => {
+    const summary = within(screen.getByRole('table', { name: '赛季总览' }));
+    expect(summary.getAllByRole('columnheader').map((header) => header.textContent)).toEqual([
+      '段位',
+      '组队类型',
+      '猫胜率',
+      '鼠胜率',
+      '占比',
+    ]);
+    expect(summary.getByRole('cell', { name: '20.00%' })).toBeInTheDocument();
+    expect(summary.getByRole('cell', { name: '-' })).toBeInTheDocument();
+    expect(summary.queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('exports missing ban rates as empty cells and omits the column when unavailable', async () => {

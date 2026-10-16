@@ -8,6 +8,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data/types';
 import { CharacterTable, winRatesData } from '@/data/winRates';
 import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
 import ClearFiltersButton from '@/components/ui/ClearFiltersButton';
 import FilterRow from '@/components/ui/FilterRow';
 import PageHeader from '@/components/ui/PageHeader';
@@ -20,6 +21,9 @@ import { normalizeWinRateCharacterName, type WinRateCharacterLookup } from './ch
 type ColumnKey = 'rank' | 'faction' | 'character' | 'pickRate' | 'winRate' | 'banRate';
 type SortColumn = 'pickRate' | 'winRate' | 'banRate';
 type SortDirection = 'asc' | 'desc';
+
+const TABLE_CLASS_NAME = 'min-w-full border-collapse text-left';
+const TABLE_CELL_CLASS_NAME = 'border-border border px-4 py-2';
 
 interface EnrichedCharacterRow {
   rank: string;
@@ -307,16 +311,31 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
   const renderSortableTh = (label: string, col: SortColumn) => {
     return (
       <th
-        className='hover:bg-control cursor-pointer border border-gray-300 px-4 py-2 text-left dark:border-gray-600'
-        onClick={() => handleSort(col)}
+        scope='col'
+        className={cn(TABLE_CELL_CLASS_NAME, 'p-0')}
+        aria-sort={
+          effectiveSortColumn === col
+            ? effectiveSortDirection === 'asc'
+              ? 'ascending'
+              : 'descending'
+            : undefined
+        }
       >
-        {label} {getSortIcon(col)}
+        <Button
+          variant='unstyled'
+          onClick={() => handleSort(col)}
+          className='hover:bg-control focus-visible:outline-focus flex min-h-11 w-full cursor-pointer items-center justify-between gap-2 px-4 py-2 text-left focus-visible:outline-2 focus-visible:-outline-offset-2'
+        >
+          {label} <span aria-hidden='true'>{getSortIcon(col)}</span>
+        </Button>
       </th>
     );
   };
 
   const renderTh = (label: string) => (
-    <th className='border border-gray-300 px-4 py-2 text-left dark:border-gray-600'>{label}</th>
+    <th scope='col' className={TABLE_CELL_CLASS_NAME}>
+      {label}
+    </th>
   );
 
   const showPercent = summaryData.some((s) => s.percent);
@@ -383,7 +402,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
   };
 
   return (
-    <PageShell width='maximum' className='space-y-2 md:space-y-8 dark:text-slate-200'>
+    <PageShell width='maximum' className='space-y-2 md:space-y-8'>
       <PageHeader title='胜率数据统计' description={description} className='mb-4 md:mb-8'>
         <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           <FilterRow<string>
@@ -449,16 +468,11 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
 
           <div className='mt-2 flex justify-center md:mt-4'>
             <Button
-              variant='unstyled'
+              variant='secondary'
+              size='sm'
               type='button'
               onClick={handleExportCsv}
               disabled={displayRows.length === 0}
-              className='filter-button cursor-pointer rounded-lg border-none px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60'
-              style={
-                isDarkMode
-                  ? { backgroundColor: '#374151', color: '#e5e7eb' }
-                  : { backgroundColor: '#e5e7eb', color: '#111827' }
-              }
               aria-label='导出当前表格为 CSV'
             >
               导出 CSV
@@ -471,148 +485,126 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
         <SectionHeader title={`角色数据 (${filteredAndSortedData.length} 条记录)`} />
 
         {!hasBanRates ? (
-          <p className='mb-2 text-sm text-gray-500 dark:text-gray-400'>本赛季未提供禁用率数据。</p>
-        ) : isColVisible('banRate') && displayRows.some((row) => row.banRate === null) ? (
-          <p className='mb-2 text-sm text-gray-500 dark:text-gray-400'>
-            — 表示该条记录未提供禁用率数据。
-          </p>
+          <p className='text-muted-foreground mb-2 text-sm'>本赛季未提供禁用率数据。</p>
         ) : null}
 
-        <div className='overflow-x-auto rounded-lg border border-gray-300 dark:border-gray-600'>
-          <table className='bg-surface min-w-full border-collapse'>
-            <thead>
-              <tr className='bg-surface-muted'>
-                {renderTh('No.')}
-                {isColVisible('rank') && renderTh('段位')}
-                {isColVisible('faction') && renderTh('阵营')}
-                {isColVisible('character') && renderTh('角色')}
-                {isColVisible('pickRate') && renderSortableTh('登场率', 'pickRate')}
-                {isColVisible('winRate') && renderSortableTh('胜率', 'winRate')}
-                {isColVisible('banRate') && renderSortableTh('禁用率', 'banRate')}
-              </tr>
-            </thead>
-            <tbody>
-              {displayRows.map((row, idx) => {
-                const cellBase = 'border border-gray-300 px-4 py-2 dark:border-gray-600';
-                const groupDivider = row.groupStart && idx !== 0 ? 'border-t-3' : '';
-                const cellClass = `${cellBase} ${groupDivider}`;
+        <Card bordered className='overflow-hidden p-0'>
+          <div className='overflow-x-auto'>
+            <table className={TABLE_CLASS_NAME}>
+              <caption className='sr-only'>
+                角色数据：按段位和阵营分组，使用表头按钮进行组内排序。
+              </caption>
+              <thead>
+                <tr className='bg-surface-muted'>
+                  {renderTh('No.')}
+                  {isColVisible('rank') && renderTh('段位')}
+                  {isColVisible('faction') && renderTh('阵营')}
+                  {isColVisible('character') && renderTh('角色')}
+                  {isColVisible('pickRate') && renderSortableTh('登场率', 'pickRate')}
+                  {isColVisible('winRate') && renderSortableTh('胜率', 'winRate')}
+                  {isColVisible('banRate') && renderSortableTh('禁用率', 'banRate')}
+                </tr>
+              </thead>
+              <tbody>
+                {displayRows.map((row, idx) => {
+                  const cellClass = cn(
+                    TABLE_CELL_CLASS_NAME,
+                    row.groupStart && idx !== 0 && 'border-t-3'
+                  );
 
-                return (
-                  <tr
-                    key={`${row.rank}-${row.faction}-${row.character}-${idx}`}
-                    className='hover:bg-control'
-                  >
-                    <td className={cn(cellClass, 'tabular-nums')}>{row.no}</td>
-                    {isColVisible('rank') && (
-                      <td className={cellClass} onDoubleClick={() => toggleRank(row.rank)}>
-                        {getRankLabel(row.rank)}
-                      </td>
-                    )}
-                    {isColVisible('faction') && (
-                      <td className={cellClass} onDoubleClick={() => toggleFaction(row.faction)}>
-                        {row.faction === 'cat' ? '猫' : '鼠'}
-                      </td>
-                    )}
-                    {isColVisible('character') && (
-                      <td className={cn(cellClass, 'font-medium')}>
-                        {row.characterId ? (
-                          <Link href={`/characters/${encodeURIComponent(row.characterId)}`}>
-                            {row.character}
-                          </Link>
-                        ) : (
-                          row.character
-                        )}
-                      </td>
-                    )}
-                    {isColVisible('pickRate') && <td className={cellClass}>{row.pickRate}</td>}
-                    {isColVisible('winRate') && (
-                      <td className={cellClass}>
-                        <span
-                          className={
-                            row.winRateNum >= 50
-                              ? 'font-semibold text-green-600 dark:text-green-400'
-                              : 'text-red-600 dark:text-red-400'
-                          }
-                        >
-                          {row.winRate}
-                        </span>
-                      </td>
-                    )}
-                    {isColVisible('banRate') && <td className={cellClass}>{row.banRate ?? '—'}</td>}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                  return (
+                    <tr
+                      key={`${row.rank}-${row.faction}-${row.character}-${idx}`}
+                      className='hover:bg-control'
+                    >
+                      <td className={cn(cellClass, 'tabular-nums')}>{row.no}</td>
+                      {isColVisible('rank') && (
+                        <td className={cellClass} onDoubleClick={() => toggleRank(row.rank)}>
+                          {getRankLabel(row.rank)}
+                        </td>
+                      )}
+                      {isColVisible('faction') && (
+                        <td className={cellClass} onDoubleClick={() => toggleFaction(row.faction)}>
+                          {row.faction === 'cat' ? '猫' : '鼠'}
+                        </td>
+                      )}
+                      {isColVisible('character') && (
+                        <td className={cn(cellClass, 'font-medium')}>
+                          {row.characterId ? (
+                            <Link href={`/characters/${encodeURIComponent(row.characterId)}`}>
+                              {row.character}
+                            </Link>
+                          ) : (
+                            row.character
+                          )}
+                        </td>
+                      )}
+                      {isColVisible('pickRate') && <td className={cellClass}>{row.pickRate}</td>}
+                      {isColVisible('winRate') && (
+                        <td className={cellClass}>
+                          <span
+                            className={
+                              row.winRateNum >= 50
+                                ? 'font-semibold text-green-600 dark:text-green-400'
+                                : 'text-red-600 dark:text-red-400'
+                            }
+                          >
+                            {row.winRate}
+                          </span>
+                        </td>
+                      )}
+                      {isColVisible('banRate') && (
+                        <td className={cellClass}>{row.banRate ?? '—'}</td>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Card>
 
         {displayRows.length === 0 && (
-          <p className='mt-4 text-center text-gray-500 dark:text-gray-400'>没有符合条件的数据</p>
+          <p className='text-muted-foreground mt-4 text-center'>没有符合条件的数据</p>
         )}
       </section>
 
       {summaryData.length > 0 && (
         <section>
           <SectionHeader title='赛季总览' />
-          <div className='overflow-x-auto'>
-            <table className='bg-surface min-w-full border-collapse border border-gray-300 dark:border-gray-600'>
-              <thead>
-                <tr className='bg-surface-muted'>
-                  <th className='border border-gray-300 px-4 py-2 text-left dark:border-gray-600'>
-                    段位
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2 text-left dark:border-gray-600'>
-                    组队类型
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2 text-left dark:border-gray-600'>
-                    猫胜率
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2 text-left dark:border-gray-600'>
-                    鼠胜率
-                  </th>
-                  {showPercent && (
-                    <th className='border border-gray-300 px-4 py-2 text-left dark:border-gray-600'>
-                      占比
-                    </th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {summaryData.map(
-                  (
-                    summary: {
-                      rank: string | symbol;
-                      teamType: string;
-                      catWin: string;
-                      mouseWin: string;
-                      percent?: string;
-                    },
-                    index: number
-                  ) => (
-                    <tr key={index} className='hover:bg-control'>
-                      <td className='border border-gray-300 px-4 py-2 dark:border-gray-600'>
-                        {getRankLabel(String(summary.rank))}
-                      </td>
-                      <td className='border border-gray-300 px-4 py-2 dark:border-gray-600'>
-                        {summary.teamType}
-                      </td>
-                      <td className='border border-gray-300 px-4 py-2 dark:border-gray-600'>
-                        {summary.catWin}
-                      </td>
-                      <td className='border border-gray-300 px-4 py-2 dark:border-gray-600'>
-                        {summary.mouseWin}
-                      </td>
-                      {showPercent && (
-                        <td className='border border-gray-300 px-4 py-2 dark:border-gray-600'>
-                          {summary.percent || '-'}
-                        </td>
-                      )}
-                    </tr>
-                  )
-                )}
-              </tbody>
-            </table>
-          </div>
+          <Card bordered className='overflow-hidden p-0'>
+            <div className='overflow-x-auto'>
+              <table className={TABLE_CLASS_NAME}>
+                <caption className='sr-only'>赛季总览</caption>
+                <thead>
+                  <tr className='bg-surface-muted'>
+                    {renderTh('段位')}
+                    {renderTh('组队类型')}
+                    {renderTh('猫胜率')}
+                    {renderTh('鼠胜率')}
+                    {showPercent && renderTh('占比')}
+                  </tr>
+                </thead>
+                <tbody>
+                  {summaryData.map((summary, index) => {
+                    const cellClass = cn(
+                      TABLE_CELL_CLASS_NAME,
+                      index > 0 && summary.rank !== summaryData[index - 1]?.rank && 'border-t-3'
+                    );
+                    return (
+                      <tr key={index} className='hover:bg-control'>
+                        <td className={cellClass}>{getRankLabel(summary.rank)}</td>
+                        <td className={cellClass}>{summary.teamType}</td>
+                        <td className={cellClass}>{summary.catWin}</td>
+                        <td className={cellClass}>{summary.mouseWin}</td>
+                        {showPercent && <td className={cellClass}>{summary.percent || '-'}</td>}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </Card>
         </section>
       )}
     </PageShell>
