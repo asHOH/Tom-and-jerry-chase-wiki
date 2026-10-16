@@ -30,7 +30,7 @@ import {
 } from './tableModel';
 
 const TABLE_CLASS_NAME = 'w-full table-fixed border-collapse text-left';
-const TABLE_CELL_CLASS_NAME = 'border-border border px-4 py-2';
+const TABLE_CELL_CLASS_NAME = 'border-border border px-1 py-2 sm:px-2 lg:px-4';
 const seasons = winRatesData.map((entry) => entry.timeRange);
 
 function getRanksFromSeason(seasonIndex: number): string[] {
@@ -145,7 +145,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
         scope='col'
         className={cn(
           TABLE_CELL_CLASS_NAME,
-          'p-0',
+          'p-0 sm:p-0 lg:p-0',
           effectiveSortColumn === col && 'text-blue-600 dark:text-blue-400'
         )}
         aria-sort={
@@ -159,7 +159,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
         <Button
           variant='unstyled'
           onClick={() => handleSort(col)}
-          className='hover:bg-control focus-visible:outline-focus flex min-h-11 w-full cursor-pointer items-center justify-between gap-2 px-4 py-2 text-left focus-visible:outline-2 focus-visible:-outline-offset-2'
+          className='hover:bg-control focus-visible:outline-focus flex min-h-11 w-full cursor-pointer items-center justify-between gap-1 px-1 py-2 text-left focus-visible:outline-2 focus-visible:-outline-offset-2 sm:px-2 lg:gap-2 lg:px-4'
         >
           {label} <span aria-hidden='true'>{getSortIcon(col)}</span>
         </Button>
@@ -263,7 +263,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
         </div>
       </PageHeader>
 
-      <section>
+      <section className='mx-auto w-full max-w-150 lg:max-w-none'>
         <SectionHeader title={`角色数据 (${displayRows.length} 条记录)`} />
 
         {!hasBanRates ? (
@@ -272,13 +272,13 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
 
         <Card bordered className='overflow-hidden p-0'>
           <div className='overflow-x-auto'>
-            <table className={cn(TABLE_CLASS_NAME, 'min-w-200')}>
+            <table className={cn(TABLE_CLASS_NAME, 'min-w-130 lg:min-w-200')}>
               <caption className='sr-only'>
                 角色数据：按段位和阵营分组，使用表头按钮进行组内排序。
               </caption>
               <thead>
                 <tr className='bg-surface-muted'>
-                  {renderTh('No.', 'w-16')}
+                  {renderTh('No.', 'w-9 sm:w-10 lg:w-16')}
                   {displayedColumns.map((column) =>
                     column.sortKey
                       ? renderSortableTh(column.label, column.sortKey)
@@ -348,7 +348,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
       </section>
 
       {summaryData.length > 0 && (
-        <section>
+        <section className='mx-auto w-full max-w-150 lg:max-w-none'>
           <SectionHeader title='赛季总览' />
           <Card bordered className='overflow-hidden p-0'>
             <div className='overflow-x-auto'>
