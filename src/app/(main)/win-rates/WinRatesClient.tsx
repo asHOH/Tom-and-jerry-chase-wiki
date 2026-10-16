@@ -124,7 +124,9 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
     (column) => column.key !== 'banRate' || hasBanRates
   );
   const displayedColumns = availableColumns.filter((column) => isColVisible(column.key));
-  const toggleableColumns = availableColumns.filter((column) => column.key !== 'character');
+  const toggleableColumns = availableColumns.filter(
+    (column) => !['character', 'rank', 'faction'].includes(column.key)
+  );
 
   const toggleVisibleColumn = (col: ColumnKey) => {
     if (col === 'character') return;
