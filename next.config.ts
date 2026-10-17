@@ -3,8 +3,6 @@ import path from 'node:path';
 import { NextConfig } from 'next';
 import createMDX from '@next/mdx';
 
-import { buildCspHeader } from './csp.config';
-
 import './src/env';
 
 const productionBuildIdentity = process.env.DEPLOY_BUILD_ID?.trim() || randomUUID();
@@ -37,19 +35,10 @@ const withMDX = createMDX({
   },
 });
 
-const shouldIncludeVercelAnalytics = () => {
-  const override = process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS;
-  if (override === '0') {
-    return false;
-  }
-  if (override === '1') {
-    return true;
-  }
-  return process.env.VERCEL === '1' && process.env.NODE_ENV === 'production';
-};
-
 const nextConfig: NextConfig = {
   agentRules: false,
+  // --- 静态镜像（后端已剥离）---
+  output: 'export',
   generateBuildId: () => productionBuildIdentity,
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   transpilePackages: [
@@ -91,135 +80,6 @@ const nextConfig: NextConfig = {
     // Use the commit timestamp if available (set by start_server.sh), otherwise fallback to build time
     NEXT_PUBLIC_BUILD_TIMESTAMP:
       process.env.NEXT_PUBLIC_BUILD_TIMESTAMP || new Date().toISOString(),
-  },
-  async redirects() {
-    return [
-      {
-        source: '/special-skills/:factionId/:skillId/discussion/',
-        destination: '/discuss/special-skills/:factionId/:skillId/',
-        permanent: true,
-      },
-      {
-        source: '/achievements/:factionId/:achievementName/discussion/',
-        destination: '/discuss/achievements/:factionId/:achievementName/',
-        permanent: true,
-      },
-      {
-        source: '/:entityType/:entityId/discussion/',
-        destination: '/discuss/:entityType/:entityId/',
-        permanent: true,
-      },
-      {
-        source: '/:entityType/discussion/',
-        destination: '/discuss/:entityType/',
-        permanent: true,
-      },
-    ];
-  },
-  async rewrites() {
-    const supabasePublicKey =
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const rewriteContents = [
-      {
-        source: '/version.json',
-        destination: '/api/version',
-      },
-    ];
-
-    if (
-      process.env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' ||
-      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-      !supabasePublicKey
-    ) {
-      rewriteContents.push(
-        { source: '/api/articles', destination: '/404' },
-        { source: '/api/articles/:path*', destination: '/404' },
-        { source: '/api/admin', destination: '/404' },
-        { source: '/api/admin/:path*', destination: '/404' },
-        { source: '/api/auth', destination: '/404' },
-        { source: '/api/auth/:path*', destination: '/404' },
-        { source: '/api/moderation', destination: '/404' },
-        { source: '/api/moderation/:path*', destination: '/404' },
-        { source: '/api/site-images', destination: '/404' },
-        { source: '/api/site-images/:path*', destination: '/404' },
-        { source: '/api/uploads', destination: '/404' },
-        { source: '/api/uploads/:path*', destination: '/404' },
-        { source: '/articles', destination: '/404' },
-        { source: '/articles/:path*', destination: '/404' },
-        { source: '/admin', destination: '/404' },
-        { source: '/admin/:path*', destination: '/404' }
-      );
-    }
-
-    if (process.env.NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL === '1') {
-      rewriteContents.push({ source: '/api/feedback', destination: '/404' });
-    }
-
-    return rewriteContents;
-  },
-  async headers() {
-    const headers = [
-      {
-        source: '/(.*)',
-        headers: [
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'X-Frame-Options', value: 'DENY' },
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload',
-          },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          {
-            key: 'Permissions-Policy',
-            value: 'fullscreen=(self), geolocation=(), microphone=(), camera=()',
-          },
-          {
-            key: 'Content-Security-Policy',
-            value: buildCspHeader({
-              includeVercelAnalytics: shouldIncludeVercelAnalytics(),
-              allowUnsafeEval: process.env.NODE_ENV !== 'production',
-            }),
-          },
-        ],
-      },
-    ];
-
-    const allowedOrigin =
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
-    const corsHeaders = [
-      { key: 'Vary', value: 'Origin' },
-      { key: 'Access-Control-Allow-Methods', value: 'GET, POST, OPTIONS' },
-      {
-        key: 'Access-Control-Allow-Headers',
-        value: 'Content-Type, Authorization, Idempotency-Key',
-      },
-      { key: 'Access-Control-Allow-Credentials', value: 'true' },
-    ];
-
-    if (allowedOrigin) {
-      headers.push({
-        source: '/api/(.*)',
-        headers: [{ key: 'Access-Control-Allow-Origin', value: allowedOrigin }, ...corsHeaders],
-      });
-    }
-
-    return [
-      ...headers,
-      {
-        source: '/api/(.*)',
-        // Next anchors this match and substitutes the captured origin into the header.
-        // Keep it last so trusted subdomains override the configured site origin.
-        has: [
-          {
-            type: 'header' as const,
-            key: 'origin',
-            value: '(?<origin>https://(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+tjwiki\\.com)',
-          },
-        ],
-        headers: [{ key: 'Access-Control-Allow-Origin', value: ':origin' }, ...corsHeaders],
-      },
-    ];
   },
   trailingSlash: true,
   images: {

@@ -18,7 +18,6 @@ export const dynamic = 'force-static';
 
 interface PageProps {
   params: Promise<{ property: string }>;
-  searchParams: Promise<{ faction?: string }>;
 }
 
 // Generate static params for all rankable properties
@@ -28,12 +27,11 @@ export function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const resolvedSearchParams = await searchParams;
 
   const propertyInfo = getPropertyInfo(resolvedParams.property as RankableProperty);
-  const factionId = resolvedSearchParams.faction;
+  const factionId: string | undefined = undefined;
 
   if (!propertyInfo) {
     return {};
@@ -53,12 +51,11 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   });
 }
 
-export default async function PropertyRankPage({ params, searchParams }: PageProps) {
+export default async function PropertyRankPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const resolvedSearchParams = await searchParams;
 
   const property = resolvedParams.property as RankableProperty;
-  const factionId = resolvedSearchParams.faction as FactionId | undefined;
+  const factionId: FactionId | undefined = undefined;
 
   const propertyInfo = getPropertyInfo(property);
 

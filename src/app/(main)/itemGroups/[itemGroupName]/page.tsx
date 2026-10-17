@@ -9,6 +9,8 @@ import { itemGroups } from '@/data';
 
 import ItemGroupDetailClient from './ItemGroupDetailsClient';
 
+export const dynamic = 'force-static';
+
 export function generateStaticParams() {
   return Object.keys(itemGroups).map((itemGroupName) => ({
     itemGroupName,

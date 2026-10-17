@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { cn, getActionButtonClasses } from '@/lib/design';
 import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
+import { env } from '@/env';
 
 export type DiscussButtonProps = {
   className?: string;
@@ -14,6 +15,7 @@ export type DiscussButtonProps = {
 
 export default function DiscussButton({ className, compact = false }: DiscussButtonProps) {
   const pathname = usePathname();
+  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1') return null;
   const base = pathname.endsWith('/') ? pathname : `${pathname}/`;
   const discussUrl = `/discuss${base}` as Route;
   const title = '讨论此页面';

@@ -47,10 +47,21 @@ const renderCreatorLinks = (creatorIds: readonly string[]) => {
 };
 
 export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => {
-  const { projectInfo, acknowledgements, privacy, legal } = PROJECT_STATEMENT_COPY;
+  const { staticMirror, projectInfo, acknowledgements, privacy, legal } = PROJECT_STATEMENT_COPY;
 
   return (
     <div className='space-y-4 text-left'>
+      {/* Static mirror attribution — must stay visible wherever this build is deployed */}
+      <section aria-label={staticMirror.ariaLabel}>
+        <p className='text-gray-700 dark:text-gray-300'>
+          {staticMirror.lead}
+          <strong className='font-semibold text-gray-900 dark:text-gray-100'>
+            {staticMirror.contributor}
+          </strong>
+          {staticMirror.tail}
+        </p>
+      </section>
+
       {/* Project information (inline repo link + icon, readable sentence) */}
       <section aria-label={projectInfo.ariaLabel}>
         <p className='text-gray-700 dark:text-gray-300'>

@@ -1,5 +1,3 @@
-'use server';
-
 import { DocPage } from '@/features/articles/utils/docs';
 import CharacterSection from '@/features/characters/components/character-detail/sections/CharacterSection';
 import StyledMDX from '@/components/ui/StyledMDX';

@@ -1,42 +1,49 @@
-'use server';
-
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { getGotoResult } from '@/lib/gotoUtils';
+import { itemGroups as staticItemGroups } from '@/data/static';
 import Card from '@/components/ui/Card';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
 import GotoLink from '@/components/GotoLink';
+import StaticRedirect from '@/components/StaticRedirect';
 
-export default async function GotoPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ name: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+export const dynamic = 'force-static';
+
+export async function generateStaticParams() {
+  const { data } = await getPublishedGameDataSnapshot();
+  const names = new Set<string>();
+  const addFrom = (value: unknown) => {
+    if (value && typeof value === 'object') {
+      for (const key of Object.keys(value)) names.add(key);
+    }
+  };
+  addFrom(data.characters);
+  addFrom(data.cards);
+  addFrom(data.entities);
+  addFrom(data.buffs);
+  addFrom(data.items);
+  addFrom(data.fixtures);
+  addFrom(data.maps);
+  addFrom(data.modes);
+  addFrom(data.specialSkills?.cat);
+  addFrom(data.specialSkills?.mouse);
+  addFrom(data.achievements?.cat);
+  addFrom(data.achievements?.mouse);
+  addFrom(staticItemGroups);
+  return [...names].map((name) => ({ name }));
+}
+
+export default async function GotoPage({ params }: { params: Promise<{ name: string }> }) {
   const name = decodeURIComponent((await params).name);
-  const sp = await searchParams;
-  const category = typeof sp.category === 'string' ? sp.category : undefined;
-  const rawDescMode =
-    typeof sp.descMode === 'string'
-      ? sp.descMode
-      : typeof sp.skillDesc === 'string'
-        ? sp.skillDesc
-        : undefined;
-  const descMode =
-    rawDescMode === 'description' || rawDescMode === 'detailed' ? rawDescMode : undefined;
   const snapshot = await getPublishedGameDataSnapshot();
-  const result = await getGotoResult(name, category, {
-    ...(descMode ? { descMode } : {}),
-    gameData: snapshot.data,
-  });
+  const result = await getGotoResult(name, undefined, { gameData: snapshot.data });
 
   if (!result) notFound();
 
   if (result.type !== 'disambiguation') {
-    redirect(result.url);
+    return <StaticRedirect url={result.url} title={`正在跳转：${result.name}`} />;
   }
 
   return (
