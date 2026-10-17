@@ -31,6 +31,19 @@
   --wiki-win-rate-mid: #854d0e;
   --wiki-win-rate-high: #166534;
   --wiki-win-rate-highest: #007a36;
+  /* Gray → neutral → color; stop 1 is dark text here and white in dark mode. */
+  --wiki-pick-rate-0: #626b78;
+  --wiki-pick-rate-1: #111827;
+  --wiki-pick-rate-2: #344c72;
+  --wiki-pick-rate-3: #255ca0;
+  --wiki-pick-rate-4: #1d56ca;
+  --wiki-pick-rate-5: #1744e0;
+  --wiki-ban-rate-0: #626b78;
+  --wiki-ban-rate-1: #111827;
+  --wiki-ban-rate-2: #55406b;
+  --wiki-ban-rate-3: #743e9d;
+  --wiki-ban-rate-4: #873fbd;
+  --wiki-ban-rate-5: #8c27cf;
   --nav-z-index: 9999;
   --nav-height: 56px;
   --offline-banner-height: 40px;
@@ -65,6 +78,18 @@
   --wiki-win-rate-mid: #fde047;
   --wiki-win-rate-high: #86efac;
   --wiki-win-rate-highest: #22e880;
+  --wiki-pick-rate-0: #a0a9b6;
+  --wiki-pick-rate-1: #ffffff;
+  --wiki-pick-rate-2: #c5def5;
+  --wiki-pick-rate-3: #93c5fd;
+  --wiki-pick-rate-4: #60bfff;
+  --wiki-pick-rate-5: #38bdf8;
+  --wiki-ban-rate-0: #a0a9b6;
+  --wiki-ban-rate-1: #ffffff;
+  --wiki-ban-rate-2: #e6d5f7;
+  --wiki-ban-rate-3: #d8b4fe;
+  --wiki-ban-rate-4: #c995f7;
+  --wiki-ban-rate-5: #cc80ff;
   color-scheme: dark;
 }
 

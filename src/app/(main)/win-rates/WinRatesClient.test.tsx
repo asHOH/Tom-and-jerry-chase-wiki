@@ -170,6 +170,14 @@ describe('WinRatesClient', () => {
     expect(table().getByRole('cell', { name: '—' })).toBeInTheDocument();
   });
 
+  it('colors pick and ban percentages while leaving missing values neutral', () => {
+    const row = within(table().getByRole('link', { name: '大表哥' }).closest('tr')!);
+    expect(row.getByText('1.00%').getAttribute('style')).toContain('--wiki-pick-rate-');
+    expect(row.getByText('0.00%').getAttribute('style')).toContain('--wiki-ban-rate-');
+    const missingRow = within(table().getByRole('link', { name: '表演者▪杰瑞' }).closest('tr')!);
+    expect(missingRow.getByText('—')).not.toHaveAttribute('style');
+  });
+
   it('hides unavailable ban rates and uses win-rate sorting until coverage returns', () => {
     fireEvent.click(table().getByRole('button', { name: '禁用率' }));
     clickOption('S24 (2025.4.30-5.25)');

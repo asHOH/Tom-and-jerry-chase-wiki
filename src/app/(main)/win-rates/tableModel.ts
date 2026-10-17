@@ -8,6 +8,25 @@ export type SortColumn = 'pickRateNum' | 'winRateNum' | 'banRateNum';
 export type SortDirection = 'asc' | 'desc';
 export type DisplayRow = WinRateRow & { no: number; groupStart: boolean };
 
+const USAGE_RATE_ANCHORS = {
+  pick: [0, 2, 4, 8, 14, 28],
+  ban: [0, 1.5, 3, 8, 28, 60],
+} as const;
+
+export function getUsageRateColor(rate: number | null, metric: 'pick' | 'ban'): string | undefined {
+  if (rate === null) return undefined;
+  const anchors = USAGE_RATE_ANCHORS[metric];
+  for (let index = 1; index < anchors.length; index++) {
+    const start = anchors[index - 1]!;
+    const end = anchors[index]!;
+    if (rate <= end) {
+      const weight = ((Math.max(0, rate) - start) / (end - start)) * 100;
+      return `color-mix(in oklab, var(--wiki-${metric}-rate-${index - 1}), var(--wiki-${metric}-rate-${index}) ${weight}%)`;
+    }
+  }
+  return `var(--wiki-${metric}-rate-5)`;
+}
+
 export function getWinRateColor(rate: number): string {
   const clampedRate = Math.min(72, Math.max(28, rate));
   if (clampedRate <= 35) {

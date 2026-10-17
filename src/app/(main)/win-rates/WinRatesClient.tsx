@@ -20,6 +20,7 @@ import SectionHeader from '@/components/ui/SectionHeader';
 import Link from '@/components/Link';
 
 import {
+  getUsageRateColor,
   getWinRateColor,
   getWinRateDisplayRows,
   sanitizeFileName,
@@ -324,10 +325,21 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
                               <Link href={`/characters/${encodeURIComponent(row.characterId)}`}>
                                 {content}
                               </Link>
-                            ) : column.key === 'winRate' ? (
+                            ) : column.sortKey && value !== null ? (
                               <span
-                                className='font-semibold tabular-nums'
-                                style={{ color: getWinRateColor(row.winRateNum) }}
+                                className={cn(
+                                  'tabular-nums',
+                                  column.key === 'winRate' && 'font-semibold'
+                                )}
+                                style={{
+                                  color:
+                                    column.key === 'winRate'
+                                      ? getWinRateColor(row.winRateNum)
+                                      : getUsageRateColor(
+                                          row[column.sortKey],
+                                          column.key === 'pickRate' ? 'pick' : 'ban'
+                                        ),
+                                }}
                               >
                                 {content}
                               </span>

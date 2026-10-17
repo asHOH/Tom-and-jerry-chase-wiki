@@ -3,11 +3,48 @@ import { buildWinRateCharacterLookup } from '@/data/winRates/characterLookup';
 import { normalizeWinRateRows } from '@/data/winRates/normalize';
 
 import {
+  getUsageRateColor,
   getWinRateColor,
   getWinRateDisplayRows,
   toWinRatesCsv,
   WIN_RATE_COLUMNS,
 } from './tableModel';
+
+it.each([
+  [-1, -1, 0, 1, 0],
+  [0, 0, 0, 1, 0],
+  [0.75, 0.5, 0, 1, 50],
+  [1.5, 1, 0, 1, 100],
+  [2.75, 2, 1, 2, 50],
+  [4, 3, 1, 2, 100],
+  [6, 5.5, 2, 3, 50],
+  [8, 8, 2, 3, 100],
+  [11, 18, 3, 4, 50],
+  [14, 28, 3, 4, 100],
+  [21, 44, 4, 5, 50],
+  [28, 60, 4, 5, 100],
+] as const)(
+  'maps pick %s%% and ban %s%% to their fixed color stops',
+  (pick, ban, from, to, weight) => {
+    for (const [metric, rate] of [
+      ['pick', pick],
+      ['ban', ban],
+    ] as const) {
+      const color = getUsageRateColor(rate, metric);
+      const match = color?.match(/^(color-mix.+) ([\d.]+)%\)$/);
+      expect(match?.[1]).toBe(
+        `color-mix(in oklab, var(--wiki-${metric}-rate-${from}), var(--wiki-${metric}-rate-${to})`
+      );
+      expect(Number(match?.[2])).toBeCloseTo(weight);
+    }
+  }
+);
+
+it('clamps high usage rates and leaves missing ban rates uncolored', () => {
+  expect(getUsageRateColor(100, 'pick')).toBe('var(--wiki-pick-rate-5)');
+  expect(getUsageRateColor(100, 'ban')).toBe('var(--wiki-ban-rate-5)');
+  expect(getUsageRateColor(null, 'ban')).toBeUndefined();
+});
 
 it.each([
   [0, 'lowest', 'low', 0],
