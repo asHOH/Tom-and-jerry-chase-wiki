@@ -41,7 +41,6 @@ LAST_KNOWN_GOOD_DIR=""
 ROLLBACK_ARMED=0
 CANDIDATE_RELEASE=""
 ACTIVE_RELEASE=""
-RETIRED_RELEASE=""
 CUTOVER_STARTED_AT=""
 CUTOVER_DURATION="0s"
 
@@ -538,6 +537,19 @@ prepare_candidate_release() {
   echo "Candidate directory: $CANDIDATE_RELEASE; the current app remains running."
 }
 
+check_build_disk_space() {
+  local available_kb available_inodes
+  available_kb="$(df -Pk "$RELEASES_DIR" | awk 'NR == 2 { print $4 }')"
+  available_inodes="$(df -Pi "$RELEASES_DIR" | awk 'NR == 2 { print $4 }')"
+  echo "Disk before candidate: $((available_kb / 1024)) MiB available; $available_inodes free inodes."
+  # shortcut: fixed headroom for today's release size; revise if build peaks grow.
+  if [ "$available_kb" -lt $((5 * 1024 * 1024)) ] || [ "$available_inodes" -lt 100000 ]; then
+    echo "Fatal: building a candidate requires at least 5 GiB and 100000 free inodes after release cleanup."
+    echo "Free space or expand the filesystem containing $RELEASES_DIR, then retry."
+    return 1
+  fi
+}
+
 preserve_last_known_good_release() {
   if [ -z "$ACTIVE_RELEASE" ]; then
     return 0
@@ -565,12 +577,29 @@ set_release_link() {
 
 remove_release() {
   local release="$1"
-  # Never remove the control checkout, current release, or an unrelated worktree.
+  # Keep the control checkout, active/rollback releases, and worktrees outside the releases directory.
   if [ -n "$release" ] && [ "$(dirname "$release")" = "$RELEASES_DIR" ] &&
     [ "$release" != "$ACTIVE_RELEASE" ] &&
-    [ "$release" != "$(readlink -f "$DEPLOY_STATE_DIR/current" 2>/dev/null || true)" ]; then
+    [ "$release" != "$(readlink -f "$DEPLOY_STATE_DIR/current" 2>/dev/null || true)" ] &&
+    [ "$release" != "$(readlink -f "$DEPLOY_STATE_DIR/previous" 2>/dev/null || true)" ]; then
     git -C "$REPO_ROOT" worktree remove --force "$release"
   fi
+}
+
+cleanup_releases() {
+  local field release
+  # The releases directory is reserved for deployment-owned worktrees.
+  while IFS= read -r -d '' field; do
+    case "$field" in
+      'worktree '*)
+        release="${field#worktree }"
+        [ -d "$release" ] || continue
+        release="$(cd "$release" && pwd -P)"
+        [ "$release" != "$CANDIDATE_RELEASE" ] || continue
+        remove_release "$release" || echo "Warning: could not remove obsolete release $release; will retry next deployment."
+        ;;
+    esac
+  done < <(git -C "$REPO_ROOT" worktree list --porcelain -z)
 }
 
 restore_last_known_good_release() {
@@ -678,7 +707,7 @@ echo "Runtime tools: node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"
 mkdir -p "$RELEASES_DIR" "$DEPLOY_STATE_DIR"
 RELEASES_DIR="$(cd "$RELEASES_DIR" && pwd -P)"
 find_active_release
-RETIRED_RELEASE="$(readlink -f "$DEPLOY_STATE_DIR/previous" 2>/dev/null || true)"
+cleanup_releases
 
 begin_phase "4/6" "Prepare isolated candidate"
 cd "${ACTIVE_RELEASE:-$REPO_ROOT}"
@@ -734,6 +763,7 @@ if [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
   echo "Build required; changed inputs: $BUILD_REASON_LIST"
   BUILD_STARTED_AT="$(date +%s)"
 
+  check_build_disk_space
   prepare_candidate_release
   install_dependencies
   begin_phase "5/6" "Build while the current release serves"
@@ -799,9 +829,7 @@ if [ -n "$CANDIDATE_RELEASE" ]; then
   # The primary checkout now holds operator tools; PM2 serves a separate release.
   cd "$REPO_ROOT"
   git reset --hard "$CURRENT_HASH"
-  if [ "$RETIRED_RELEASE" != "$LAST_KNOWN_GOOD_DIR" ]; then
-    remove_release "$RETIRED_RELEASE" || echo "Warning: could not remove retired release $RETIRED_RELEASE."
-  fi
+  cleanup_releases
 else
   wait_for_application_health
 fi

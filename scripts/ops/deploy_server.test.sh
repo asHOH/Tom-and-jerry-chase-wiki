@@ -49,6 +49,16 @@ ensure_pinned_npm() { :; }
 ensure_pm2_cli() { :; }
 detect_node_memory_limit() { NODE_MEMORY_LIMIT=768; }
 report_memory_status() { :; }
+df() {
+  local available=5242880
+  if [ "$1" = -Pi ]; then
+    available=100000
+    [ "$TEST_MODE" != low-inodes ] || available=99999
+  else
+    [ "$TEST_MODE" != low-disk ] || available=5242879
+  fi
+  printf 'Filesystem Total Used Available Capacity Mounted\nmock 9999999 0 %s 0%% /\n' "$available"
+}
 cleanup_child_processes() { :; }
 sleep() { :; }
 # Git Bash lacks flock and native directory symlinks on some Windows machines.
@@ -158,8 +168,12 @@ run_deploy() {
   if [ "$status" -ne "$expected" ]; then cat output; echo "Unexpected status for $TEST_MODE: $status"; exit 1; fi
 }
 
-for mode in install-fail build-fail; do
+for mode in low-disk low-inodes install-fail build-fail; do
   run_deploy 1 "$mode"
+  if [[ "$mode" == low-* ]]; then
+    grep -q 'requires at least 5 GiB and 100000 free inodes' output
+    [ ! -s events ]
+  fi
   ! grep -q delete events
   [ "$(cat active)" = "$CONTROL" ]
   [ "$(cat "$CONTROL/public/sw.js")" = old-worker ]
@@ -213,4 +227,31 @@ run_deploy 1 build-fail --force-build
 [ "$(cat active)" = "$second_release" ]
 [ -d "$first_release" ]
 [ "$(git -C "$CONTROL" worktree list --porcelain | grep -c '^worktree ')" -eq 3 ]
+# Recover interrupted candidates, including a deletion that failed on the prior run.
+orphan="$CONTROL.releases/abandoned-candidate"
+outside="$TEST_ROOT/operator-worktree"
+git -C "$CONTROL" worktree add -q --detach "$orphan" "$NEW_HASH"
+git -C "$CONTROL" worktree add -q --detach "$outside" "$OLD_HASH"
+mkdir -p "$orphan/.next" "$CONTROL.releases/operator-files"
+echo partial-build > "$orphan/.next/partial"
+git -C "$CONTROL" worktree lock "$orphan"
+run_deploy 0 success
+grep -q 'could not remove obsolete release' output
+[ -d "$orphan" ]
+git -C "$CONTROL" worktree unlock "$orphan"
+
+# Cleanup precedes the disk check, and a rejected build leaves both good releases intact.
+run_deploy 1 low-disk --force-build
+[ ! -d "$orphan" ]
+[ -d "$outside" ]
+[ -d "$CONTROL.releases/operator-files" ]
+[ -d "$first_release" ]
+[ "$(cat active)" = "$second_release" ]
+[ ! -s events ]
+
+# Reusing an existing build needs no candidate headroom.
+run_deploy 0 low-disk
+grep -q 'build=skipped' output
+[ ! -s events ]
+
 echo 'Verified isolated release deployments'
