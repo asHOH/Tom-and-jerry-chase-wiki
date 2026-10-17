@@ -1,5 +1,3 @@
-'use server';
-
 import docPagesJson from '@/data/generated/docPages.json';
 
 export interface DocPage {

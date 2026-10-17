@@ -2,6 +2,8 @@ import { MetadataRoute } from 'next';
 
 import { SITE_URL } from '@/constants/seo';
 
+export const dynamic = 'force-static';
+
 const IS_VERCEL = process.env.VERCEL === '1';
 const IS_VERCEL_PREVIEW = IS_VERCEL && process.env.VERCEL_ENV !== 'production';
 
@@ -22,6 +24,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/api.php', '/index.php'],
     },
-    sitemap: [`${SITE_URL}/sitemap.xml`, `${SITE_URL}/articles/sitemap.xml`],
+    sitemap: [`${SITE_URL}/sitemap.xml`],
   };
 }

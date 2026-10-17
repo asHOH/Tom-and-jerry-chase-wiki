@@ -2,6 +2,12 @@ import { PROJECT_INFO } from '@/constants';
 
 export interface ProjectStatementCopy {
   creatorSeparator: string;
+  staticMirror: {
+    ariaLabel: string;
+    lead: string;
+    contributor: string;
+    tail: string;
+  };
   projectInfo: {
     ariaLabel: string;
     maintainerPrefix: string;
@@ -42,6 +48,12 @@ export interface ProjectStatementCopy {
 
 export const PROJECT_STATEMENT_COPY: ProjectStatementCopy = {
   creatorSeparator: '、',
+  staticMirror: {
+    ariaLabel: '静态版本说明',
+    lead: '该网站的静态产物编译贡献者为 ',
+    contributor: '九归零',
+    tail: '，此项目位于原官方项目的其中一条分支上，请在部署此版本时添加此说明。',
+  },
   projectInfo: {
     ariaLabel: '项目信息',
     maintainerPrefix: '本项目由',

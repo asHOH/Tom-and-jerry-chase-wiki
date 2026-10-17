@@ -13,6 +13,8 @@ import {
 const DESCRIPTION = '详细介绍游戏内的局内机制（该界面建设中）';
 
 // Generate static params for all mechanics sections
+export const dynamic = 'force-static';
+
 export function generateStaticParams() {
   return mechanicsSectionsList.map((sectionName) => ({
     sectionName,
