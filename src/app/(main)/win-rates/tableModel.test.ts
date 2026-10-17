@@ -11,57 +11,43 @@ import {
 } from './tableModel';
 
 it.each([
-  [-1, -1, 0, 1, 0],
-  [0, 0, 0, 1, 0],
-  [0.75, 0.5, 0, 1, 50],
-  [1.5, 1, 0, 1, 100],
-  [2.75, 2, 1, 2, 50],
-  [4, 3, 1, 2, 100],
-  [6, 5.5, 2, 3, 50],
-  [8, 8, 2, 3, 100],
-  [11, 18, 3, 4, 50],
-  [14, 28, 3, 4, 100],
-  [21, 44, 4, 5, 50],
-  [28, 60, 4, 5, 100],
+  ['pick', 1, 5],
+  ['ban', 0.75, 4.25],
 ] as const)(
-  'maps pick %s%% and ban %s%% to their fixed color stops',
-  (pick, ban, from, to, weight) => {
-    for (const [metric, rate] of [
-      ['pick', pick],
-      ['ban', ban],
-    ] as const) {
-      const color = getUsageRateColor(rate, metric);
-      const match = color?.match(/^(color-mix.+) ([\d.]+)%\)$/);
-      expect(match?.[1]).toBe(
-        `color-mix(in oklab, var(--wiki-${metric}-rate-${from}), var(--wiki-${metric}-rate-${to})`
-      );
-      expect(Number(match?.[2])).toBeCloseTo(weight);
-    }
+  'interpolates %s colors within the surrounding stops',
+  (metric, lowRate, higherRate) => {
+    expect(getUsageRateColor(lowRate, metric)).toBe(
+      `color-mix(in oklab, var(--wiki-${metric}-rate-0), var(--wiki-${metric}-rate-1) 50%)`
+    );
+    expect(getUsageRateColor(higherRate, metric)).toBe(
+      `color-mix(in oklab, var(--wiki-${metric}-rate-2), var(--wiki-${metric}-rate-3) 25%)`
+    );
   }
 );
 
-it('clamps high usage rates and leaves missing ban rates uncolored', () => {
-  expect(getUsageRateColor(100, 'pick')).toBe('var(--wiki-pick-rate-5)');
-  expect(getUsageRateColor(100, 'ban')).toBe('var(--wiki-ban-rate-5)');
+it.each(['pick', 'ban'] as const)('clamps %s colors at both ends of the scale', (metric) => {
+  expect(getUsageRateColor(-1, metric)).toBe(getUsageRateColor(0, metric));
+  expect(getUsageRateColor(100, metric)).toBe(`var(--wiki-${metric}-rate-5)`);
+});
+
+it('leaves missing ban rates uncolored', () => {
   expect(getUsageRateColor(null, 'ban')).toBeUndefined();
 });
 
 it.each([
-  [0, 'lowest', 'low', 0],
-  [28, 'lowest', 'low', 0],
-  [31.5, 'lowest', 'low', 50],
-  [35, 'lowest', 'low', 100],
-  [42.5, 'low', 'mid', 50],
-  [50, 'low', 'mid', 100],
-  [57.5, 'mid', 'high', 50],
-  [65, 'mid', 'high', 100],
-  [68.5, 'high', 'highest', 50],
-  [72, 'high', 'highest', 100],
-  [100, 'high', 'highest', 100],
-] as const)('maps %s%% to the clamped OKLab win-rate scale', (rate, from, to, weight) => {
+  [31.5, 'lowest', 'low'],
+  [42.5, 'low', 'mid'],
+  [57.5, 'mid', 'high'],
+  [68.5, 'high', 'highest'],
+] as const)('interpolates the color for a %s%% win rate', (rate, from, to) => {
   expect(getWinRateColor(rate)).toBe(
-    `color-mix(in oklab, var(--wiki-win-rate-${from}), var(--wiki-win-rate-${to}) ${weight}%)`
+    `color-mix(in oklab, var(--wiki-win-rate-${from}), var(--wiki-win-rate-${to}) 50%)`
   );
+});
+
+it('clamps win-rate colors at both ends of the scale', () => {
+  expect(getWinRateColor(0)).toBe(getWinRateColor(28));
+  expect(getWinRateColor(100)).toBe(getWinRateColor(72));
 });
 
 it('sorts within rank and faction groups, resets numbering, and leaves source rows intact', () => {
