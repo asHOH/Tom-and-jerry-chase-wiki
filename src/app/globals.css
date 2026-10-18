@@ -1,4 +1,6 @@
 @import 'tailwindcss' source('..');
+@source '../../node_modules/streamdown/dist/*.js';
+@source '../../node_modules/@streamdown/cjk/dist/*.js';
 @source not '../src/data/generated';
 @source not '../src/data';
 @source inline('{text-sm,text-xl,text-2xl,ml-1,ml-2,mx-1,mx-2}');

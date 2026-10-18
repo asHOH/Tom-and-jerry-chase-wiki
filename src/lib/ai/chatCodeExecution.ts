@@ -16,6 +16,7 @@ const CHAT_CODE_MAX_OUTPUT_BYTES = 32 * 1024;
 let executionActive = false;
 
 export type ChatCodeExecutionContext = ChatGameData & {
+  readonly references?: readonly unknown[];
   readonly actorProfiles: ActorProfileLookup;
   readonly itemGroups: Readonly<Record<string, ItemGroup>>;
   readonly historyData: GameHistory;

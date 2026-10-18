@@ -1,10 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { AnimatePresence } from 'motion/react'; // smaller bundle size than framer-motion
-
-import { createPortal } from 'react-dom';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import type { HistoryEntry } from '@/lib/historyUtils';
@@ -30,10 +27,9 @@ import CollapseCard from '@/components/ui/CollapseCard';
 import DiscussEditButtons from '@/components/ui/DiscussEditButtons';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
-import MotionButton from '@/components/ui/MotionButton';
 import PageTitle from '@/components/ui/PageTitle';
 import { PendingActionWarningBoundary } from '@/components/ui/PendingActionWarning';
-import { ChevronUpIcon, PlusIcon } from '@/components/icons/CommonIcons';
+import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
 import CharacterRelationDisplay from './character-relations/CharacterRelationDisplay';
@@ -118,23 +114,6 @@ export default function CharacterDetails({
     ) : (
       <LocalCharacterHistoryDisplay names={localHistoryNames} />
     );
-
-  // Go to Top button state
-  const [showGoTop, setShowGoTop] = useState(false);
-  const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
-
-  useEffect(() => {
-    setPortalElement(document.body);
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowGoTop(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const positioningTags =
     factionId === 'cat'
@@ -469,29 +448,6 @@ export default function CharacterDetails({
             </div>
           </div>
         </div>
-        {/* Go to Top Button */}
-        {portalElement
-          ? createPortal(
-              <AnimatePresence>
-                {showGoTop && (
-                  <MotionButton
-                    variant='unstyled'
-                    aria-label='返回顶部'
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    className='fixed right-6 bottom-6 z-50 rounded-full bg-blue-600 p-3 text-white shadow-lg transition-colors duration-200 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none'
-                    style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ChevronUpIcon className='h-6 w-6' />
-                  </MotionButton>
-                )}
-              </AnimatePresence>,
-              portalElement
-            )
-          : null}
       </PublishedCharacterProvider>
     </EditModeContext>
   );

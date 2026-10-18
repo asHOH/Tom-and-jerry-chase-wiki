@@ -3,7 +3,7 @@ export const OFFLINE_WARMUP_ROUTES = ['/', '/factions/cat/', '/factions/mouse/']
 
 export function isOfflinePublicPage(pathname: string): boolean {
   return (
-    !/^\/(?:api|_next|admin|settings|notifications|offline)(?:\/|$)/.test(pathname) &&
+    !/^\/(?:api|_next|admin|ai|settings|notifications|offline)(?:\/|$)/.test(pathname) &&
     !/^\/articles\/(?:new|pending|preview)(?:\/|$)/.test(pathname) &&
     !/^\/articles\/[^/]+\/edit(?:\/|$)/.test(pathname) &&
     !/^\/characters\/user(?:\/|$)/.test(pathname)

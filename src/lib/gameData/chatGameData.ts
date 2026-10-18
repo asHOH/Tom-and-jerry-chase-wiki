@@ -2,10 +2,7 @@ import 'server-only';
 
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 
-export type ChatGameData = Pick<
-  PublishedGameDataByType,
-  'characters' | 'cards' | 'specialSkills' | 'items' | 'entities' | 'buffs'
->;
+export type ChatGameData = PublishedGameDataByType;
 
 export function selectChatGameData(data: PublishedGameDataByType): ChatGameData {
   return {
@@ -15,5 +12,10 @@ export function selectChatGameData(data: PublishedGameDataByType): ChatGameData 
     items: data.items,
     entities: data.entities,
     buffs: data.buffs,
+    maps: data.maps,
+    fixtures: data.fixtures,
+    modes: data.modes,
+    achievements: data.achievements,
+    traits: data.traits,
   };
 }

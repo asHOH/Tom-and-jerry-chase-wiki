@@ -105,6 +105,10 @@
   --color-control-active: var(--wiki-control-active);
   --color-control-active-hover: var(--wiki-control-active-hover);
   --color-muted-foreground: var(--wiki-muted-foreground);
+  --color-muted: var(--wiki-surface-muted);
   --color-border: var(--wiki-border);
   --color-focus: var(--wiki-focus);
+  --color-primary: var(--wiki-focus);
+  --color-primary-foreground: var(--wiki-background);
+  --color-sidebar: var(--wiki-surface-muted);
 }

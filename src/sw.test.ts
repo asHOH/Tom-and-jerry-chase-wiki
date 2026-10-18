@@ -125,6 +125,7 @@ describe('service worker runtime caching', () => {
 
   it.each([
     '/admin/',
+    '/ai/',
     '/articles/new/',
     '/articles/pending/',
     '/articles/preview/',
@@ -139,6 +140,7 @@ describe('service worker runtime caching', () => {
 
   it.each([
     '/api/auth/me',
+    '/api/chat',
     '/api/notifications',
     '/api/notifications/email',
     '/api/notifications/preferences',

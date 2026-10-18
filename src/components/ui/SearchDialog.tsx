@@ -6,7 +6,6 @@ import { m } from 'motion/react';
 import { cn, getTypeLabelColors } from '@/lib/design';
 import { performSearch } from '@/lib/searchUtils';
 import type { SearchResult } from '@/lib/searchUtils/types';
-import { useChat } from '@/hooks/useChat';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useSearchGameData } from '@/hooks/useSearchGameData';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -14,9 +13,8 @@ import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormControls';
 import Tag from '@/components/ui/Tag';
-import { ChatBubbleIcon, CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
+import { CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { env } from '@/env';
 
 type SearchDialogProps = {
   open: boolean;
@@ -88,8 +86,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
   const [searchError, setSearchError] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [isAiExpanded, setIsAiExpanded] = useState(false);
-  const [isAiStopped, setIsAiStopped] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchIdRef = useRef(0); // To keep track of the latest search request
   const resultsListRef = useRef<HTMLUListElement>(null);
@@ -104,11 +100,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     const frame = window.requestAnimationFrame(() => searchInputRef.current?.focus());
     return () => window.cancelAnimationFrame(frame);
   }, [open]);
-
-  useEffect(() => {
-    setIsAiExpanded(false);
-    setIsAiStopped(false);
-  }, [open, searchQuery]);
 
   useEffect(() => {
     if (open) return;
@@ -161,27 +152,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     return 'id' in result ? result.id : result.name;
   };
 
-  const showAiPreview =
-    open && searchQuery.trim().length > 1 && Boolean(env.NEXT_PUBLIC_AI_CHAT_MODEL);
-
-  // Reserve the preview before the debounced request starts.
-  const {
-    responseText: aiResponseText,
-    isLoading: isChatLoading,
-    error: chatError,
-    stop: stopChat,
-  } = useChat(showAiPreview ? searchQuery : undefined, 2000);
-  const hasAiResult = showAiPreview && Boolean(aiResponseText?.trim());
-  const aiStatus = isAiStopped
-    ? '已停止回答'
-    : chatError
-      ? '暂时无法回答，请稍后重试'
-      : isChatLoading
-        ? '正在回答…'
-        : hasAiResult
-          ? '回答完成'
-          : '输入完成后自动回答';
-
   const handleResultClick = useCallback(
     (result: SearchResult) => {
       navigate(result.href);
@@ -196,11 +166,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     if (!open) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Leave native keyboard activation and answer scrolling to their own controls.
+      // Leave native keyboard activation to the result controls.
       if (
-        isAiExpanded ||
-        (event.target !== searchInputRef.current &&
-          !(event.target instanceof Node && resultsListRef.current?.contains(event.target)))
+        event.target !== searchInputRef.current &&
+        !(event.target instanceof Node && resultsListRef.current?.contains(event.target))
       )
         return;
       if (event.key === 'Enter' && event.target !== searchInputRef.current) return;
@@ -242,7 +211,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [open, highlightedIndex, searchResults, handleResultClick, isAiExpanded]);
+  }, [open, highlightedIndex, searchResults, handleResultClick]);
 
   // Scroll highlighted item into view
   useEffect(() => {
@@ -346,10 +315,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
 
       {searchQuery.length > 0 && (
         <div className={cn('flex min-h-0 flex-col gap-3', isMobile ? 'flex-1' : 'h-100')}>
-          <div
-            hidden={isAiExpanded}
-            className='min-h-0 flex-1 overflow-y-auto rounded-md border border-gray-300 [overflow-anchor:none] dark:border-gray-600'
-          >
+          <div className='min-h-0 flex-1 overflow-y-auto rounded-md border border-gray-300 [overflow-anchor:none] dark:border-gray-600'>
             <m.ul
               ref={resultsListRef}
               initial='hidden'
@@ -426,73 +392,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
               )
             )}
           </div>
-          {showAiPreview && (
-            <section
-              aria-labelledby='search-ai-title'
-              className={cn(
-                'flex flex-col rounded-md bg-blue-50 p-3 text-sm dark:bg-blue-900/20',
-                isAiExpanded ? 'min-h-0 flex-1' : 'h-28 shrink-0'
-              )}
-            >
-              <div className='flex h-8 shrink-0 items-center justify-between gap-2'>
-                <div className='flex min-w-0 items-center gap-2'>
-                  <h3
-                    id='search-ai-title'
-                    className='flex shrink-0 items-center gap-1.5 font-medium text-blue-700 dark:text-blue-300'
-                  >
-                    <ChatBubbleIcon className='h-4 w-4' />
-                    AI 助手
-                  </h3>
-                  <span
-                    role='status'
-                    title={aiStatus}
-                    className='truncate text-xs text-gray-500 dark:text-gray-400'
-                  >
-                    {aiStatus}
-                  </span>
-                </div>
-                <div className='flex shrink-0 items-center gap-1'>
-                  {(isAiExpanded || (hasAiResult && !isChatLoading)) && (
-                    <Button
-                      variant='secondary'
-                      size='sm'
-                      className='p-1.5 text-xs'
-                      aria-expanded={isAiExpanded}
-                      aria-controls='search-ai-answer'
-                      onClick={() => setIsAiExpanded((expanded) => !expanded)}
-                    >
-                      {isAiExpanded ? '返回搜索结果' : '展开'}
-                    </Button>
-                  )}
-                  {isChatLoading && !isAiStopped && (
-                    <Button
-                      variant='secondary'
-                      size='sm'
-                      className='p-1.5 text-xs'
-                      aria-label='停止 AI 回答'
-                      onClick={() => {
-                        stopChat();
-                        setIsAiStopped(true);
-                      }}
-                    >
-                      停止
-                    </Button>
-                  )}
-                </div>
-              </div>
-              <div
-                id='search-ai-answer'
-                tabIndex={isAiExpanded ? 0 : undefined}
-                className={cn(
-                  'mt-2 wrap-anywhere whitespace-pre-wrap text-gray-700 dark:text-gray-300',
-                  isAiExpanded ? 'min-h-0 flex-1 overflow-y-auto' : 'line-clamp-2 leading-6'
-                )}
-              >
-                {aiResponseText ||
-                  (isChatLoading && !isAiStopped ? '' : '可结合百科内容回答你的问题。')}
-              </div>
-            </section>
-          )}
         </div>
       )}
     </BaseDialog>

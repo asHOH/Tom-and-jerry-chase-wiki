@@ -5,6 +5,44 @@ const createJestConfig = nextJest({
   dir: './',
 });
 
+const streamdownEsmPackages = [
+  'streamdown',
+  '@streamdown',
+  'marked',
+  'remend',
+  'rehype-[^/]+',
+  'remark-[^/]+',
+  'unified',
+  'unist-util-[^/]+',
+  'hast-util-[^/]+',
+  'mdast-util-[^/]+',
+  'micromark(?:-[^/]+)?',
+  'vfile(?:-[^/]+)?',
+  'bail',
+  'is-plain-obj',
+  'trough',
+  'devlop',
+  'estree-util-[^/]+',
+  'comma-separated-tokens',
+  'property-information',
+  'space-separated-tokens',
+  'zwitch',
+  'ccount',
+  'parse-entities',
+  'character-entities(?:-[^/]+)?',
+  'character-reference-invalid',
+  'is-(?:alphanumerical|alphabetical|decimal|hexadecimal)',
+  'stringify-entities',
+  'longest-streak',
+  'get-east-asian-width',
+  'trim-lines',
+  'parse5',
+  'web-namespaces',
+  'html-void-elements',
+  'html-url-attributes',
+  '@ungap',
+].join('|');
+
 // Add any custom config to be passed to Jest
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
@@ -16,8 +54,9 @@ const customJestConfig = {
   modulePathIgnorePatterns: ['<rootDir>/.tmp/'],
   // Transform ESM packages that ship untranspiled code
   // Keep the sanitize-html parser packages in sync with next.config.ts transpilePackages.
+  // Streamdown's Markdown parser and CJK plugin also ship an ESM dependency graph.
   transformIgnorePatterns: [
-    'node_modules/(?!(lodash-es|@t3-oss/env-nextjs|sanitize-html|html-react-parser|html-dom-parser|style-to-js|style-to-object|htmlparser2|domhandler|domutils|dom-serializer|domelementtype|entities)/)',
+    `node_modules/(?!(lodash-es|@t3-oss/env-nextjs|sanitize-html|html-react-parser|html-dom-parser|style-to-js|style-to-object|htmlparser2|domhandler|domutils|dom-serializer|domelementtype|entities|${streamdownEsmPackages})/)`,
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',

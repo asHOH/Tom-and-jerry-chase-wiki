@@ -7,6 +7,49 @@
   object-fit: contain;
 }
 
+.chat-interface,
+.chat-interface * {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--wiki-muted-foreground) 50%, transparent) transparent;
+}
+
+.chat-interface::-webkit-scrollbar,
+.chat-interface *::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.chat-interface::-webkit-scrollbar-track,
+.chat-interface *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-interface::-webkit-scrollbar-thumb,
+.chat-interface *::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--wiki-muted-foreground) 50%, transparent);
+}
+
+.chat-mention-input[data-empty='true']::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--wiki-muted-foreground);
+  pointer-events: none;
+}
+
+/* The enclosing composer supplies the neutral focus border. */
+.chat-interface .chat-mention-input:focus,
+.chat-interface .chat-mention-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.chat-mention-input .ProseMirror-selectednode {
+  outline: 1px solid currentColor;
+  outline-offset: 1px;
+}
+
 @media (min-width: 768px) {
   .faction-button-image {
     height: 40px;

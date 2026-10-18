@@ -4,6 +4,7 @@ import childProcess from 'node:child_process';
 import { once } from 'node:events';
 import { setImmediate as nextTurn } from 'node:timers/promises';
 
+import { PUBLISHABLE_ENTITY_TYPES } from '@/lib/gameData/publishableEntityTypes';
 import { getCanonicalGameData } from '@/lib/gameData/published/canonicalSources';
 import { historyData } from '@/data/history';
 import { actorProfileLookup } from '@/features/actor-profiles/serialization';
@@ -19,6 +20,11 @@ const context: ChatCodeExecutionContext = {
   items: {},
   entities: {},
   buffs: {},
+  maps: {},
+  fixtures: {},
+  modes: {},
+  achievements: { cat: {}, mouse: {} },
+  traits: {},
   actorProfiles: {},
   itemGroups: {},
   historyData: [],
@@ -65,9 +71,7 @@ test('queries the actual baseline snapshot in a subprocess', async () => {
   const snapshot = {
     ...context,
     ...Object.fromEntries(
-      (['characters', 'cards', 'specialSkills', 'items', 'entities', 'buffs'] as const).map(
-        (name) => [name, getCanonicalGameData(name)]
-      )
+      PUBLISHABLE_ENTITY_TYPES.map((name) => [name, getCanonicalGameData(name)])
     ),
     actorProfiles: actorProfileLookup,
     historyData,

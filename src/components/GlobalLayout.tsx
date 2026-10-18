@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
+import FloatingWikiControls from '@/components/FloatingWikiControls';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 
 import { DynamicFaviconEditBadge } from './DynamicFaviconEditBadge';
@@ -10,6 +11,8 @@ import { DynamicFaviconEditBadge } from './DynamicFaviconEditBadge';
 export default function GlobalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const shouldReduceMotion = useReducedMotion();
+
+  if (/^\/ai\/?$/.test(pathname)) return <>{children}</>;
 
   // Detail pages can switch between concise and detailed descriptions from the navigation bar.
   const showDetailToggle =
@@ -27,6 +30,7 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
   return (
     <>
       <DynamicFaviconEditBadge />
+      <FloatingWikiControls />
       <TabNavigationWrapper showDetailToggle={showDetailToggle}>
         <AnimatePresence mode='wait' initial={false}>
           <m.div
