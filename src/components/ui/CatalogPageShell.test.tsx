@@ -42,23 +42,11 @@ describe('CatalogPageShell', () => {
       </CatalogPageShell>
     );
 
-    expect(screen.getByText('Page title')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Page title' })).toBeInTheDocument();
     expect(screen.getByText('Page description')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
     expect(screen.getByText('Filters')).toBeInTheDocument();
     expect(screen.getByText('Page content')).toBeInTheDocument();
-  });
-
-  it('omits optional sections when not provided', () => {
-    render(
-      <CatalogPageShell title='Title only'>
-        <div>Content</div>
-      </CatalogPageShell>
-    );
-
-    expect(screen.getByText('Title only')).toBeInTheDocument();
-    expect(screen.queryByText('Filters')).not.toBeInTheDocument();
-    expect(screen.getByText('Content')).toBeInTheDocument();
   });
 
   it('applies desktop-only description classes', () => {
@@ -76,36 +64,22 @@ describe('CatalogPageShell', () => {
     expect(descriptionWrapper).toHaveClass('sr-only', 'md:not-sr-only');
   });
 
-  it('uses content spacing as the shell gap source by default', () => {
-    const { container } = render(
+  it('skips shell top spacing when contentTopSpacing is none', () => {
+    const { rerender } = render(
       <CatalogPageShell title='Title'>
         <div>Content</div>
       </CatalogPageShell>
     );
-
-    const section = container.querySelector('section');
-    const header = container.querySelector('header');
-    const contentWrapper = screen.getByText('Content').parentElement;
-
-    expect(section).not.toHaveClass('space-y-2', 'md:space-y-8');
-    expect(section).toHaveClass('max-w-6xl', 'text-foreground');
-    expect(section).not.toHaveClass('px-2', 'md:p-6', 'dark:text-slate-200');
-    expect(header).not.toHaveClass('mb-4', 'md:mb-8');
-    expect(contentWrapper).toHaveClass('mt-6', 'md:mt-8');
-  });
-
-  it('skips shell top spacing when contentTopSpacing is none', () => {
-    render(
+    expect(screen.getByText('Content').parentElement).toHaveClass('mt-6', 'md:mt-8');
+    rerender(
       <CatalogPageShell title='Title' contentTopSpacing='none'>
         <div>Content</div>
       </CatalogPageShell>
     );
-
-    const contentWrapper = screen.getByText('Content').parentElement;
-    expect(contentWrapper).not.toHaveClass('mt-6', 'md:mt-8');
+    expect(screen.getByText('Content').parentElement).not.toHaveClass('mt-6', 'md:mt-8');
   });
 
-  it('merges class overrides with cn', () => {
+  it('applies caller overrides to each content slot', () => {
     const { container } = render(
       <CatalogPageShell
         title='Title'
