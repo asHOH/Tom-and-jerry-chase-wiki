@@ -13,7 +13,7 @@ import Link from '@/components/Link';
 import { env } from '@/env';
 
 const controlClassName =
-  'flex size-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-colors hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400 dark:bg-blue-700 dark:hover:bg-blue-600';
+  'flex size-12 items-center justify-center rounded-full bg-action-primary text-action-primary-foreground shadow-lg transition-colors hover:bg-action-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
 
 export default function FloatingWikiControls() {
   const pathname = usePathname();

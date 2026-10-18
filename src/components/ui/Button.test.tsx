@@ -3,10 +3,16 @@ import { render, screen } from '@testing-library/react';
 import Button from '@/components/ui/Button';
 
 describe('Button', () => {
-  it("should default to type='button'", () => {
+  it('defaults to a button with primary action and focus styling', () => {
     render(<Button>保存</Button>);
 
     expect(screen.getByRole('button', { name: '保存' })).toHaveAttribute('type', 'button');
+    expect(screen.getByRole('button', { name: '保存' })).toHaveClass(
+      'bg-action-primary',
+      'text-action-primary-foreground',
+      'hover:bg-action-primary-hover',
+      'focus-visible:outline-focus'
+    );
   });
 
   it('uses accessible foreground and background pairs for semantic actions', () => {

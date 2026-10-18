@@ -29,7 +29,16 @@ describe('ButtonLink', () => {
 
     const link = screen.getByRole('link', { name: '新建文章' });
     expect(link).toHaveAttribute('href', '/articles/new');
-    expect(link).toHaveClass('inline-flex', 'bg-blue-600', 'rounded-lg', 'px-4', 'py-2.5');
+    expect(link).toHaveClass(
+      'inline-flex',
+      'bg-action-primary',
+      'text-action-primary-foreground',
+      'hover:bg-action-primary-hover',
+      'focus-visible:outline-focus',
+      'rounded-lg',
+      'px-4',
+      'py-2.5'
+    );
   });
 
   it('supports variants, sizing, icons, custom classes, and edit-param preservation', () => {

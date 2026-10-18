@@ -28,6 +28,9 @@ const semanticTokens = [
   'muted-foreground',
   'border',
   'focus',
+  'action-primary',
+  'action-primary-foreground',
+  'action-primary-hover',
 ];
 
 it('provides semantic colors in both themes and exposes them to Tailwind', () => {
@@ -48,6 +51,7 @@ it('applies semantic canvas, text, and keyboard focus colors', () => {
     /html,\s*body\s*\{[^}]*color:\s*var\(--wiki-foreground\);[^}]*background-color:\s*var\(--wiki-background\);/s
   );
   expect(baseSource).toContain('outline: 2px solid var(--wiki-focus);');
+  expect(patternsSource).toContain('outline: 2px solid var(--wiki-focus);');
 });
 
 it('scopes fixed-navigation and offline clearance to the app content shell', () => {

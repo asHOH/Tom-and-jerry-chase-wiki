@@ -320,7 +320,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               {isHomeActive() && (
                 <m.div
                   layoutId='active-nav-pill'
-                  className='absolute inset-0 -z-10 rounded-md bg-blue-600 dark:bg-blue-700'
+                  className='bg-action-primary absolute inset-0 -z-10 rounded-md'
                   transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                 />
               )}
@@ -428,7 +428,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   {isTabActive(tab.href) && (
                     <m.div
                       layoutId='active-nav-pill'
-                      className='absolute inset-0 -z-10 rounded-md bg-blue-600 dark:bg-blue-700'
+                      className='bg-action-primary absolute inset-0 -z-10 rounded-md'
                       transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                     />
                   )}

@@ -67,6 +67,11 @@ describe('ActionTile', () => {
     fireEvent.click(button);
 
     expect(button).not.toBeDisabled();
+    expect(button).toHaveClass(
+      'hover:bg-action-primary-hover',
+      'hover:text-action-primary-foreground',
+      'focus-visible:ring-focus'
+    );
     expect(button).not.toHaveAttribute('aria-current');
     expect(button).not.toHaveAttribute('aria-disabled');
     expect(button).not.toHaveAttribute('tabindex');
@@ -91,6 +96,7 @@ describe('ActionTile', () => {
     fireEvent.click(link);
 
     expect(link).toHaveAttribute('aria-current', 'page');
+    expect(link).toHaveClass('bg-action-primary', 'text-action-primary-foreground');
     expect(link).toHaveAttribute('aria-disabled', 'true');
     expect(link).toHaveAttribute('tabindex', '-1');
     expect(onClick).not.toHaveBeenCalled();

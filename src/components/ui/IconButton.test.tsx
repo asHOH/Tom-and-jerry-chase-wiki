@@ -26,7 +26,8 @@ describe('IconButton', () => {
       'bg-green-100',
       'text-green-800',
       'dark:bg-green-900/80',
-      'dark:text-green-200'
+      'dark:text-green-200',
+      'focus-visible:outline-focus'
     );
   });
 

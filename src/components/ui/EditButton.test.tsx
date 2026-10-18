@@ -29,7 +29,10 @@ describe('EditButton', () => {
   it('should render full edit as a primary button', () => {
     render(<EditButton />);
 
-    expect(screen.getByRole('button', { name: '编辑' })).toHaveClass('bg-blue-600', 'text-white');
+    expect(screen.getByRole('button', { name: '编辑' })).toHaveClass(
+      'bg-action-primary',
+      'text-action-primary-foreground'
+    );
   });
 
   it('should hide when edit mode is enabled', () => {

@@ -23,6 +23,10 @@
   --wiki-muted-foreground: var(--color-gray-600);
   /* Standard surface borders and dividers */
   --wiki-border: var(--color-gray-200);
+  /* Filled primary actions and selected navigation/filter controls */
+  --wiki-action-primary: var(--color-blue-600);
+  --wiki-action-primary-foreground: var(--color-white);
+  --wiki-action-primary-hover: var(--color-blue-700);
   /* Default keyboard focus indicator */
   --wiki-focus: var(--color-blue-500);
   /* Win-rate text anchors at 28%, 35%, 50%, 65%, and 72%. */
@@ -72,6 +76,9 @@
   --wiki-control-active-hover: var(--color-gray-700);
   --wiki-muted-foreground: var(--color-gray-400);
   --wiki-border: var(--color-slate-700);
+  --wiki-action-primary: var(--color-blue-700);
+  --wiki-action-primary-foreground: var(--color-white);
+  --wiki-action-primary-hover: var(--color-blue-600);
   --wiki-focus: var(--color-blue-400);
   --wiki-win-rate-lowest: #ff7373;
   --wiki-win-rate-low: #fca5a5;
@@ -108,6 +115,10 @@
   --color-muted: var(--wiki-surface-muted);
   --color-border: var(--wiki-border);
   --color-focus: var(--wiki-focus);
+  --color-action-primary: var(--wiki-action-primary);
+  --color-action-primary-foreground: var(--wiki-action-primary-foreground);
+  --color-action-primary-hover: var(--wiki-action-primary-hover);
+  /* Streamdown uses primary for link text as well as filled buttons. */
   --color-primary: var(--wiki-focus);
   --color-primary-foreground: var(--wiki-background);
   --color-sidebar: var(--wiki-surface-muted);
