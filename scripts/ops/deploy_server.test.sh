@@ -162,6 +162,7 @@ run_deploy() {
   local expected="$1"
   export TEST_MODE="$2"
   shift 2
+  echo "Deployment scenario: $TEST_MODE $*"
   : > events
   local status=0
   bash deploy.sh "$@" > output 2>&1 || status=$?

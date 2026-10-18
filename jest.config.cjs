@@ -29,6 +29,10 @@ const streamdownEsmPackages = [
   'zwitch',
   'ccount',
   'parse-entities',
+  'decode-named-character-reference',
+  'escape-string-regexp',
+  'hastscript',
+  'markdown-table',
   'character-entities(?:-[^/]+)?',
   'character-reference-invalid',
   'is-(?:alphanumerical|alphabetical|decimal|hexadecimal)',
@@ -63,6 +67,8 @@ const customJestConfig = {
     '^lodash-es$': 'lodash',
     '^lodash-es/(.*)$': 'lodash/$1',
     '^@t3-oss/env-nextjs$': '<rootDir>/test/__mocks__/t3-env-nextjs.ts',
+    // shortcut: import-only package entry paths are fixed here, update if dependency upgrades move them.
+    '^(streamdown|@streamdown/cjk|remend)$': '<rootDir>/node_modules/$1/dist/index.js',
   },
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
@@ -79,5 +85,12 @@ const customJestConfig = {
   restoreMocks: true,
 };
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-module.exports = createJestConfig(customJestConfig);
+module.exports = async () => {
+  const config = await createJestConfig(customJestConfig)();
+  // Next prepends a node_modules ignore rule that overrides our ESM allowlist.
+  config.transformIgnorePatterns = [
+    ...customJestConfig.transformIgnorePatterns,
+    '^.+\\.module\\.(css|sass|scss)$',
+  ];
+  return config;
+};

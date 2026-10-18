@@ -55,7 +55,7 @@ it('sends explicitly, supports Shift+Enter, and waits for Chinese composition', 
   expect(input.textContent).toBe('');
 });
 
-it('shows safe plain text, retry, and clear actions', () => {
+it('keeps readable text while skipping raw HTML, with retry and clear actions', async () => {
   jest.mocked(useChat).mockReturnValue({
     ...chatState,
     messages: [
@@ -63,12 +63,12 @@ it('shows safe plain text, retry, and clear actions', () => {
       {
         id: 'a',
         role: 'assistant',
-        parts: [{ type: 'text', text: '<img src=x onerror=alert(1)>' }],
+        parts: [{ type: 'text', text: '安全内容\n\n<img src=x onerror=alert(1)>' }],
       },
     ],
   });
   render(<ChatClient userId='account-a' available />);
-  expect(screen.getByText('<img src=x onerror=alert(1)>')).toBeInTheDocument();
+  expect(await screen.findByText('安全内容')).toBeInTheDocument();
   expect(screen.queryByRole('img')).not.toBeInTheDocument();
   const answer = screen.getByRole('article', { name: 'AI 助手的回答' });
   fireEvent.click(within(answer).getByRole('button', { name: '重试回答' }));
@@ -86,6 +86,25 @@ it('allows retry when a request ends before an assistant answer is available', (
   render(<ChatClient userId='account-a' available />);
   fireEvent.click(screen.getByRole('button', { name: '重试回答' }));
   expect(mockRetry).toHaveBeenCalled();
+});
+
+it('renders bold CJK text next to Chinese punctuation and characters', async () => {
+  jest.mocked(useChat).mockReturnValue({
+    ...chatState,
+    messages: [
+      {
+        id: 'a',
+        role: 'assistant',
+        parts: [{ type: 'text', text: '汤姆的**「手型枪」**技能。' }],
+      },
+    ],
+  });
+  render(<ChatClient userId='account-a' available />);
+  const answer = screen.getByRole('article', { name: 'AI 助手的回答' });
+  expect(await within(answer).findByText('「手型枪」')).toHaveAttribute(
+    'data-streamdown',
+    'strong'
+  );
 });
 
 it('disables sends and clears during streaming, with a stop action', () => {

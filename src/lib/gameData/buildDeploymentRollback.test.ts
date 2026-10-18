@@ -6,6 +6,8 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 const deployScript = readFileSync('scripts/ops/deploy_server.sh', 'utf8').replaceAll('\r\n', '\n');
+// Git Bash process startup makes the multi-scenario deployment fixture slower on Windows.
+const deploymentTestTimeout = process.platform === 'win32' ? 180_000 : 90_000;
 
 describe('VPS build rollback contract', () => {
   it('requires artifacts on candidate releases, including public checks, but can recover an older release', () => {
@@ -132,26 +134,30 @@ printf '%s' "\${BUILD_REASONS[*]}"
     expect(invalid.stderr).toContain('Unknown argument');
   });
 
-  it('keeps production intact during builds and recovers a failed cutover using isolated releases', () => {
-    const testRoot = mkdtempSync(path.join(tmpdir(), 'tjwiki-deploy-test-'));
-    try {
-      const bash = process.platform === 'win32' ? 'C:/Program Files/Git/bin/bash.exe' : 'bash';
-      const result = spawnSync(bash, ['scripts/ops/deploy_server.test.sh'], {
-        encoding: 'utf8',
-        timeout: 90_000,
-        env: { ...process.env, TEST_ROOT: testRoot },
-      });
-      expect({
-        error: result.error,
-        status: result.status,
-        output: result.stdout + result.stderr,
-      }).toEqual({
-        error: undefined,
-        status: 0,
-        output: expect.stringContaining('Verified isolated release deployments'),
-      });
-    } finally {
-      rmSync(testRoot, { recursive: true, force: true });
-    }
-  }, 95_000);
+  it(
+    'keeps production intact during builds and recovers a failed cutover using isolated releases',
+    () => {
+      const testRoot = mkdtempSync(path.join(tmpdir(), 'tjwiki-deploy-test-'));
+      try {
+        const bash = process.platform === 'win32' ? 'C:/Program Files/Git/bin/bash.exe' : 'bash';
+        const result = spawnSync(bash, ['scripts/ops/deploy_server.test.sh'], {
+          encoding: 'utf8',
+          timeout: deploymentTestTimeout,
+          env: { ...process.env, TEST_ROOT: testRoot },
+        });
+        expect({
+          error: result.error,
+          status: result.status,
+          output: result.stdout + result.stderr,
+        }).toEqual({
+          error: undefined,
+          status: 0,
+          output: expect.stringContaining('Verified isolated release deployments'),
+        });
+      } finally {
+        rmSync(testRoot, { recursive: true, force: true });
+      }
+    },
+    deploymentTestTimeout + 5_000
+  );
 });
