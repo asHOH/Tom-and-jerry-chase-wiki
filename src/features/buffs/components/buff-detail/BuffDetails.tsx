@@ -25,7 +25,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
   const [effectiveBuff, updateBuff] = useEditableEntity(
     { entityType: 'buffs', entityId: buffName },
     buff
-  ) as unknown as readonly [Buff, (mutate: (value: Buff) => void) => void];
+  );
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveBuff.name, 'buff');

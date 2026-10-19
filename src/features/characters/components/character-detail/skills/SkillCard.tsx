@@ -89,7 +89,7 @@ function updateSkillName({
   newName,
 }: {
   skillIndex: number;
-  localCharacter: CharacterWithFaction;
+  localCharacter: DeepReadonly<CharacterWithFaction>;
   updateCharacter: EditableUpdate<CharacterWithFaction>;
   newName: string;
 }) {
@@ -148,7 +148,7 @@ function SkillHeader({
   skill: DeepReadonly<Skill>;
   skillTypeLabel: string;
   skillIndex: number;
-  localCharacter: CharacterWithFaction;
+  localCharacter: DeepReadonly<CharacterWithFaction>;
   updateCharacter: EditableUpdate<CharacterWithFaction>;
   isEditMode: boolean;
   showHistory: boolean;
@@ -229,7 +229,7 @@ export default function SkillCard({
   const [localCharacter, updateCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
-  ) as unknown as readonly [CharacterWithFaction, EditableUpdate<CharacterWithFaction>];
+  );
   const isMobile = useMobile();
   const skillTypeLabel = getSkillTypeLabel(skill.type, isSingleWeapon);
 

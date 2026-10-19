@@ -30,7 +30,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
   const [effectiveEntity, updateEntity] = useEditableEntity(
     { entityType: 'entities', entityId: entityName },
     entity
-  ) as unknown as readonly [Entity, (mutate: (value: Entity) => void) => void];
+  );
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveEntity.name, 'entity');
@@ -102,7 +102,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
           <div className='space-y-4'>
             {(effectiveEntity.skills ?? [])
               .map((skill) => {
-                const R: Skill & { cooldown?: number } = { ...skill, id: skill.type };
+                const R: DeepReadonly<Skill & { cooldown?: number }> = { ...skill, id: skill.type };
                 return R;
               })
               .map<React.ReactNode>((skill: DeepReadonly<Skill & { cooldown?: number }>, index) => (

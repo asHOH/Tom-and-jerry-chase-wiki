@@ -1,5 +1,6 @@
 'use client';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { getBuffTypeColors } from '@/lib/design';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
@@ -28,7 +29,7 @@ const parseRangeValue = (value: string): number | 'infinity' | undefined => {
   return Number.isNaN(number) ? undefined : number;
 };
 
-export default function BuffAttributesCard({ buff }: { buff: Buff }) {
+export default function BuffAttributesCard({ buff }: { buff: DeepReadonly<Buff> }) {
   const { isEditMode } = useEditMode();
   const { buffName } = useLocalBuff();
   const ed = editable('buffs');
@@ -36,7 +37,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const [effectiveBuff, updateBuff] = useEditableEntity(
     { entityType: 'buffs', entityId: buffName },
     buff
-  ) as unknown as readonly [Buff, (mutate: (value: Buff) => void) => void];
+  );
   const [buffsSnapshot] = useEditableDomain('buffs', buffs);
 
   const availableAliases = (effectiveBuff.aliases ?? buff.aliases ?? [])

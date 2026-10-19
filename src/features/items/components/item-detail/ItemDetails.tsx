@@ -20,10 +20,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
   const { itemName } = useLocalItem();
   const ed = editable('items');
 
-  const [effectiveItem] = useEditableEntity(
-    { entityType: 'items', entityId: itemName },
-    item
-  ) as unknown as readonly [Item];
+  const [effectiveItem] = useEditableEntity({ entityType: 'items', entityId: itemName }, item);
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveItem.name, 'item');

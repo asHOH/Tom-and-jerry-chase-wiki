@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
+import { isReadonlyArray } from '@/lib/isReadonlyArray';
 import { useEditableDomain, type EditableUpdate } from '@/hooks/useEditableGameData';
 import { useToast } from '@/context/ToastContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
@@ -54,7 +56,7 @@ function TraitItemEditor({
   updateItem,
   onRemove,
 }: {
-  item: SingleItemOrGroup;
+  item: DeepReadonly<SingleItemOrGroup>;
   updateItem: EditableUpdate<SingleItemOrGroup>;
   onRemove: () => void;
 }) {
@@ -120,7 +122,7 @@ function TraitGroupEditor({
   group,
   updateGroup,
 }: {
-  group: TraitGroup;
+  group: DeepReadonly<TraitGroup>;
   updateGroup: EditableUpdate<TraitGroup>;
 }) {
   const removeItem = (groupIndex: number, alternativeIndex: number) => {
@@ -149,7 +151,7 @@ function TraitGroupEditor({
   return (
     <div className='space-y-3'>
       {group.map((groupItem, groupIndex) => {
-        const alternatives = Array.isArray(groupItem) ? groupItem : [groupItem];
+        const alternatives = isReadonlyArray(groupItem) ? groupItem : [groupItem];
         return (
           <div key={groupIndex} className='border-border bg-surface rounded-xl border p-3'>
             <div className='mb-2 flex items-center justify-between gap-2'>
@@ -203,8 +205,8 @@ function TraitCard({
   updateTraits,
 }: {
   traitId: string;
-  trait: Trait;
-  traits: Record<string, Trait>;
+  trait: DeepReadonly<Trait>;
+  traits: DeepReadonly<Record<string, Trait>>;
   updateTraits: EditableUpdate<Record<string, Trait>>;
 }) {
   const { error, info } = useToast();
@@ -390,11 +392,12 @@ function TraitCard({
   );
 }
 
-export default function TraitEditor({ traitsSnapshot }: { traitsSnapshot: Record<string, Trait> }) {
-  const [traits, updateTraits] = useEditableDomain(
-    'traits',
-    traitsSnapshot
-  ) as unknown as readonly [Record<string, Trait>, EditableUpdate<Record<string, Trait>>];
+export default function TraitEditor({
+  traitsSnapshot,
+}: {
+  traitsSnapshot: DeepReadonly<Record<string, Trait>>;
+}) {
+  const [traits, updateTraits] = useEditableDomain('traits', traitsSnapshot);
   const [query, setQuery] = useState('');
 
   const filteredEntries = useMemo(() => {
@@ -402,9 +405,9 @@ export default function TraitEditor({ traitsSnapshot }: { traitsSnapshot: Record
     return Object.entries(traits).filter(([id, trait]) => {
       if (!normalizedQuery) return true;
       const memberNames = [
-        ...trait.group.flatMap((item) => (Array.isArray(item) ? item : [item])),
+        ...trait.group.flatMap((item) => (isReadonlyArray(item) ? item : [item])),
         ...(trait.spacialCase ?? []).flatMap((specialCase) =>
-          specialCase.group.flatMap((item) => (Array.isArray(item) ? item : [item]))
+          specialCase.group.flatMap((item) => (isReadonlyArray(item) ? item : [item]))
         ),
       ]
         .map((item) => item.name)

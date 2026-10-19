@@ -1,5 +1,6 @@
 'use client';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalSpecialSkill } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
@@ -12,7 +13,7 @@ import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 
 interface SpecialSkillDetailClientProps {
-  skill: SpecialSkill;
+  skill: DeepReadonly<SpecialSkill>;
 }
 
 export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetailClientProps) {
@@ -26,7 +27,7 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
       factionId: factionId === 'cat' || factionId === 'mouse' ? factionId : skill.factionId!,
     },
     skill
-  ) as unknown as readonly [SpecialSkill, (mutate: (value: SpecialSkill) => void) => void];
+  );
 
   return (
     <AttributesCardLayout

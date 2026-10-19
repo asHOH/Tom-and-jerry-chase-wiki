@@ -1,7 +1,7 @@
 'use client';
 
 import { getCardCostColors, getCardRankColors } from '@/lib/design';
-import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
+import type { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
@@ -63,10 +63,7 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
   const [effectiveCard, updateCard] = useEditableEntity(
     { entityType: 'cards', entityId: cardId },
     card
-  ) as unknown as readonly [
-    KnowledgeCardWithFaction,
-    (mutate: (value: KnowledgeCardWithFaction) => void) => void,
-  ];
+  );
 
   const rankColors = getCardRankColors(card.rank, true);
   const costColors = getCardCostColors(card.cost, true);

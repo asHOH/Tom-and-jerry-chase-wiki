@@ -25,7 +25,7 @@ export default function AchievementDetailClient({ achievement }: { achievement: 
       factionId: factionId === 'cat' || factionId === 'mouse' ? factionId : achievement.factionId!,
     },
     achievement
-  ) as unknown as readonly [Achievement];
+  );
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(

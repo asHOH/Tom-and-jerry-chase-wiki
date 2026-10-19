@@ -7,7 +7,7 @@ import {
   projectKnowledgeCardCharacters,
   type KnowledgeCardCharacterLookup,
 } from '@/lib/gameData/published/clientProjections';
-import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
+import type { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
@@ -39,10 +39,7 @@ export default function KnowledgeCardDetails({
   const { cardId } = useLocalCard();
   const ed = editable('cards');
 
-  const [effectiveCard] = useEditableEntity(
-    { entityType: 'cards', entityId: cardId },
-    card
-  ) as unknown as readonly [KnowledgeCardWithFaction];
+  const [effectiveCard] = useEditableEntity({ entityType: 'cards', entityId: cardId }, card);
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveCard.id, 'knowledgeCard');

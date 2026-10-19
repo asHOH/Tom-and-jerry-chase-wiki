@@ -4,6 +4,7 @@
 import { useState } from 'react';
 
 import { cn } from '@/lib/design';
+import { isReadonlyArray } from '@/lib/isReadonlyArray';
 import { SingleItem } from '@/data/types';
 import Button from '@/components/ui/Button';
 import SingleItemButton from '@/components/ui/SingleItemButton';
@@ -20,7 +21,7 @@ const ArrowIcon = ({ expanded }: { expanded: boolean }) => (
 
 interface CollapsibleItemsProps {
   /** 要显示的数据项，可以是单个或多个 */
-  items: SingleItem | SingleItem[];
+  items: SingleItem | readonly SingleItem[];
   /** 显示的标题，例如"归属者：" */
   title?: string;
   /** 组件标签，用于aria-label */
@@ -52,7 +53,7 @@ export default function CollapsibleItems({
   if (!items) return null;
 
   // 如果是数组
-  if (Array.isArray(items)) {
+  if (isReadonlyArray(items)) {
     const itemsArray = items;
 
     // 空数组不显示

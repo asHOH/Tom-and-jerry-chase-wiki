@@ -1,5 +1,6 @@
 'use client';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { getModeTypeColors } from '@/lib/design';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
@@ -22,7 +23,7 @@ export default function ModeAttributesCard({
   mode,
   mapsData = maps,
 }: {
-  mode: Mode;
+  mode: DeepReadonly<Mode>;
   mapsData?: PublishedGameDataByType['maps'];
 }) {
   const { isEditMode } = useEditMode();
@@ -32,11 +33,11 @@ export default function ModeAttributesCard({
   const [effectiveMode, updateMode] = useEditableEntity(
     { entityType: 'modes', entityId: modeName },
     mode
-  ) as unknown as readonly [Mode, (mutate: (value: Mode) => void) => void];
+  );
   const [mapsSnapshot] = useEditableDomain('maps', mapsData);
   const mapsSource = mapsSnapshot;
 
-  function putTypeTagOn(mode: Mode) {
+  function putTypeTagOn(mode: DeepReadonly<Mode>) {
     return (
       <Tag size='xs' margin='compact' colorStyles={getModeTypeColors(mode.type)}>
         {isEditMode ? (

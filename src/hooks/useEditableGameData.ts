@@ -83,6 +83,13 @@ export function useEditableDomain<EntityType extends PublishableEntityType, View
 
 export function useEditableEntity<EntityType extends PublishableEntityType>(
   ref: EditableEntityRef<EntityType>,
+  publishedFallback: DeepReadonly<PublishedGameDataEntityByType[EntityType]>
+): EditableResult<
+  DeepReadonly<PublishedGameDataEntityByType[EntityType]>,
+  PublishedGameDataEntityByType[EntityType]
+>;
+export function useEditableEntity<EntityType extends PublishableEntityType>(
+  ref: EditableEntityRef<EntityType>,
   publishedFallback: DeepReadonly<PublishedGameDataEntityByType[EntityType]> | null
 ): EditableResult<
   DeepReadonly<PublishedGameDataEntityByType[EntityType]> | null,

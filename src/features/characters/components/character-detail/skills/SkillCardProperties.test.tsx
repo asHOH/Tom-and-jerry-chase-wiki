@@ -49,7 +49,7 @@ function createSkill(overrides: Partial<Skill> = {}): Skill {
 function setSkill(skill: Skill) {
   const character = characters['测试角色']!;
   character.skills = [skill];
-  return snapshot(character) as unknown as CharacterWithFaction;
+  return snapshot(character);
 }
 
 function renderProperties(skill: Skill, isEditMode = false) {

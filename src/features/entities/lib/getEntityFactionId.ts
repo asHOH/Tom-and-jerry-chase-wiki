@@ -1,3 +1,5 @@
+import type { DeepReadonly } from '@/types/deep-readonly';
+import { isReadonlyArray } from '@/lib/isReadonlyArray';
 import { getSingleItemFactionId } from '@/lib/singleItemTools';
 import { Entity, FactionId, SingleItem } from '@/data/types';
 import { entities } from '@/data';
@@ -6,7 +8,7 @@ import { entities } from '@/data';
 const factionCache = new Map<string, FactionId | undefined>();
 
 export default function getEntityFactionId(
-  entity: Entity,
+  entity: DeepReadonly<Entity>,
   _visitedSet?: Set<string>,
   _cache?: Map<string, FactionId | undefined>
 ): FactionId | undefined {
@@ -48,7 +50,7 @@ export default function getEntityFactionId(
       }
     };
 
-    if (Array.isArray(entity.owner)) {
+    if (isReadonlyArray(entity.owner)) {
       if (entity.owner.length === 0) {
         result = undefined;
       } else {

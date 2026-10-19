@@ -1,5 +1,6 @@
 'use client';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
@@ -35,10 +36,10 @@ const FIXTURE_TYPES: readonly FixtureTypeList[] = [
 ];
 const FIXTURE_SOURCES: readonly FixtureSourceList[] = ['通用组件', '地图组件', '模式组件'];
 
-const toFixtureTypeArray = (type: Fixture['type']): FixtureTypeList[] =>
+const toFixtureTypeArray = (type: DeepReadonly<Fixture['type']>): FixtureTypeList[] =>
   typeof type === 'string' ? [type] : [...type];
 
-export default function FixtureAttributesCard({ fixture }: { fixture: Fixture }) {
+export default function FixtureAttributesCard({ fixture }: { fixture: DeepReadonly<Fixture> }) {
   const { isDetailedView: isDetailed } = useAppContext();
   const { isEditMode } = useEditMode();
   const { fixtureName } = useLocalFixture();
@@ -47,7 +48,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
   const [effectiveFixture, updateFixture] = useEditableEntity(
     { entityType: 'fixtures', entityId: fixtureName },
     fixture
-  ) as unknown as readonly [Fixture, (mutate: (value: Fixture) => void) => void];
+  );
   const [mapsSnapshot] = useEditableDomain('maps', maps);
 
   /* 计算variant相关内容 */
@@ -55,7 +56,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
   const variant = getSingleItemVariant({ name: fixture.name, type: 'fixture' });
   /* -------- */
 
-  function putTypeTagOn(currentFixture: Fixture) {
+  function putTypeTagOn(currentFixture: DeepReadonly<Fixture>) {
     if (typeof currentFixture.type === 'string') {
       return (
         <Tag size='sm' margin='compact' colorStyles={getFixtureTypeColors(currentFixture.type)}>

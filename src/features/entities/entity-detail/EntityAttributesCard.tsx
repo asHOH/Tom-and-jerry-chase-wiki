@@ -1,5 +1,6 @@
 'use client';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { getEntityTypeColors } from '@/lib/design';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
@@ -90,7 +91,7 @@ const deriveEntityTypes = (tags: readonly Entitytaglist[]): Entitytypelist[] => 
   return types.size > 0 ? Array.from(types) : ['特殊类'];
 };
 
-export default function EntityAttributesCard({ entity }: { entity: Entity }) {
+export default function EntityAttributesCard({ entity }: { entity: DeepReadonly<Entity> }) {
   const { isDetailedView: isDetailed } = useAppContext();
   const { isEditMode } = useEditMode();
   const { entityName } = useLocalEntity();
@@ -99,7 +100,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
   const [effectiveEntity, updateEntity] = useEditableEntity(
     { entityType: 'entities', entityId: entityName },
     entity
-  ) as unknown as readonly [Entity, (mutate: (value: Entity) => void) => void];
+  );
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: entity.name, type: 'entity' });
@@ -113,7 +114,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
       : [effectiveEntity.owner]
     : [];
 
-  function putTypeTagOn(currentEntity: Entity, mode: 'type' | 'tag' = 'type') {
+  function putTypeTagOn(currentEntity: DeepReadonly<Entity>, mode: 'type' | 'tag' = 'type') {
     const tags = mode === 'tag' ? currentEntity.entitytag : currentEntity.entitytype;
     if (typeof tags === 'string') {
       return (

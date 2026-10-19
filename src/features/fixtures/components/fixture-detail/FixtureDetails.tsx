@@ -26,7 +26,7 @@ export default function FixtureDetailClient({ fixture }: { fixture: Fixture }) {
   const [effectiveFixture] = useEditableEntity(
     { entityType: 'fixtures', entityId: fixtureName },
     fixture
-  ) as unknown as readonly [Fixture];
+  );
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveFixture.name, 'fixture');

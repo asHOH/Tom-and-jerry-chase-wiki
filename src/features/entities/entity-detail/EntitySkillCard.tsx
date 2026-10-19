@@ -10,7 +10,7 @@ import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { Entity, Skill, SkillLevel, SkillType } from '@/data/types';
+import { Skill, SkillLevel, SkillType } from '@/data/types';
 import SkillUsagePropertiesEditor from '@/features/characters/components/character-detail/skills/SkillUsagePropertiesEditor';
 import {
   addSkillPart,
@@ -115,9 +115,7 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
     cooldownProperty !== null || usageSections.some((section) => section.properties.length > 0);
   const usageParts = getSkillUsageParts(skill);
   const isMultiPart = hasSkillParts(skill);
-  const factionId = effectiveEntity
-    ? getEntityFactionId(effectiveEntity as unknown as Entity)
-    : undefined;
+  const factionId = effectiveEntity ? getEntityFactionId(effectiveEntity) : undefined;
 
   return (
     <Card className='p-6!'>

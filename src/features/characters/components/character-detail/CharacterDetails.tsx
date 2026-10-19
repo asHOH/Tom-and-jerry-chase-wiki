@@ -7,7 +7,7 @@ import type { DeepReadonly } from '@/types/deep-readonly';
 import type { HistoryEntry } from '@/lib/historyUtils';
 import singleItemRreverse from '@/lib/singleItemReverse';
 import type { CharacterWithFaction, ContentEditor } from '@/lib/types';
-import { useEditableEntity, type EditableUpdate } from '@/hooks/useEditableGameData';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
@@ -99,10 +99,7 @@ export default function CharacterDetails({
   const [localCharacter, updateCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId || character.id },
     character
-  ) as unknown as readonly [
-    DeepReadonly<CharacterWithFaction>,
-    EditableUpdate<CharacterWithFaction>,
-  ];
+  );
   const factionId = localCharacter.factionId!;
   const historyNames = [character.id, ...(character.aliases ?? [])];
   const localHistoryNames = [localCharacter.id, ...(localCharacter.aliases ?? [])];

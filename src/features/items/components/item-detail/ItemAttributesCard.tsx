@@ -1,5 +1,6 @@
 'use client';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { getItemSourceColors /* , getCardCostColors */, getItemTypeColors } from '@/lib/design';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
@@ -31,7 +32,7 @@ const ITEM_TYPES: readonly Itemtypelist[] = [
 ];
 const ITEM_SOURCES: readonly Itemsourcelist[] = ['常规道具', '地图道具'];
 
-export default function ItemAttributesCard({ item }: { item: Item }) {
+export default function ItemAttributesCard({ item }: { item: DeepReadonly<Item> }) {
   const { isDetailedView: isDetailed } = useAppContext();
   const { isEditMode } = useEditMode();
   const { itemName } = useLocalItem();
@@ -40,7 +41,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
   const [effectiveItem, updateItem] = useEditableEntity(
     { entityType: 'items', entityId: itemName },
     item
-  ) as unknown as readonly [Item, (mutate: (value: Item) => void) => void];
+  );
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: item.name, type: 'item' });

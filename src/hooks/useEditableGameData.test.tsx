@@ -71,6 +71,23 @@ describe('editable game-data reads', () => {
     expect(projectDraft).not.toHaveBeenCalled();
   });
 
+  it.each(['loading', 'ready'] as const)(
+    'preserves concrete and null fallbacks for a missing entity while %s',
+    (runtimeStatus) => {
+      const fallback = items[Object.keys(items)[0]!]!;
+      const { result } = renderHook(
+        () => ({
+          concrete: useEditableEntity({ entityType: 'items', entityId: 'missing-item' }, fallback),
+          nullable: useEditableEntity({ entityType: 'items', entityId: 'missing-item' }, null),
+        }),
+        { wrapper: createWrapper(runtimeStatus) }
+      );
+
+      expect(result.current.concrete[0]).toBe(fallback);
+      expect(result.current.nullable[0]).toBeNull();
+    }
+  );
+
   it('reads and subscribes to a ready draft domain', async () => {
     const itemId = Object.keys(items)[0]!;
     const { result } = renderHook(() => useEditableDomain('items', items), {

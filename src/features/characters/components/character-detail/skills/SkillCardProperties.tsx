@@ -30,7 +30,7 @@ const e = editable('characters');
 type SkillCardPropertiesProps = {
   skill: DeepReadonly<Skill>;
   skillIndex: number;
-  localCharacter: CharacterWithFaction;
+  localCharacter: DeepReadonly<CharacterWithFaction>;
   isEditMode: boolean;
   isDetailed: boolean;
   isMobileEditMode?: boolean;

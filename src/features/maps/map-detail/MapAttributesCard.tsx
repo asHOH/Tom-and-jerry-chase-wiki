@@ -1,5 +1,6 @@
 'use client';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
@@ -27,7 +28,7 @@ export default function MapAttributesCard({
   map,
   modeNames,
 }: {
-  map: Map;
+  map: DeepReadonly<Map>;
   modeNames: readonly string[];
 }) {
   const { isEditMode } = useEditMode();
@@ -37,7 +38,7 @@ export default function MapAttributesCard({
   const [effectiveMap, updateMap] = useEditableEntity(
     { entityType: 'maps', entityId: mapName },
     map
-  ) as unknown as readonly [Map, (mutate: (value: Map) => void) => void];
+  );
   const [editModes] = useEditableDomain('modes', {});
   const availableModeOptions = isEditMode ? Object.keys(editModes) : modeNames;
   const activeSupportedModes = Array.isArray(effectiveMap?.supportedModes)

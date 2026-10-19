@@ -1,5 +1,6 @@
 'use client';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { getFactionButtonColors } from '@/lib/design';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalAchievement } from '@/hooks/useLocalEditEntity';
@@ -14,7 +15,11 @@ import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 
-export default function AchievementAttributesCard({ achievement }: { achievement: Achievement }) {
+export default function AchievementAttributesCard({
+  achievement,
+}: {
+  achievement: DeepReadonly<Achievement>;
+}) {
   const { isEditMode } = useEditMode();
   const { achievementName, factionId } = useLocalAchievement();
   const ed = editable('achievements');
@@ -25,7 +30,7 @@ export default function AchievementAttributesCard({ achievement }: { achievement
       factionId: factionId === 'cat' || factionId === 'mouse' ? factionId : achievement.factionId!,
     },
     achievement
-  ) as unknown as readonly [Achievement, (mutate: (value: Achievement) => void) => void];
+  );
 
   return (
     <AttributesCardLayout

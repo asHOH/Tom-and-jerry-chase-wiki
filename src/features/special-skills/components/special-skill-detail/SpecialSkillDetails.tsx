@@ -40,7 +40,7 @@ export default function SpecialSkillDetailClient({
       factionId: factionId === 'cat' || factionId === 'mouse' ? factionId : skill.factionId!,
     },
     skill
-  ) as unknown as readonly [SpecialSkill];
+  );
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveSkill.name, 'specialSkill', effectiveSkill.factionId);
