@@ -113,7 +113,7 @@ const FeedbackSection =
                   <h3 className='mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100'>
                     感谢您的反馈！
                   </h3>
-                  <p className='mb-4 text-gray-600 dark:text-gray-400'>我们会认真考虑您的建议。</p>
+                  <p className='text-muted-foreground mb-4'>我们会认真考虑您的建议。</p>
                   <Button
                     onClick={() => {
                       setSubmitted(false);
@@ -219,7 +219,7 @@ const FeedbackSection =
                               setIsAnonymous(checked);
                               // Preserve contact value so users can toggle back without losing input
                             }}
-                            className='h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
+                            className='focus:ring-focus h-4 w-4 rounded border-gray-300 text-blue-600'
                             aria-controls='contact'
                             aria-label='匿名提交'
                           />
@@ -278,7 +278,7 @@ const FeedbackSection =
                     </Button>
                   </div>
 
-                  <div className='mt-4 border-t border-gray-200 pt-3 dark:border-gray-600'>
+                  <div className='border-border mt-4 border-t pt-3'>
                     <p className='text-center text-xs text-gray-500 dark:text-gray-400'>
                       感谢您帮助改进猫和老鼠手游百科！
                     </p>

@@ -88,9 +88,7 @@ export default function SectionNavigationShell({
 
       <NavigationButtons items={items} isMobile={isMobile} isTabActive={isActive} />
 
-      <div className='border-t-2 border-b-2 border-dashed border-gray-300 dark:border-gray-700'>
-        {children}
-      </div>
+      <div className='border-border border-t-2 border-b-2 border-dashed'>{children}</div>
 
       {showBottomNavigation ? (
         <NavigationButtons items={items} isMobile={isMobile} isTabActive={isActive} />

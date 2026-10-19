@@ -39,7 +39,7 @@ export default function PreferenceChoice<T extends string>({
               aria-checked={selected}
               onClick={() => onChange(option.value)}
               className={cn(
-                'rounded-lg border px-3 py-3 text-left transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none',
+                'focus-visible:ring-focus rounded-lg border px-3 py-3 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none',
                 selected
                   ? 'border-blue-500 bg-blue-50 text-blue-900 dark:border-blue-500 dark:bg-blue-950/40 dark:text-blue-100'
                   : 'border-border bg-surface hover:bg-control text-gray-700 dark:text-gray-300'

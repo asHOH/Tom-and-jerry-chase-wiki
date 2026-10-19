@@ -51,7 +51,7 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
     iconBg: 'bg-blue-200',
     itemBg: 'bg-blue-50 dark:bg-blue-900/30',
     interactive:
-      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95',
+      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-focus active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full hover:bg-blue-300 dark:hover:bg-blue-600 cursor-pointer',
   },
@@ -105,7 +105,7 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
 const relationItemNameClassName = 'text-sm text-gray-700 dark:text-gray-300';
 const relationItemDescriptionClassName = 'mt-1 text-left text-xs text-gray-500 dark:text-gray-400';
 const relationItemTextareaClassName =
-  'bg-surface/60 mt-1 w-full resize-none rounded-md border border-gray-200 px-2 py-1 text-left text-xs text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:text-gray-300';
+  'bg-surface/60 mt-1 w-full resize-none rounded-md border border-gray-200 px-2 py-1 text-left text-xs text-gray-600 focus:border-focus focus:ring-1 focus:ring-focus focus:outline-none dark:border-gray-600 dark:text-gray-300';
 const minorLabelClassName = 'text-[11px] text-gray-500 dark:text-gray-400';
 const relationTagClassName =
   'bg-surface/80 inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium text-gray-600 ring-1 ring-gray-200 dark:text-gray-300 dark:ring-slate-600';
@@ -394,7 +394,7 @@ export default function CharacterRelationPanel({
   const visibleSections = sections.filter((section) => section.show !== false);
 
   return (
-    <div className='flex items-start gap-6 rounded-lg bg-gray-50 p-4 shadow dark:bg-slate-800/50'>
+    <div className='bg-surface-sunken flex items-start gap-6 rounded-lg p-4 shadow'>
       <div className='flex flex-1 flex-col gap-4'>
         {visibleSections.map((section) => (
           <RelationSection

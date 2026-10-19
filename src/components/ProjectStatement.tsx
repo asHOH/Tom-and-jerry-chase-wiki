@@ -24,7 +24,7 @@ const renderCreatorLinks = (creatorIds: readonly string[]) => {
           <Link
             href={`/users/${encodeURIComponent(creator.nickname)}`}
             aria-label={`${displayName}（查看用户页）`}
-            className='rounded-xs whitespace-pre-wrap text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
+            className='focus-visible:ring-focus rounded-xs whitespace-pre-wrap text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
           >
             {displayName}
           </Link>
@@ -84,7 +84,7 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
               variant='unstyled'
               type='button'
               onClick={onFeedbackClick}
-              className='font-inherit cursor-pointer rounded-xs border-none bg-transparent p-0 text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
+              className='font-inherit focus-visible:ring-focus cursor-pointer rounded-xs border-none bg-transparent p-0 text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
             >
               {projectInfo.description.feedbackLinkText}
             </Button>

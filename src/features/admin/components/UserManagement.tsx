@@ -179,7 +179,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
       <Card className='dark:text-slate-200'>
         <div className='mb-4 flex items-center justify-between'>
           <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>用户管理</h2>
-          <div className='text-sm text-gray-600 dark:text-gray-400'>{users.length} 个用户</div>
+          <div className='text-muted-foreground text-sm'>{users.length} 个用户</div>
         </div>
 
         <div className='overflow-x-auto'>

@@ -204,7 +204,7 @@ export default function CharacterRankingGrid({
           <>
             {propertyInfo?.description}
             {charactersWithProperty.length > 0 && (
-              <span className='mt-2 block text-sm text-gray-600 dark:text-gray-400'>
+              <span className='text-muted-foreground mt-2 block text-sm'>
                 共 {charactersWithProperty.length} 个角色拥有此属性
                 {propertyInfo?.higherIsBetter === false && ' (数值越低越好)'}
               </span>

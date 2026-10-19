@@ -188,7 +188,7 @@ export default function MapAttributesCard({
             </div>
           )}
 
-          <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+          <div className='border-border border-t pt-1'>
             <span className='text-lg font-bold whitespace-pre'>地图信息</span>
             <div className='auto-fill-grid grid-container mt-1 grid grid-cols-[repeat(2,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'>
               {(isEditMode || map.roomCount !== undefined) && (
@@ -343,7 +343,7 @@ export default function MapAttributesCard({
           </div>
 
           {(isEditMode || (map.supportedModes && map.supportedModes.length > 0)) && (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border border-t pt-1'>
               <span className='text-lg font-bold whitespace-pre'>支持模式</span>
               {isEditMode ? (
                 <div className='mt-1 flex flex-wrap gap-2 text-xs'>
@@ -383,7 +383,7 @@ export default function MapAttributesCard({
           )}
 
           {(isEditMode || (effectiveMap.mapSkin && effectiveMap.mapSkin.length > 0)) && (
-            <div className='border-t border-gray-300 py-1 dark:border-gray-600'>
+            <div className='border-border border-t py-1'>
               <span className='text-lg font-bold whitespace-pre'>地图换肤</span>
               <div className='mt-1 flex flex-col gap-2'>
                 {(effectiveMap.mapSkin ?? []).map((singleMapSkin, index) => {

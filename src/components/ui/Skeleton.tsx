@@ -163,7 +163,7 @@ export function SkeletonSpecialSkillCard({ animate = true }: { animate?: boolean
 export function SkeletonBuffCard({ animate = true }: { animate?: boolean }) {
   return (
     <SkeletonCard>
-      <div className='flex items-center gap-3 border border-dotted border-gray-200 p-2 dark:border-slate-600'>
+      <div className='border-border flex items-center gap-3 border border-dotted p-2'>
         <Skeleton className='h-10 w-10 rounded' animate={animate} />
         <div className='flex-1 space-y-2'>
           <Skeleton className='h-4 w-3/4' animate={animate} />

@@ -47,7 +47,7 @@ export default function QuestionCard({
               className={cn(
                 'flex items-center gap-3 rounded-lg border-2 px-5 py-4 text-left transition-all duration-150',
                 'min-h-11 touch-manipulation', // Mobile touch target
-                'focus:ring-2 focus:ring-blue-400 focus:outline-none',
+                'focus:ring-focus focus:ring-2 focus:outline-none',
                 isSelected
                   ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30'
                   : 'border-border bg-surface hover:bg-control hover:border-gray-300 dark:hover:border-slate-600'

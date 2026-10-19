@@ -143,7 +143,7 @@ export default function CharacterDetails({
               <Card className='h-full overflow-hidden'>
                 {(isEditMode || !isMobile) && (
                   <>
-                    <div className='image-container relative -mx-4 -mt-4 mb-4 h-64 rounded-t-lg bg-gray-200 dark:bg-slate-700'>
+                    <div className='image-container bg-surface-muted relative -mx-4 -mt-4 mb-4 h-64 rounded-t-lg'>
                       <div className='flex h-full items-center justify-center p-3'>
                         <CharacterImage
                           characterId={localCharacter.id}
@@ -186,7 +186,7 @@ export default function CharacterDetails({
                         gridTemplateColumns: `5rem repeat(auto-fit, minmax(1px,1fr))`,
                       }}
                     >
-                      <div className='image-container relative -mt-4 -ml-4 rounded-tl-lg bg-gray-200 dark:bg-slate-700'>
+                      <div className='image-container bg-surface-muted relative -mt-4 -ml-4 rounded-tl-lg'>
                         <div className='flex h-full items-center justify-center'>
                           <CharacterImage
                             characterId={localCharacter.id}

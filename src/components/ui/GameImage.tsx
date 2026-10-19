@@ -63,7 +63,7 @@ export default function GameImage({
   return (
     <div
       className={cn(
-        'relative mb-3 w-full overflow-hidden bg-gray-200 dark:bg-slate-700',
+        'bg-surface-muted relative mb-3 w-full overflow-hidden',
         size === 'CARD_DETAILS' ? 'h-64' : 'h-48'
       )}
       style={style}

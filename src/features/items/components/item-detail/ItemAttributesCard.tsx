@@ -152,7 +152,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             </Tag>
           </div>
           {isEditMode ? (
-            <div className='grid gap-2 border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border grid gap-2 border-t pt-1'>
               <label className='flex items-center gap-2 text-sm'>
                 <span className='shrink-0'>阵营:</span>
                 <FormSelect
@@ -255,7 +255,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             }}
           />
           {effectiveItem.actorProfileName !== undefined ? (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border border-t pt-1'>
               <span className='text-sm font-bold'>该物件属于特殊角色，具有以下属性：</span>
               <ActorAttributesSection name={effectiveItem.actorProfileName} context='object' />
             </div>
@@ -266,7 +266,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             onChange={(mutate) => updateItem(mutate)}
           />
           {(isEditMode || effectiveItem?.store !== undefined) && (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border border-t pt-1'>
               {isEditMode ? (
                 <div className='flex items-center gap-2'>
                   <span className='text-lg font-bold whitespace-pre'>局内商店：</span>

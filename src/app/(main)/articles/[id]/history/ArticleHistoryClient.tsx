@@ -136,7 +136,7 @@ export default function ArticleHistoryClient() {
         text: '已拒绝',
       },
       revoked: {
-        color: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400',
+        color: 'bg-surface-muted text-foreground',
         text: '已撤销',
       },
     };
@@ -175,7 +175,7 @@ export default function ArticleHistoryClient() {
           <h1 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
             {error ? '加载历史版本失败' : '历史版本未找到'}
           </h1>
-          <p className='mb-6 text-gray-600 dark:text-gray-400'>无法加载此文章的历史版本</p>
+          <p className='text-muted-foreground mb-6'>无法加载此文章的历史版本</p>
           <ButtonLink href={`/articles/${articleId}`}>返回文章</ButtonLink>
         </Card>
       </PageShell>
@@ -229,7 +229,7 @@ export default function ArticleHistoryClient() {
         }
         className='mb-8'
       >
-        {/* <div className='flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4'>
+        {/* <div className='flex items-center gap-2 text-sm text-muted-foreground mb-4'>
           <Link
             href={`/articles/${articleId}`}
             className='hover:text-blue-600 dark:hover:text-blue-400'
@@ -245,7 +245,7 @@ export default function ArticleHistoryClient() {
       {data.versions.length >= 2 && (
         <Card className='mb-6 p-4'>
           <div className='flex flex-wrap items-center justify-between gap-3'>
-            <div className='text-sm text-gray-600 dark:text-gray-400'>
+            <div className='text-muted-foreground text-sm'>
               请选择一个旧版本和一个新版本进行比较
             </div>
             <Button
@@ -303,7 +303,7 @@ export default function ArticleHistoryClient() {
                             }))
                           }
                           disabled={selectedOldIndex !== undefined && index >= selectedOldIndex}
-                          className='bg-control size-4 border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600'
+                          className='bg-control focus:ring-focus size-4 border-gray-300 text-blue-600 dark:border-gray-600'
                           aria-label={`选择版本 #${data.versions.length - index} 作为新版本`}
                         />
                         新
@@ -321,7 +321,7 @@ export default function ArticleHistoryClient() {
                 </div>
 
                 <div className='mb-4 space-y-2'>
-                  <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
+                  <div className='text-muted-foreground flex flex-wrap items-center gap-6 text-sm'>
                     <div className='flex items-center gap-2'>
                       <UserCircleIcon className='size-4' strokeWidth={1.5} />
                       <span>编辑者: {version.users?.nickname || '未知用户'}</span>
@@ -426,7 +426,7 @@ export default function ArticleHistoryClient() {
 
           <Link
             href='/articles'
-            className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+            className='text-muted-foreground px-4 py-2 transition-colors hover:text-gray-800 dark:hover:text-gray-200'
           >
             浏览更多文章
           </Link>

@@ -170,7 +170,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
             ) : null}
           </div>
           {isEditMode ? (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border border-t pt-1'>
               <span className='text-lg font-bold whitespace-pre'>支持地图</span>
               <EditableStringList
                 actionPath={`${fixtureName}.supportedMaps`}
@@ -187,7 +187,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
             </div>
           ) : null}
           {isEditMode ? (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border border-t pt-1'>
               <ActorProfileSelect
                 value={effectiveFixture.actorProfileName}
                 onChange={(profileName) => {
@@ -216,7 +216,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
             }}
           />
           {effectiveFixture.actorProfileName !== undefined ? (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border border-t pt-1'>
               <span className='text-sm font-bold'>该物件属于特殊角色，具有以下属性：</span>
               <ActorAttributesSection name={effectiveFixture.actorProfileName} context='object' />
             </div>

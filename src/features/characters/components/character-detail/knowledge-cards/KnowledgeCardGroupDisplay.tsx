@@ -215,10 +215,7 @@ const GroupDescriptionBlock = ({
 
   return (
     <div
-      className={cn(
-        'rounded-lg bg-gray-50 p-2 sm:p-3 dark:bg-slate-700/50',
-        'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
-      )}
+      className={cn('bg-surface-sunken rounded-lg p-2 sm:p-3', 'ml-11 sm:ml-12 md:ml-13 lg:ml-14')}
     >
       <e.div
         path={descriptionPath}
@@ -570,7 +567,7 @@ export function KnowledgeCardGroupDisplay({
               isGeneral={isGeneral}
             />
             {subIndex < flattenedCombinations.length - 1 && (
-              <div className='my-2 border-t border-gray-300 dark:border-slate-600'></div>
+              <div className='border-border my-2 border-t'></div>
             )}
           </React.Fragment>
         ))}

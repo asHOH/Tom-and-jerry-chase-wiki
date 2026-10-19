@@ -182,7 +182,7 @@ function ReverseResultButton({
           </div>
 
           {/* Description at the bottom with smaller gray text */}
-          <div className='line-clamp-2 text-xs text-gray-600 dark:text-gray-400'>
+          <div className='text-muted-foreground line-clamp-2 text-xs'>
             {result.description ? highlightKeywords(result.description) : '暂无描述'}
           </div>
         </div>

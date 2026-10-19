@@ -227,9 +227,9 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
 
   const renderUploadTab = () => (
     <div className='space-y-4'>
-      <div className='bg-surface-sunken rounded-lg border border-dashed border-gray-300 p-6 text-center dark:border-gray-600'>
+      <div className='bg-surface-sunken border-border rounded-lg border border-dashed p-6 text-center'>
         <p className='mb-2 text-base font-semibold text-gray-900 dark:text-gray-100'>上传新图片</p>
-        <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
+        <p className='text-muted-foreground mb-4 text-sm'>
           {IMAGE_EXT_HINT}，单张不超过 {formatBytesForDisplay(RTE_IMAGE_MAX_BYTES)}。
         </p>
         <label className='inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60'>
@@ -308,7 +308,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
               variant='unstyled'
               type='button'
               key={item.path}
-              className='border-border bg-surface-sunken group overflow-hidden rounded-lg border text-left shadow-sm hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none'
+              className='border-border bg-surface-sunken group focus:ring-focus overflow-hidden rounded-lg border text-left shadow-sm hover:border-blue-500 focus:ring-2 focus:outline-none'
               onClick={() => handleSupabaseSelect(item)}
             >
               <div className='bg-control relative aspect-video w-full overflow-hidden'>
@@ -341,7 +341,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
 
   const renderSiteTab = () => (
     <div className='space-y-4'>
-      <div className='flex items-center justify-between text-sm text-gray-600 dark:text-gray-400'>
+      <div className='text-muted-foreground flex items-center justify-between text-sm'>
         <div>
           当前路径：
           <span className='font-mono text-gray-800 dark:text-gray-200'>
@@ -379,7 +379,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
               type='button'
               key={entry.path}
               onClick={() => handleSiteEntryClick(entry)}
-              className='border-border bg-surface-sunken flex items-center gap-3 rounded-lg border px-3 py-2 text-left hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none'
+              className='border-border bg-surface-sunken focus:ring-focus flex items-center gap-3 rounded-lg border px-3 py-2 text-left hover:border-blue-500 focus:ring-2 focus:outline-none'
             >
               {entry.type === 'directory' ? (
                 <div className='flex h-12 w-12 items-center justify-center rounded-md bg-blue-50 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300'>

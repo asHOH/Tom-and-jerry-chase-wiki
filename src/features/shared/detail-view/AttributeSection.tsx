@@ -16,7 +16,7 @@ export default function AttributeSection({
   titleClassName,
 }: AttributeSectionProps) {
   return (
-    <div className={cn('border-t border-gray-300 pt-1 dark:border-gray-600', className)}>
+    <div className={cn('border-border border-t pt-1', className)}>
       {title ? (
         <span className={cn('text-lg font-bold whitespace-pre', titleClassName)}>{title}</span>
       ) : null}

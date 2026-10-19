@@ -27,7 +27,7 @@ const orBadgeClass =
   'text-xs font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300';
 
 const smallButtonClass =
-  'hover:bg-control-hover rounded px-1.5 py-0.5 text-xs text-gray-600 transition-colors dark:text-gray-400';
+  'hover:bg-control-hover rounded px-1.5 py-0.5 text-xs text-muted-foreground transition-colors';
 
 /** Renders a single group-tuple header with edit controls. */
 const GroupHeader = memo(

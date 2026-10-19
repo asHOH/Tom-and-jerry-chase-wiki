@@ -105,7 +105,7 @@ const ToolbarButton = React.memo(function ToolbarButton({
       className={cn(
         'inline-flex h-8 items-center justify-center rounded-md border p-2 text-sm font-medium transition-all duration-200',
         'hover:bg-control',
-        'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none',
+        'focus:ring-focus focus:ring-2 focus:ring-offset-1 focus:outline-none',
         'disabled:cursor-not-allowed disabled:opacity-50',
         isActive
           ? 'border-blue-300 bg-blue-100 text-blue-700 dark:border-blue-600 dark:bg-blue-900/30 dark:text-blue-300'
@@ -140,12 +140,7 @@ const Toolbar = React.memo(function Toolbar({
   const [showTableTools, setShowTableTools] = useState(false);
 
   return (
-    <div
-      className={cn(
-        'bg-surface-sunken border-b border-gray-300 p-3 dark:border-gray-600',
-        className
-      )}
-    >
+    <div className={cn('bg-surface-sunken border-border border-b p-3', className)}>
       <div className='flex flex-wrap items-center gap-2'>
         <div className='flex items-center gap-1'>
           <ToolbarButton
@@ -280,7 +275,7 @@ const Toolbar = React.memo(function Toolbar({
                     'rounded p-1',
                     'border-0 bg-transparent',
                     'hover:bg-control',
-                    'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none'
+                    'focus:ring-focus focus:ring-2 focus:ring-offset-1 focus:outline-none'
                   )}
                 >
                   <ChevronRightSolidIcon

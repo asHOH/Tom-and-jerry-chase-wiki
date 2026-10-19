@@ -117,7 +117,7 @@ export function TopicSection({
               variant='unstyled'
               type='button'
               onClick={() => startReply(topic.id)}
-              className='text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+              className='text-muted-foreground hover:text-gray-800 dark:hover:text-gray-200'
             >
               回复
             </Button>
@@ -253,7 +253,7 @@ function ReplyItem({
             variant='unstyled'
             type='button'
             onClick={() => onReply(reply.id)}
-            className='text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+            className='text-muted-foreground hover:text-gray-800 dark:hover:text-gray-200'
           >
             回复
           </Button>

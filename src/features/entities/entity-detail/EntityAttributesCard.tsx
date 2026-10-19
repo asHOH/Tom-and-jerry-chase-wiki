@@ -223,7 +223,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
             )}
           </div>
           {isEditMode ? (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border border-t pt-1'>
               <span className='text-lg font-bold whitespace-pre'>归属者</span>
               <SingleItemListEditor
                 actionPath={`${entityName}.owner`}
@@ -243,7 +243,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
             </div>
           ) : null}
           {isEditMode ? (
-            <div className='grid gap-2 border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border grid gap-2 border-t pt-1'>
               <label className='flex items-center gap-2 text-sm'>
                 <span className='shrink-0'>阵营:</span>
                 <FormSelect
@@ -291,7 +291,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
             }}
           />
           {effectiveEntity.actorProfileName !== undefined ? (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border border-t pt-1'>
               <span className='text-sm font-bold'>该物件属于特殊角色，具有以下属性：</span>
               <ActorAttributesSection name={effectiveEntity.actorProfileName} context='object' />
             </div>

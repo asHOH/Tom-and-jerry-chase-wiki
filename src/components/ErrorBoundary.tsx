@@ -118,7 +118,7 @@ function ErrorDisplay({
         {/* Error message */}
         <div className='space-y-2'>
           <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>{title}</h3>
-          <p className='text-gray-600 dark:text-gray-400'>{errorMessage}</p>
+          <p className='text-muted-foreground'>{errorMessage}</p>
           {suggestion && <p className='text-sm text-gray-500 dark:text-gray-500'>{suggestion}</p>}
         </div>
 
@@ -140,7 +140,7 @@ function ErrorDisplay({
             <summary className='cursor-pointer text-sm text-gray-500 hover:text-gray-700'>
               错误详情 (开发模式)
             </summary>
-            <pre className='mt-2 overflow-auto rounded bg-gray-100 p-3 text-xs dark:bg-gray-800'>
+            <pre className='bg-surface-muted mt-2 overflow-auto rounded p-3 text-xs'>
               {error.stack}
             </pre>
           </details>

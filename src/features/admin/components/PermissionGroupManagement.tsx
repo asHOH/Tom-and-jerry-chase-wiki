@@ -212,7 +212,7 @@ export default function PermissionGroupManagement({
   return (
     <div className='grid gap-4 lg:grid-cols-[19rem_minmax(0,1fr)]'>
       <Card className='h-fit overflow-hidden p-0 lg:sticky lg:top-4'>
-        <div className='border-b border-slate-200 bg-gradient-to-br from-indigo-50 to-blue-50 p-4 dark:border-slate-700 dark:from-indigo-950/30 dark:to-blue-950/20'>
+        <div className='border-border border-b bg-gradient-to-br from-indigo-50 to-blue-50 p-4 dark:from-indigo-950/30 dark:to-blue-950/20'>
           <div className='flex items-center justify-between gap-3'>
             <div>
               <h2 className='font-bold text-slate-900 dark:text-white'>用户组</h2>
@@ -239,7 +239,7 @@ export default function PermissionGroupManagement({
                 'group min-w-56 rounded-xl border p-3 text-left transition-all lg:w-full lg:min-w-0',
                 selected?.id === group.id
                   ? 'border-blue-300 bg-blue-50 shadow-sm ring-1 ring-blue-100 dark:border-blue-700 dark:bg-blue-950/40 dark:ring-blue-900/50'
-                  : 'bg-surface-sunken hover:bg-surface border-transparent hover:border-slate-200 hover:shadow-sm dark:hover:border-slate-700'
+                  : 'bg-surface-sunken hover:bg-surface hover:border-border border-transparent hover:shadow-sm'
               )}
             >
               <span className='flex items-center justify-between gap-2'>
@@ -271,7 +271,7 @@ export default function PermissionGroupManagement({
             </Button>
           ))}
           {groups.length === 0 && (
-            <div className='w-full rounded-xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400'>
+            <div className='border-border w-full rounded-xl border border-dashed p-6 text-center text-sm text-slate-500 dark:text-slate-400'>
               暂无用户组
             </div>
           )}
@@ -291,7 +291,7 @@ export default function PermissionGroupManagement({
           </div>
         ) : (
           <div>
-            <div className='border-b border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50/70 p-4 sm:p-6 dark:border-slate-700 dark:from-slate-800 dark:to-blue-950/20'>
+            <div className='border-border border-b bg-gradient-to-r from-slate-50 to-blue-50/70 p-4 sm:p-6 dark:from-slate-800 dark:to-blue-950/20'>
               <div className='flex flex-wrap items-start justify-between gap-3'>
                 <div>
                   <p className='text-xs font-semibold tracking-wider text-blue-600 uppercase dark:text-blue-400'>
@@ -388,7 +388,7 @@ export default function PermissionGroupManagement({
                 </label>
               </section>
 
-              <section className='border-t border-slate-200 pt-6 dark:border-slate-700'>
+              <section className='border-border border-t pt-6'>
                 <div className='mb-4'>
                   <h3 className='font-semibold text-slate-900 dark:text-white'>继承权限</h3>
                   <p className='mt-0.5 text-sm text-slate-500 dark:text-slate-400'>
@@ -415,13 +415,13 @@ export default function PermissionGroupManagement({
                     })}
                   </div>
                 ) : (
-                  <div className='rounded-xl border border-dashed border-slate-300 px-4 py-6 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400'>
+                  <div className='border-border rounded-xl border border-dashed px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400'>
                     未继承任何权限
                   </div>
                 )}
               </section>
 
-              <section className='border-t border-slate-200 pt-6 dark:border-slate-700'>
+              <section className='border-border border-t pt-6'>
                 <div className='mb-4 flex flex-wrap items-end justify-between gap-3'>
                   <div>
                     <h3 className='font-semibold text-slate-900 dark:text-white'>权限授权</h3>
@@ -555,7 +555,7 @@ export default function PermissionGroupManagement({
                   })}
 
                   {grants.length === 0 && (
-                    <div className='rounded-xl border border-dashed border-slate-300 px-4 py-10 text-center dark:border-slate-700'>
+                    <div className='border-border rounded-xl border border-dashed px-4 py-10 text-center'>
                       <p className='font-medium text-slate-700 dark:text-slate-200'>暂无授权</p>
                       <p className='mt-1 text-sm text-slate-500 dark:text-slate-400'>
                         此用户组目前不包含任何操作权限
@@ -582,7 +582,7 @@ export default function PermissionGroupManagement({
                 ))}
               </datalist>
               {canManage && (
-                <div className='flex flex-col-reverse gap-2 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end dark:border-slate-700'>
+                <div className='border-border flex flex-col-reverse gap-2 border-t pt-5 sm:flex-row sm:justify-end'>
                   <Button
                     variant='danger'
                     disabled={

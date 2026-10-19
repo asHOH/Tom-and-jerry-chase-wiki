@@ -146,7 +146,7 @@ export default function AdvancedCardGroupEditor({
         {/* Footer */}
         <div className='border-border flex-none border-t p-4 sm:p-6'>
           <div className='flex flex-col items-center justify-between gap-4 sm:flex-row'>
-            <div className='text-sm text-gray-600 dark:text-gray-400'>
+            <div className='text-muted-foreground text-sm'>
               <span className='font-bold'>
                 当前知识量:{' '}
                 {Number.isFinite(costRange.min) && Number.isFinite(costRange.max)

@@ -91,7 +91,7 @@ export function ReplyForm({
       )}
 
       {!isAuthenticated && (
-        <div className='mb-3 text-sm text-gray-600 dark:text-gray-400'>登录后可参与讨论。</div>
+        <div className='text-muted-foreground mb-3 text-sm'>登录后可参与讨论。</div>
       )}
 
       <FormTextarea

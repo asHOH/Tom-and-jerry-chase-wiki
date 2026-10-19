@@ -238,7 +238,7 @@ const MatrixCell = ({
           type='button'
           aria-label={`编辑 ${row.label} 与 ${column.label} 的关系`}
           className={cn(
-            'flex items-center justify-center border-0 p-0 transition-opacity hover:opacity-85 focus:ring-2 focus:ring-blue-400 focus:outline-none',
+            'focus:ring-focus flex items-center justify-center border-0 p-0 transition-opacity hover:opacity-85 focus:ring-2 focus:outline-none',
             getPendingActionWarningClassName(pendingSummary),
             cell && !cell.isMinor && RELATION_COLOR_CLASSES[cell.displayKind]
           )}
@@ -262,7 +262,7 @@ const MatrixCell = ({
             aria-pressed={isRowHighlighted && isColumnHighlighted}
             disabled={isEditMode}
             className={cn(
-              'flex cursor-pointer items-center justify-center border-0 p-0 transition-opacity hover:opacity-85 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none focus-visible:ring-inset',
+              'focus-visible:ring-focus flex cursor-pointer items-center justify-center border-0 p-0 transition-opacity hover:opacity-85 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
               cell && !cell.isMinor && RELATION_COLOR_CLASSES[cell.displayKind]
             )}
             style={sizing.cell}
@@ -299,7 +299,7 @@ const ColumnHeader = ({
       name={column.label}
       href={column.href}
       categoryHint={getColumnCategoryHint(column, columnCategory)}
-      className='flex h-full w-full items-end justify-center overflow-hidden px-0.5 py-1 text-center text-[12px] leading-tight font-medium text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
+      className='focus:ring-focus flex h-full w-full items-end justify-center overflow-hidden px-0.5 py-1 text-center text-[12px] leading-tight font-medium text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
     >
       <span className='flex max-h-full flex-col items-center justify-end gap-0.5 overflow-hidden'>
         {getColumnHeaderChunks(column.label).map((chunk, index) => (
@@ -336,7 +336,7 @@ const RowHeader = ({
       href={row.href}
       categoryHint={CHARACTER_CATEGORY_HINT_BY_FACTION[rowFaction]}
       triggerClassName='block h-full leading-none'
-      className='flex h-full max-w-28 items-center truncate px-2 text-left text-[12px] leading-none font-medium text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
+      className='focus:ring-focus flex h-full max-w-28 items-center truncate px-2 text-left text-[12px] leading-none font-medium text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
     >
       {row.label}
     </GotoLink>

@@ -29,9 +29,9 @@ const typeColors: Record<ChangeType, string> = {
   refactor: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
   perf: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
   test: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
-  chore: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
+  chore: 'bg-surface-muted text-foreground',
   revert: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400',
-  other: 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-400',
+  other: 'bg-surface-muted text-foreground',
 };
 
 const typeLabels: Record<ChangeType, string> = {
@@ -157,7 +157,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
         ariaLabelledBy='changelogs-title'
         panelClassName='flex flex-col md:h-auto md:max-h-[85vh] md:w-4/5 md:max-w-4xl md:min-w-md'
       >
-        <div className='flex items-center justify-between border-b border-gray-300 p-6 dark:border-gray-700'>
+        <div className='border-border flex items-center justify-between border-b p-6'>
           <h3 id='changelogs-title' className='text-2xl font-bold text-gray-900 dark:text-gray-100'>
             更新日志
           </h3>
@@ -199,7 +199,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                     <div className='flex items-center gap-3'>
                       <ChevronRightIcon
                         className={cn(
-                          'h-5 w-5 text-gray-600 transition-transform dark:text-gray-400',
+                          'text-muted-foreground h-5 w-5 transition-transform',
                           isExpanded && 'rotate-90'
                         )}
                       />
@@ -207,13 +207,13 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                         {formatCompactDate(dailyLog.date, { invalidFallback: dailyLog.date })}
                       </h4>
                     </div>
-                    <span className='text-sm text-gray-600 dark:text-gray-400'>
+                    <span className='text-muted-foreground text-sm'>
                       {dailyLog.changes.length} 项更改
                     </span>
                   </Button>
 
                   {isExpanded && (
-                    <div className='bg-surface-sunken/50 border-t border-gray-300 dark:border-gray-700'>
+                    <div className='bg-surface-sunken/50 border-border border-t'>
                       <div className='divide-border divide-y'>
                         {majorChanges.map(renderChange)}
 

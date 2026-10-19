@@ -66,7 +66,7 @@ export default function CharacterSection({
             href={`#${sectionId}`}
             aria-label={`链接到${title}`}
             title={`链接到“${title}”`}
-            className='rounded p-1 text-gray-400 opacity-0 transition-opacity hover:text-blue-600 hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none dark:hover:text-blue-400'
+            className='focus-visible:ring-focus rounded p-1 text-gray-400 opacity-0 transition-opacity hover:text-blue-600 hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:outline-none dark:hover:text-blue-400'
           >
             <LinkIcon className='size-4' />
           </a>
@@ -75,7 +75,7 @@ export default function CharacterSection({
           variant='unstyled'
           type='button'
           aria-label={to ? `前往${title}` : isOpen ? `折叠${title}` : `展开${title}`}
-          className='ml-auto cursor-pointer rounded p-1 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none'
+          className='focus-visible:ring-focus ml-auto cursor-pointer rounded p-1 focus-visible:ring-2 focus-visible:outline-none'
           onClick={toggleOpen}
         >
           {to ? (

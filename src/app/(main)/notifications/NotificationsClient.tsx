@@ -89,7 +89,7 @@ export default function NotificationsClient() {
                     'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
                     filter === value
                       ? 'bg-surface text-blue-700 shadow-sm dark:text-blue-300'
-                      : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'
+                      : 'text-muted-foreground hover:text-gray-900 dark:hover:text-gray-100'
                   )}
                   onClick={() => setFilter(value)}
                 >
@@ -184,7 +184,7 @@ export default function NotificationsClient() {
                 <Link
                   key={notification.id}
                   href={notification.href}
-                  className='block rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500'
+                  className='focus-visible:outline-focus block rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2'
                   onClick={() => void markRead(notification.id)}
                 >
                   {content}
@@ -194,7 +194,7 @@ export default function NotificationsClient() {
                   variant='unstyled'
                   key={notification.id}
                   type='button'
-                  className='block w-full rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500'
+                  className='focus-visible:outline-focus block w-full rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2'
                   onClick={() => void markRead(notification.id)}
                 >
                   {content}

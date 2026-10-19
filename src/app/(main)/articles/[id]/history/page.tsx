@@ -28,7 +28,7 @@ export default function ArticleHistoryPage() {
   return (
     <Suspense
       fallback={
-        <PageShell width='maximum' className='py-16 text-center text-gray-600 dark:text-gray-400'>
+        <PageShell width='maximum' className='text-muted-foreground py-16 text-center'>
           正在加载版本历史...
         </PageShell>
       }

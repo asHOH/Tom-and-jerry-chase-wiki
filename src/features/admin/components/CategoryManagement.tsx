@@ -222,7 +222,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
       <Card className='dark:text-slate-200'>
         <div className='mb-3 flex items-center justify-between'>
           <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>现有分类</h2>
-          <div className='text-sm text-gray-600 dark:text-gray-400'>
+          <div className='text-muted-foreground text-sm'>
             {loading ? '加载中...' : `${categories.length} 个分类`}
           </div>
         </div>

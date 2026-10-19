@@ -32,7 +32,7 @@ export default function SkillCardMedia({
 
   return (
     <div className='mr-2 shrink-0 md:mr-6'>
-      <div className='relative h-16 w-16 overflow-hidden rounded-full border-2 border-gray-300 bg-white dark:border-gray-600 dark:bg-slate-700'>
+      <div className='border-border bg-surface-muted relative h-16 w-16 overflow-hidden rounded-full border-2'>
         <Image
           src={skill.imageUrl}
           alt={skill.name}

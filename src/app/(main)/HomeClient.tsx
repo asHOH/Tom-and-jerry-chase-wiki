@@ -80,7 +80,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
       {/* Division line before 网站说明 */}
       <div className='mt-12 px-2 sm:mt-18 sm:px-4 md:mt-24'>
         <div className='mx-auto max-w-4xl'>
-          <div className='h-px w-full bg-gray-300 dark:bg-gray-700'></div>
+          <div className='bg-border h-px w-full'></div>
         </div>
       </div>
 
@@ -101,7 +101,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
             href={QQ_GROUP_URL}
             target='_blank'
             rel='noopener noreferrer'
-            className='mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 underline-offset-4 transition-colors hover:text-blue-700 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-gray-900'
+            className='focus-visible:ring-focus focus-visible:ring-offset-background mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 underline-offset-4 transition-colors hover:text-blue-700 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
             aria-label={`加入QQ交流群 ${QQ_GROUP_NUMBER}（在新窗口打开）`}
           >
             <ChatBubbleIcon className='size-4' strokeWidth={2} />
@@ -127,7 +127,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
 
         <div className='mt-8 px-2 sm:mt-10 sm:px-4 md:mt-12'>
           <div className='mx-auto max-w-4xl'>
-            <div className='h-px w-full bg-gray-300 dark:bg-gray-700'></div>
+            <div className='bg-border h-px w-full'></div>
           </div>
         </div>
 

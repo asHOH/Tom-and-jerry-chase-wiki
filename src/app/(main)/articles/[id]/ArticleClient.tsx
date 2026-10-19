@@ -113,7 +113,7 @@ export default function ArticleClient({
                   itemClassName,
                   isActive
                     ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200'
-                    : 'text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-300'
+                    : 'text-muted-foreground hover:text-blue-600 dark:hover:text-blue-300'
                 )}
               >
                 {showAutoNumbering && <span className='mr-1 opacity-70'>{item.prefix}</span>}
@@ -157,8 +157,8 @@ export default function ArticleClient({
             <PageHeader title={article.title} titleClassName={titleSize} />
 
             {/* Article Meta */}
-            <div className='p-2 md:mt-6 md:rounded-lg md:border md:border-gray-200 md:p-6 dark:md:border-gray-700'>
-              <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
+            <div className='md:border-border p-2 md:mt-6 md:rounded-lg md:border md:p-6'>
+              <div className='text-muted-foreground flex flex-wrap items-center gap-6 text-sm'>
                 <div className='flex items-center gap-2'>
                   <UserCircleIcon className='size-4' strokeWidth={1.5} />
                   <span>
@@ -299,7 +299,7 @@ export default function ArticleClient({
             <div className='flex flex-wrap justify-center gap-3'>
               <Link
                 href='/articles'
-                className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+                className='text-muted-foreground px-4 py-2 transition-colors hover:text-gray-800 dark:hover:text-gray-200'
               >
                 浏览更多文章
               </Link>

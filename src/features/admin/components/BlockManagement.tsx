@@ -335,7 +335,7 @@ export default function BlockManagement({
             <div
               key={block.id}
               className={cn(
-                'rounded-lg border border-slate-200 p-3 text-sm dark:border-slate-700',
+                'border-border rounded-lg border p-3 text-sm',
                 block.isAutoblock && 'border-orange-300 dark:border-orange-700'
               )}
             >
@@ -394,7 +394,7 @@ export default function BlockManagement({
           )}
         </div>
         {logs.length > 0 && (
-          <div className='mt-5 border-t border-slate-200 pt-4 dark:border-slate-700'>
+          <div className='border-border mt-5 border-t pt-4'>
             <h3 className='mb-2 font-semibold'>审计记录</h3>
             <div className='space-y-2 text-sm'>
               {logs.slice(0, 100).map((log) => (

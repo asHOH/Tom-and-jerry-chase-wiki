@@ -220,10 +220,7 @@ export default function CharacterImport() {
       >
         {!showImportOptions && !showPasteInput ? (
           <>
-            <div
-              className='relative mb-4 w-full overflow-hidden bg-gray-200 dark:bg-slate-700'
-              style={{}}
-            >
+            <div className='bg-surface-muted relative mb-4 w-full overflow-hidden' style={{}}>
               <div className='flex h-full items-center justify-center p-2'>
                 <ArrowUpTrayIcon
                   className='size-6 text-gray-500 transition-all duration-250 ease-in-out hover:scale-105 dark:text-gray-400'

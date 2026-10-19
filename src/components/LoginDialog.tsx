@@ -250,7 +250,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onClose, isMobile }) =>
         return (
           <>
             <h2 className='mb-2 text-xl font-bold text-gray-900 dark:text-white'>输入密码</h2>
-            <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
+            <p className='text-muted-foreground mb-4 text-sm'>
               欢迎回来，<span className='font-semibold'>{username}</span>。
             </p>
             <input
@@ -277,7 +277,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onClose, isMobile }) =>
         return (
           <>
             <h2 className='mb-2 text-xl font-bold text-gray-900 dark:text-white'>创建账户</h2>
-            <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
+            <p className='text-muted-foreground mb-4 text-sm'>
               用户名 <span className='font-semibold'>{username}</span> 未被占用。
             </p>
             <input
@@ -352,7 +352,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onClose, isMobile }) =>
                     {passwordStrength.strength === 4 && '很强'}
                   </span>
                 </div>
-                <p className='mt-1 text-xs text-gray-600 dark:text-gray-400'>
+                <p className='text-muted-foreground mt-1 text-xs'>
                   {password != confirmPassword ? '两次输入的密码不一致' : passwordStrength.reason}
                 </p>
               </div>

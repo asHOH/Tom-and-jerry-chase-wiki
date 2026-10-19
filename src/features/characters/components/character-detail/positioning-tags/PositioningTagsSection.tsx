@@ -421,7 +421,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                     path={`${tagsKey}.${originalIndex}.additionalDescription`}
                     initialValue={tag.additionalDescription}
                     className={cn(
-                      'mt-2 border-l-2 pl-3 text-sm whitespace-pre-wrap text-gray-600 dark:text-gray-400',
+                      'text-muted-foreground mt-2 border-l-2 pl-3 text-sm whitespace-pre-wrap',
                       borderColor
                     )}
                     onSave={(newValue) =>

@@ -304,7 +304,7 @@ export function ArticleCharacterSelector({
           'flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left text-lg transition-all duration-200',
           disabled
             ? 'border-border bg-control cursor-not-allowed text-gray-400 dark:text-gray-500'
-            : 'bg-surface cursor-pointer border-gray-300 text-gray-900 hover:border-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:text-gray-100',
+            : 'bg-surface focus:ring-focus cursor-pointer border-gray-300 text-gray-900 hover:border-gray-400 focus:ring-2 focus:outline-none dark:border-gray-600 dark:text-gray-100',
           selectedCharacter && !disabled && 'pr-14'
         )}
         aria-haspopup='listbox'
@@ -341,7 +341,7 @@ export function ArticleCharacterSelector({
           variant='unstyled'
           type='button'
           onClick={handleClear}
-          className='hover:bg-control absolute top-1/2 right-9 -translate-y-1/2 rounded p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:text-gray-300'
+          className='hover:bg-control focus-visible:ring-focus absolute top-1/2 right-9 -translate-y-1/2 rounded p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-2 dark:hover:text-gray-300'
           aria-label='清除选择'
         >
           <CloseIcon className='h-4 w-4' />

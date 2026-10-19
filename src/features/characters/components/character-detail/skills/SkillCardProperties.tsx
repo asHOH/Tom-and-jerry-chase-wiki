@@ -270,8 +270,7 @@ export default function SkillCardProperties({
             <div
               key={partIndex}
               className={cn(
-                usageParts.length > 1 &&
-                  'rounded border border-dashed border-gray-300 p-2 dark:border-gray-600'
+                usageParts.length > 1 && 'border-border rounded border border-dashed p-2'
               )}
             >
               {usageParts.length > 1 && (

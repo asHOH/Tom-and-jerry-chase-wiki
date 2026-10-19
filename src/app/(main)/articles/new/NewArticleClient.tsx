@@ -205,7 +205,7 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
       {/* Header */}
       <PageHeader title='创建新文章' description='分享你的游戏心得和攻略技巧' className='mb-8'>
         {/* Navigation Breadcrumb */}
-        <div className='flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400'>
+        <div className='text-muted-foreground flex items-center justify-center gap-2 text-sm'>
           <Link
             href='/articles'
             className='transition-colors hover:text-blue-600 dark:hover:text-blue-400'

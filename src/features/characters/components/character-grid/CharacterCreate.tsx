@@ -98,7 +98,7 @@ export default function CharacterCreate() {
     >
       {!showInput ? (
         <>
-          <div className='relative mb-4 flex h-48 w-full items-center justify-center overflow-hidden bg-gray-200 dark:bg-slate-700'>
+          <div className='bg-surface-muted relative mb-4 flex h-48 w-full items-center justify-center overflow-hidden'>
             <PlusIcon
               className='text-gray-500 transition-all duration-250 ease-in-out hover:scale-105 dark:text-gray-400'
               style={{

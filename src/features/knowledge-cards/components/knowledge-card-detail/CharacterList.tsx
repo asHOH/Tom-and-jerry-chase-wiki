@@ -29,7 +29,7 @@ export default function CharacterList({ characters, showList }: CharacterListPro
           >
             <Link
               href={`/characters/${character.id}`}
-              className='flex w-full items-center gap-2 rounded-lg duration-300 hover:bg-slate-100 lg:px-0.5 dark:hover:bg-slate-700/60'
+              className='hover:bg-control flex w-full items-center gap-2 rounded-lg duration-300 lg:px-0.5'
               tabIndex={0}
             >
               <div className='relative flex h-16 w-16 shrink-0 items-center justify-center'>

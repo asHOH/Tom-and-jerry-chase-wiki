@@ -303,12 +303,12 @@ export default function EditModeToolbar({
                   id='toolbar-license-agreement'
                   checked={agreedToLicense}
                   onChange={(e) => setAgreedToLicense(e.target.checked)}
-                  className='bg-control mt-0.5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 dark:border-gray-600'
+                  className='bg-control focus:ring-focus mt-0.5 shrink-0 rounded border-gray-300 text-blue-600 disabled:opacity-50 dark:border-gray-600'
                   disabled={isPublishing}
                 />
                 <label
                   htmlFor='toolbar-license-agreement'
-                  className='cursor-pointer text-xs text-gray-600 select-none dark:text-gray-400'
+                  className='text-muted-foreground cursor-pointer text-xs select-none'
                 >
                   提交即表示您同意将修改内容根据{' '}
                   <a

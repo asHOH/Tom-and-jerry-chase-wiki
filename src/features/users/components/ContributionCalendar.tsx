@@ -128,7 +128,7 @@ function CalendarCell({
         data-contribution-calendar-cell
         onKeyDown={(event) => moveCalendarFocus(event, cellIndex, dayOfWeek)}
         className={cn(
-          'h-4 w-4 shrink-0 rounded-[3px] ring-1 transition-transform ring-inset hover:scale-125 focus:z-10 focus:scale-125 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:focus:ring-blue-300',
+          'focus:ring-focus h-4 w-4 shrink-0 rounded-[3px] ring-1 transition-transform ring-inset hover:scale-125 focus:z-10 focus:scale-125 focus:ring-2 focus:outline-none',
           LEVEL_CLASSES[getContributionLevel(total)]
         )}
       />

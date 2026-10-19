@@ -68,7 +68,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
             {!isCollapsed && (
               <>
                 <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>文档</h2>
-                {/* <p className='text-sm text-gray-600 dark:text-gray-400 mt-1'>这里是杂项文档</p> */}
+                {/* <p className='text-sm text-muted-foreground mt-1'>这里是杂项文档</p> */}
               </>
             )}
 
@@ -101,7 +101,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                   isCollapsed ? 'justify-center px-2 py-2' : 'px-3 py-2',
                   pathname === '/docs'
                     ? 'border-l-4 border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300'
-                    : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-slate-700'
+                    : 'hover:bg-control text-gray-700 dark:text-gray-300'
                 )}
                 onClick={() => setIsOpen(false)}
                 title={isCollapsed ? 'Overview' : undefined}
@@ -130,7 +130,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                             isCollapsed ? 'justify-center px-2 py-2' : 'px-3 py-2',
                             isActive
                               ? 'border-l-4 border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300'
-                              : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-slate-700'
+                              : 'hover:bg-control text-gray-700 dark:text-gray-300'
                           )}
                           onClick={() => setIsOpen(false)}
                           title={isCollapsed ? page.title : undefined}

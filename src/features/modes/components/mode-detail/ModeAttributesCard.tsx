@@ -144,7 +144,7 @@ export default function ModeAttributesCard({
             </div>
           )}
           {supportedMaps.length > 0 && (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border border-t pt-1'>
               <span className='text-lg font-bold whitespace-pre'>支持地图</span>
               <div className='mt-1'>
                 <SingleItemAccordionCard

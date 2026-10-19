@@ -39,7 +39,7 @@ export default function RecommendedStorePlansSection() {
         {storePlans.map((plan, planIndex) => (
           <li
             key={planIndex}
-            className='rounded-xl border border-gray-200 bg-gray-50/70 px-3 py-2.5 dark:border-gray-600 dark:bg-gray-800/50'
+            className='border-border bg-surface-sunken rounded-xl border px-3 py-2.5'
           >
             {isEditMode && (
               <div className='mb-3 flex justify-end'>
@@ -71,7 +71,7 @@ export default function RecommendedStorePlansSection() {
                       onClick={(event) => {
                         if (isEditMode) event.preventDefault();
                       }}
-                      className='bg-surface group relative flex aspect-square items-center justify-center rounded-lg border border-gray-200 transition-all hover:-translate-y-0.5 hover:border-gray-400 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none dark:border-gray-600 dark:hover:border-gray-400 dark:focus-visible:ring-blue-500'
+                      className='bg-surface group focus-visible:ring-focus relative flex aspect-square items-center justify-center rounded-lg border border-gray-200 transition-all hover:-translate-y-0.5 hover:border-gray-400 hover:shadow-sm focus-visible:ring-2 focus-visible:outline-none dark:border-gray-600 dark:hover:border-gray-400'
                     >
                       <span className='flex size-full items-center justify-center overflow-hidden'>
                         <Img

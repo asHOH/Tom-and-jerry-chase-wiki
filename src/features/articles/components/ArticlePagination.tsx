@@ -32,7 +32,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
   return (
     <div className='mt-8 flex flex-col items-center gap-4'>
       {/* Page indicator */}
-      <div className='text-sm text-gray-600 dark:text-gray-400'>
+      <div className='text-muted-foreground text-sm'>
         第 {currentPage} 页，共 {totalPages} 页
         {!isMobile && (
           <span className='ml-2 text-xs text-gray-400 dark:text-gray-500'>

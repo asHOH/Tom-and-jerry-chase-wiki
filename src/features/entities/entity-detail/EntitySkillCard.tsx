@@ -124,7 +124,7 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
       <div className='flex items-start justify-between'>
         {skill.imageUrl && (
           <div className='mr-6 shrink-0'>
-            <div className='relative h-16 w-16 overflow-hidden rounded-full border-2 border-gray-300 bg-white dark:border-gray-600 dark:bg-slate-700'>
+            <div className='border-border bg-surface-muted relative h-16 w-16 overflow-hidden rounded-full border-2'>
               <Image
                 src={skill.imageUrl}
                 alt={skill.name}
@@ -309,8 +309,7 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
                   <div
                     key={partIndex}
                     className={cn(
-                      usageParts.length > 1 &&
-                        'rounded border border-dashed border-gray-300 p-2 dark:border-gray-600'
+                      usageParts.length > 1 && 'border-border rounded border border-dashed p-2'
                     )}
                   >
                     {usageParts.length > 1 ? (

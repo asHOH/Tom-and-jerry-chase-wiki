@@ -75,9 +75,7 @@ export default function PreviewClient() {
           <h1 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
             {error ? '加载预览失败' : '预览不可用'}
           </h1>
-          <p className='mb-6 text-gray-600 dark:text-gray-400'>
-            此预览链接可能无效、已过期或文章已被删除
-          </p>
+          <p className='text-muted-foreground mb-6'>此预览链接可能无效、已过期或文章已被删除</p>
           <ButtonLink href='/'>返回首页</ButtonLink>
         </div>
       </PageShell>
@@ -102,7 +100,7 @@ export default function PreviewClient() {
         description: '此版本已被拒绝，不会公开发布',
       },
       revoked: {
-        color: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
+        color: 'bg-surface-muted text-foreground',
         text: '已撤销',
         description: '此版本已被撤销，不再公开显示',
       },
@@ -145,7 +143,7 @@ export default function PreviewClient() {
                   {statusInfo.text}
                 </span>
               </div>
-              <p className='text-sm text-gray-600 dark:text-gray-400'>{statusInfo.description}</p>
+              <p className='text-muted-foreground text-sm'>{statusInfo.description}</p>
             </div>
           </div>
         </div>
@@ -155,7 +153,7 @@ export default function PreviewClient() {
       <PageHeader title={data.article.title} className='mb-8'>
         {/* Article Meta */}
         <div className='mt-6 p-6'>
-          <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
+          <div className='text-muted-foreground flex flex-wrap items-center gap-6 text-sm'>
             <div className='flex items-center gap-2'>
               <UserCircleIcon className='size-4' strokeWidth={1.5} />
               <span>作者: {data.article.users_public_view.nickname || '未知用户'}</span>
@@ -233,14 +231,14 @@ export default function PreviewClient() {
         <div className='mt-6 flex flex-wrap justify-center gap-3'>
           <Link
             href='/'
-            className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+            className='text-muted-foreground px-4 py-2 transition-colors hover:text-gray-800 dark:hover:text-gray-200'
           >
             返回首页
           </Link>
 
           <Link
             href='/articles'
-            className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+            className='text-muted-foreground px-4 py-2 transition-colors hover:text-gray-800 dark:hover:text-gray-200'
           >
             浏览文章
           </Link>

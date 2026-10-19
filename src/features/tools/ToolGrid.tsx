@@ -81,7 +81,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
 
       <div className='mt-24 px-2 sm:px-4'>
         <div className='mx-auto max-w-4xl'>
-          <div className='h-px w-full bg-gray-300 dark:bg-gray-700'></div>
+          <div className='bg-border h-px w-full'></div>
         </div>
       </div>
       <div className='mt-8 px-2 text-center sm:px-4'>

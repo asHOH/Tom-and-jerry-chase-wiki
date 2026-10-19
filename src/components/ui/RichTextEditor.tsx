@@ -287,7 +287,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   if (!editor) {
     return (
-      <div className='rounded-lg border border-gray-300 dark:border-gray-600'>
+      <div className='border-border rounded-lg border'>
         <div className='flex items-center justify-center p-6 text-gray-500 dark:text-gray-400'>
           <LoadingSpinnerIcon />
           加载编辑器...
@@ -297,7 +297,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
 
   return (
-    <div className='bg-surface-raised flex max-h-[90vh] flex-col overflow-hidden rounded-lg border border-gray-300 dark:border-gray-600'>
+    <div className='bg-surface-raised border-border flex max-h-[90vh] flex-col overflow-hidden rounded-lg border'>
       <Toolbar
         state={toolbarState}
         commands={commands}

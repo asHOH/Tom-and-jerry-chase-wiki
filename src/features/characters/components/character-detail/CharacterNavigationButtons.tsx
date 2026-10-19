@@ -36,7 +36,7 @@ export default function CharacterNavigationButtons({
         <span className='hidden sm:inline'>{previousId ?? '上一位'}</span>
       </MotionButton>
 
-      <div className='px-2 text-sm text-gray-600 dark:text-gray-400'>
+      <div className='text-muted-foreground px-2 text-sm'>
         {currentIndex + 1} / {totalCharacters}
       </div>
 

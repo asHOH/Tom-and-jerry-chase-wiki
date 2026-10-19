@@ -55,8 +55,7 @@ export default function CharacterDisplay({
       role='button'
       aria-label={`查看${name}角色详情`}
       className={cn(
-        isEntryCard &&
-          'border-2 border-dashed border-slate-300 bg-slate-50 opacity-60 dark:border-slate-600 dark:bg-slate-800/50'
+        isEntryCard && 'border-border bg-surface-sunken border-2 border-dashed opacity-60'
       )}
     >
       <GameImage
@@ -102,7 +101,7 @@ export default function CharacterDisplay({
                     {tag.tagName}
                   </Tag>
                   {weaponImageUrl && (
-                    <div className='bg-surface/40 absolute -top-2 -right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full border border-gray-300 dark:border-gray-600'>
+                    <div className='bg-surface/40 border-border absolute -top-2 -right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full border'>
                       <Image
                         src={weaponImageUrl}
                         alt={`武器${tag.weapon}`}

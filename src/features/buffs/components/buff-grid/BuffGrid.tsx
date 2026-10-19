@@ -123,12 +123,10 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
         <>
           <div className='relative py-4'>
             <div className='absolute inset-0 flex items-center'>
-              <div className='w-full border-t border-gray-300 dark:border-gray-600'></div>
+              <div className='border-border w-full border-t'></div>
             </div>
             <div className='relative flex justify-center'>
-              <h2 className='inline-block bg-gray-100 px-4 text-2xl font-bold dark:bg-gray-900'>
-                状态
-              </h2>
+              <h2 className='bg-background inline-block px-4 text-2xl font-bold'>状态</h2>
             </div>
           </div>
           {classGroups.length > 0 && (
@@ -136,9 +134,9 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
               {classGroups.map((group) => (
                 <div
                   key={group.name + '-title'}
-                  className='relative mt-5 rounded border border-gray-300 p-2'
+                  className='border-border relative mt-5 rounded border p-2'
                 >
-                  <div className='absolute -top-5 left-2.5 flex h-5 items-center border border-b-0 border-gray-300 bg-gray-200 px-4 py-0.5 pl-2.5 text-xs font-bold text-gray-800 [clip-path:polygon(0%_0%,calc(100%-12px)_0%,100%_100%,0%_100%)] dark:bg-gray-200'>
+                  <div className='border-border bg-surface-muted text-foreground absolute -top-5 left-2.5 flex h-5 items-center border border-b-0 px-4 py-0.5 pl-2.5 text-xs font-bold [clip-path:polygon(0%_0%,calc(100%-12px)_0%,100%_100%,0%_100%)]'>
                     {group.name}
                   </div>
                   <div
@@ -170,12 +168,10 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
         <>
           <div className='relative py-4'>
             <div className='absolute inset-0 flex items-center'>
-              <div className='w-full border-t border-gray-300 dark:border-gray-600'></div>
+              <div className='border-border w-full border-t'></div>
             </div>
             <div className='relative flex justify-center'>
-              <h2 className='inline-block bg-gray-100 px-4 text-2xl font-bold dark:bg-gray-900'>
-                效果&属性
-              </h2>
+              <h2 className='bg-background inline-block px-4 text-2xl font-bold'>效果&属性</h2>
             </div>
           </div>
           {effectClassGroups.length > 0 && (
@@ -183,9 +179,9 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
               {effectClassGroups.map((group) => (
                 <div
                   key={group.name + '-title'}
-                  className='relative mt-5 rounded border border-gray-300 p-2'
+                  className='border-border relative mt-5 rounded border p-2'
                 >
-                  <div className='absolute -top-5 left-2.5 flex h-5 items-center border border-b-0 border-gray-300 bg-gray-200 px-4 py-0.5 pl-2.5 text-xs font-bold text-gray-800 [clip-path:polygon(0%_0%,calc(100%-12px)_0%,100%_100%,0%_100%)] dark:bg-gray-200'>
+                  <div className='border-border bg-surface-muted text-foreground absolute -top-5 left-2.5 flex h-5 items-center border border-b-0 px-4 py-0.5 pl-2.5 text-xs font-bold [clip-path:polygon(0%_0%,calc(100%-12px)_0%,100%_100%,0%_100%)]'>
                     {group.name}
                   </div>
                   <div

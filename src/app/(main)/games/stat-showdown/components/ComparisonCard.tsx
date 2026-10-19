@@ -54,7 +54,7 @@ export default function ComparisonCard({
         'relative w-full max-w-50 touch-manipulation',
         'bg-surface rounded-xl shadow-md',
         'transition-all duration-200',
-        'focus:ring-2 focus:ring-blue-400 focus:outline-none',
+        'focus:ring-focus focus:ring-2 focus:outline-none',
         !disabled && !isFlipped && 'cursor-pointer hover:-translate-y-1 hover:shadow-lg',
         disabled && 'cursor-default',
         glowClass

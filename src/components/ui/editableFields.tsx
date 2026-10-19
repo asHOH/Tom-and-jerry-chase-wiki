@@ -484,7 +484,7 @@ function useInlineEditableContent(opts: {
                   'flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm',
                   isActive
                     ? 'bg-blue-100 text-blue-900 dark:bg-blue-900/40 dark:text-blue-100'
-                    : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                    : 'hover:bg-control'
                 )}
                 onMouseDown={(event) => {
                   event.preventDefault();

@@ -77,7 +77,7 @@ export default function HomepageNotices() {
           <Button
             variant='unstyled'
             onClick={() => dismiss(current)}
-            className='shrink-0 rounded-md px-2 py-1 text-sm text-blue-700 hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-blue-200 dark:hover:bg-blue-900/50'
+            className='focus:ring-focus shrink-0 rounded-md px-2 py-1 text-sm text-blue-700 hover:bg-blue-100 focus:ring-2 focus:outline-none dark:text-blue-200 dark:hover:bg-blue-900/50'
             aria-label={`关闭公告：${current.title}`}
           >
             关闭
@@ -102,7 +102,7 @@ export default function HomepageNotices() {
                   <Button
                     variant='unstyled'
                     onClick={() => dismiss(notice)}
-                    className='shrink-0 rounded-md px-2 py-1 text-sm text-blue-700 hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-blue-200 dark:hover:bg-blue-900/50'
+                    className='focus:ring-focus shrink-0 rounded-md px-2 py-1 text-sm text-blue-700 hover:bg-blue-100 focus:ring-2 focus:outline-none dark:text-blue-200 dark:hover:bg-blue-900/50'
                     aria-label={`关闭公告：${notice.title}`}
                   >
                     关闭

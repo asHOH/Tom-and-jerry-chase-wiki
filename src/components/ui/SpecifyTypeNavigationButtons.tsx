@@ -56,7 +56,7 @@ export default function SpecifyTypeNavigationButtons({
       </MotionButton>
 
       {/* Target Counter */}
-      <div className='flex items-baseline gap-1 text-sm text-gray-600 dark:text-gray-400'>
+      <div className='text-muted-foreground flex items-baseline gap-1 text-sm'>
         <span className='font-medium'>{currentIndex + 1}</span>
         <span className='text-xs text-gray-400 dark:text-gray-500'>/{totals}</span>
       </div>

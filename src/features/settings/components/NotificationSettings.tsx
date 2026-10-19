@@ -197,7 +197,7 @@ export default function NotificationSettings() {
                       checked={checked}
                       disabled={!available || preferenceBusyKey !== null}
                       onChange={() => void togglePreference(item.key)}
-                      className='bg-surface-sunken mt-1 size-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600'
+                      className='bg-surface-sunken focus:ring-focus mt-1 size-4 rounded border-gray-300 text-blue-600 dark:border-gray-600'
                     />
                     <span className='min-w-0'>
                       <span className='block text-sm font-medium text-gray-900 dark:text-gray-100'>

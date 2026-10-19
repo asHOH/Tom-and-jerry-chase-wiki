@@ -271,7 +271,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
       {/* Header */}
       <PageHeader title='编辑文章' description='修改和完善您的文章内容' className='mb-8'>
         {/* Navigation Breadcrumb */}
-        <div className='flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400'>
+        <div className='text-muted-foreground flex items-center justify-center gap-2 text-sm'>
           <Link
             href='/articles'
             className='transition-colors hover:text-blue-600 dark:hover:text-blue-400'
@@ -313,7 +313,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
                 <div className='text-sm font-semibold text-gray-900 dark:text-gray-100'>
                   公开版本
                 </div>
-                <div className='mt-1 text-xs text-gray-600 dark:text-gray-400'>
+                <div className='text-muted-foreground mt-1 text-xs'>
                   更新时间: {formatArticleDate(approvedSource.created_at)}
                 </div>
               </Button>
@@ -332,11 +332,11 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
                 <div className='text-sm font-semibold text-gray-900 dark:text-gray-100'>
                   我的待审核版本
                 </div>
-                <div className='mt-1 text-xs text-gray-600 dark:text-gray-400'>
+                <div className='text-muted-foreground mt-1 text-xs'>
                   提交时间: {formatArticleDate(pendingSource.created_at)}
                 </div>
                 {pendingSource.commit_message && (
-                  <div className='mt-1 line-clamp-1 text-xs text-gray-600 dark:text-gray-400'>
+                  <div className='text-muted-foreground mt-1 line-clamp-1 text-xs'>
                     提交说明: {pendingSource.commit_message}
                   </div>
                 )}

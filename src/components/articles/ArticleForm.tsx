@@ -160,7 +160,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
             {isLoadingCategories ? (
               <div className='flex items-center gap-2 py-3'>
                 <LoadingSpinner size='sm' />
-                <span className='text-gray-600 dark:text-gray-400'>加载分类中...</span>
+                <span className='text-muted-foreground'>加载分类中...</span>
               </div>
             ) : (
               <FormSelect
@@ -186,9 +186,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               <label className='block text-lg font-semibold text-gray-900 dark:text-gray-100'>
                 关联角色 <span className='text-red-500'>*</span>
               </label>
-              <p className='text-sm text-gray-600 dark:text-gray-400'>
-                角色攻略文章需要选择一个关联角色
-              </p>
+              <p className='text-muted-foreground text-sm'>角色攻略文章需要选择一个关联角色</p>
               <ArticleCharacterSelector
                 characters={characterOptions}
                 selectedCharacterId={characterId ?? null}
@@ -225,9 +223,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                   >
                     提交说明 <span className='text-red-500'>*</span>
                   </label>
-                  <p className='text-sm text-gray-600 dark:text-gray-400'>
-                    简要说明本次修改的内容或原因
-                  </p>
+                  <p className='text-muted-foreground text-sm'>简要说明本次修改的内容或原因</p>
                 </div>
 
                 <Button
@@ -266,7 +262,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               id='license-agreement'
               checked={agreedToLicense}
               onChange={(e) => setAgreedToLicense(e.target.checked)}
-              className='bg-control mt-1 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 dark:border-gray-600'
+              className='bg-control focus:ring-focus mt-1 shrink-0 rounded border-gray-300 text-blue-600 disabled:opacity-50 dark:border-gray-600'
               disabled={isSubmitting}
             />
             <label

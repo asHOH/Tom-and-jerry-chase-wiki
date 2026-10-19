@@ -237,7 +237,7 @@ function ActivityPagination({
   const mutedButtonClasses = cn(getActionButtonClasses('secondary', 'sm'), 'h-9 font-medium');
 
   return (
-    <nav aria-label='贡献记录分页' className='border-t border-gray-200 pt-4 dark:border-gray-800'>
+    <nav aria-label='贡献记录分页' className='border-border border-t pt-4'>
       <div className='flex flex-col items-center gap-3 sm:flex-row sm:justify-between'>
         <p className='text-xs text-gray-500 dark:text-gray-400'>
           共 {formatContributionCount(totalItems)} 条，每页 {ACTIVITY_PAGE_SIZE} 条 · 第{' '}

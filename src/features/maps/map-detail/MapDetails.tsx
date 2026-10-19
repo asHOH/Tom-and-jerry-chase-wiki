@@ -190,7 +190,7 @@ export default function MapDetailClient({
           {/* 图片容器 */}
           <div
             ref={imageRef}
-            className='relative w-full cursor-pointer bg-gray-100 transition-transform active:scale-95 dark:bg-gray-800'
+            className='bg-surface-muted relative w-full cursor-pointer transition-transform active:scale-95'
             style={{
               aspectRatio: imageAspectRatio ? `${imageAspectRatio}` : '16/9',
               maxHeight: isMobile ? '70vh' : '80vh',

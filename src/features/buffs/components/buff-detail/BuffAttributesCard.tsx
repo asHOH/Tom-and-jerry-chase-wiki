@@ -138,7 +138,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
               </span>
             </div>
           )}
-          <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+          <div className='border-border border-t pt-1'>
             <span className='text-lg font-bold whitespace-pre'>基础信息</span>
             <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-1 items-center justify-center gap-1 text-sm font-normal'>
               {isEditMode ? (
@@ -198,7 +198,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
             </div>
           </div>
           {classFilter.length > 0 && (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-border border-t pt-1'>
               <span className='text-lg font-bold whitespace-pre'>
                 <span className='text-fuchsia-600 dark:text-fuchsia-400'>
                   {effectiveBuff.class}

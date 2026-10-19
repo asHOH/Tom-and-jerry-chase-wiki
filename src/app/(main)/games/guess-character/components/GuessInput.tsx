@@ -78,10 +78,9 @@ export default function GuessInput({
           'bg-surface-sunken w-full rounded-lg border-2 px-4 py-3 text-lg',
           'transition-colors duration-150',
           'placeholder:text-gray-400',
-          'focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none',
+          'focus:border-focus focus:ring-focus/30 focus:ring-2 focus:outline-none',
           'disabled:cursor-not-allowed disabled:opacity-50',
           'dark:text-white dark:placeholder:text-gray-500',
-          'dark:focus:ring-blue-800',
           error ? 'border-red-400 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
         )}
         autoComplete='off'

@@ -202,7 +202,7 @@ export default function ArticlesClient({
             'mt-4 gap-2 px-2 md:mt-8 md:gap-4 md:px-4'
           )}
         >
-          <div className='text-center text-sm text-gray-600 sm:text-left dark:text-gray-400'>
+          <div className='text-muted-foreground text-center text-sm sm:text-left'>
             共 {data.total_count} 篇文章
             {selectedCategories.size > 0 && (
               <span className='block sm:inline'>
@@ -272,7 +272,7 @@ export default function ArticlesClient({
           <h3 className='mb-2 text-xl font-semibold text-gray-800 dark:text-gray-200'>
             {selectedCategories.size > 0 ? '没有匹配的文章' : '暂无文章'}
           </h3>
-          <p className='mb-6 text-gray-600 dark:text-gray-400'>
+          <p className='text-muted-foreground mb-6'>
             {selectedCategories.size > 0
               ? '尝试调整搜索条件或筛选器'
               : '成为第一个创建文章的人吧！'}
@@ -337,7 +337,7 @@ export default function ArticlesClient({
                       {article.title}
                     </h3>
 
-                    <div className='mb-3 flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400'>
+                    <div className='text-muted-foreground mb-3 flex items-center gap-3 text-sm'>
                       <span>作者: {article.users_public_view?.nickname || '未知'}</span>
                       <span
                         className='rounded bg-blue-100 px-2 py-1 text-xs text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-800/50'
@@ -356,7 +356,7 @@ export default function ArticlesClient({
                     </p>
 
                     <div className='mt-auto mb-2 flex'>
-                      <div className='items-left flex flex-col justify-between text-xs text-gray-600 dark:text-gray-400'>
+                      <div className='items-left text-muted-foreground flex flex-col justify-between text-xs'>
                         <span>
                           发布:{' '}
                           {formatCompactDate(article.created_at, {

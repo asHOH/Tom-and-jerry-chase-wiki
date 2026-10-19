@@ -67,7 +67,7 @@ export default async function GotoPage({
                 {c.name}（{c.categoryLabel}）
               </span>
             </GotoLink>
-            <span className='text-gray-600 dark:text-gray-400'>，{c.kindDescription}</span>
+            <span className='text-muted-foreground'>，{c.kindDescription}</span>
           </li>
         ))}
       </Card>

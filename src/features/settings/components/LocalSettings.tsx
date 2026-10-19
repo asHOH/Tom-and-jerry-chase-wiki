@@ -106,12 +106,12 @@ export default function LocalSettings() {
           onChange={(value) => setDetailedView(value === 'detailed')}
         />
 
-        <label className='flex items-start gap-3 rounded-lg border border-gray-200 p-3 dark:border-gray-700'>
+        <label className='border-border flex items-start gap-3 rounded-lg border p-3'>
           <input
             type='checkbox'
             checked={articleAutoNumbering}
             onChange={(event) => reportSave(setArticleAutoNumbering(event.target.checked))}
-            className='bg-surface-sunken mt-1 size-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600'
+            className='bg-surface-sunken focus:ring-focus mt-1 size-4 rounded border-gray-300 text-blue-600 dark:border-gray-600'
           />
           <span>
             <span className='block text-sm font-medium text-gray-900 dark:text-gray-100'>
@@ -165,7 +165,7 @@ export default function LocalSettings() {
         </div>
         <div className='mt-5 border-t border-red-200 pt-5 dark:border-red-900/60'>
           <h3 className='text-sm font-semibold text-red-700 dark:text-red-300'>危险操作</h3>
-          <p className='mt-1 mb-3 text-xs leading-5 text-gray-600 dark:text-gray-400'>
+          <p className='text-muted-foreground mt-1 mb-3 text-xs leading-5'>
             删除当前浏览器中的所有未发布编辑草稿和操作历史，且无法恢复。
           </p>
           <Button variant='danger' onClick={clearDrafts}>

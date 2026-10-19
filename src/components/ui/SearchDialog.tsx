@@ -313,7 +313,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
 
       {searchQuery.length > 0 && (
         <div className={cn('flex min-h-0 flex-col gap-3', isMobile ? 'flex-1' : 'h-100')}>
-          <div className='min-h-0 flex-1 overflow-y-auto rounded-md border border-gray-300 [overflow-anchor:none] dark:border-gray-600'>
+          <div className='border-border min-h-0 flex-1 overflow-y-auto rounded-md border [overflow-anchor:none]'>
             <m.ul
               ref={resultsListRef}
               initial='hidden'

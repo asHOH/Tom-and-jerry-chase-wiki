@@ -105,9 +105,7 @@ export default function AttributesCardLayout({
           </div>
         )}
 
-        <div className='mx-4 grid items-center gap-1 border-t border-gray-300 py-1 dark:border-gray-600'>
-          {attributes}
-        </div>
+        <div className='border-border mx-4 grid items-center gap-1 border-t py-1'>{attributes}</div>
 
         {navigation}
       </EntityCardFrame>

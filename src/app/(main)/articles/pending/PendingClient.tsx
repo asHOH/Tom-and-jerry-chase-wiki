@@ -254,7 +254,7 @@ export default function PendingClient() {
               ? '您没有权限访问此页面'
               : '加载待审核内容失败'}
           </h1>
-          <p className='mb-6 text-gray-600 dark:text-gray-400'>
+          <p className='text-muted-foreground mb-6'>
             {(permissions.has('article.update_own') || permissions.has('article.update_any')) &&
             !permissions.has('article_version.approve')
               ? '您可以查看自己的待审核提交，但不能进行审核操作'
@@ -278,11 +278,11 @@ export default function PendingClient() {
         <div className='p-6'>
           <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
             <div className='flex items-center gap-4'>
-              <div className='text-sm text-gray-600 dark:text-gray-400'>
+              <div className='text-muted-foreground text-sm'>
                 共 {data?.count || 0} 个待处理项目
               </div>
               {filteredSubmissions.length !== data?.count && (
-                <div className='text-sm text-gray-600 dark:text-gray-400'>
+                <div className='text-muted-foreground text-sm'>
                   (显示 {filteredSubmissions.length} 个)
                 </div>
               )}
@@ -329,7 +329,7 @@ export default function PendingClient() {
                 ? '暂无待审核项目'
                 : '暂无已拒绝项目'}
           </h3>
-          <p className='mb-4 text-gray-600 dark:text-gray-400'>
+          <p className='text-muted-foreground mb-4'>
             {filter === 'all' ? '所有提交都已处理完成' : '尝试切换其他筛选条件查看更多内容'}
           </p>
           <div className='flex flex-wrap justify-center gap-3'>
@@ -350,7 +350,7 @@ export default function PendingClient() {
                       <h3 className='mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100'>
                         {submission.title}
                       </h3>
-                      <div className='flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400'>
+                      <div className='text-muted-foreground flex flex-wrap items-center gap-4 text-sm'>
                         <span>作者: {submission.author_nickname || '未知'}</span>
                         <span>编辑者: {submission.editor_nickname || '未知'}</span>
                         <span>分类: {submission.category_name || '未分类'}</span>
@@ -363,7 +363,7 @@ export default function PendingClient() {
                   </div>
 
                   <div className='mb-4 space-y-2'>
-                    <div className='text-sm text-gray-600 dark:text-gray-400'>
+                    <div className='text-muted-foreground text-sm'>
                       提交时间: {formatArticleDate(submission.created_at)}
                     </div>
 
@@ -464,7 +464,7 @@ export default function PendingClient() {
         <div className='flex flex-wrap justify-center gap-3'>
           <Link
             href='/articles'
-            className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+            className='text-muted-foreground px-4 py-2 transition-colors hover:text-gray-800 dark:hover:text-gray-200'
           >
             返回文章列表
           </Link>
@@ -472,7 +472,7 @@ export default function PendingClient() {
           {canModerate && (
             <Link
               href='/admin/users'
-              className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+              className='text-muted-foreground px-4 py-2 transition-colors hover:text-gray-800 dark:hover:text-gray-200'
             >
               用户管理
             </Link>

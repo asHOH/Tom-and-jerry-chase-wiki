@@ -253,7 +253,7 @@ function CategoryBreakdown({
       )}
 
       {total > 0 && (
-        <p className='border-t border-gray-100 pt-3 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400'>
+        <p className='border-border border-t pt-3 text-xs text-gray-500 dark:text-gray-400'>
           类型合计 {contributionNumberFormatter.format(total)} 次
         </p>
       )}

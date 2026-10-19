@@ -105,7 +105,7 @@ export default function CharacterArticle({
 
           {/* Meta Info */}
           <Card bordered className='mt-6'>
-            <div className='flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400'>
+            <div className='text-muted-foreground flex flex-wrap items-center gap-4 text-sm'>
               <div className='flex items-center gap-2'>
                 <UserCircleIcon className='size-4' strokeWidth={1.5} />
                 <span>
@@ -187,7 +187,7 @@ export default function CharacterArticle({
                 <div className='space-y-3 px-1 py-2'>
                   {/* Meta Info */}
                   <Card bordered className='p-3'>
-                    <div className='flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-400'>
+                    <div className='text-muted-foreground flex flex-wrap items-center gap-3 text-sm'>
                       <div className='flex items-center gap-2'>
                         <UserCircleIcon className='size-4' strokeWidth={1.5} />
                         <span>

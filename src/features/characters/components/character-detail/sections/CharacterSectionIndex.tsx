@@ -24,7 +24,7 @@ function CharacterSectionIndexItem({
     <li>
       <a
         className={cn(
-          'flex items-center gap-0.5 rounded px-1 py-0.5 text-sm transition-colors hover:underline focus:ring-2 focus:ring-blue-400 focus:outline-none dark:focus:ring-blue-600',
+          'focus:ring-focus flex items-center gap-0.5 rounded px-1 py-0.5 text-sm transition-colors hover:underline focus:ring-2 focus:outline-none',
           isActive
             ? 'bg-blue-100 font-medium text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
             : 'text-gray-700 dark:text-gray-200'

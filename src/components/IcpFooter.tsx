@@ -10,7 +10,7 @@ export default function IcpFooter() {
   }
 
   return (
-    <footer className='border-border border-t px-4 py-3 text-center text-xs text-gray-600 dark:text-gray-400'>
+    <footer className='border-border text-muted-foreground border-t px-4 py-3 text-center text-xs'>
       <a
         href={ICP_FILING_SYSTEM_URL}
         target='_blank'
