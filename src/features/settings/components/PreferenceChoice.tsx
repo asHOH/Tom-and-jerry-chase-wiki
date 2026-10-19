@@ -1,7 +1,8 @@
 'use client';
 
-import { cn } from '@/lib/design';
-import Button from '@/components/ui/Button';
+import { useId } from 'react';
+
+import { cn, getSelectionControlClasses } from '@/lib/design';
 
 type PreferenceOption<T extends string> = {
   value: T;
@@ -22,6 +23,8 @@ export default function PreferenceChoice<T extends string>({
   options,
   onChange,
 }: PreferenceChoiceProps<T>) {
+  const groupName = useId();
+
   return (
     <fieldset>
       <legend className='mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100'>
@@ -30,28 +33,38 @@ export default function PreferenceChoice<T extends string>({
       <div className='grid gap-2 sm:grid-cols-3'>
         {options.map((option) => {
           const selected = option.value === value;
+          const optionId = `${groupName}-${option.value}`;
           return (
-            <Button
-              variant='unstyled'
-              key={option.value}
-              type='button'
-              role='radio'
-              aria-checked={selected}
-              onClick={() => onChange(option.value)}
-              className={cn(
-                'focus-visible:ring-focus rounded-lg border px-3 py-3 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none',
-                selected
-                  ? 'border-blue-500 bg-blue-50 text-blue-900 dark:border-blue-500 dark:bg-blue-950/40 dark:text-blue-100'
-                  : 'border-border bg-surface hover:bg-control text-gray-700 dark:text-gray-300'
-              )}
-            >
-              <span className='block text-sm font-medium'>{option.label}</span>
-              {option.description ? (
-                <span className='mt-1 block text-xs leading-5 opacity-75'>
-                  {option.description}
+            <label key={option.value} className='cursor-pointer'>
+              <input
+                type='radio'
+                name={groupName}
+                value={option.value}
+                checked={selected}
+                onChange={() => onChange(option.value)}
+                aria-labelledby={`${optionId}-label`}
+                aria-describedby={option.description ? `${optionId}-description` : undefined}
+                className='peer sr-only focus:outline-none'
+              />
+              <span
+                className={cn(
+                  getSelectionControlClasses(selected),
+                  'peer-focus-visible:ring-focus block h-full rounded-lg px-3 py-3 text-left peer-focus-visible:ring-2'
+                )}
+              >
+                <span id={`${optionId}-label`} className='block text-sm font-medium'>
+                  {option.label}
                 </span>
-              ) : null}
-            </Button>
+                {option.description ? (
+                  <span
+                    id={`${optionId}-description`}
+                    className='mt-1 block text-xs leading-5 opacity-75'
+                  >
+                    {option.description}
+                  </span>
+                ) : null}
+              </span>
+            </label>
           );
         })}
       </div>

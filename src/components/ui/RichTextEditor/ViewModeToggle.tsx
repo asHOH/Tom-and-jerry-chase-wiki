@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { cn } from '@/lib/design';
+import { cn, getSelectionControlClasses } from '@/lib/design';
 import Button from '@/components/ui/Button';
 
 export type EditorViewMode = 'rich' | 'wiki' | 'html';
@@ -28,11 +28,7 @@ const ViewModeToggle = React.memo(function ViewModeToggle({
     wiki: labels?.wiki ?? 'WikiText',
   };
   const baseButtonClasses =
-    'inline-flex h-8 items-center justify-center p-2 rounded-md border text-sm';
-  const activeClasses =
-    'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300';
-  const inactiveClasses =
-    'bg-surface border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300';
+    'focus-visible:ring-focus inline-flex h-8 items-center justify-center p-2 rounded-md text-sm focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50';
   const buttonConfigs: Array<{ mode: EditorViewMode; label: string; title: string }> = [
     { mode: 'rich', label: l.rich, title: '富文本' },
     { mode: 'html', label: l.html, title: 'HTML' },
@@ -43,15 +39,16 @@ const ViewModeToggle = React.memo(function ViewModeToggle({
   }
 
   return (
-    <div className={cn('flex items-center gap-1', className)}>
+    <div role='group' aria-label='编辑模式' className={cn('flex items-center gap-1', className)}>
       {buttonConfigs.map(({ mode: targetMode, label, title }) => (
         <Button
           variant='unstyled'
           key={targetMode}
           type='button'
+          aria-pressed={mode === targetMode}
           onClick={() => onChange(targetMode)}
           disabled={disabled}
-          className={cn(baseButtonClasses, mode === targetMode ? activeClasses : inactiveClasses)}
+          className={cn(baseButtonClasses, getSelectionControlClasses(mode === targetMode))}
           title={title}
         >
           {label}

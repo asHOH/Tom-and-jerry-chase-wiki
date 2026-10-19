@@ -95,6 +95,15 @@ export function getFilterButtonActiveToneClasses(tone: FilterButtonTone = 'defau
   return filterButtonActiveToneClasses[tone];
 }
 
+export function getSelectionControlClasses(selected: boolean): string {
+  return cn(
+    'border transition-colors',
+    selected
+      ? 'border-focus bg-action-primary-subtle text-action-primary-subtle-foreground hover:bg-action-primary-subtle-hover'
+      : 'border-border bg-surface text-muted-foreground hover:bg-control'
+  );
+}
+
 export type FormControlSize = keyof typeof formControlSizes;
 
 export function getFormControlClasses(options?: {
