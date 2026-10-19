@@ -6,7 +6,7 @@ import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
 import { Map, MapSize, mapTypes, SingleItem, studyLevel } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
-import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
+import AliasEditor from '@/features/shared/detail-view/AliasEditor';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import { FormSelect } from '@/components/ui/FormControls';
@@ -53,42 +53,11 @@ export default function MapAttributesCard({
       aliases={isEditMode ? undefined : map.aliases}
       aliasesContent={
         isEditMode ? (
-          <div className='flex items-center gap-1'>
-            <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
-            {(effectiveMap.aliases ?? map.aliases ?? []).length > 0 ? (
-              (effectiveMap.aliases ?? map.aliases ?? []).map((alias, index, arr) => (
-                <span key={`${alias}-${index}`} className='inline-flex items-center'>
-                  <ed.span
-                    initialValue={alias || '<无内容>'}
-                    path={`aliases.${index}`}
-                    isSingleLine
-                    onSave={(newValue) => {
-                      updateMap((draft) => {
-                        if (!draft.aliases) draft.aliases = [];
-                        const trimmed = newValue.trim();
-                        if (trimmed === '') {
-                          draft.aliases = draft.aliases.filter((_, i) => i !== index);
-                        } else {
-                          draft.aliases[index] = trimmed;
-                        }
-                      });
-                    }}
-                  />
-                  {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
-                </span>
-              ))
-            ) : (
-              <span>{'<无内容>'}</span>
-            )}
-            <AddAliasButton
-              onAdd={() => {
-                updateMap((draft) => {
-                  if (!draft.aliases) draft.aliases = [];
-                  if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
-                });
-              }}
-            />
-          </div>
+          <AliasEditor
+            aliases={effectiveMap.aliases ?? map.aliases}
+            field={ed.span}
+            update={updateMap}
+          />
         ) : undefined
       }
       attributes={

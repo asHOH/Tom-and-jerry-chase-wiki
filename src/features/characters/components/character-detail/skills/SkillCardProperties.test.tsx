@@ -23,15 +23,6 @@ jest.mock('@/features/shared/components/TextWithItemKeyTooltips', () => ({
   default: ({ text }: { text: string }) => <>{text}</>,
 }));
 
-jest.mock('@/features/shared/detail-view/AddAliasButton', () => ({
-  __esModule: true,
-  default: ({ onAdd }: { onAdd: () => void }) => (
-    <button type='button' onClick={onAdd}>
-      添加别名
-    </button>
-  ),
-}));
-
 jest.mock('@/components/ui/IconButton', () => ({
   __esModule: true,
   default: ({ children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) => (

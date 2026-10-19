@@ -7,7 +7,7 @@ import { useEditMode } from '@/context/EditModeContext';
 import { FACTION_FULL_NAMES, FACTION_NAMES } from '@/constants/factions';
 import { Achievement } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
-import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
+import AliasEditor from '@/features/shared/detail-view/AliasEditor';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
@@ -36,44 +36,11 @@ export default function AchievementAttributesCard({ achievement }: { achievement
       aliases={isEditMode ? undefined : achievement.aliases}
       aliasesContent={
         isEditMode ? (
-          <div className='flex items-center gap-1'>
-            <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
-            {(effectiveAchievement.aliases ?? achievement.aliases ?? []).length > 0 ? (
-              (effectiveAchievement.aliases ?? achievement.aliases ?? []).map(
-                (alias, index, arr) => (
-                  <span key={`${alias}-${index}`} className='inline-flex items-center'>
-                    <ed.span
-                      initialValue={alias || '<无内容>'}
-                      path={`aliases.${index}`}
-                      isSingleLine
-                      onSave={(newValue) => {
-                        updateAchievement((draft) => {
-                          if (!draft.aliases) draft.aliases = [];
-                          const trimmed = newValue.trim();
-                          if (trimmed === '') {
-                            draft.aliases = draft.aliases.filter((_, i) => i !== index);
-                          } else {
-                            draft.aliases[index] = trimmed;
-                          }
-                        });
-                      }}
-                    />
-                    {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
-                  </span>
-                )
-              )
-            ) : (
-              <span>{'<无内容>'}</span>
-            )}
-            <AddAliasButton
-              onAdd={() => {
-                updateAchievement((draft) => {
-                  if (!draft.aliases) draft.aliases = [];
-                  if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
-                });
-              }}
-            />
-          </div>
+          <AliasEditor
+            aliases={effectiveAchievement.aliases ?? achievement.aliases}
+            field={ed.span}
+            update={updateAchievement}
+          />
         ) : undefined
       }
       attributes={

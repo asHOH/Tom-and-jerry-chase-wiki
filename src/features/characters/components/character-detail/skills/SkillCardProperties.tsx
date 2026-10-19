@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import uniq from 'lodash-es/uniq';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
@@ -17,7 +17,7 @@ import {
   removeSkillPart,
 } from '@/features/characters/utils/skillUsage';
 import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
-import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
+import AliasEditor from '@/features/shared/detail-view/AliasEditor';
 import Button from '@/components/ui/Button';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
@@ -164,37 +164,14 @@ export default function SkillCardProperties({
 
   if (isEditMode) {
     commonProperties.push(
-      <div key='aliases' className='flex text-xs text-gray-400 dark:text-gray-500'>
-        别名：
-        {skill.aliases?.map((alias, index) => (
-          <Fragment key={`${alias}-${index}`}>
-            <e.span
-              initialValue={alias}
-              path={`skills.${skillIndex}.aliases.${index}`}
-              isSingleLine={true}
-              onSave={(newValue) => {
-                const trimmed = newValue.trim();
-                updateSkill((draft) => {
-                  if (trimmed === '') {
-                    draft.aliases = draft.aliases!.filter((_, aliasIndex) => aliasIndex !== index);
-                  } else {
-                    draft.aliases![index] = trimmed;
-                  }
-                });
-              }}
-            />
-            {index < skill.aliases!.length - 1 && <span>、</span>}
-          </Fragment>
-        ))}
-        <AddAliasButton
-          onAdd={() => {
-            updateSkill((draft) => {
-              draft.aliases ??= [];
-              if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
-            });
-          }}
-        />
-      </div>
+      <AliasEditor
+        key='aliases'
+        aliases={skill.aliases}
+        field={e.span}
+        update={updateSkill}
+        path={`skills.${skillIndex}.aliases`}
+        className='text-xs text-gray-400 dark:text-gray-500'
+      />
     );
   }
 

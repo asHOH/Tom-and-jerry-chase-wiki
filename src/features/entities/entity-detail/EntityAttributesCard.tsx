@@ -10,7 +10,7 @@ import { Entity, Entitytaglist, Entitytypelist, SingleItem } from '@/data/types'
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import ActorProfileSelect from '@/features/shared/detail-view/ActorProfileSelect';
-import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
+import AliasEditor from '@/features/shared/detail-view/AliasEditor';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import CharacterLikeAttributesSection from '@/features/shared/detail-view/CharacterLikeAttributesSection';
 import EditableCheckboxGroup from '@/features/shared/detail-view/EditableCheckboxGroup';
@@ -141,42 +141,11 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
       aliases={isEditMode ? undefined : entity.aliases}
       aliasesContent={
         isEditMode ? (
-          <div className='flex items-center gap-1'>
-            <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
-            {(effectiveEntity.aliases ?? entity.aliases ?? []).length > 0 ? (
-              (effectiveEntity.aliases ?? entity.aliases ?? []).map((alias, index, arr) => (
-                <span key={`${alias}-${index}`} className='inline-flex items-center'>
-                  <ed.span
-                    initialValue={alias || '<无内容>'}
-                    path={`aliases.${index}`}
-                    isSingleLine
-                    onSave={(newValue) => {
-                      updateEntity((draft) => {
-                        if (!draft.aliases) draft.aliases = [];
-                        const trimmed = newValue.trim();
-                        if (trimmed === '') {
-                          draft.aliases = draft.aliases.filter((_, i) => i !== index);
-                        } else {
-                          draft.aliases[index] = trimmed;
-                        }
-                      });
-                    }}
-                  />
-                  {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
-                </span>
-              ))
-            ) : (
-              <span>{'<无内容>'}</span>
-            )}
-            <AddAliasButton
-              onAdd={() => {
-                updateEntity((draft) => {
-                  if (!draft.aliases) draft.aliases = [];
-                  if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
-                });
-              }}
-            />
-          </div>
+          <AliasEditor
+            aliases={effectiveEntity.aliases ?? entity.aliases}
+            field={ed.span}
+            update={updateEntity}
+          />
         ) : undefined
       }
       attributes={
