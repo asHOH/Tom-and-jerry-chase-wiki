@@ -257,6 +257,8 @@ export function BaseDialog({
               if (
                 !openDialogs.some(({ panel }) => panel === event.currentTarget) &&
                 event.relatedTarget instanceof HTMLElement &&
+                // Replacing a dialog can briefly leave focus on the body before cleanup restores it.
+                event.relatedTarget !== document.body &&
                 !event.currentTarget.contains(event.relatedTarget)
               ) {
                 activeElementBeforeOpenRef.current = event.relatedTarget;
