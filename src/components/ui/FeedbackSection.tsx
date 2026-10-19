@@ -105,7 +105,7 @@ const FeedbackSection =
               open={isFeedbackOpen}
               onOpenChange={(nextOpen) => setIsFeedbackOpen(nextOpen)}
               ariaLabelledBy='feedback-title'
-              panelClassName='md:h-auto md:max-h-[80vh] md:w-1/2 md:max-w-2xl md:min-w-md'
+              size='2xl'
             >
               {submitted ? (
                 <div className='p-6 text-center' role='alert' aria-live='polite'>

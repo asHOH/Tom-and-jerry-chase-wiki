@@ -47,8 +47,7 @@ export default function LinkDialog({
       ariaLabelledBy='link-dialog-title'
       closeOnEsc={false}
       closeOnOutsideClick={false}
-      lockScroll={false}
-      panelClassName='inset-auto top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 p-6'
+      panelClassName='p-6'
     >
       <h2
         id='link-dialog-title'

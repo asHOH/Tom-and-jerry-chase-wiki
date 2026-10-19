@@ -198,8 +198,8 @@ export function CharacterSlotsSelector({
         }}
         ariaLabelledBy={dialogTitleId}
         closeOnEsc={false}
-        lockScroll={false}
-        panelClassName='inset-auto top-1/2 left-1/2 flex max-h-[80vh] w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 flex-col'
+        size='2xl'
+        panelClassName='flex max-h-[80dvh] flex-col overflow-hidden'
       >
         <div className='border-border flex items-center justify-between border-b p-4'>
           <h3

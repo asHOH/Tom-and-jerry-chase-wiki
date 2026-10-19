@@ -68,7 +68,7 @@ describe('LoginDialog', () => {
     expect(screen.getByRole('textbox')).toHaveValue('');
     expect(screen.getByRole('dialog', { name: '登录或注册' })).toHaveClass(
       'inset-0',
-      'h-full',
+      'h-dvh',
       'w-full',
       'rounded-none'
     );

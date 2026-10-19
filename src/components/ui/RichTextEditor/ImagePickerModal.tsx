@@ -423,8 +423,9 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       }}
       ariaLabelledBy='image-picker-dialog-title'
       closeOnOutsideClick={!isUploading}
-      backdropClassName='z-120 bg-black/60 backdrop-blur-none'
-      panelClassName='border-border inset-auto top-1/2 left-1/2 z-130 max-h-[calc(100%-2rem)] w-[calc(100%-2rem)] max-w-4xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto border shadow-2xl'
+      size='4xl'
+      backdropClassName='bg-black/60 backdrop-blur-none'
+      panelClassName='border-border border shadow-2xl'
     >
       <div className='border-border flex items-center justify-between border-b px-6 py-4'>
         <div>

@@ -38,12 +38,7 @@ export default function ResultDialog({
   isDaily,
 }: ResultDialogProps) {
   return (
-    <BaseDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      ariaLabel='游戏结果'
-      panelClassName='max-w-md w-[90vw] p-6'
-    >
+    <BaseDialog open={open} onOpenChange={onOpenChange} ariaLabel='游戏结果' panelClassName='p-6'>
       <div className='flex flex-col items-center gap-4 text-center'>
         {/* Result header */}
         <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>

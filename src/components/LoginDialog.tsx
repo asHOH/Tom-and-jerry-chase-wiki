@@ -390,13 +390,9 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onClose, isMobile }) =>
         if (!nextOpen) onClose();
       }}
       ariaLabel='登录或注册'
-      lockScroll={false}
-      panelClassName={cn(
-        'p-6',
-        isMobile
-          ? 'inset-0 flex h-full w-full flex-col overflow-y-auto rounded-none'
-          : 'inset-auto top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2'
-      )}
+      size='sm'
+      fullScreen={isMobile}
+      panelClassName='p-6'
     >
       <Button
         variant='unstyled'

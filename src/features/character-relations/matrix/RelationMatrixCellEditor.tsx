@@ -171,7 +171,8 @@ export default function RelationMatrixCellEditor({
       ariaLabel='编辑角色关系'
       closeOnEsc={false}
       closeOnOutsideClick={false}
-      panelClassName='flex max-h-[min(90vh,36rem)] w-[min(92vw,32rem)] flex-col overflow-hidden'
+      size='lg'
+      panelClassName='flex max-h-[min(90dvh,36rem)] flex-col overflow-hidden'
     >
       <div className='flex flex-col gap-4 overflow-y-auto p-4'>
         <div>

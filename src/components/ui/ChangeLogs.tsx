@@ -155,7 +155,8 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
         open={isChangeLogsOpen}
         onOpenChange={(nextOpen) => setIsChangeLogsOpen(nextOpen)}
         ariaLabelledBy='changelogs-title'
-        panelClassName='flex flex-col md:h-auto md:max-h-[85vh] md:w-4/5 md:max-w-4xl md:min-w-md'
+        size='4xl'
+        panelClassName='flex flex-col overflow-hidden'
       >
         <div className='border-border flex items-center justify-between border-b p-6'>
           <h3 id='changelogs-title' className='text-2xl font-bold text-gray-900 dark:text-gray-100'>

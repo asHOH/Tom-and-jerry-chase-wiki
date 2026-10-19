@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import isEqual from 'lodash-es/isEqual';
 
-import { cn } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import type { CardGroup, CardGroupType, FactionId } from '@/data/types';
 import {
@@ -113,13 +112,9 @@ export default function AdvancedCardGroupEditor({
           if (!open) onClose();
         }}
         ariaLabel='高级编辑知识卡组'
-        backdropClassName='z-10000'
-        panelClassName={cn(
-          'z-10001 flex flex-col',
-          isMobile
-            ? 'inset-0 h-full w-full rounded-none'
-            : 'inset-auto top-1/2 left-1/2 max-h-[85vh] w-[calc(100%-2rem)] max-w-4xl -translate-x-1/2 -translate-y-1/2'
-        )}
+        size='4xl'
+        fullScreen={isMobile}
+        panelClassName='flex flex-col overflow-hidden'
       >
         {/* Header */}
         <div className='border-border flex-none border-b p-4 sm:p-6'>

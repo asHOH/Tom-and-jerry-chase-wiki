@@ -265,13 +265,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
         if (!nextOpen) onClose();
       }}
       ariaLabelledBy='search-dialog-title'
-      lockScroll={false}
-      panelClassName={cn(
-        'flex max-h-[calc(100dvh-2rem)] flex-col p-4',
-        isMobile
-          ? 'inset-0 h-full max-h-dvh w-full rounded-none'
-          : 'inset-auto top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2'
-      )}
+      fullScreen={isMobile}
+      panelClassName='flex flex-col overflow-hidden p-4'
     >
       <Button
         variant='unstyled'

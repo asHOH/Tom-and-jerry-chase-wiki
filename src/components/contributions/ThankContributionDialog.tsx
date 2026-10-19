@@ -49,7 +49,7 @@ export default function ThankContributionDialog({
       ariaDescribedBy='thank-contribution-description'
       closeOnEsc={!submitting}
       closeOnOutsideClick={!submitting}
-      panelClassName='md:h-auto md:max-h-[85vh] md:w-full md:max-w-xl'
+      size='xl'
     >
       <div className='p-5 sm:p-6'>
         <div className='flex items-start justify-between gap-4'>

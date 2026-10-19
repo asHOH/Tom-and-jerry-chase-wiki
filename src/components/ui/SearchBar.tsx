@@ -88,7 +88,8 @@ const SearchBar: React.FC<object> = () => {
           open={showSearchDialog}
           onOpenChange={setShowSearchDialog}
           ariaLabel='搜索'
-          panelClassName='max-w-md p-6 md:w-full'
+          fullScreen={isMobile}
+          panelClassName='p-6'
         >
           <p role='status'>{error ? '搜索加载失败，请重试' : '正在准备搜索…'}</p>
           {error && <Button onClick={retry}>重试</Button>}

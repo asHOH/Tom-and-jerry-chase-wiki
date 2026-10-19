@@ -127,8 +127,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
         ariaLabelledBy='edit-user-dialog-title'
         closeOnEsc={false}
         closeOnOutsideClick={false}
-        lockScroll={false}
-        panelClassName='inset-auto top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 p-6 dark:text-slate-100'
+        panelClassName='p-6 dark:text-slate-100'
       >
         {selectedUser ? (
           <>

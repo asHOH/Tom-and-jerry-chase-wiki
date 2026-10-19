@@ -211,7 +211,7 @@ describe('SearchDialog', () => {
     expect(screen.getByRole('textbox')).toHaveValue('');
     expect(screen.getByRole('dialog', { name: '搜索' })).toHaveClass(
       'inset-0',
-      'h-full',
+      'h-dvh',
       'w-full',
       'rounded-none'
     );

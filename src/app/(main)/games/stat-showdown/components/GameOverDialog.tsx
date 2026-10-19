@@ -42,7 +42,8 @@ export default function GameOverDialog({
       open={open}
       onOpenChange={onOpenChange}
       ariaLabel='游戏结束'
-      panelClassName='max-w-sm w-[90vw] p-6'
+      size='sm'
+      panelClassName='p-6'
     >
       <div className='flex flex-col items-center gap-4 text-center'>
         <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>游戏结束</h2>

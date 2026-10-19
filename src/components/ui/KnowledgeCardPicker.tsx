@@ -80,13 +80,9 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
         if (!open) onClose();
       }}
       ariaLabel='选择知识卡'
-      backdropClassName='z-10000'
-      panelClassName={cn(
-        'z-10001 flex flex-col p-6',
-        isMobile
-          ? 'inset-0 h-full w-full rounded-none'
-          : 'inset-auto top-1/2 left-1/2 max-h-[80vh] w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2'
-      )}
+      size='3xl'
+      fullScreen={isMobile}
+      panelClassName='flex flex-col overflow-hidden p-6'
     >
       <h2 className='mb-4 text-2xl font-bold text-gray-900 dark:text-white'>选择知识卡</h2>
       <div className='min-h-0 flex-1 overflow-y-auto'>

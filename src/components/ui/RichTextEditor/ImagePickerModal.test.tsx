@@ -1,5 +1,5 @@
 import React, { type JSX } from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import ImagePickerModal from './ImagePickerModal';
 
@@ -45,7 +45,9 @@ describe('ImagePickerModal', () => {
       <ImagePickerModal {...defaultProps} onClose={onClose} isUploading />
     );
 
-    const uploadingBackdrop = document.querySelector('.z-120[aria-hidden="true"]');
+    const uploadingBackdrop = screen.getByRole('dialog', {
+      name: '插入图片',
+    }).previousElementSibling;
     if (!uploadingBackdrop) throw new Error('Expected image picker backdrop');
 
     fireEvent.mouseDown(uploadingBackdrop);
@@ -57,7 +59,7 @@ describe('ImagePickerModal', () => {
     onClose.mockClear();
     rerender(<ImagePickerModal {...defaultProps} onClose={onClose} isUploading={false} />);
 
-    const idleBackdrop = document.querySelector('.z-120[aria-hidden="true"]');
+    const idleBackdrop = screen.getByRole('dialog', { name: '插入图片' }).previousElementSibling;
     if (!idleBackdrop) throw new Error('Expected image picker backdrop');
 
     fireEvent.mouseDown(idleBackdrop);
