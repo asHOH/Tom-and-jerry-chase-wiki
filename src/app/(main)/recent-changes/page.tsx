@@ -1,6 +1,7 @@
 import type { Metadata, Route } from 'next';
 
 import { formatCompactDateTime } from '@/lib/dateUtils';
+import { cn, getActionButtonClasses } from '@/lib/design';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import {
   getRecentChanges,
@@ -59,11 +60,10 @@ export default async function RecentChangesPage({ searchParams }: PageProps) {
               key={option.value}
               href={recentChangesHref(option.value)}
               aria-current={active ? 'page' : undefined}
-              className={
-                active
-                  ? 'rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white'
-                  : 'bg-control hover:bg-control-hover rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition-colors dark:text-gray-200'
-              }
+              className={cn(
+                getActionButtonClasses(active ? 'primary' : 'secondary', 'sm'),
+                'rounded-full border-0 px-4 font-medium'
+              )}
             >
               {option.label}
             </Link>
@@ -159,17 +159,19 @@ function Pagination({
 }) {
   if (totalPages <= 1) return null;
 
+  const buttonClasses = cn(
+    getActionButtonClasses('secondary', 'sm'),
+    'rounded-lg border-0 px-4 font-normal'
+  );
+
   return (
     <nav aria-label='最近更改分页' className='flex items-center justify-center gap-3'>
       {currentPage > 1 ? (
-        <Link
-          href={recentChangesHref(filter, currentPage - 1)}
-          className='bg-control hover:bg-control-hover rounded-lg px-4 py-2 text-sm text-gray-700 dark:text-gray-200'
-        >
+        <Link href={recentChangesHref(filter, currentPage - 1)} className={buttonClasses}>
           上一页
         </Link>
       ) : (
-        <span className='bg-control cursor-not-allowed rounded-lg px-4 py-2 text-sm text-gray-400 opacity-60'>
+        <span aria-disabled='true' className={cn(buttonClasses, 'pointer-events-none opacity-60')}>
           上一页
         </span>
       )}
@@ -177,14 +179,11 @@ function Pagination({
         第 {currentPage} 页，共 {totalPages} 页
       </span>
       {currentPage < totalPages ? (
-        <Link
-          href={recentChangesHref(filter, currentPage + 1)}
-          className='bg-control hover:bg-control-hover rounded-lg px-4 py-2 text-sm text-gray-700 dark:text-gray-200'
-        >
+        <Link href={recentChangesHref(filter, currentPage + 1)} className={buttonClasses}>
           下一页
         </Link>
       ) : (
-        <span className='bg-control cursor-not-allowed rounded-lg px-4 py-2 text-sm text-gray-400 opacity-60'>
+        <span aria-disabled='true' className={cn(buttonClasses, 'pointer-events-none opacity-60')}>
           下一页
         </span>
       )}

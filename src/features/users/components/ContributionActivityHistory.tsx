@@ -1,6 +1,6 @@
 import type { Route } from 'next';
 
-import { cn } from '@/lib/design';
+import { cn, getActionButtonClasses } from '@/lib/design';
 import type {
   ContributionActivityFilter,
   ContributionActivityItem,
@@ -100,10 +100,9 @@ function ActivityFilters({
             href={filterHrefs[value]}
             aria-current={isActive ? 'page' : undefined}
             className={cn(
-              'rounded-full border px-3 py-1.5 text-sm font-medium transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:focus:ring-offset-gray-900',
-              isActive
-                ? 'border-blue-600 bg-blue-600 text-white shadow-sm dark:border-blue-400 dark:bg-blue-500'
-                : 'border-border bg-surface-sunken text-gray-600 hover:border-blue-300 hover:text-blue-700 dark:text-gray-300 dark:hover:border-blue-700 dark:hover:text-blue-300'
+              getActionButtonClasses(isActive ? 'primary' : 'secondary', 'sm'),
+              'rounded-full border py-1.5 font-medium',
+              isActive && 'border-action-primary'
             )}
           >
             {label}
@@ -203,28 +202,18 @@ function PageLink({
   pageHref: (page: number) => Route;
 }) {
   const isCurrent = page === currentPage;
-  const classes =
-    'inline-flex h-9 min-w-9 items-center justify-center rounded-md border px-2 text-sm font-medium transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:focus:ring-offset-gray-900';
+  const classes = cn(
+    getActionButtonClasses(isCurrent ? 'primary' : 'secondary', 'sm'),
+    'h-9 min-w-9 border px-2 font-medium',
+    isCurrent && 'border-action-primary'
+  );
 
   return isCurrent ? (
-    <span
-      aria-current='page'
-      className={cn(
-        classes,
-        'border-blue-600 bg-blue-600 text-white dark:border-blue-400 dark:bg-blue-500'
-      )}
-    >
+    <span aria-current='page' className={cn(classes, 'pointer-events-none')}>
       {page}
     </span>
   ) : (
-    <Link
-      href={pageHref(page)}
-      aria-label={`第 ${page} 页`}
-      className={cn(
-        classes,
-        'border-border bg-surface-sunken text-gray-700 hover:border-blue-300 hover:text-blue-700 dark:text-gray-300 dark:hover:border-blue-700 dark:hover:text-blue-300'
-      )}
-    >
+    <Link href={pageHref(page)} aria-label={`第 ${page} 页`} className={classes}>
       {page}
     </Link>
   );
@@ -244,8 +233,7 @@ function ActivityPagination({
   if (totalItems === 0 || totalPages <= 1) return null;
 
   const tokens = getPageTokens(currentPage, totalPages);
-  const mutedButtonClasses =
-    'border-border bg-surface-sunken inline-flex h-9 items-center justify-center rounded-md border px-3 text-sm font-medium text-gray-700 transition-colors hover:border-blue-300 hover:text-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:text-gray-300 dark:hover:border-blue-700 dark:hover:text-blue-300 dark:focus:ring-offset-gray-900';
+  const mutedButtonClasses = cn(getActionButtonClasses('secondary', 'sm'), 'h-9 font-medium');
 
   return (
     <nav aria-label='贡献记录分页' className='border-t border-gray-200 pt-4 dark:border-gray-800'>
@@ -262,7 +250,7 @@ function ActivityPagination({
           ) : (
             <span
               aria-disabled='true'
-              className={cn(mutedButtonClasses, 'cursor-not-allowed opacity-50')}
+              className={cn(mutedButtonClasses, 'pointer-events-none opacity-60')}
             >
               上一页
             </span>
@@ -289,7 +277,7 @@ function ActivityPagination({
           ) : (
             <span
               aria-disabled='true'
-              className={cn(mutedButtonClasses, 'cursor-not-allowed opacity-50')}
+              className={cn(mutedButtonClasses, 'pointer-events-none opacity-60')}
             >
               下一页
             </span>

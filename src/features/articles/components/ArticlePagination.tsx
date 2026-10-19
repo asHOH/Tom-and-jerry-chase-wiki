@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import { cn } from '@/lib/design';
 import Button from '@/components/ui/Button';
 
 interface ArticlePaginationProps {
@@ -30,9 +29,6 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
     pages.push(i);
   }
 
-  const paginationButtonBase =
-    'rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900';
-
   return (
     <div className='mt-8 flex flex-col items-center gap-4'>
       {/* Page indicator */}
@@ -47,15 +43,13 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
 
       <div className='flex items-center gap-2'>
         <Button
-          variant='unstyled'
+          variant='secondary'
+          size='sm'
           type='button'
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage <= 1}
           aria-label='上一页'
-          className={cn(
-            paginationButtonBase,
-            'bg-control hover:bg-control-hover text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-300'
-          )}
+          className='rounded-lg border-0'
         >
           上一页
         </Button>
@@ -63,14 +57,12 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
         {startPage > 1 && (
           <>
             <Button
-              variant='unstyled'
+              variant='secondary'
+              size='sm'
               type='button'
               onClick={() => handlePageChange(1)}
               aria-label='第 1 页'
-              className={cn(
-                paginationButtonBase,
-                'bg-control hover:bg-control-hover text-gray-700 dark:text-gray-300'
-              )}
+              className='rounded-lg border-0'
             >
               1
             </Button>
@@ -84,18 +76,14 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
 
         {pages.map((page) => (
           <Button
-            variant='unstyled'
+            variant={page === currentPage ? 'primary' : 'secondary'}
+            size='sm'
             type='button'
             key={page}
             onClick={() => handlePageChange(page)}
             aria-label={`第 ${page} 页`}
             aria-current={page === currentPage ? 'page' : undefined}
-            className={cn(
-              paginationButtonBase,
-              page === currentPage
-                ? 'bg-blue-600 text-white'
-                : 'bg-control hover:bg-control-hover text-gray-700 dark:text-gray-300'
-            )}
+            className='rounded-lg border-0'
           >
             {page}
           </Button>
@@ -109,14 +97,12 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
               </span>
             )}
             <Button
-              variant='unstyled'
+              variant='secondary'
+              size='sm'
               type='button'
               onClick={() => handlePageChange(totalPages)}
               aria-label={`第 ${totalPages} 页`}
-              className={cn(
-                paginationButtonBase,
-                'bg-control hover:bg-control-hover text-gray-700 dark:text-gray-300'
-              )}
+              className='rounded-lg border-0'
             >
               {totalPages}
             </Button>
@@ -124,15 +110,13 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
         )}
 
         <Button
-          variant='unstyled'
+          variant='secondary'
+          size='sm'
           type='button'
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
           aria-label='下一页'
-          className={cn(
-            paginationButtonBase,
-            'bg-control hover:bg-control-hover text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-300'
-          )}
+          className='rounded-lg border-0'
         >
           下一页
         </Button>
