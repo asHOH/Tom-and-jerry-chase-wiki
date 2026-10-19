@@ -24,9 +24,7 @@ const SCENE_MAP_IDS = {
 
 export function getSceneMapUrl(mapName: string): string | undefined {
   if (!Object.hasOwn(SCENE_MAP_IDS, mapName)) return undefined;
-  const url = new URL('https://maps.tjwiki.com/');
-  url.searchParams.set('map', SCENE_MAP_IDS[mapName as keyof typeof SCENE_MAP_IDS]);
-  return url.href;
+  return 'https://maps.tjwiki.com/maps/' + SCENE_MAP_IDS[mapName];
 }
 
 export function getSceneMapName(mapId: string): string | undefined {
