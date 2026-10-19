@@ -7,7 +7,9 @@ import {
   getMapLevelColors,
   getMapTypeColors,
   getPositioningTagColors,
+  getPositioningTagContainerColor,
   getSkillLevelColors,
+  getSkillLevelContainerColor,
 } from './colorStyles';
 
 it('adds an optional border without changing the card foreground or background', () => {
@@ -55,6 +57,35 @@ it('retains rank and skill-level fallbacks', () => {
   expect(getCardRankColors('unknown', true)).toEqual(getCardRankColors('default', true));
   expect(getSkillLevelColors(0, true)).toEqual(getSkillLevelColors(1, true));
   expect(getSkillLevelColors(4, true)).toEqual(getSkillLevelColors(1, true));
+  expect(getSkillLevelContainerColor(0)).toEqual(getSkillLevelContainerColor(1));
+  expect(getSkillLevelContainerColor(4)).toEqual(getSkillLevelContainerColor(1));
+  expect(new Set([1, 2, 3].map(getSkillLevelContainerColor)).size).toBe(3);
+});
+
+it('reserves colored positioning panels for recognized major tags', () => {
+  const neutral = getPositioningTagContainerColor('unknown', 3, 'cat');
+  for (const level of [undefined, 0, 1, 2] as const) {
+    expect(getPositioningTagContainerColor('进攻', level, 'cat')).toBe(neutral);
+  }
+  const major = getPositioningTagContainerColor('进攻', 3, 'cat');
+  expect(major).not.toBe(neutral);
+  expect(getPositioningTagContainerColor('进攻', 4, 'cat')).toBe(major);
+});
+
+it('shares panel treatments for equivalent positioning roles across factions', () => {
+  for (const [cat, mouse] of [
+    ['进攻', '干扰'],
+    ['防守', '辅助'],
+    ['追击', '砸墙'],
+    ['速通', '救援'],
+    ['打架', '破局'],
+    ['翻盘', '奶酪'],
+    ['后期', '后期'],
+  ] as const) {
+    expect(getPositioningTagContainerColor(cat, 3, 'cat')).toBe(
+      getPositioningTagContainerColor(mouse, 3, 'mouse')
+    );
+  }
 });
 
 it('keeps avatar filters aligned with their factions', () => {

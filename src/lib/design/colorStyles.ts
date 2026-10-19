@@ -33,47 +33,6 @@ const resolvePositioningTagKey = (tagName: string, faction: FactionId) => {
   return positioningTagNameMap[tagName];
 };
 
-const skillLevelContainerClasses: Record<1 | 2 | 3, string> = {
-  1: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-300 dark:from-blue-900 dark:to-blue-950 dark:border-blue-800',
-  2: 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-300 dark:from-amber-900 dark:to-amber-950 dark:border-amber-800',
-  3: 'bg-gradient-to-r from-red-50 to-red-100 border border-red-300 dark:from-red-900 dark:to-red-950 dark:border-red-800',
-};
-
-const positioningTagContainerClasses: Record<
-  keyof typeof gameColorPalettes.positioningTags,
-  string
-> = {
-  attack:
-    'bg-gradient-to-r from-red-50 to-red-100 border border-red-200 dark:from-red-900 dark:to-red-950 dark:border-red-800',
-  defense:
-    'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 dark:from-blue-900 dark:to-blue-950 dark:border-blue-800',
-  chase:
-    'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300 dark:from-orange-900 dark:to-orange-950 dark:border-orange-800',
-  speedrun:
-    'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 dark:from-emerald-900 dark:to-emerald-950 dark:border-emerald-800',
-  fight:
-    'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 dark:from-purple-900 dark:to-purple-950 dark:border-purple-800',
-  lateGame:
-    'border-border bg-gradient-to-r from-gray-100 to-gray-200 border dark:from-gray-600 dark:to-gray-700',
-  comeback:
-    'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 dark:from-amber-900 dark:to-amber-950 dark:border-amber-800',
-  cheese:
-    'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 dark:from-amber-900 dark:to-amber-950 dark:border-amber-800',
-  disrupt:
-    'bg-gradient-to-r from-red-50 to-red-100 border border-red-200 dark:from-red-900 dark:to-red-950 dark:border-red-800',
-  support:
-    'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 dark:from-blue-900 dark:to-blue-950 dark:border-blue-800',
-  rescue:
-    'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 dark:from-emerald-900 dark:to-emerald-950 dark:border-emerald-800',
-  breakthrough:
-    'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 dark:from-purple-900 dark:to-purple-950 dark:border-purple-800',
-  wallBreak:
-    'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300 dark:from-orange-900 dark:to-orange-950 dark:border-orange-800',
-  lateGameMouse:
-    'border-border bg-gradient-to-r from-gray-100 to-gray-200 border dark:from-gray-600 dark:to-gray-700',
-  minor: 'bg-gray-50 border border-gray-100 dark:bg-slate-800/50 dark:border-slate-700',
-};
-
 // Card utility functions using game color palettes
 export const getCardRankColors = (rank: string, includeBorder: boolean) => {
   const rankKey = rank as keyof typeof gameColorPalettes.rank;
@@ -304,15 +263,15 @@ export const getSkillLevelColors = (level: number, includeBorder: boolean) => {
 
 export const getSkillLevelContainerColor = (level: number): string => {
   if (level === 1) {
-    return skillLevelContainerClasses[1];
+    return gameColorPalettes.skillLevels.level1.container;
   }
   if (level === 2) {
-    return skillLevelContainerClasses[2];
+    return gameColorPalettes.skillLevels.level2.container;
   }
   if (level === 3) {
-    return skillLevelContainerClasses[3];
+    return gameColorPalettes.skillLevels.level3.container;
   }
-  return skillLevelContainerClasses[1];
+  return gameColorPalettes.skillLevels.level1.container;
 };
 
 export const getPositioningTagContainerColor = (
@@ -321,11 +280,11 @@ export const getPositioningTagContainerColor = (
   faction: FactionId
 ): string => {
   if ((level ?? 0) < 3) {
-    return positioningTagContainerClasses.minor;
+    return gameColorPalettes.positioningTags.minor.container;
   }
 
   const tagKey = resolvePositioningTagKey(tagName, faction);
-  return positioningTagContainerClasses[tagKey ?? 'minor'];
+  return gameColorPalettes.positioningTags[tagKey ?? 'minor'].container;
 };
 
 /**

@@ -166,3 +166,50 @@
   --game-avatar-other-text: #e5e7eb;
   --game-avatar-other-background: #374151;
 }
+
+/* Panel shades differ from badges; the palette selects both treatments. */
+@layer components {
+  .game-container-skill-1 {
+    @apply border border-blue-300 bg-linear-to-r from-blue-50 to-blue-100 dark:border-blue-800 dark:from-blue-900 dark:to-blue-950;
+  }
+
+  .game-container-skill-2 {
+    @apply border border-amber-300 bg-linear-to-r from-amber-50 to-amber-100 dark:border-amber-800 dark:from-amber-900 dark:to-amber-950;
+  }
+
+  .game-container-skill-3 {
+    @apply border border-red-300 bg-linear-to-r from-red-50 to-red-100 dark:border-red-800 dark:from-red-900 dark:to-red-950;
+  }
+
+  .game-container-crimson {
+    @apply border border-red-200 bg-linear-to-r from-red-50 to-red-100 dark:border-red-800 dark:from-red-900 dark:to-red-950;
+  }
+
+  .game-container-azure {
+    @apply border border-blue-200 bg-linear-to-r from-blue-50 to-blue-100 dark:border-blue-800 dark:from-blue-900 dark:to-blue-950;
+  }
+
+  .game-container-russet {
+    @apply border border-orange-300 bg-linear-to-r from-orange-100 to-orange-200 dark:border-orange-800 dark:from-orange-900 dark:to-orange-950;
+  }
+
+  .game-container-emerald {
+    @apply border border-emerald-200 bg-linear-to-r from-emerald-50 to-emerald-100 dark:border-emerald-800 dark:from-emerald-900 dark:to-emerald-950;
+  }
+
+  .game-container-violet {
+    @apply border border-purple-200 bg-linear-to-r from-purple-50 to-purple-100 dark:border-purple-800 dark:from-purple-900 dark:to-purple-950;
+  }
+
+  .game-container-deep-gray {
+    @apply border-border border bg-linear-to-r from-gray-100 to-gray-200 dark:from-gray-600 dark:to-gray-700;
+  }
+
+  .game-container-amber {
+    @apply border border-amber-200 bg-linear-to-r from-amber-50 to-amber-100 dark:border-amber-800 dark:from-amber-900 dark:to-amber-950;
+  }
+
+  .game-container-minor {
+    @apply border border-gray-100 bg-gray-50 dark:border-slate-700 dark:bg-slate-800/50;
+  }
+}

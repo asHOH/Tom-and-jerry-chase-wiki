@@ -16,16 +16,19 @@ export const gameColorPalettes = {
       text: 'var(--game-skill-levels-level1-text)',
       background: 'var(--game-skill-levels-level1-background)',
       border: 'var(--game-skill-levels-level1-border)',
+      container: 'game-container-skill-1',
     },
     level2: {
       text: 'var(--game-skill-levels-level2-text)',
       background: 'var(--game-skill-levels-level2-background)',
       border: 'var(--game-skill-levels-level2-border)',
+      container: 'game-container-skill-2',
     },
     level3: {
       text: 'var(--game-skill-levels-level3-text)',
       background: 'var(--game-skill-levels-level3-background)',
       border: 'var(--game-skill-levels-level3-border)',
+      container: 'game-container-skill-3',
     },
   },
   rank: {
@@ -106,6 +109,7 @@ export const gameColorPalettes = {
       text: 'var(--game-positioning-tags-minor-text)',
       background: 'var(--game-positioning-tags-minor-background)',
       border: 'var(--game-positioning-tags-minor-border)',
+      container: 'game-container-minor',
     },
   },
   avatars: {
