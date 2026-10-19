@@ -7,7 +7,6 @@ import { CharacterWithFaction } from '@/lib/types';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import {
   getPositioningTagLevel,
@@ -273,7 +272,6 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
     handleAddPositioningTags,
     handleRemovePositioningTags,
   } = usePositioningTags({ factionId });
-  const [isDarkMode] = useDarkMode();
   const [storedViewMode] = useLocalPreference('positioningTagViewMode');
   const viewMode: PositioningTagViewMode = isEditMode ? 'text' : storedViewMode;
 
@@ -328,8 +326,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                         tag.tagName,
                         getPositioningTagLevel(tag),
                         true,
-                        factionId,
-                        isDarkMode
+                        factionId
                       )}
                       size='sm'
                     >
@@ -440,7 +437,6 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
             data={chartData}
             factionId={factionId}
             isDetailed={isDetailed}
-            isDarkMode={isDarkMode}
             viewMode={viewMode}
           />
         )}

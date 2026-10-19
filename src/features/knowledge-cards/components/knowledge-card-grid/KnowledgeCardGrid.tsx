@@ -9,7 +9,6 @@ import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { cards } from '@/data/static';
@@ -37,7 +36,6 @@ export default function KnowledgeCardGrid({ description, data = cards, published
     toggleFilter: toggleRankFilter,
     hasFilter: hasRankFilter,
   } = useFilterState<string>();
-  const [isDarkMode] = useDarkMode();
   const [costRange, setCostRange] = useState<[number, number]>([2, 7]);
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const costLabelId = useId();
@@ -79,9 +77,7 @@ export default function KnowledgeCardGrid({ description, data = cards, published
             isActive={(opt) => selectedFaction === opt}
             onToggle={(opt) => setSelectedFaction(selectedFaction === opt ? null : opt)}
             getOptionLabel={(opt) => FACTION_FULL_NAMES[opt]}
-            getButtonStyle={(opt, active) =>
-              active ? getFactionButtonColors(opt, isDarkMode) : undefined
-            }
+            getButtonStyle={(opt, active) => (active ? getFactionButtonColors(opt) : undefined)}
           />
 
           <FilterRow<string>
@@ -98,9 +94,7 @@ export default function KnowledgeCardGrid({ description, data = cards, published
                 </span>
               </>
             )}
-            getButtonStyle={(opt, active) =>
-              active ? getCardRankColors(opt, false, isDarkMode) : undefined
-            }
+            getButtonStyle={(opt, active) => (active ? getCardRankColors(opt, false) : undefined)}
           />
 
           <div

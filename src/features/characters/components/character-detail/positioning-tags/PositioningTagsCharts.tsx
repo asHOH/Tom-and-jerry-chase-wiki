@@ -11,7 +11,6 @@ type PositioningTagsChartProps = {
   data: readonly PositioningTagChartDatum[];
   factionId: FactionId;
   isDetailed: boolean;
-  isDarkMode: boolean;
   viewMode: Exclude<PositioningTagViewMode, 'text'>;
 };
 
@@ -27,8 +26,8 @@ const polarPoint = (center: number, radius: number, angle: number) => ({
   y: center + radius * Math.sin(angle),
 });
 
-const getTagColor = (datum: PositioningTagChartDatum, factionId: FactionId, isDarkMode: boolean) =>
-  getPositioningTagColors(datum.tagName, datum.level, false, factionId, isDarkMode).color;
+const getTagColor = (datum: PositioningTagChartDatum, factionId: FactionId) =>
+  getPositioningTagColors(datum.tagName, datum.level, false, factionId).color;
 
 const getRadarDisplayLevel = (level: number) => level + 1;
 
@@ -82,7 +81,6 @@ function BarChart({
   data,
   factionId,
   isDetailed,
-  isDarkMode,
   titleId,
 }: Omit<PositioningTagsChartProps, 'viewMode'> & { titleId: string }) {
   const visibleData = data
@@ -125,7 +123,7 @@ function BarChart({
       {visibleData.map((datum, index) => {
         const y = top + index * rowHeight;
         const width = (chartWidth * datum.level) / MAX_LEVEL;
-        const color = getTagColor(datum, factionId, isDarkMode);
+        const color = getTagColor(datum, factionId);
         return (
           <g key={datum.tagName}>
             <Tooltip
@@ -179,7 +177,6 @@ function RadarChart({
   data,
   factionId,
   isDetailed,
-  isDarkMode,
   titleId,
 }: Omit<PositioningTagsChartProps, 'viewMode'> & { titleId: string }) {
   const center = 140;
@@ -232,7 +229,7 @@ function RadarChart({
         const axisEnd = polarPoint(center, radius, angle);
         const labelPoint = polarPoint(center, radius + 24, angle);
         const valuePoint = getPoint(index, getRadarDisplayLevel(datum.level));
-        const color = getTagColor(datum, factionId, isDarkMode);
+        const color = getTagColor(datum, factionId);
         return (
           <g key={datum.tagName}>
             <line
@@ -284,7 +281,6 @@ export default function PositioningTagsChart({
   data,
   factionId,
   isDetailed,
-  isDarkMode,
   viewMode,
 }: PositioningTagsChartProps) {
   const titleId = useId();
@@ -292,21 +288,9 @@ export default function PositioningTagsChart({
   return (
     <div className='border-border bg-surface-sunken/60 rounded-lg border p-2'>
       {viewMode === 'bar' ? (
-        <BarChart
-          data={data}
-          factionId={factionId}
-          isDetailed={isDetailed}
-          isDarkMode={isDarkMode}
-          titleId={titleId}
-        />
+        <BarChart data={data} factionId={factionId} isDetailed={isDetailed} titleId={titleId} />
       ) : (
-        <RadarChart
-          data={data}
-          factionId={factionId}
-          isDetailed={isDetailed}
-          isDarkMode={isDarkMode}
-          titleId={titleId}
-        />
+        <RadarChart data={data} factionId={factionId} isDetailed={isDetailed} titleId={titleId} />
       )}
       <PositioningTagDataTable data={data} viewMode={viewMode} />
     </div>

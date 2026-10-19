@@ -7,7 +7,6 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { entities } from '@/data/static';
 import type { Entity, Entitytaglist, Entitytypelist, FactionId } from '@/data/types';
@@ -77,8 +76,6 @@ export default function EntityClient({ description, data = entities, publishedRe
 
   // 筛选逻辑开关：true = AND（所有选中项都必须满足），false = OR（满足任一即可）
   const [andMode, setAndMode] = useState(false);
-
-  const [isDarkMode] = useDarkMode();
 
   // 辅助函数：检查 entitytype 是否匹配（根据 andMode 决定逻辑）
   function matchesType(entity: Entity): boolean {
@@ -184,7 +181,7 @@ export default function EntityClient({ description, data = entities, publishedRe
             )}
             getButtonStyle={(type, active) => {
               if (!active) return undefined;
-              const colors = getEntityTypeColors(type, isDarkMode, false);
+              const colors = getEntityTypeColors(type, false);
               return { backgroundColor: colors.backgroundColor, color: colors.color };
             }}
           />
@@ -205,7 +202,7 @@ export default function EntityClient({ description, data = entities, publishedRe
               if (f === 'other') {
                 return undefined;
               }
-              return active ? getFactionButtonColors(f, isDarkMode) : undefined;
+              return active ? getFactionButtonColors(f) : undefined;
             }}
           />
 
@@ -266,7 +263,7 @@ export default function EntityClient({ description, data = entities, publishedRe
               innerClassName='flex flex-wrap gap-1 md:gap-1.5'
               getButtonStyle={(tag, active) => {
                 if (!active) return undefined;
-                const colors = getEntityTypeColors(tag, isDarkMode, false);
+                const colors = getEntityTypeColors(tag, false);
                 return { backgroundColor: colors.backgroundColor, color: colors.color };
               }}
             />

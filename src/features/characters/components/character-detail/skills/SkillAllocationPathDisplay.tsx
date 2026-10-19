@@ -29,7 +29,6 @@ type SkillAllocationPathDisplayProps = {
   characterSkills: DeepReadonly<SkillDefinition[]>;
   characterName: string;
   factionId: FactionId;
-  isDarkMode: boolean;
 };
 
 const DELAYED_BG_INSET = 2;
@@ -108,7 +107,6 @@ export default function SkillAllocationPathDisplay({
   characterSkills,
   characterName,
   factionId,
-  isDarkMode,
 }: SkillAllocationPathDisplayProps) {
   const currentLevels = useMemo(() => buildCurrentLevels(parsedLevels), [parsedLevels]);
   const levelGroups = useMemo(() => buildLevelGroups(currentLevels), [currentLevels]);
@@ -136,7 +134,7 @@ export default function SkillAllocationPathDisplay({
         getSkillAllocationImageUrl(characterName, skillType, factionId, skill?.name);
 
       type SkillLevelColors = { color: string; backgroundColor: string; borderColor?: string };
-      const colors: SkillLevelColors = getSkillLevelColors(currentLevel, true, isDarkMode);
+      const colors: SkillLevelColors = getSkillLevelColors(currentLevel, true);
       const edgeColor = (colors?.borderColor as string) ?? '#9ca3af';
       const showArc = currentLevel === 1 || currentLevel === 2 || currentLevel === 3;
       const baseStyle = {
@@ -356,7 +354,7 @@ export default function SkillAllocationPathDisplay({
 
       return iconElement;
     },
-    [skillTypeMap, characterName, factionId, isDarkMode]
+    [skillTypeMap, characterName, factionId]
   );
 
   const renderConnectionLine = (

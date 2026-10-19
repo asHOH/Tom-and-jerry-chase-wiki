@@ -8,7 +8,6 @@ import { performSearch } from '@/lib/searchUtils';
 import type { SearchResult } from '@/lib/searchUtils/types';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useSearchGameData } from '@/hooks/useSearchGameData';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormControls';
@@ -91,7 +90,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
   const resultsListRef = useRef<HTMLUListElement>(null);
   const { navigate } = useNavigation();
   const gameData = useSearchGameData(open);
-  const [isDarkMode] = useDarkMode();
 
   useEffect(() => {
     if (!open) return;
@@ -369,7 +367,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
                       )}
                     </div>
                     <Tag
-                      colorStyles={getTypeLabelColors(getTypeColorKey(result), isDarkMode)}
+                      colorStyles={getTypeLabelColors(getTypeColorKey(result))}
                       size='xs'
                       margin='compact'
                       className='shrink-0'

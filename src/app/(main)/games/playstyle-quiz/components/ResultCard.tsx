@@ -27,7 +27,6 @@ type ResultCardProps = {
   match: MatchedCharacter;
   character: CharacterResult;
   faction: FactionId;
-  isDarkMode: boolean;
   similarMatches: MatchedCharacter[];
   allCharacters: Record<string, CharacterResult>;
 };
@@ -40,7 +39,6 @@ export default function ResultCard({
   match,
   character,
   faction,
-  isDarkMode,
   similarMatches,
   allCharacters,
 }: ResultCardProps) {
@@ -92,8 +90,7 @@ export default function ResultCard({
                 tag.tagName,
                 getPositioningTagLevel(tag),
                 false,
-                faction,
-                isDarkMode
+                faction
               );
               return (
                 <Tag key={tag.tagName} colorStyles={colors} size='sm'>

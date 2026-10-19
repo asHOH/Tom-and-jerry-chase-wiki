@@ -9,7 +9,6 @@ import { CharacterWithFaction } from '@/lib/types';
 import { useEditableEntity, type EditableUpdate } from '@/hooks/useEditableGameData';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Skill, SkillLevel } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
@@ -232,7 +231,6 @@ export default function SkillCard({
     publishedCharacter
   ) as unknown as readonly [CharacterWithFaction, EditableUpdate<CharacterWithFaction>];
   const isMobile = useMobile();
-  const [isDarkMode] = useDarkMode();
   const skillTypeLabel = getSkillTypeLabel(skill.type, isSingleWeapon);
 
   const getLevelDescription = (level: SkillLevel): string =>
@@ -322,7 +320,7 @@ export default function SkillCard({
                 <p className='px-2 py-1 whitespace-pre-wrap'>
                   <span
                     className='font-bold'
-                    style={{ color: getSkillLevelColors(level.level, false, isDarkMode).color }}
+                    style={{ color: getSkillLevelColors(level.level, false).color }}
                   >
                     Lv.{level.level}:
                   </span>{' '}

@@ -1,13 +1,11 @@
 import { getItemSourceColors, getItemTypeColors } from '@/lib/design';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { Item } from '@/data/types';
 import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
 
 export default function ItemCardDisplay({ item }: { item: Item }) {
-  const [isDarkMode] = useDarkMode();
-  const typeColors = getItemTypeColors(item.itemtype, isDarkMode);
-  const sourceColors = getItemSourceColors(item.itemsource, isDarkMode);
+  const typeColors = getItemTypeColors(item.itemtype);
+  const sourceColors = getItemSourceColors(item.itemsource);
 
   return (
     <CatalogCard

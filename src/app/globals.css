@@ -13,6 +13,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @import '../styles/theme.css';
+@import '../styles/game-colors.css';
 @import '../styles/base.css';
 @import '../styles/typography.css';
 @import '../styles/components.css';

@@ -36,7 +36,6 @@ export const renderTextWithTooltips = (
   attackBoost: number | null,
   index: number,
   wallCrackDamageBoost?: number,
-  isDarkMode: boolean = false,
   currentCharacterId?: string
 ): RenderTextPart[] => {
   const parts: RenderTextPart[] = [];
@@ -89,7 +88,6 @@ export const renderTextWithTooltips = (
             linkName: damage.numericPart,
             displayText: damage.numericPart,
             categoryHint,
-            isDarkMode,
             sourceIndex: token.sourceIndex,
             sourceEnd: token.sourceEnd,
           })
@@ -138,7 +136,6 @@ export const renderTextWithTooltips = (
           linkName: isTaggedFallback ? damage.numericPart : contentText,
           displayText: isTaggedFallback ? damage.numericPart : visibleText,
           categoryHint,
-          isDarkMode,
           sourceIndex: token.sourceIndex,
           sourceEnd: token.sourceEnd,
         })

@@ -6,7 +6,6 @@ import { getFactionButtonColors } from '@/lib/design';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { specialSkills } from '@/data/static';
 import type { FactionId } from '@/data/types';
@@ -29,7 +28,6 @@ export default function SpecialSkillClient({
 }: Props) {
   usePublishedRevision(publishedRevision);
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
-  const [isDarkMode] = useDarkMode();
 
   const [specialSkillsSnapshot] = useEditableDomain('specialSkills', data);
   const allSkills = [
@@ -74,9 +72,7 @@ export default function SpecialSkillClient({
           isActive={(f) => selectedFaction === f}
           onToggle={(f) => setSelectedFaction(selectedFaction === f ? null : f)}
           getOptionLabel={(f) => FACTION_FULL_NAMES[f]}
-          getButtonStyle={(f, active) =>
-            active ? getFactionButtonColors(f, isDarkMode) : undefined
-          }
+          getButtonStyle={(f, active) => (active ? getFactionButtonColors(f) : undefined)}
         />
       }
     >

@@ -111,7 +111,6 @@ type GroupMetaRowProps = {
   contributor: string | undefined;
   contributorInformation: Contributor | undefined;
   isEditMode: boolean;
-  isDarkMode: boolean;
   missingWarningMessage: string | null;
 };
 
@@ -119,7 +118,6 @@ const GroupMetaRow = ({
   contributor,
   contributorInformation,
   isEditMode,
-  isDarkMode,
   missingWarningMessage,
 }: GroupMetaRowProps) => {
   const shouldShowContributor =
@@ -128,8 +126,8 @@ const GroupMetaRow = ({
     return null;
   }
 
-  const contributorTagStyles = getKnowledgeCardGroupMetaColors('contributor', isDarkMode);
-  const warningTagStyles = getKnowledgeCardGroupMetaColors('missingWarning', isDarkMode);
+  const contributorTagStyles = getKnowledgeCardGroupMetaColors('contributor');
+  const warningTagStyles = getKnowledgeCardGroupMetaColors('missingWarning');
 
   return (
     <div className='ml-11 flex flex-wrap items-center gap-1 sm:ml-12 md:ml-13 lg:ml-14'>
@@ -180,7 +178,6 @@ type KnowledgeCardGroupFlatProps = {
   descriptionPath: string;
   contributor: string | undefined;
   contributorInformation: Contributor | undefined;
-  isDarkMode: boolean;
   getCardPriority: (cardId: string) => string | undefined;
   shouldShowPriorityWarnings: boolean;
   onConvertToGroupSet?: (index: number) => void;
@@ -250,7 +247,6 @@ function KnowledgeCardGroupFlat({
   descriptionPath,
   contributor,
   contributorInformation,
-  isDarkMode,
   getCardPriority,
   shouldShowPriorityWarnings,
   onConvertToGroupSet,
@@ -332,7 +328,6 @@ function KnowledgeCardGroupFlat({
                 imageBasePath={imageBasePath}
                 isOptional={isOptional}
                 isEditMode={canEdit}
-                isDarkMode={isDarkMode}
                 characterId={characterId}
                 getCardRank={getCardRank}
                 handleSelectCard={handleSelectCard}
@@ -378,7 +373,6 @@ function KnowledgeCardGroupFlat({
         contributor={contributor}
         contributorInformation={contributorInformation}
         isEditMode={canEdit}
-        isDarkMode={isDarkMode}
         missingWarningMessage={missingWarningMessage}
       />
 
@@ -536,7 +530,6 @@ export function KnowledgeCardGroupDisplay({
           contributor={contributor}
           contributorInformation={contributorInformation}
           isEditMode={canEdit}
-          isDarkMode={isDarkMode}
           missingWarningMessage={missingWarningMessage}
         />
 
@@ -571,7 +564,6 @@ export function KnowledgeCardGroupDisplay({
               descriptionPath={descriptionPath}
               contributor={contributor}
               contributorInformation={contributorInformation}
-              isDarkMode={isDarkMode}
               getCardPriority={getCardPriority}
               shouldShowPriorityWarnings={shouldShowPriorityWarnings}
               {...(onConvertToGroupSet ? { onConvertToGroupSet } : {})}

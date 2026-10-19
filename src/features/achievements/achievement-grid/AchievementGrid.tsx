@@ -6,7 +6,6 @@ import { getFactionButtonColors } from '@/lib/design';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { achievements } from '@/data/static';
 import type { Achievement, FactionId } from '@/data/types';
@@ -27,7 +26,6 @@ export default function AchievementGridClient({
 }: AchievementGridProps) {
   usePublishedRevision(publishedRevision);
   const [selectedFactions, setSelectedFactions] = useState<FactionId[]>([]);
-  const [isDarkMode] = useDarkMode();
 
   const [achievementsSnapshot] = useEditableDomain('achievements', data);
   const allAchievements = [
@@ -62,9 +60,7 @@ export default function AchievementGridClient({
             )
           }
           getOptionLabel={(f) => FACTION_FULL_NAMES[f]}
-          getButtonStyle={(f, active) =>
-            active ? getFactionButtonColors(f, isDarkMode) : undefined
-          }
+          getButtonStyle={(f, active) => (active ? getFactionButtonColors(f) : undefined)}
         />
       }
     >

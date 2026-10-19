@@ -5,7 +5,6 @@ import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTo
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Entity, Entitytaglist, Entitytypelist, SingleItem } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
@@ -92,7 +91,6 @@ const deriveEntityTypes = (tags: readonly Entitytaglist[]): Entitytypelist[] => 
 };
 
 export default function EntityAttributesCard({ entity }: { entity: Entity }) {
-  const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const { isEditMode } = useEditMode();
   const { entityName } = useLocalEntity();
@@ -119,19 +117,14 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
     const tags = mode === 'tag' ? currentEntity.entitytag : currentEntity.entitytype;
     if (typeof tags === 'string') {
       return (
-        <Tag size='sm' margin='compact' colorStyles={getEntityTypeColors(tags, isDarkMode)}>
+        <Tag size='sm' margin='compact' colorStyles={getEntityTypeColors(tags)}>
           {tags}
         </Tag>
       );
     } else {
       return tags.map((type) => {
         return (
-          <Tag
-            size='sm'
-            margin='compact'
-            colorStyles={getEntityTypeColors(type, isDarkMode)}
-            key={type}
-          >
+          <Tag size='sm' margin='compact' colorStyles={getEntityTypeColors(type)} key={type}>
             {type}
           </Tag>
         );

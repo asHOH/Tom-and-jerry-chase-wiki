@@ -5,6 +5,8 @@ import { gameColorPalettes } from './gameColorPalettes';
 import { sharedPositioningTagPalettes } from './palettes';
 import type { PositioningTagColorStyle } from './types';
 
+// Returned CSS values adapt through game-colors.css, including in SVG and gradients.
+// Callers can compose these styles without reading the current theme or parsing color literals.
 // ============================================================================
 // Internal Maps and Helpers
 // ============================================================================
@@ -73,21 +75,20 @@ const positioningTagContainerClasses: Record<
 };
 
 // Card utility functions using game color palettes
-export const getCardRankColors = (rank: string, includeBorder: boolean, isDarkMode: boolean) => {
+export const getCardRankColors = (rank: string, includeBorder: boolean) => {
   const rankKey = rank as keyof typeof gameColorPalettes.rank;
   const colorScheme = gameColorPalettes.rank[rankKey] || gameColorPalettes.rank.default;
 
   return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    color: colorScheme.text,
+    backgroundColor: colorScheme.background,
     ...(includeBorder && {
-      borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+      borderColor: colorScheme.border,
     }),
   };
 };
 
-export const getCardCostColors = (cost: number, includeBorder: boolean, isDarkMode: boolean) => {
+export const getCardCostColors = (cost: number, includeBorder: boolean) => {
   let colorScheme;
 
   if (cost >= 6) {
@@ -101,17 +102,16 @@ export const getCardCostColors = (cost: number, includeBorder: boolean, isDarkMo
   }
 
   return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    color: colorScheme.text,
+    backgroundColor: colorScheme.background,
     ...(includeBorder && {
-      borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+      borderColor: colorScheme.border,
     }),
   };
 };
 
 // Type label utility (for preview badges like 角色/知识卡)
-export const getTypeLabelColors = (type: string, isDarkMode = false) => {
+export const getTypeLabelColors = (type: string) => {
   const map: Record<string, keyof typeof sharedPositioningTagPalettes> = {
     character: 'azure',
     card: 'amber',
@@ -131,11 +131,10 @@ export const getTypeLabelColors = (type: string, isDarkMode = false) => {
 
   const paletteKey = map[type] || 'deepGray';
   const palette = sharedPositioningTagPalettes[paletteKey];
-  const theme = isDarkMode && palette.dark ? palette.dark : palette;
 
   return {
-    color: theme.text,
-    backgroundColor: theme.background,
+    color: palette.text,
+    backgroundColor: palette.background,
   };
 };
 
@@ -144,8 +143,7 @@ export const getPositioningTagColors = (
   tagName: string,
   level: PositioningTagLevel | undefined,
   includeBorder: boolean,
-  faction: FactionId,
-  isDarkMode: boolean
+  faction: FactionId
 ): PositioningTagColorStyle => {
   const tagKey = resolvePositioningTagKey(tagName, faction);
   const colorScheme =
@@ -153,32 +151,17 @@ export const getPositioningTagColors = (
       ? gameColorPalettes.positioningTags.minor
       : gameColorPalettes.positioningTags[tagKey];
 
-  // Base style object with consistent properties
-
   if (isPositioningTagMinor(level) && tagKey) {
     // For minor tags, create diagonal gradient background
     const originalColorScheme = gameColorPalettes.positioningTags[tagKey];
     const greyColorScheme = gameColorPalettes.positioningTags.minor;
 
     return {
-      color:
-        isDarkMode && originalColorScheme.dark
-          ? originalColorScheme.dark.text
-          : originalColorScheme.text,
-      background: `linear-gradient(135deg, ${
-        isDarkMode && originalColorScheme.dark
-          ? originalColorScheme.dark.background
-          : originalColorScheme.background
-      } 20%, ${
-        isDarkMode && greyColorScheme.dark
-          ? greyColorScheme.dark.background
-          : greyColorScheme.background
+      color: originalColorScheme.text,
+      background: `linear-gradient(135deg, ${originalColorScheme.background} 20%, ${
+        greyColorScheme.background
       } 40%)`,
-      borderColor: includeBorder
-        ? isDarkMode && greyColorScheme.dark
-          ? greyColorScheme.dark.border
-          : greyColorScheme.border
-        : 'transparent',
+      borderColor: includeBorder ? greyColorScheme.border : 'transparent',
     };
   }
 
@@ -186,35 +169,23 @@ export const getPositioningTagColors = (
     // Fallback for minor tags without recognized tag name
     const greyColorScheme = gameColorPalettes.positioningTags.minor;
     return {
-      color: isDarkMode && greyColorScheme.dark ? greyColorScheme.dark.text : greyColorScheme.text,
-      backgroundColor:
-        isDarkMode && greyColorScheme.dark
-          ? greyColorScheme.dark.background
-          : greyColorScheme.background,
-      borderColor: includeBorder
-        ? isDarkMode && greyColorScheme.dark
-          ? greyColorScheme.dark.border
-          : greyColorScheme.border
-        : 'transparent',
+      color: greyColorScheme.text,
+      backgroundColor: greyColorScheme.background,
+      borderColor: includeBorder ? greyColorScheme.border : 'transparent',
     };
   }
 
   return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
-    borderColor: includeBorder
-      ? isDarkMode && colorScheme.dark
-        ? colorScheme.dark.border
-        : colorScheme.border
-      : 'transparent',
+    color: colorScheme.text,
+    backgroundColor: colorScheme.background,
+    borderColor: includeBorder ? colorScheme.border : 'transparent',
   };
 };
 
 /**
  * Item type color utility
  */
-export const getItemTypeColors = (itemtype: string, isDarkMode: boolean) => {
+export const getItemTypeColors = (itemtype: string) => {
   const itemTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
     投掷类: 'emerald',
     手持类: 'violet',
@@ -226,18 +197,17 @@ export const getItemTypeColors = (itemtype: string, isDarkMode: boolean) => {
 
   const paletteKey = itemTypePaletteMap[itemtype] || 'deepGray';
   const palette = sharedPositioningTagPalettes[paletteKey];
-  const theme = isDarkMode && palette.dark ? palette.dark : palette;
 
   return {
-    color: theme.text,
-    backgroundColor: theme.background,
+    color: palette.text,
+    backgroundColor: palette.background,
   };
 };
 
 /**
  * Item source color utility
  */
-export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => {
+export const getItemSourceColors = (itemsource: string) => {
   const itemSourcePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
     常规道具: 'azure',
     地图道具: 'russet',
@@ -246,18 +216,17 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
 
   const paletteKey = itemSourcePaletteMap[itemsource] || 'deepGray';
   const palette = sharedPositioningTagPalettes[paletteKey];
-  const theme = isDarkMode && palette.dark ? palette.dark : palette;
 
   return {
-    color: theme.text,
-    backgroundColor: theme.background,
+    color: palette.text,
+    backgroundColor: palette.background,
   };
 };
 
 /**
  * Buff
  */
-export const getBuffTypeColors = (type: buffTypelist, isDarkMode: boolean) => {
+export const getBuffTypeColors = (type: buffTypelist) => {
   const buffTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
     状态: 'amber',
     瞬时效果: 'violet',
@@ -267,25 +236,21 @@ export const getBuffTypeColors = (type: buffTypelist, isDarkMode: boolean) => {
 
   const paletteKey = buffTypePaletteMap[type] || 'deepGray';
   const palette = sharedPositioningTagPalettes[paletteKey];
-  const theme = isDarkMode && palette.dark ? palette.dark : palette;
+
   return {
-    color: theme.text,
-    backgroundColor: theme.background,
+    color: palette.text,
+    backgroundColor: palette.background,
   };
 };
 
 type KnowledgeCardGroupMetaColor = keyof typeof gameColorPalettes.knowledgeCardGroupMeta;
 
-export const getKnowledgeCardGroupMetaColors = (
-  role: KnowledgeCardGroupMetaColor,
-  isDarkMode: boolean
-) => {
+export const getKnowledgeCardGroupMetaColors = (role: KnowledgeCardGroupMetaColor) => {
   const scheme = gameColorPalettes.knowledgeCardGroupMeta[role];
-  const theme = isDarkMode ? scheme.dark : scheme;
 
   return {
-    color: theme.text,
-    backgroundColor: theme.background,
+    color: scheme.text,
+    backgroundColor: scheme.background,
   };
 };
 
@@ -297,36 +262,24 @@ export const getKnowledgeCardGroupMetaColors = (
  * - 其他: neutral gray
  */
 export const getAvatarFilterColors = (
-  option: '杰瑞' | '泰菲' | '汤姆' | '其他',
-  isDarkMode: boolean
+  option: '杰瑞' | '泰菲' | '汤姆' | '其他'
 ): { color: string; backgroundColor: string } => {
   // 杰瑞和汤姆复用 faction colors
   if (option === '杰瑞' || option === '汤姆') {
     const factionKey = option === '杰瑞' ? 'mouse' : 'cat';
     const c = gameColorPalettes.factions[factionKey];
-    const theme = isDarkMode ? c.dark : c.light;
-    return { color: theme.text, backgroundColor: theme.background };
+
+    return { color: c.text, backgroundColor: c.background };
   }
 
-  // 其他选项采用固定配色
-  const palette = {
-    泰菲: {
-      light: { bg: '#D8DBF8', text: '#4453AA' },
-      dark: { bg: '#4453AA', text: '#D7DAF9' },
-    },
-    其他: {
-      light: { bg: '#e5e7eb', text: '#4b5563' },
-      dark: { bg: '#374151', text: '#e5e7eb' },
-    },
-  } as const;
+  const scheme =
+    option === '泰菲' ? gameColorPalettes.avatars.tuffy : gameColorPalettes.avatars.other;
 
-  const scheme = palette[option as keyof typeof palette];
-  const theme = isDarkMode ? scheme.dark : scheme.light;
-  return { color: theme.text, backgroundColor: theme.bg };
+  return { color: scheme.text, backgroundColor: scheme.background };
 };
 
 // Skill level utility functions
-export const getSkillLevelColors = (level: number, includeBorder: boolean, isDarkMode: boolean) => {
+export const getSkillLevelColors = (level: number, includeBorder: boolean) => {
   let colorScheme;
 
   if (level === 1) {
@@ -341,11 +294,10 @@ export const getSkillLevelColors = (level: number, includeBorder: boolean, isDar
   }
 
   return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    color: colorScheme.text,
+    backgroundColor: colorScheme.background,
     ...(includeBorder && {
-      borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+      borderColor: colorScheme.border,
     }),
   };
 };
@@ -379,11 +331,7 @@ export const getPositioningTagContainerColor = (
 /**
  * Entity type color utility
  */
-export const getEntityTypeColors = (
-  entityType: string,
-  isDarkMode: boolean,
-  isMinor: boolean = false
-) => {
+export const getEntityTypeColors = (entityType: string, isMinor: boolean = false) => {
   const entityTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
     /*投射类：绿色*/
     投射类: 'emerald',
@@ -424,29 +372,14 @@ export const getEntityTypeColors = (
     星元: 'violet',
   };
 
-  const hexToRgba = (hex: string, alpha: number): string => {
-    let hexColor = hex.replace('#', '');
-    if (hexColor.length === 3) {
-      hexColor = hexColor
-        .split('')
-        .map((c) => c + c)
-        .join('');
-    }
-    const r = parseInt(hexColor.slice(0, 2), 16);
-    const g = parseInt(hexColor.slice(2, 4), 16);
-    const b = parseInt(hexColor.slice(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  };
-
   const paletteKey = entityTypePaletteMap[entityType] || 'deepGray';
   const palette = sharedPositioningTagPalettes[paletteKey];
-  const theme = isDarkMode && palette.dark ? palette.dark : palette;
 
-  const semiTransparentBg = hexToRgba(theme.background, 0.5);
-  const backgroundColor = isMinor ? semiTransparentBg : theme.background;
+  const semiTransparentBg = `color-mix(in srgb, ${palette.background} 50%, transparent)`;
+  const backgroundColor = isMinor ? semiTransparentBg : palette.background;
 
   return {
-    color: theme.text,
+    color: palette.text,
     backgroundColor,
   };
 };
@@ -454,7 +387,7 @@ export const getEntityTypeColors = (
 /**
  * Map type color utility
  */
-export const getMapTypeColors = (mapType: string, isDarkMode: boolean) => {
+export const getMapTypeColors = (mapType: string) => {
   const mapTypeColorMap: Record<
     string,
     'rescue' | 'support' | 'breakthrough' | 'wallBreak' | 'disrupt' | 'cheese' | 'lateGameMouse'
@@ -466,14 +399,13 @@ export const getMapTypeColors = (mapType: string, isDarkMode: boolean) => {
   const paletteKey = mapTypeColorMap[mapType] || 'lateGameMouse';
   const colorScheme = gameColorPalettes.positioningTags[paletteKey];
   return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
-    borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+    color: colorScheme.text,
+    backgroundColor: colorScheme.background,
+    borderColor: colorScheme.border,
   };
 };
 
-export const getMapSizeColors = (size: string, isDarkMode: boolean) => {
+export const getMapSizeColors = (size: string) => {
   const sizeColorMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
     微型: 'amber',
     小型: 'emerald',
@@ -482,15 +414,14 @@ export const getMapSizeColors = (size: string, isDarkMode: boolean) => {
   };
   const paletteKey = sizeColorMap[size] || 'deepGray';
   const palette = sharedPositioningTagPalettes[paletteKey];
-  const theme = isDarkMode && palette.dark ? palette.dark : palette;
 
   return {
-    color: theme.text,
-    backgroundColor: theme.background,
+    color: palette.text,
+    backgroundColor: palette.background,
   };
 };
 
-export const getMapLevelColors = (level: string, isDarkMode: boolean) => {
+export const getMapLevelColors = (level: string) => {
   const levelColorMap: Record<string, 'C' | 'B' | 'A' | 'S'> = {
     见习学业: 'C',
     高级学业: 'B',
@@ -501,17 +432,16 @@ export const getMapLevelColors = (level: string, isDarkMode: boolean) => {
   const colorScheme = gameColorPalettes.rank[paletteKey];
 
   return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
-    borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+    color: colorScheme.text,
+    backgroundColor: colorScheme.background,
+    borderColor: colorScheme.border,
   };
 };
 
 /**
  * Fixture type color utility
  */
-export const getFixtureTypeColors = (fixtureType: string, isDarkMode: boolean) => {
+export const getFixtureTypeColors = (fixtureType: string) => {
   const fixtureTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
     平台类: 'emerald',
     地面类: 'violet',
@@ -524,18 +454,17 @@ export const getFixtureTypeColors = (fixtureType: string, isDarkMode: boolean) =
 
   const paletteKey = fixtureTypePaletteMap[fixtureType] || 'deepGray';
   const palette = sharedPositioningTagPalettes[paletteKey];
-  const theme = isDarkMode && palette.dark ? palette.dark : palette;
 
   return {
-    color: theme.text,
-    backgroundColor: theme.background,
+    color: palette.text,
+    backgroundColor: palette.background,
   };
 };
 
 /**
  * Fixture source color utility
  */
-export const getFixtureSourceColors = (fixtureSource: string, isDarkMode: boolean) => {
+export const getFixtureSourceColors = (fixtureSource: string) => {
   const fixtureSourcePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
     通用组件: 'amber',
     地图组件: 'violet',
@@ -544,18 +473,17 @@ export const getFixtureSourceColors = (fixtureSource: string, isDarkMode: boolea
 
   const paletteKey = fixtureSourcePaletteMap[fixtureSource] || 'deepGray';
   const palette = sharedPositioningTagPalettes[paletteKey];
-  const theme = isDarkMode && palette.dark ? palette.dark : palette;
 
   return {
-    color: theme.text,
-    backgroundColor: theme.background,
+    color: palette.text,
+    backgroundColor: palette.background,
   };
 };
 
 /**
  * Mode type color utility
  */
-export const getModeTypeColors = (modeType: string, isDarkMode: boolean) => {
+export const getModeTypeColors = (modeType: string) => {
   const modeTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
     经典模式: 'emerald',
     休闲模式: 'violet',
@@ -564,25 +492,24 @@ export const getModeTypeColors = (modeType: string, isDarkMode: boolean) => {
 
   const paletteKey = modeTypePaletteMap[modeType] || 'deepGray';
   const palette = sharedPositioningTagPalettes[paletteKey];
-  const theme = isDarkMode && palette.dark ? palette.dark : palette;
 
   return {
-    color: theme.text,
-    backgroundColor: theme.background,
+    color: palette.text,
+    backgroundColor: palette.background,
   };
 };
 
 /**
  * Consistent faction filter button colors
- * - cat: yellow palette
- * - mouse: sky palette
+ * - cat: blue palette
+ * - mouse: brown palette
  */
-export function getFactionButtonColors(
-  faction: FactionId,
-  isDarkMode: boolean
-): { backgroundColor: string; color: string } {
+export function getFactionButtonColors(faction: FactionId): {
+  backgroundColor: string;
+  color: string;
+} {
   const palette = gameColorPalettes.factions;
   const scheme = faction === 'cat' ? palette.cat : palette.mouse;
-  const theme = isDarkMode ? scheme.dark : scheme.light;
-  return { backgroundColor: theme.background, color: theme.text };
+
+  return { backgroundColor: scheme.background, color: scheme.text };
 }

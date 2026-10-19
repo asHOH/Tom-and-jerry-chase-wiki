@@ -4,7 +4,6 @@ import { getModeTypeColors } from '@/lib/design';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalMode } from '@/hooks/useLocalEditEntity';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { maps } from '@/data/static';
 import { Mode, ModeTypeList, SingleItem } from '@/data/types';
@@ -26,7 +25,6 @@ export default function ModeAttributesCard({
   mode: Mode;
   mapsData?: PublishedGameDataByType['maps'];
 }) {
-  const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
   const { modeName } = useLocalMode();
   const ed = editable('modes');
@@ -40,7 +38,7 @@ export default function ModeAttributesCard({
 
   function putTypeTagOn(mode: Mode) {
     return (
-      <Tag size='xs' margin='compact' colorStyles={getModeTypeColors(mode.type, isDarkMode)}>
+      <Tag size='xs' margin='compact' colorStyles={getModeTypeColors(mode.type)}>
         {isEditMode ? (
           <select
             aria-label='游戏模式类型'

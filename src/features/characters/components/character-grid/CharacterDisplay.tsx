@@ -6,7 +6,6 @@ import { cn, getPositioningTagColors } from '@/lib/design';
 import { CharacterDisplayProps } from '@/lib/types';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useMobile } from '@/hooks/useMediaQuery';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import {
   getPositioningTagLevel,
@@ -30,7 +29,6 @@ export default function CharacterDisplay({
   preload = false,
   isEntryCard = false, // Add the new prop
 }: CharacterDisplayProps & { preload?: boolean; isEntryCard?: boolean }) {
-  const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
   const isMobile = useMobile();
   const [charactersSnap] = useEditableDomain('characters', characters);
@@ -96,8 +94,7 @@ export default function CharacterDisplay({
                       tag.tagName,
                       getPositioningTagLevel(tag),
                       false,
-                      factionId as FactionId,
-                      isDarkMode
+                      factionId as FactionId
                     )}
                     size={isMobile ? 'xxs' : 'xs'}
                     margin='compact'

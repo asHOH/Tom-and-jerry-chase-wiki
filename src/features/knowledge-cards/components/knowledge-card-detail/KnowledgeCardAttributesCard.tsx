@@ -4,7 +4,6 @@ import { getCardCostColors, getCardRankColors } from '@/lib/design';
 import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
@@ -56,7 +55,6 @@ const replaceCharacterCardReferences = (
 };
 
 export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetailsProps) {
-  const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
   const { cardId } = useLocalCard();
   const ed = editable('cards');
@@ -70,8 +68,8 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
     (mutate: (value: KnowledgeCardWithFaction) => void) => void,
   ];
 
-  const rankColors = getCardRankColors(card.rank, true, isDarkMode);
-  const costColors = getCardCostColors(card.cost, true, isDarkMode);
+  const rankColors = getCardRankColors(card.rank, true);
+  const costColors = getCardCostColors(card.cost, true);
 
   return (
     <AttributesCardLayout

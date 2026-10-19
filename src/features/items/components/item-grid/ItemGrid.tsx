@@ -8,7 +8,6 @@ import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES, FACTION_NAMES } from '@/constants/factions';
 import { items } from '@/data/static';
 import type { FactionId, Item, Itemsourcelist, Itemtypelist } from '@/data/types';
@@ -41,7 +40,6 @@ export default function ItemClient({ description, data = items, publishedRevisio
   const [selectedSources, setSelectedSources] = useState<Itemsourcelist[]>([]);
   const [selectedFactions, setSelectedFactions] = useState<(FactionId | 'none')[]>([]);
   const isMobile = useMobile();
-  const [isDarkMode] = useDarkMode();
 
   const [itemsSnapshot] = useEditableDomain('items', data);
   const filteredItems = Object.values(itemsSnapshot as Record<string, Item>).filter(
@@ -86,9 +84,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
-            getButtonStyle={(type, active) =>
-              active ? getItemTypeColors(type, isDarkMode) : undefined
-            }
+            getButtonStyle={(type, active) => (active ? getItemTypeColors(type) : undefined)}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -110,9 +106,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
-            getButtonStyle={(source, active) =>
-              active ? getItemSourceColors(source, isDarkMode) : undefined
-            }
+            getButtonStyle={(source, active) => (active ? getItemSourceColors(source) : undefined)}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -138,7 +132,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
               f === 'none' ? '通用' : `${isMobile ? FACTION_NAMES[f] : FACTION_FULL_NAMES[f]}专用`
             }
             getButtonStyle={(f, active) =>
-              active && f !== 'none' ? getFactionButtonColors(f, isDarkMode) : undefined
+              active && f !== 'none' ? getFactionButtonColors(f) : undefined
             }
           />
         </>

@@ -8,7 +8,6 @@ import {
   getSingleItemOwnerSuffix,
 } from '@/lib/singleItemTools';
 import { useMobile } from '@/hooks/useMediaQuery';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { getFactionLabel } from '@/constants/factions';
 import {
   FactionId,
@@ -42,8 +41,6 @@ function ReverseResultButton({
     groupKeywords: string[];
   };
 }) {
-  const [isDarkMode] = useDarkMode();
-
   // Get button colors based on type
   function getButtonColors() {
     // Map type to the original keys used in getTypeLabelColors
@@ -62,7 +59,7 @@ function ReverseResultButton({
     };
 
     const originalKey = typeKeyMap[result.type] || result.type;
-    return getTypeLabelColors(originalKey, isDarkMode);
+    return getTypeLabelColors(originalKey);
   }
 
   const buttonColors = getButtonColors();

@@ -7,7 +7,6 @@ import { getBuffTypeColors } from '@/lib/design';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { buffs } from '@/data/static';
 import type { Buff } from '@/data/types';
 import { CatalogGridItem } from '@/components/ui/CatalogGrid';
@@ -29,7 +28,6 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
   const [selectedTypes, setSelectedTypes] = useState<('状态' | '瞬时效果' | '持续效果' | '属性')[]>(
     []
   );
-  const [isDarkMode] = useDarkMode();
 
   const [buffsSnapshot] = useEditableDomain('buffs', data);
   const allBuffs = Object.values(buffsSnapshot as Record<string, Buff>);
@@ -105,7 +103,7 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
             )
           }
           getOptionLabel={(f) => f}
-          getButtonStyle={(f, active) => (active ? getBuffTypeColors(f, isDarkMode) : undefined)}
+          getButtonStyle={(f, active) => (active ? getBuffTypeColors(f) : undefined)}
         />
       }
     >

@@ -1,15 +1,12 @@
 import { getModeTypeColors } from '@/lib/design';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { Mode } from '@/data/types';
 import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
 
 export default function ModeCardDisplay({ mode }: { mode: Mode }) {
-  const [isDarkMode] = useDarkMode();
-
   function putTypeTagOn(mode: Mode) {
     return (
-      <Tag size='xs' margin='compact' colorStyles={getModeTypeColors(mode.type, isDarkMode)}>
+      <Tag size='xs' margin='compact' colorStyles={getModeTypeColors(mode.type)}>
         {mode.type}
       </Tag>
     );

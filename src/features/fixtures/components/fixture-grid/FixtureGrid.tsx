@@ -8,7 +8,6 @@ import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { fixtures } from '@/data/static';
 import type { Fixture, FixtureSourceList, FixtureTypeList } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
@@ -41,7 +40,6 @@ export default function FixtureClient({ description, data = fixtures, publishedR
   const [selectedTypes, setSelectedTypes] = useState<FixtureTypeList[]>([]);
   const [selectedSources, setSelectedSources] = useState<FixtureSourceList[]>([]);
   const isMobile = useMobile();
-  const [isDarkMode] = useDarkMode();
 
   const [fixturesSnapshot] = useEditableDomain('fixtures', data);
   const filteredFixtures = Object.values(fixturesSnapshot as Record<string, Fixture>).filter(
@@ -87,9 +85,7 @@ export default function FixtureClient({ description, data = fixtures, publishedR
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 3) : opt)}
-            getButtonStyle={(type, active) =>
-              active ? getFixtureTypeColors(type, isDarkMode) : undefined
-            }
+            getButtonStyle={(type, active) => (active ? getFixtureTypeColors(type) : undefined)}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -112,7 +108,7 @@ export default function FixtureClient({ description, data = fixtures, publishedR
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
             getButtonStyle={(source, active) =>
-              active ? getFixtureSourceColors(source, isDarkMode) : undefined
+              active ? getFixtureSourceColors(source) : undefined
             }
             renderOption={(tag, button) => (
               <Tooltip

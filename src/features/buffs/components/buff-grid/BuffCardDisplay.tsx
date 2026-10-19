@@ -1,5 +1,4 @@
 import { cn, getBuffTypeColors } from '@/lib/design';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import Tag from '@/components/ui/Tag';
@@ -12,8 +11,6 @@ const borderColorList = {
   属性: 'border-red-200 dark:border-red-800',
 };
 export default function BuffCardDisplay({ buff }: { buff: Buff }) {
-  const [isDarkMode] = useDarkMode();
-
   return (
     <EntityCardFrame
       variant='catalog'
@@ -56,7 +53,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
             <Tag
               size='xs'
               margin='compact'
-              colorStyles={getBuffTypeColors(buff.type, isDarkMode)}
+              colorStyles={getBuffTypeColors(buff.type)}
               className='whitespace-nowrap'
             >
               {buff.type}

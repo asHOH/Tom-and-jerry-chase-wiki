@@ -3,7 +3,6 @@
 import { getBuffTypeColors } from '@/lib/design';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { buffs } from '@/data/static';
 import { Buff, buffTypelist, SingleItem } from '@/data/types';
@@ -30,7 +29,6 @@ const parseRangeValue = (value: string): number | 'infinity' | undefined => {
 };
 
 export default function BuffAttributesCard({ buff }: { buff: Buff }) {
-  const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
   const { buffName } = useLocalBuff();
   const ed = editable('buffs');
@@ -104,11 +102,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
         <>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>类型: </span>
-            <Tag
-              size='sm'
-              margin='compact'
-              colorStyles={getBuffTypeColors(effectiveBuff.type, isDarkMode)}
-            >
+            <Tag size='sm' margin='compact' colorStyles={getBuffTypeColors(effectiveBuff.type)}>
               {isEditMode ? (
                 <select
                   aria-label='状态类型'

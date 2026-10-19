@@ -3,7 +3,6 @@
 import { getFactionButtonColors } from '@/lib/design';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalAchievement } from '@/hooks/useLocalEditEntity';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { FACTION_FULL_NAMES, FACTION_NAMES } from '@/constants/factions';
 import { Achievement } from '@/data/types';
@@ -16,7 +15,6 @@ import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationB
 import Tag from '@/components/ui/Tag';
 
 export default function AchievementAttributesCard({ achievement }: { achievement: Achievement }) {
-  const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
   const { achievementName, factionId } = useLocalAchievement();
   const ed = editable('achievements');
@@ -96,7 +94,7 @@ export default function AchievementAttributesCard({ achievement }: { achievement
             <Tag
               size='sm'
               margin='compact'
-              colorStyles={getFactionButtonColors(effectiveAchievement.factionId, isDarkMode)}
+              colorStyles={getFactionButtonColors(effectiveAchievement.factionId)}
             >
               {FACTION_FULL_NAMES[effectiveAchievement.factionId]}
             </Tag>

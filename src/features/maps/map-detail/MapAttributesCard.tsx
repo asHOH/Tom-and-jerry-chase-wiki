@@ -3,7 +3,6 @@
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Map, MapSize, mapTypes, SingleItem, studyLevel } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
@@ -31,7 +30,6 @@ export default function MapAttributesCard({
   map: Map;
   modeNames: readonly string[];
 }) {
-  const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
   const { mapName } = useLocalMap();
   const ed = editable('maps');
@@ -97,11 +95,7 @@ export default function MapAttributesCard({
         <>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>类型：</span>
-            <Tag
-              size='sm'
-              margin='compact'
-              colorStyles={getMapTypeColors(effectiveMap.type, isDarkMode)}
-            >
+            <Tag size='sm' margin='compact' colorStyles={getMapTypeColors(effectiveMap.type)}>
               {isEditMode ? (
                 <select
                   aria-label='地图类型'
@@ -124,11 +118,7 @@ export default function MapAttributesCard({
               )}
             </Tag>
             {!isEditMode && effectiveMap.size && (
-              <Tag
-                size='sm'
-                margin='compact'
-                colorStyles={getMapSizeColors(effectiveMap.size, isDarkMode)}
-              >
+              <Tag size='sm' margin='compact' colorStyles={getMapSizeColors(effectiveMap.size)}>
                 {effectiveMap.size}
               </Tag>
             )}
@@ -136,7 +126,7 @@ export default function MapAttributesCard({
               <Tag
                 size='sm'
                 margin='compact'
-                colorStyles={getMapLevelColors(effectiveMap.studyLevelUnlock, isDarkMode)}
+                colorStyles={getMapLevelColors(effectiveMap.studyLevelUnlock)}
               >
                 {effectiveMap.studyLevelUnlock}
               </Tag>

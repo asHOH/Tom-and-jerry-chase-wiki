@@ -1,13 +1,10 @@
 import { getFactionButtonColors } from '@/lib/design';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { Achievement } from '@/data/types';
 import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
 
 export default function AchievementCardDisplay({ achievement }: { achievement: Achievement }) {
-  const [isDarkMode] = useDarkMode();
-
   return (
     <CatalogCard
       title={achievement.name}
@@ -21,14 +18,14 @@ export default function AchievementCardDisplay({ achievement }: { achievement: A
           <Tag
             size='xs'
             margin='compact'
-            colorStyles={getFactionButtonColors(achievement.factionId, isDarkMode)}
+            colorStyles={getFactionButtonColors(achievement.factionId)}
           >
             {FACTION_FULL_NAMES[achievement.factionId]}
           </Tag>
           <Tag
             size='xs'
             margin='compact'
-            colorStyles={getFactionButtonColors(achievement.factionId, isDarkMode)}
+            colorStyles={getFactionButtonColors(achievement.factionId)}
           >
             {achievement.score}分
           </Tag>

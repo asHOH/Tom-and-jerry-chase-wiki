@@ -5,7 +5,6 @@ import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTo
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Item, Itemsourcelist, Itemtypelist } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
@@ -33,7 +32,6 @@ const ITEM_TYPES: readonly Itemtypelist[] = [
 const ITEM_SOURCES: readonly Itemsourcelist[] = ['常规道具', '地图道具'];
 
 export default function ItemAttributesCard({ item }: { item: Item }) {
-  const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const { isEditMode } = useEditMode();
   const { itemName } = useLocalItem();
@@ -103,7 +101,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             <Tag
               size='sm'
               margin='compact'
-              colorStyles={getItemTypeColors(effectiveItem?.itemtype || '', isDarkMode)}
+              colorStyles={getItemTypeColors(effectiveItem?.itemtype || '')}
             >
               {isEditMode ? (
                 <select
@@ -129,7 +127,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             <Tag
               size='sm'
               margin='compact'
-              colorStyles={getItemSourceColors(effectiveItem?.itemsource || '', isDarkMode)}
+              colorStyles={getItemSourceColors(effectiveItem?.itemsource || '')}
             >
               {isEditMode ? (
                 <select

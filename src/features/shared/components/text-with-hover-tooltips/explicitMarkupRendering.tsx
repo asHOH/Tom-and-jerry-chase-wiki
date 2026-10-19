@@ -18,7 +18,6 @@ type ExplicitLinkOptions = {
   linkName: string;
   displayText: RenderableText;
   categoryHint: string | null;
-  isDarkMode: boolean;
   sourceIndex: number;
   sourceEnd: number;
 };
@@ -158,7 +157,6 @@ export const renderExplicitLink = ({
   linkName,
   displayText,
   categoryHint,
-  isDarkMode,
   sourceIndex,
   sourceEnd,
 }: ExplicitLinkOptions): React.ReactElement => {
@@ -174,7 +172,7 @@ export const renderExplicitLink = ({
         {...(hint ? { categoryHint: hint } : {})}
       >
         <Tag
-          colorStyles={getCardRankColors(card.rank, false, isDarkMode)}
+          colorStyles={getCardRankColors(card.rank, false)}
           size='sm'
           margin='micro'
           role='link'

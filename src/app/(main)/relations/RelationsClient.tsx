@@ -7,7 +7,6 @@ import { getFactionButtonColors } from '@/lib/design';
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import {
   PendingActionAwarenessProvider,
@@ -73,11 +72,9 @@ const isFactionTarget = (
 function RowFactionSelector({
   selected,
   onSelect,
-  isDarkMode,
 }: {
   selected: RelationMatrixRowFaction;
   onSelect: (rowFaction: RelationMatrixRowFaction) => void;
-  isDarkMode: boolean;
 }) {
   return (
     <FilterRow<RelationMatrixRowFaction>
@@ -86,9 +83,7 @@ function RowFactionSelector({
       isActive={(option) => selected === option}
       onToggle={onSelect}
       getOptionLabel={(option) => FACTION_NAMES[option]}
-      getButtonStyle={(option, active) =>
-        active ? getFactionButtonColors(option, isDarkMode) : undefined
-      }
+      getButtonStyle={(option, active) => (active ? getFactionButtonColors(option) : undefined)}
       className={targetSelectorClassName}
       ariaLabel='行目标类型'
     />
@@ -99,12 +94,10 @@ function ColumnCategorySelector({
   options,
   selected,
   onSelect,
-  isDarkMode,
 }: {
   options: readonly RelationMatrixColumnCategoryOption[];
   selected: RelationMatrixColumnCategory;
   onSelect: (columnCategory: RelationMatrixColumnCategory) => void;
-  isDarkMode: boolean;
 }) {
   const optionIds = options.map((option) => option.id);
 
@@ -118,7 +111,7 @@ function ColumnCategorySelector({
         options.find((columnOption) => columnOption.id === option)?.label ?? option
       }
       getButtonStyle={(option, active) =>
-        active && isFactionTarget(option) ? getFactionButtonColors(option, isDarkMode) : undefined
+        active && isFactionTarget(option) ? getFactionButtonColors(option) : undefined
       }
       className={targetSelectorClassName}
       ariaLabel='列目标类型'
@@ -163,7 +156,6 @@ export default function RelationsClient({
   data,
   publishedRevision,
 }: RelationsClientProps) {
-  const [isDarkMode] = useDarkMode();
   const permissions = usePermissions();
   const { exitEditMode } = useSearchParamEditMode();
   const { isEditMode, registerPublishedRevision } = useEditMode();
@@ -265,16 +257,11 @@ export default function RelationsClient({
       actions={canEditRelations && !isEditMode ? <EditButton /> : undefined}
       filters={
         <div className='border-border bg-surface-sunken flex flex-col gap-3 rounded-md border p-3'>
-          <RowFactionSelector
-            selected={rowFaction}
-            onSelect={handleRowFactionSelect}
-            isDarkMode={isDarkMode}
-          />
+          <RowFactionSelector selected={rowFaction} onSelect={handleRowFactionSelect} />
           <ColumnCategorySelector
             options={columnCategoryOptions}
             selected={coercedColumnCategory}
             onSelect={setColumnCategory}
-            isDarkMode={isDarkMode}
           />
           <MatrixSizeSlider value={matrixSize} onChange={setMatrixSize} />
           <RelationMatrixLegend rowFaction={rowFaction} columnCategory={coercedColumnCategory} />

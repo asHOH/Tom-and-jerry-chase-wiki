@@ -5,7 +5,6 @@ import React, { useMemo } from 'react';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import type { FactionId, SkillAllocation } from '@/data/types';
 import {
@@ -65,7 +64,6 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
-  const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
 
   const processedPattern = useMemo(
@@ -153,7 +151,6 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               characterSkills={character.skills}
               characterName={character.id}
               factionId={factionId}
-              isDarkMode={isDarkMode}
             />
           ) : (
             !patternValidation.isValid && (

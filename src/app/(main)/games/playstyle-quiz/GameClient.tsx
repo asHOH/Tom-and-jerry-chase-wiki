@@ -3,7 +3,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 import type { FactionId } from '@/data/types';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
@@ -41,7 +40,6 @@ export default function PlaystyleQuizClient({ description, characters: charsSnap
       ) as PublishedGameDataByType['characters'],
     [charsSnap]
   );
-  const [isDarkMode] = useDarkMode();
 
   const [phase, setPhase] = useState<GamePhase>('select');
   const [faction, setFaction] = useState<FactionId | null>(null);
@@ -157,7 +155,6 @@ export default function PlaystyleQuizClient({ description, characters: charsSnap
             match={result.topMatch}
             character={result.character!}
             faction={faction}
-            isDarkMode={isDarkMode}
             similarMatches={result.similarMatches}
             allCharacters={playableCharacters}
           />

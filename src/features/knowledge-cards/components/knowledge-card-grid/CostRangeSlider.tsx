@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn, getCardCostColors } from '@/lib/design';
-import { useDarkMode } from '@/context/DarkModeContext';
 
 type CostRangeSliderProps = {
   min: number;
@@ -41,25 +40,15 @@ export default function CostRangeSlider({
   const minValue = Math.min(handlePositions[0], handlePositions[1]);
   const maxValue = Math.max(handlePositions[0], handlePositions[1]);
 
-  const [isDarkMode] = useDarkMode();
-
-  const getColorForCost = useCallback(
-    (cost: number) => {
-      const colors = getCardCostColors(cost, false, isDarkMode);
-      return colors.backgroundColor;
-    },
-    [isDarkMode]
-  );
-
   const getSegmentStyle = useCallback(
     (segmentStart: number, segmentEnd: number) => {
       // Use the color of the start point of the segment (n for segment n to n+1)
       return {
-        backgroundColor: getColorForCost(segmentStart),
+        backgroundColor: getCardCostColors(segmentStart, false).backgroundColor,
         opacity: segmentStart >= minValue && segmentEnd <= maxValue ? 1 : 0.3,
       };
     },
-    [minValue, maxValue, getColorForCost]
+    [minValue, maxValue]
   );
 
   const updateValueFromEvent = useCallback(
@@ -203,9 +192,8 @@ export default function CostRangeSlider({
           className='absolute top-1/2 z-10 h-6 w-6 -translate-x-1/2 -translate-y-1/2 transform cursor-grab rounded-full border-2 border-white shadow-lg active:cursor-grabbing'
           style={{
             left: `${getPositionPercentage(handlePositions[0])}%`,
-            backgroundColor: getCardCostColors(handlePositions[0], false, isDarkMode)
-              .backgroundColor,
-            borderColor: getCardCostColors(handlePositions[0], false, isDarkMode).color,
+            backgroundColor: getCardCostColors(handlePositions[0], false).backgroundColor,
+            borderColor: getCardCostColors(handlePositions[0], false).color,
           }}
           onMouseDown={(e) => {
             e.stopPropagation(); // Prevent track click when handle is dragged
@@ -222,9 +210,8 @@ export default function CostRangeSlider({
           className='absolute top-1/2 z-10 h-6 w-6 -translate-x-1/2 -translate-y-1/2 transform cursor-grab rounded-full border-2 border-white shadow-lg active:cursor-grabbing'
           style={{
             left: `${getPositionPercentage(handlePositions[1])}%`,
-            backgroundColor: getCardCostColors(handlePositions[1], false, isDarkMode)
-              .backgroundColor,
-            borderColor: getCardCostColors(handlePositions[1], false, isDarkMode).color,
+            backgroundColor: getCardCostColors(handlePositions[1], false).backgroundColor,
+            borderColor: getCardCostColors(handlePositions[1], false).color,
           }}
           onMouseDown={(e) => {
             e.stopPropagation(); // Prevent track click when handle is dragged

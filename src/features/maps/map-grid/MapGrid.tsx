@@ -7,7 +7,6 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { maps } from '@/data/static';
 import { type Map, type MapSize, type mapTypes, type studyLevel } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
@@ -38,7 +37,6 @@ export default function MapClient({ description, data = maps, publishedRevision 
   const [selectedTypes, setSelectedTypes] = useState<mapTypes[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<MapSize[]>([]);
   const [selectedLevels, setSelectedLevels] = useState<(studyLevel | '其它')[]>([]);
-  const [isDarkMode] = useDarkMode();
 
   const [mapsSnapshot] = useEditableDomain('maps', data);
   const filteredMaps = Object.values(mapsSnapshot as Record<string, Map>).filter((map: Map) => {
@@ -77,7 +75,7 @@ export default function MapClient({ description, data = maps, publishedRevision 
             }
             getOptionLabel={(opt) => opt}
             getButtonStyle={(name, active) => {
-              return active ? getMapTypeColors(name, isDarkMode) : undefined;
+              return active ? getMapTypeColors(name) : undefined;
             }}
             renderOption={(tag, button) => (
               <Tooltip
@@ -101,7 +99,7 @@ export default function MapClient({ description, data = maps, publishedRevision 
             }
             getOptionLabel={(size) => size}
             getButtonStyle={(size, active) => {
-              return active ? getMapSizeColors(size, isDarkMode) : undefined;
+              return active ? getMapSizeColors(size) : undefined;
             }}
           />
 
@@ -116,7 +114,7 @@ export default function MapClient({ description, data = maps, publishedRevision 
             }
             getOptionLabel={(level) => level}
             getButtonStyle={(level, active) => {
-              return active ? getMapLevelColors(level, isDarkMode) : undefined;
+              return active ? getMapLevelColors(level) : undefined;
             }}
           />
         </>

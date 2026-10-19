@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { getFactionButtonColors } from '@/lib/design';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 import type { FactionId } from '@/data/types';
 import {
@@ -22,7 +21,6 @@ interface PropertySelectorProps {
 
 function PropertySelector({ currentProperty, onPropertyChange }: PropertySelectorProps) {
   const router = useRouter();
-  const [isDarkMode] = useDarkMode();
 
   const factionId = (useSearchParams().get('faction') ?? undefined) as FactionId | undefined;
 
@@ -108,7 +106,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
                 : ''
             }
             getButtonStyle={(opt, active) =>
-              active && opt !== 'all' ? getFactionButtonColors(opt, isDarkMode) : undefined
+              active && opt !== 'all' ? getFactionButtonColors(opt) : undefined
             }
             getButtonDisabled={(opt) =>
               opt !== 'all' && factionSpecificProperties.some((p) => p.key === currentProperty)

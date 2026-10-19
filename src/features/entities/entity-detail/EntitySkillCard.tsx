@@ -9,7 +9,6 @@ import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Entity, Skill, SkillLevel, SkillType } from '@/data/types';
 import SkillUsagePropertiesEditor from '@/features/characters/components/character-detail/skills/SkillUsagePropertiesEditor';
@@ -73,7 +72,6 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
   };
   const e = editable('entities');
   const isMobile = useMobile();
-  const [isDarkMode] = useDarkMode();
 
   const getLevelDescription = (level: DeepReadonly<SkillLevel>): string =>
     isDetailed && level.detailedDescription?.trim() ? level.detailedDescription : level.description;
@@ -392,7 +390,7 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
                   <p className='whitespace-pre-wrap'>
                     <span
                       className='font-bold'
-                      style={{ color: getSkillLevelColors(level.level, false, isDarkMode).color }}
+                      style={{ color: getSkillLevelColors(level.level, false).color }}
                     >
                       Lv.
                       {isEditMode ? (

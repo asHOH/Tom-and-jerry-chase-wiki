@@ -2,7 +2,6 @@ import { Fragment, useMemo } from 'react';
 
 import { storage, StorageKey } from '@/lib/localStorage';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { getActorProfile } from '@/features/actor-profiles/selectors';
 import { usePublishedCharacter } from '@/features/characters/components/character-detail/PublishedCharacterContext';
 import Tooltip from '@/components/ui/Tooltip';
@@ -34,7 +33,6 @@ const getCurrentTime = (): number =>
   typeof performance === 'undefined' ? Date.now() : performance.now();
 
 export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTooltipsProps) {
-  const [isDarkMode] = useDarkMode();
   const localCharacterCtx = useLocalCharacter();
   const currentCharacterId = localCharacterCtx.characterId;
   const localCharacter = usePublishedCharacter(currentCharacterId);
@@ -91,7 +89,6 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
           attackBoost,
           index,
           wallCrackDamageBoost,
-          isDarkMode,
           currentCharacterId
         );
         tokenParts = token.isHighlighted
@@ -105,7 +102,6 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
           attackBoost,
           token.sourceIndex,
           wallCrackDamageBoost,
-          isDarkMode,
           currentCharacterId
         );
 
@@ -114,7 +110,6 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
           attackBoost,
           token.sourceIndex,
           wallCrackDamageBoost,
-          isDarkMode,
           currentCharacterId
         );
 
@@ -158,15 +153,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
     }
 
     return renderedParts;
-  }, [
-    attackBoost,
-    currentCharacterId,
-    isDarkMode,
-    rawText,
-    parsedText,
-    actorProfile,
-    wallCrackDamageBoost,
-  ]);
+  }, [attackBoost, currentCharacterId, rawText, parsedText, actorProfile, wallCrackDamageBoost]);
 
   return (
     <>

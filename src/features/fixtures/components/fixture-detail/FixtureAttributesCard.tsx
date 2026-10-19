@@ -5,7 +5,6 @@ import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTo
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalFixture } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { maps } from '@/data/static';
 import { Fixture, FixtureSourceList, FixtureTypeList } from '@/data/types';
@@ -40,7 +39,6 @@ const toFixtureTypeArray = (type: Fixture['type']): FixtureTypeList[] =>
   typeof type === 'string' ? [type] : [...type];
 
 export default function FixtureAttributesCard({ fixture }: { fixture: Fixture }) {
-  const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const { isEditMode } = useEditMode();
   const { fixtureName } = useLocalFixture();
@@ -60,23 +58,14 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
   function putTypeTagOn(currentFixture: Fixture) {
     if (typeof currentFixture.type === 'string') {
       return (
-        <Tag
-          size='sm'
-          margin='compact'
-          colorStyles={getFixtureTypeColors(currentFixture.type, isDarkMode)}
-        >
+        <Tag size='sm' margin='compact' colorStyles={getFixtureTypeColors(currentFixture.type)}>
           {currentFixture.type}
         </Tag>
       );
     } else {
       return currentFixture.type.map((type) => {
         return (
-          <Tag
-            size='sm'
-            margin='compact'
-            colorStyles={getFixtureTypeColors(type, isDarkMode)}
-            key={type}
-          >
+          <Tag size='sm' margin='compact' colorStyles={getFixtureTypeColors(type)} key={type}>
             {type}
           </Tag>
         );
@@ -174,7 +163,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
               <Tag
                 size='sm'
                 margin='compact'
-                colorStyles={getFixtureSourceColors(effectiveFixture.source, isDarkMode)}
+                colorStyles={getFixtureSourceColors(effectiveFixture.source)}
               >
                 {effectiveFixture.source}
               </Tag>

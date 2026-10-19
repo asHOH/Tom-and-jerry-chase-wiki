@@ -1,6 +1,5 @@
 import { getCardCostColors, getCardRankColors } from '@/lib/design';
 import { KnowledgeCardDisplayProps } from '@/lib/types';
-import { useDarkMode } from '@/context/DarkModeContext';
 import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
 
@@ -12,9 +11,8 @@ export default function KnowledgeCardDisplay({
   imageUrl,
   preload = false,
 }: KnowledgeCardDisplayProps & { preload?: boolean }) {
-  const [isDarkMode] = useDarkMode();
-  const rankColors = getCardRankColors(rank, false, isDarkMode);
-  const costColors = getCardCostColors(cost, false, isDarkMode);
+  const rankColors = getCardRankColors(rank, false);
+  const costColors = getCardCostColors(cost, false);
 
   return (
     <CatalogCard

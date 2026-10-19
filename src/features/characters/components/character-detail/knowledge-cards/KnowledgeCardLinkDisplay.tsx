@@ -13,7 +13,6 @@ type KnowledgeCardLinkDisplayProps = {
   imageBasePath: string;
   isOptional: boolean;
   isEditMode: boolean;
-  isDarkMode: boolean;
   characterId: string;
   getCardRank: (cardId: string) => string;
   handleSelectCard: (cardName: string, characterId: string) => void;
@@ -26,7 +25,6 @@ export default function KnowledgeCardLinkDisplay({
   imageBasePath,
   isOptional,
   isEditMode,
-  isDarkMode,
   characterId,
   getCardRank,
   handleSelectCard,
@@ -34,7 +32,7 @@ export default function KnowledgeCardLinkDisplay({
 }: KnowledgeCardLinkDisplayProps) {
   const cardName = cardId.split('-')[1]!;
   const cardRank = getCardRank(cardId);
-  const rankColors = getCardRankColors(cardRank, false, isDarkMode);
+  const rankColors = getCardRankColors(cardRank, false);
 
   const handleClick = () => {
     if (isEditMode) return;

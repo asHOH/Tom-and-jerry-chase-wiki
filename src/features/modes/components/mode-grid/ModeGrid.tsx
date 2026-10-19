@@ -6,7 +6,6 @@ import { getModeTypeColors } from '@/lib/design';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { modes } from '@/data/static';
 import type { Mode, ModeTypeList } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
@@ -26,7 +25,6 @@ const MODE_TYPE_OPTIONS: ModeTypeList[] = ['经典模式', '休闲模式', '特�
 export default function ModeClient({ description, data = modes, publishedRevision }: Props) {
   usePublishedRevision(publishedRevision);
   const [selectedTypes, setSelectedTypes] = useState<ModeTypeList[]>([]);
-  const [isDarkMode] = useDarkMode();
 
   const [modesSnapshot] = useEditableDomain('modes', data);
   const filteredModes = Object.values(modesSnapshot as Record<string, Mode>).filter(
@@ -68,9 +66,7 @@ export default function ModeClient({ description, data = modes, publishedRevisio
             )
           }
           getOptionLabel={(opt) => opt}
-          getButtonStyle={(type, active) =>
-            active ? getModeTypeColors(type, isDarkMode) : undefined
-          }
+          getButtonStyle={(type, active) => (active ? getModeTypeColors(type) : undefined)}
         />
       }
     >

@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { cn, getTypeLabelColors } from '@/lib/design';
 import { getSingleItemHref, getSingleItemImageUrl } from '@/lib/singleItemTools';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { SingleItemOrGroup } from '@/data/types';
 import Image from '@/components/Image';
 
@@ -12,8 +11,6 @@ interface SingleItemButtonProps {
 }
 
 export default function SingleItemButton({ singleItem, size = 'default' }: SingleItemButtonProps) {
-  const [isDarkMode] = useDarkMode();
-
   function getSingleItemButtonColor(singleItem: SingleItemOrGroup) {
     const getOriginalKey = (key: string): string => {
       const SpecificKeyMap: Record<string, string> = {
@@ -23,7 +20,7 @@ export default function SingleItemButton({ singleItem, size = 'default' }: Singl
       };
       return SpecificKeyMap[key] || key;
     };
-    const typeColorStyles = getTypeLabelColors(getOriginalKey(singleItem.type), isDarkMode);
+    const typeColorStyles = getTypeLabelColors(getOriginalKey(singleItem.type));
     return { ...typeColorStyles, borderColor: typeColorStyles.color };
   }
 

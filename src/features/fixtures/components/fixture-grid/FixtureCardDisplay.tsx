@@ -1,20 +1,13 @@
 import { getFixtureTypeColors } from '@/lib/design';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { Fixture } from '@/data/types';
 import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
 
 export default function FixtureCardDisplay({ fixture }: { fixture: Fixture }) {
-  const [isDarkMode] = useDarkMode();
-
   function putTypeTagOn(fixture: Fixture) {
     if (typeof fixture.type === 'string') {
       return (
-        <Tag
-          size='xs'
-          margin='compact'
-          colorStyles={getFixtureTypeColors(fixture.type, isDarkMode)}
-        >
+        <Tag size='xs' margin='compact' colorStyles={getFixtureTypeColors(fixture.type)}>
           {fixture.type === 'NPC'
             ? 'NPC'
             : fixture.type === '可交互'
@@ -25,12 +18,7 @@ export default function FixtureCardDisplay({ fixture }: { fixture: Fixture }) {
     } else {
       return fixture.type.map((type) => {
         return (
-          <Tag
-            size='xs'
-            margin='compact'
-            colorStyles={getFixtureTypeColors(type, isDarkMode)}
-            key={type}
-          >
+          <Tag size='xs' margin='compact' colorStyles={getFixtureTypeColors(type)} key={type}>
             {type === 'NPC' ? 'NPC' : type === '可交互' ? '交互' : type.slice(0, 2)}
           </Tag>
         );

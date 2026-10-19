@@ -1,5 +1,4 @@
 import { getEntityTypeColors } from '@/lib/design';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { Entity } from '@/data/types';
 import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
@@ -11,15 +10,13 @@ export default function EntityCardDisplay({
   entity: Entity;
   showTags?: boolean;
 }) {
-  const [isDarkMode] = useDarkMode();
-
   // 生成标签列表（竖向排列在图片左上角，动态圆角）
   const renderTags = () => {
     const tags = Array.isArray(entity.entitytag) ? entity.entitytag : [entity.entitytag];
 
     return tags.map((tag, index) => {
       // 调用 getEntityTypeColors，传入 isMinor = true
-      const tagColors = getEntityTypeColors(tag, isDarkMode, true);
+      const tagColors = getEntityTypeColors(tag, true);
 
       // 根据位置计算圆角
       let borderRadius = '';
@@ -58,19 +55,14 @@ export default function EntityCardDisplay({
           size='xs'
           margin='compact'
           // 底部的类型标签不传入 isMinor，或传入 false（默认）
-          colorStyles={getEntityTypeColors(entity.entitytype, isDarkMode)}
+          colorStyles={getEntityTypeColors(entity.entitytype)}
         >
           {entity.entitytype}
         </Tag>
       );
     } else {
       return entity.entitytype.map((type) => (
-        <Tag
-          key={type}
-          size='xs'
-          margin='compact'
-          colorStyles={getEntityTypeColors(type, isDarkMode)}
-        >
+        <Tag key={type} size='xs' margin='compact' colorStyles={getEntityTypeColors(type)}>
           {type}
         </Tag>
       ));

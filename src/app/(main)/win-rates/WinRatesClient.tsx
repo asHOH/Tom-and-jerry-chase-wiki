@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 
 import { cn, getFactionButtonColors, getFilterButtonActiveToneClasses } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_NAMES } from '@/constants/factions';
 import type { FactionId } from '@/data/types';
 import { winRatesData } from '@/data/winRates';
@@ -51,8 +50,6 @@ type WinRatesClientProps = {
 };
 
 export default function WinRatesClient({ description, characterLookup }: WinRatesClientProps) {
-  const [isDarkMode] = useDarkMode();
-
   const [selectedSeason, setSelectedSeason] = useState(0);
   const [sortColumn, setSortColumn] = useState<SortColumn>('winRateNum');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -227,9 +224,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
             isActive={(opt) => selectedFactions.has(opt)}
             onToggle={(opt) => toggleFaction(opt)}
             getOptionLabel={(opt) => FACTION_NAMES[opt]}
-            getButtonStyle={(opt, active) =>
-              active ? getFactionButtonColors(opt, isDarkMode) : undefined
-            }
+            getButtonStyle={(opt, active) => (active ? getFactionButtonColors(opt) : undefined)}
           />
 
           {availableRanks.length > 0 && (

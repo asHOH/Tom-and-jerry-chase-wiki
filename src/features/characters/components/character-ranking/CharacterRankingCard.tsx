@@ -3,7 +3,6 @@
 import { memo } from 'react';
 
 import { getCardRankColors } from '@/lib/design';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { getRankDisplayName, RankedCharacter } from '@/features/characters/utils/ranking';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import Tag from '@/components/ui/Tag';
@@ -22,15 +21,14 @@ function CharacterRankingCard({
   preload = false,
 }: CharacterRankingCardProps) {
   const { character, rank, formattedValue } = rankedCharacter;
-  const [isDarkMode] = useDarkMode();
 
   // Get rank colors using design tokens - map ranks to card rank system
   // We color by unique rank groups: group 1 -> S, group 2 -> A, group 3 -> B, others -> C
   const getRankColorScheme = (groupIndex: number) => {
-    if (groupIndex === 1) return getCardRankColors('S', false, isDarkMode);
-    if (groupIndex === 2) return getCardRankColors('A', false, isDarkMode);
-    if (groupIndex === 3) return getCardRankColors('B', false, isDarkMode);
-    return getCardRankColors('C', false, isDarkMode);
+    if (groupIndex === 1) return getCardRankColors('S', false);
+    if (groupIndex === 2) return getCardRankColors('A', false);
+    if (groupIndex === 3) return getCardRankColors('B', false);
+    return getCardRankColors('C', false);
   };
 
   const effectiveGroupIndex = rankGroupIndex ?? (rank <= 3 ? rank : 4); // Fallback keeps previous behavior

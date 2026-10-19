@@ -7,7 +7,6 @@ import { getCardRankColors } from '@/lib/design';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 import { characters } from '@/data/static';
 import { FactionId } from '@/data/types';
@@ -42,7 +41,6 @@ export default function CharacterRankingGrid({
   );
 
   const factionId = (useSearchParams().get('faction') ?? undefined) as FactionId | undefined;
-  const [isDarkMode] = useDarkMode();
   const [charactersSnap] = useEditableDomain('characters', data);
 
   // Helpers to create softer backgrounds from token colors
@@ -243,7 +241,7 @@ export default function CharacterRankingGrid({
             <div className='grid grid-cols-1 gap-4 text-center md:grid-cols-3'>
               {/* Highest -> S rank colors with soft background */}
               {(() => {
-                const s = getCardRankColors('S', false, isDarkMode);
+                const s = getCardRankColors('S', false);
                 return (
                   <div
                     className='rounded-lg p-4'
@@ -261,7 +259,7 @@ export default function CharacterRankingGrid({
 
               {/* Lowest -> C rank colors with soft background */}
               {(() => {
-                const c = getCardRankColors('C', false, isDarkMode);
+                const c = getCardRankColors('C', false);
                 return (
                   <div
                     className='rounded-lg p-4'
@@ -279,7 +277,7 @@ export default function CharacterRankingGrid({
 
               {/* Average -> B rank colors with soft background */}
               {(() => {
-                const b = getCardRankColors('B', false, isDarkMode);
+                const b = getCardRankColors('B', false);
                 return (
                   <div
                     className='rounded-lg p-4'

@@ -10,7 +10,6 @@ import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { FactionCharactersProps } from '@/lib/types';
 import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import {
   getPositioningTagLevel,
@@ -36,7 +35,6 @@ export default function CharacterGrid({ factionId, characters }: FactionCharacte
     return GameDataManager.getFactionsWithCharacters(effectiveCharacters)[factionId];
   }, [effectiveCharacters, factionId])!;
   const { isDetailedView: isDetailed } = useAppContext();
-  const [isDarkMode] = useDarkMode();
   const originalCharacterIds = getOriginalCharacterIds();
 
   const originalCharacters = useMemo(() => {
@@ -239,8 +237,7 @@ export default function CharacterGrid({ factionId, characters }: FactionCharacte
                 tag as PositioningTagName,
                 4,
                 false,
-                faction.id as FactionId,
-                isDarkMode
+                faction.id as FactionId
               );
               return isActive ? tagColors : undefined;
             }}
@@ -253,7 +250,7 @@ export default function CharacterGrid({ factionId, characters }: FactionCharacte
             onToggle={(opt) => toggleAvatar(opt)}
             getButtonStyle={(opt) => {
               const isActive = hasAvatar(opt);
-              const colors = getAvatarFilterColors(opt, isDarkMode);
+              const colors = getAvatarFilterColors(opt);
               return isActive
                 ? { backgroundColor: colors.backgroundColor, color: colors.color }
                 : undefined;

@@ -32,7 +32,6 @@ interface CardDisplayProps {
   getCardRank: (cardId: string) => string;
   imageBasePath: string;
   isOptional: boolean;
-  isDarkMode: boolean;
   isHybridMode?: boolean;
   depth: number;
   priorityWarning: string | null;
@@ -47,7 +46,6 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
   getCardRank,
   imageBasePath,
   isOptional,
-  isDarkMode,
   isHybridMode,
   depth,
   priorityWarning,
@@ -63,7 +61,6 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
       imageBasePath={imageBasePath}
       isOptional={isOptional}
       isEditMode={isEditMode}
-      isDarkMode={isDarkMode}
       characterId={characterId}
       getCardRank={getCardRank}
       handleSelectCard={handleSelectCard}
@@ -188,7 +185,6 @@ const TreeNodeDisplay: React.FC<
         getCardRank={props.getCardRank}
         imageBasePath={props.imageBasePath}
         isOptional={isOptional}
-        isDarkMode={isDarkMode}
         isHybridMode={props.isHybridMode ?? false}
         depth={depth}
         priorityWarning={priorityWarning}
