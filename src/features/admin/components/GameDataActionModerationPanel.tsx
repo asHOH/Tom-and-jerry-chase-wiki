@@ -12,6 +12,7 @@ import {
   PUBLISHABLE_ENTITY_TYPES,
   type PublishableEntityType,
 } from '@/lib/gameData/publishableEntityTypes';
+import { getSubmissionStatusPresentation, SUBMISSION_STATUSES } from '@/lib/submissionStatus';
 import { useToast } from '@/context/ToastContext';
 import {
   useGameDataModeration,
@@ -234,11 +235,11 @@ const GameDataActionModerationPanel = ({
               fullWidth={false}
               size='sm'
             >
-              <option value='pending'>待审核</option>
-              <option value='approved'>已批准</option>
-              <option value='rejected'>已拒绝</option>
-              <option value='synced'>已同步</option>
-              <option value='revoked'>已撤销</option>
+              {SUBMISSION_STATUSES.map((status) => (
+                <option key={status} value={status}>
+                  {getSubmissionStatusPresentation(status, 'gameData').label}
+                </option>
+              ))}
               <option value='all'>全部</option>
             </FormSelect>
 

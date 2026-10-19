@@ -60,6 +60,9 @@
   --wiki-status-success: var(--color-green-50);
   --wiki-status-success-foreground: var(--color-green-800);
   --wiki-status-success-border: var(--color-green-200);
+  --wiki-status-synced: var(--color-purple-50);
+  --wiki-status-synced-foreground: var(--color-purple-800);
+  --wiki-status-synced-border: var(--color-purple-200);
   /* Invalid-field borders and focus rings share one indicator color. */
   --wiki-validation-error: var(--color-red-500);
   /* Default keyboard focus indicator */
@@ -142,6 +145,9 @@
   --wiki-status-success: color-mix(in oklab, var(--color-green-900) 15%, transparent);
   --wiki-status-success-foreground: var(--color-green-200);
   --wiki-status-success-border: color-mix(in oklab, var(--color-green-900) 60%, transparent);
+  --wiki-status-synced: color-mix(in oklab, var(--color-purple-900) 15%, transparent);
+  --wiki-status-synced-foreground: var(--color-purple-200);
+  --wiki-status-synced-border: color-mix(in oklab, var(--color-purple-900) 60%, transparent);
   --wiki-focus: var(--color-blue-400);
   --wiki-win-rate-lowest: #ff7373;
   --wiki-win-rate-low: #fca5a5;
@@ -211,6 +217,9 @@
   --color-status-success: var(--wiki-status-success);
   --color-status-success-foreground: var(--wiki-status-success-foreground);
   --color-status-success-border: var(--wiki-status-success-border);
+  --color-status-synced: var(--wiki-status-synced);
+  --color-status-synced-foreground: var(--wiki-status-synced-foreground);
+  --color-status-synced-border: var(--wiki-status-synced-border);
   --color-validation-error: var(--wiki-validation-error);
   /* Streamdown uses primary for link text as well as filled buttons. */
   --color-primary: var(--wiki-focus);

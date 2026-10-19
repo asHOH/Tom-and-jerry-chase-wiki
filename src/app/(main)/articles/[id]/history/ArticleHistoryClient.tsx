@@ -8,6 +8,7 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { fetchJson } from '@/lib/fetchJson';
+import { getSubmissionStatusPresentation } from '@/lib/submissionStatus';
 import { useClearArticleClientCache } from '@/hooks/useClearArticleClientCache';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
@@ -122,35 +123,16 @@ export default function ArticleHistoryClient() {
   };
 
   const getStatusBadge = (status: string | null) => {
-    const statusConfig = {
-      approved: {
-        color: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
-        text: '已发布',
-      },
-      pending: {
-        color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
-        text: '待审核',
-      },
-      rejected: {
-        color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
-        text: '已拒绝',
-      },
-      revoked: {
-        color: 'bg-surface-muted text-foreground',
-        text: '已撤销',
-      },
-    };
-
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.approved;
+    const presentation = getSubmissionStatusPresentation(status, 'article');
 
     return (
       <span
         className={cn(
           'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-          config.color
+          presentation.badgeClassName
         )}
       >
-        {config.text}
+        {presentation.label}
       </span>
     );
   };

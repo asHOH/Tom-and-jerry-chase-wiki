@@ -127,6 +127,28 @@ describe('ArticleHistoryClient diff selection', () => {
     expect(mockPush).toHaveBeenCalledWith('/articles/article-1/history?oldid=v2&diff=v3');
   });
 
+  it('shows missing and unrecognized statuses without claiming publication', () => {
+    jest.mocked(useSWR).mockReturnValue({
+      data: {
+        ...historyData,
+        versions: historyData.versions.slice(0, 2).map((version, index) => ({
+          ...version,
+          status: index === 0 ? null : 'future-status',
+        })),
+      },
+      error: undefined,
+      isLoading: false,
+      isValidating: false,
+      mutate: jest.fn(),
+    });
+
+    render(<ArticleHistoryClient />);
+
+    expect(screen.getAllByText('状态未知')).toHaveLength(2);
+    expect(screen.queryByText('已发布')).not.toBeInTheDocument();
+    expect(screen.queryByText('当前版本')).not.toBeInTheDocument();
+  });
+
   it('shows a committed revocation warning before scheduling the existing reload', async () => {
     const originalFetch = global.fetch;
     jest.useFakeTimers();

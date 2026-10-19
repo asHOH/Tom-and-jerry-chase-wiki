@@ -7,6 +7,7 @@ import useSWR from 'swr';
 
 import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
+import { getSubmissionStatusPresentation, SUBMISSION_STATUSES } from '@/lib/submissionStatus';
 import type {
   ContributionKind,
   ContributionStatus,
@@ -21,37 +22,6 @@ import Link from '@/components/Link';
 
 type FilterKind = 'all' | ContributionKind;
 type FilterStatus = 'all' | ContributionStatus;
-
-const STATUS_META: Record<
-  ContributionStatus,
-  { label: string; className: string; filterLabel: string }
-> = {
-  pending: {
-    label: '待审核',
-    filterLabel: '待审核',
-    className: 'bg-amber-100 text-amber-800 dark:bg-amber-900/35 dark:text-amber-200',
-  },
-  approved: {
-    label: '已通过',
-    filterLabel: '已通过',
-    className: 'bg-green-100 text-green-800 dark:bg-green-900/35 dark:text-green-200',
-  },
-  rejected: {
-    label: '未通过',
-    filterLabel: '未通过',
-    className: 'bg-red-100 text-red-800 dark:bg-red-900/35 dark:text-red-200',
-  },
-  synced: {
-    label: '已同步',
-    filterLabel: '已同步',
-    className: 'bg-purple-100 text-purple-800 dark:bg-purple-900/35 dark:text-purple-200',
-  },
-  revoked: {
-    label: '已撤回',
-    filterLabel: '已撤回',
-    className: 'bg-surface-muted text-gray-700 dark:text-gray-200',
-  },
-};
 
 const jsonFetcher = async (url: string): Promise<ContributionStatusResponse> => {
   const response = await fetch(url);
@@ -186,11 +156,7 @@ export default function ContributionSubmissionStatus() {
                 >
                   全部状态
                 </Button>
-                {(
-                  Object.entries(STATUS_META) as Array<
-                    [ContributionStatus, (typeof STATUS_META)[ContributionStatus]]
-                  >
-                ).map(([value, meta]) => (
+                {SUBMISSION_STATUSES.map((value) => (
                   <Button
                     key={value}
                     size='sm'
@@ -198,7 +164,7 @@ export default function ContributionSubmissionStatus() {
                     aria-pressed={statusFilter === value}
                     onClick={() => setStatusFilter(value)}
                   >
-                    {meta.filterLabel}
+                    {getSubmissionStatusPresentation(value, 'contribution').label}
                   </Button>
                 ))}
                 <Button size='sm' variant='ghost' onClick={() => void mutate()}>
@@ -229,7 +195,10 @@ export default function ContributionSubmissionStatus() {
           ) : (
             <ol className='space-y-3'>
               {filteredContributions.map((contribution) => {
-                const statusMeta = STATUS_META[contribution.status];
+                const statusMeta = getSubmissionStatusPresentation(
+                  contribution.status,
+                  'contribution'
+                );
                 return (
                   <li key={`${contribution.kind}-${contribution.id}`}>
                     <Card
@@ -250,7 +219,7 @@ export default function ContributionSubmissionStatus() {
                             <span
                               className={cn(
                                 'rounded-full px-2.5 py-1 text-xs font-medium',
-                                statusMeta.className
+                                statusMeta.badgeClassName
                               )}
                             >
                               {statusMeta.label}

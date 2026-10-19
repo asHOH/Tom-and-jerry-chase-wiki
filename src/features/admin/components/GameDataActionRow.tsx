@@ -7,6 +7,7 @@ import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import type { GameDataActionDetail, GameDataActionSummary } from '@/lib/gameData/adminActionTypes';
 import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
+import { getSubmissionStatusPresentation } from '@/lib/submissionStatus';
 import type { useGameDataModeration } from '@/features/admin/hooks/useGameDataModeration';
 import type { GameActionDiffView } from '@/features/admin/utils/gameActionDiff';
 import Button from '@/components/ui/Button';
@@ -15,20 +16,10 @@ import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 import GameDataActionPreviewList, { GameDataActionChangeViewer } from './GameDataActionPreviewList';
 
-type ActionStatus = GameDataActionSummary['status'];
-
 export type ThankTarget = {
   actionId: string;
   contributionTitle: string;
   approveFirst: boolean;
-};
-
-const ACTION_STATUS_META: Record<ActionStatus, { label: string; className: string }> = {
-  pending: { label: '待审核', className: 'text-orange-700 dark:text-orange-300' },
-  approved: { label: '已批准', className: 'text-green-700 dark:text-green-300' },
-  rejected: { label: '已拒绝', className: 'text-red-700 dark:text-red-300' },
-  synced: { label: '已同步', className: 'text-purple-700 dark:text-purple-300' },
-  revoked: { label: '已撤销', className: 'text-gray-700 dark:text-gray-300' },
 };
 
 type GameDataActionRowProps = {
@@ -64,8 +55,7 @@ export default function GameDataActionRow({
   onToggleSelected,
   onToggleExpanded,
 }: GameDataActionRowProps) {
-  const statusMeta =
-    ACTION_STATUS_META[submission.status as ActionStatus] ?? ACTION_STATUS_META.pending;
+  const statusMeta = getSubmissionStatusPresentation(submission.status, 'gameData');
   const isAutoApproved =
     submission.status !== 'pending' &&
     !!submission.reviewed_at &&
@@ -95,7 +85,7 @@ export default function GameDataActionRow({
             <div className='flex items-center gap-2 text-sm text-gray-700 dark:text-slate-200'>
               <span className='font-medium'>{submission.entity_type}</span>
               <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-              <span className={statusMeta.className}>{statusMeta.label}</span>
+              <span className={statusMeta.textClassName}>{statusMeta.label}</span>
               {submission.is_public && submission.status === 'pending' && (
                 <>
                   <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>

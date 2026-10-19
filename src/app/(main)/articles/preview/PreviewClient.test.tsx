@@ -54,6 +54,31 @@ const previewData = {
 };
 
 describe('PreviewClient', () => {
+  it.each([null, 'future-status', 'synced'])('shows an unknown preview state for %s', (status) => {
+    jest.mocked(useSWR).mockReturnValue({
+      data: {
+        preview: {
+          ...previewData.preview,
+          article: {
+            ...previewData.preview.article,
+            version: { ...previewData.preview.article.version, status },
+          },
+        },
+      },
+      error: undefined,
+      isLoading: false,
+      isValidating: false,
+      mutate: jest.fn(),
+    });
+
+    render(<PreviewClient />);
+
+    expect(screen.getByText('状态未知')).toBeInTheDocument();
+    expect(screen.getByText('此版本的审核状态未知')).toBeInTheDocument();
+    expect(screen.queryByText('待审核')).not.toBeInTheDocument();
+    expect(screen.queryByText('已发布')).not.toBeInTheDocument();
+  });
+
   it('renders the effective proposed metadata', () => {
     jest.mocked(useSWR).mockReturnValue({
       data: previewData,

@@ -6,6 +6,7 @@ import useSWR from 'swr';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { fetchJson } from '@/lib/fetchJson';
+import { getSubmissionStatusPresentation } from '@/lib/submissionStatus';
 import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
@@ -45,6 +46,14 @@ interface PreviewData {
   };
 }
 
+const statusDescriptions: Record<string, string> = {
+  pending: '此版本正在等待审核，尚未公开发布',
+  approved: '此版本已经审核通过并公开发布',
+  rejected: '此版本已被拒绝，不会公开发布',
+  revoked: '此版本已被撤销，不再公开显示',
+  unknown: '此版本的审核状态未知',
+};
+
 export default function PreviewClient() {
   const searchParams = useSearchParams();
   const token = searchParams?.get('token');
@@ -82,51 +91,13 @@ export default function PreviewClient() {
     );
   }
 
-  const getStatusInfo = (status: string) => {
-    const statusConfig = {
-      pending: {
-        color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-        text: '待审核',
-        description: '此版本正在等待审核，尚未公开发布',
-      },
-      approved: {
-        color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-        text: '已发布',
-        description: '此版本已经审核通过并公开发布',
-      },
-      rejected: {
-        color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-        text: '已拒绝',
-        description: '此版本已被拒绝，不会公开发布',
-      },
-      revoked: {
-        color: 'bg-surface-muted text-foreground',
-        text: '已撤销',
-        description: '此版本已被撤销，不再公开显示',
-      },
-    };
-
-    return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-  };
-
-  const statusInfo = getStatusInfo(data.article.version.status);
+  const statusInfo = getSubmissionStatusPresentation(data.article.version.status, 'article');
 
   return (
     <PageShell width='narrow' className='py-8'>
       {/* Preview Banner */}
       <div className='mb-6'>
-        <div
-          className={cn(
-            'border-l-4 p-4',
-            statusInfo.color.includes('yellow')
-              ? 'border-yellow-400'
-              : statusInfo.color.includes('green')
-                ? 'border-green-400'
-                : statusInfo.color.includes('red')
-                  ? 'border-red-400'
-                  : 'border-gray-400'
-          )}
-        >
+        <div className={cn('border-l-4 p-4', statusInfo.borderClassName)}>
           <div className='flex items-start justify-between'>
             <div className='flex-1'>
               <div className='mb-2 flex items-center gap-3'>
@@ -137,13 +108,15 @@ export default function PreviewClient() {
                 <span
                   className={cn(
                     'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium',
-                    statusInfo.color
+                    statusInfo.badgeClassName
                   )}
                 >
-                  {statusInfo.text}
+                  {statusInfo.label}
                 </span>
               </div>
-              <p className='text-muted-foreground text-sm'>{statusInfo.description}</p>
+              <p className='text-muted-foreground text-sm'>
+                {statusDescriptions[statusInfo.status]}
+              </p>
             </div>
           </div>
         </div>
