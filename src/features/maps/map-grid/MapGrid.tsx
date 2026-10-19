@@ -74,9 +74,7 @@ export default function MapClient({ description, data = maps, publishedRevision 
               )
             }
             getOptionLabel={(opt) => opt}
-            getButtonStyle={(name, active) => {
-              return active ? getMapTypeColors(name) : undefined;
-            }}
+            getOptionColors={getMapTypeColors}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -98,9 +96,7 @@ export default function MapClient({ description, data = maps, publishedRevision 
               )
             }
             getOptionLabel={(size) => size}
-            getButtonStyle={(size, active) => {
-              return active ? getMapSizeColors(size) : undefined;
-            }}
+            getOptionColors={getMapSizeColors}
           />
 
           <FilterRow<studyLevel | '其它'>
@@ -113,9 +109,7 @@ export default function MapClient({ description, data = maps, publishedRevision 
               )
             }
             getOptionLabel={(level) => level}
-            getButtonStyle={(level, active) => {
-              return active ? getMapLevelColors(level) : undefined;
-            }}
+            getOptionColors={getMapLevelColors}
           />
         </>
       }

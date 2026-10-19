@@ -179,11 +179,7 @@ export default function EntityClient({ description, data = entities, publishedRe
                 {button}
               </Tooltip>
             )}
-            getButtonStyle={(type, active) => {
-              if (!active) return undefined;
-              const colors = getEntityTypeColors(type, false);
-              return { backgroundColor: colors.backgroundColor, color: colors.color };
-            }}
+            getOptionColors={getEntityTypeColors}
           />
 
           {/* 阵营筛选 */}
@@ -198,12 +194,7 @@ export default function EntityClient({ description, data = entities, publishedRe
               )
             }
             getOptionLabel={(f) => (f === 'other' ? '其它' : FACTION_FULL_NAMES[f])}
-            getButtonStyle={(f, active) => {
-              if (f === 'other') {
-                return undefined;
-              }
-              return active ? getFactionButtonColors(f) : undefined;
-            }}
+            getOptionColors={(f) => (f !== 'other' ? getFactionButtonColors(f) : undefined)}
           />
 
           {/* 控制区域：显示标签筛选 + 精确匹配 */}
@@ -261,11 +252,7 @@ export default function EntityClient({ description, data = entities, publishedRe
                 </Tooltip>
               )}
               innerClassName='flex flex-wrap gap-1 md:gap-1.5'
-              getButtonStyle={(tag, active) => {
-                if (!active) return undefined;
-                const colors = getEntityTypeColors(tag, false);
-                return { backgroundColor: colors.backgroundColor, color: colors.color };
-              }}
+              getOptionColors={getEntityTypeColors}
             />
           )}
         </>

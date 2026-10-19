@@ -105,9 +105,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
                 ? 'bg-gray-200 text-gray-700 dark:bg-gray-200 dark:text-gray-700'
                 : ''
             }
-            getButtonStyle={(opt, active) =>
-              active && opt !== 'all' ? getFactionButtonColors(opt) : undefined
-            }
+            getOptionColors={(opt) => (opt !== 'all' ? getFactionButtonColors(opt) : undefined)}
             getButtonDisabled={(opt) =>
               opt !== 'all' && factionSpecificProperties.some((p) => p.key === currentProperty)
                 ? factionId !== opt

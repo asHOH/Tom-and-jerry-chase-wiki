@@ -84,7 +84,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
-            getButtonStyle={(type, active) => (active ? getItemTypeColors(type) : undefined)}
+            getOptionColors={getItemTypeColors}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -106,7 +106,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
-            getButtonStyle={(source, active) => (active ? getItemSourceColors(source) : undefined)}
+            getOptionColors={getItemSourceColors}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -131,9 +131,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
             getOptionLabel={(f) =>
               f === 'none' ? '通用' : `${isMobile ? FACTION_NAMES[f] : FACTION_FULL_NAMES[f]}专用`
             }
-            getButtonStyle={(f, active) =>
-              active && f !== 'none' ? getFactionButtonColors(f) : undefined
-            }
+            getOptionColors={(f) => (f !== 'none' ? getFactionButtonColors(f) : undefined)}
           />
         </>
       }

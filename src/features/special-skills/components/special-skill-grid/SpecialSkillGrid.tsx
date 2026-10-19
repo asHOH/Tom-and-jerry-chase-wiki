@@ -72,7 +72,7 @@ export default function SpecialSkillClient({
           isActive={(f) => selectedFaction === f}
           onToggle={(f) => setSelectedFaction(selectedFaction === f ? null : f)}
           getOptionLabel={(f) => FACTION_FULL_NAMES[f]}
-          getButtonStyle={(f, active) => (active ? getFactionButtonColors(f) : undefined)}
+          getOptionColors={getFactionButtonColors}
         />
       }
     >

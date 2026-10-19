@@ -10,6 +10,11 @@ type FilterButtonStyle = React.CSSProperties & {
   '--filter-button-hover-color'?: string;
 };
 
+type FilterOptionColors = Pick<
+  React.CSSProperties,
+  'color' | 'backgroundColor' | 'background' | 'borderColor'
+>;
+
 export type FilterRowProps<T extends string | number> = {
   label: string;
   options: readonly T[] | T[];
@@ -20,7 +25,8 @@ export type FilterRowProps<T extends string | number> = {
   getOptionLabel?: ((opt: T, active: boolean) => ReactNode) | undefined;
   renderOption?: ((opt: T, button: ReactNode) => ReactNode) | undefined;
   getButtonClassName?: ((opt: T, active: boolean) => string) | undefined;
-  getButtonStyle?: ((opt: T, active: boolean) => React.CSSProperties | undefined) | undefined;
+  // Used for selected colors and the unselected hover text color.
+  getOptionColors?: ((opt: T) => FilterOptionColors | undefined) | undefined;
   activeTone?: FilterButtonTone | ((opt: T) => FilterButtonTone) | undefined;
   // Option can be disabled (e.g., interlocks)
   getButtonDisabled?: ((opt: T, active: boolean) => boolean | undefined) | undefined;
@@ -40,7 +46,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
     getOptionLabel,
     renderOption,
     getButtonClassName,
-    getButtonStyle,
+    getOptionColors,
     activeTone = 'default',
     getButtonDisabled,
     className,
@@ -65,30 +71,26 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
           aria-label={ariaLabel || label}
         >
           {options.map((opt) => {
-            const active = isActive(opt as T);
+            const active = isActive(opt);
             const resolvedActiveTone =
-              typeof activeTone === 'function' ? activeTone(opt as T) : activeTone;
-            const provided = getButtonStyle?.(opt as T, active);
-            const activeStyle = active ? undefined : getButtonStyle?.(opt as T, true);
-            const activeTextColor = activeStyle?.color;
-            const hoverStyle =
-              typeof activeTextColor === 'string'
-                ? ({ '--filter-button-hover-color': activeTextColor } satisfies FilterButtonStyle)
+              typeof activeTone === 'function' ? activeTone(opt) : activeTone;
+            const colors = getOptionColors?.(opt);
+            const buttonStyle: FilterButtonStyle | undefined = active
+              ? colors
+              : colors?.color
+                ? { '--filter-button-hover-color': colors.color }
                 : undefined;
-            const finalStyle = hoverStyle
-              ? ({ ...provided, ...hoverStyle } satisfies FilterButtonStyle)
-              : provided;
-            const inactiveHoverTextClassName = hoverStyle
+            const inactiveHoverTextClassName = colors?.color
               ? 'hover:text-[var(--filter-button-hover-color)]'
               : 'hover:text-gray-900 dark:hover:text-gray-100';
-            const labelNode = getOptionLabel ? getOptionLabel(opt as T, active) : String(opt);
+            const labelNode = getOptionLabel ? getOptionLabel(opt, active) : String(opt);
             const button = (
               <MotionButton
                 variant='unstyled'
                 key={String(opt)}
                 type='button'
                 aria-pressed={active}
-                onClick={() => onToggle(opt as T)}
+                onClick={() => onToggle(opt)}
                 className={cn(
                   'filter-button cursor-pointer rounded-lg border-none px-3 py-2 text-sm font-medium ease-in-out',
                   active
@@ -97,16 +99,16 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                         'hover:bg-control bg-transparent text-gray-700 dark:text-gray-300',
                         inactiveHoverTextClassName
                       ),
-                  getButtonClassName?.(opt as T, active)
+                  getButtonClassName?.(opt, active)
                 )}
-                style={finalStyle as MotionStyle}
-                disabled={getButtonDisabled?.(opt as T, active)}
+                style={buttonStyle as MotionStyle}
+                disabled={getButtonDisabled?.(opt, active)}
                 whileTap={{ scale: 0.95 }}
               >
                 {labelNode}
               </MotionButton>
             );
-            return renderOption ? renderOption(opt as T, button) : button;
+            return renderOption ? renderOption(opt, button) : button;
           })}
         </div>
       </div>

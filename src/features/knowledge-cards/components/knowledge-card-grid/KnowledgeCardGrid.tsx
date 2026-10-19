@@ -77,7 +77,7 @@ export default function KnowledgeCardGrid({ description, data = cards, published
             isActive={(opt) => selectedFaction === opt}
             onToggle={(opt) => setSelectedFaction(selectedFaction === opt ? null : opt)}
             getOptionLabel={(opt) => FACTION_FULL_NAMES[opt]}
-            getButtonStyle={(opt, active) => (active ? getFactionButtonColors(opt) : undefined)}
+            getOptionColors={getFactionButtonColors}
           />
 
           <FilterRow<string>
@@ -94,7 +94,7 @@ export default function KnowledgeCardGrid({ description, data = cards, published
                 </span>
               </>
             )}
-            getButtonStyle={(opt, active) => (active ? getCardRankColors(opt, false) : undefined)}
+            getOptionColors={(opt) => getCardRankColors(opt, false)}
           />
 
           <div

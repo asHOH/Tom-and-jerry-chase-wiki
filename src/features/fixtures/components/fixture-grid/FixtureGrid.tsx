@@ -85,7 +85,7 @@ export default function FixtureClient({ description, data = fixtures, publishedR
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 3) : opt)}
-            getButtonStyle={(type, active) => (active ? getFixtureTypeColors(type) : undefined)}
+            getOptionColors={getFixtureTypeColors}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -107,9 +107,7 @@ export default function FixtureClient({ description, data = fixtures, publishedR
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
-            getButtonStyle={(source, active) =>
-              active ? getFixtureSourceColors(source) : undefined
-            }
+            getOptionColors={getFixtureSourceColors}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}

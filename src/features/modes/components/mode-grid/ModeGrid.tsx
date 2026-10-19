@@ -66,7 +66,7 @@ export default function ModeClient({ description, data = modes, publishedRevisio
             )
           }
           getOptionLabel={(opt) => opt}
-          getButtonStyle={(type, active) => (active ? getModeTypeColors(type) : undefined)}
+          getOptionColors={getModeTypeColors}
         />
       }
     >

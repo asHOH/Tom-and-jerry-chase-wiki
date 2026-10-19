@@ -224,7 +224,7 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
             isActive={(opt) => selectedFactions.has(opt)}
             onToggle={(opt) => toggleFaction(opt)}
             getOptionLabel={(opt) => FACTION_NAMES[opt]}
-            getButtonStyle={(opt, active) => (active ? getFactionButtonColors(opt) : undefined)}
+            getOptionColors={getFactionButtonColors}
           />
 
           {availableRanks.length > 0 && (

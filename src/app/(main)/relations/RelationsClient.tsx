@@ -83,7 +83,7 @@ function RowFactionSelector({
       isActive={(option) => selected === option}
       onToggle={onSelect}
       getOptionLabel={(option) => FACTION_NAMES[option]}
-      getButtonStyle={(option, active) => (active ? getFactionButtonColors(option) : undefined)}
+      getOptionColors={getFactionButtonColors}
       className={targetSelectorClassName}
       ariaLabel='行目标类型'
     />
@@ -110,8 +110,8 @@ function ColumnCategorySelector({
       getOptionLabel={(option) =>
         options.find((columnOption) => columnOption.id === option)?.label ?? option
       }
-      getButtonStyle={(option, active) =>
-        active && isFactionTarget(option) ? getFactionButtonColors(option) : undefined
+      getOptionColors={(option) =>
+        isFactionTarget(option) ? getFactionButtonColors(option) : undefined
       }
       className={targetSelectorClassName}
       ariaLabel='列目标类型'

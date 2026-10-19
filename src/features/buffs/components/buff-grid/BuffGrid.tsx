@@ -103,7 +103,7 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
             )
           }
           getOptionLabel={(f) => f}
-          getButtonStyle={(f, active) => (active ? getBuffTypeColors(f) : undefined)}
+          getOptionColors={getBuffTypeColors}
         />
       }
     >

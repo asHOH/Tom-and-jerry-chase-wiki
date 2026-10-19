@@ -231,16 +231,7 @@ export default function CharacterGrid({ factionId, characters }: FactionCharacte
                 {button}
               </Tooltip>
             )}
-            getButtonStyle={(tag) => {
-              const isActive = hasPositioningTagFilter(tag as PositioningTagName);
-              const tagColors = getPositioningTagColors(
-                tag as PositioningTagName,
-                4,
-                false,
-                faction.id as FactionId
-              );
-              return isActive ? tagColors : undefined;
-            }}
+            getOptionColors={(tag) => getPositioningTagColors(tag, 4, false, faction.id)}
           />
 
           <FilterRow
@@ -248,13 +239,7 @@ export default function CharacterGrid({ factionId, characters }: FactionCharacte
             options={avatarOptions}
             isActive={(opt) => hasAvatar(opt)}
             onToggle={(opt) => toggleAvatar(opt)}
-            getButtonStyle={(opt) => {
-              const isActive = hasAvatar(opt);
-              const colors = getAvatarFilterColors(opt);
-              return isActive
-                ? { backgroundColor: colors.backgroundColor, color: colors.color }
-                : undefined;
-            }}
+            getOptionColors={getAvatarFilterColors}
           />
         </>
       }
