@@ -129,4 +129,31 @@ describe('PermissionGroupManagement', () => {
       parentGroupId: contributor.id,
     });
   });
+
+  it('announces a failed save as an alert and a successful retry as a status', async () => {
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: false, json: async () => ({ error: '保存被拒绝' }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ ok: true }) });
+    const mutateGroups = jest.fn();
+
+    render(
+      <PermissionGroupManagement
+        groups={[contributor]}
+        catalog={catalog}
+        resourceOptions={{}}
+        canManage
+        mutateGroups={mutateGroups}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '保存更改' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('保存被拒绝');
+    expect(mutateGroups).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: '保存更改' }));
+    expect(await screen.findByRole('status')).toHaveTextContent('用户组已保存');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(mutateGroups).toHaveBeenCalledTimes(1);
+  });
 });

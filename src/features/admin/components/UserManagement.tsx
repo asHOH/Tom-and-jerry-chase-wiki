@@ -10,6 +10,7 @@ import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormInput } from '@/components/ui/FormControls';
+import Notice from '@/components/ui/Notice';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
 import type { PermissionGroup } from './PermissionGroupManagement';
@@ -100,14 +101,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
   return (
     <>
       {message && (
-        <div
-          className={cn(
-            'mb-4 rounded p-3',
-            message.type === 'success'
-              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200'
-              : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'
-          )}
-        >
+        <Notice variant={message.type} className='mb-4'>
           {message.text}
           <Button
             variant='unstyled'
@@ -116,7 +110,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
           >
             关闭
           </Button>
-        </div>
+        </Notice>
       )}
 
       <BaseDialog

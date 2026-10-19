@@ -7,6 +7,7 @@ import { cn } from '@/lib/design';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormControls';
+import Notice from '@/components/ui/Notice';
 
 type ResourceOption = { id: string; label: string };
 type BlockUser = { id: string; nickname: string };
@@ -87,7 +88,7 @@ export default function BlockManagement({
   const [hardBlock, setHardBlock] = useState(false);
   const [autoblock, setAutoblock] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const resourceIds = resourceOptions[resourceType] ?? [];
   const activeBlocks = blocks.filter((block) => block.active);
@@ -148,11 +149,11 @@ export default function BlockManagement({
 
   const submit = async () => {
     if (!reason.trim() || actions.length === 0) {
-      setMessage('请填写理由并至少选择一项限制。');
+      setMessage({ type: 'error', text: '请填写理由并至少选择一项限制。' });
       return;
     }
     if (scope === 'partial' && (!resourceType || !resourceId)) {
-      setMessage('部分编辑封禁需要选择资源。');
+      setMessage({ type: 'error', text: '部分编辑封禁需要选择资源。' });
       return;
     }
     const body = {
@@ -175,10 +176,10 @@ export default function BlockManagement({
     );
     const result = (await response.json().catch(() => null)) as { error?: string } | null;
     if (!response.ok) {
-      setMessage(result?.error ?? '保存封禁失败');
+      setMessage({ type: 'error', text: result?.error ?? '保存封禁失败' });
       return;
     }
-    setMessage(editingId ? '封禁已修改' : '封禁已创建');
+    setMessage({ type: 'success', text: editingId ? '封禁已修改' : '封禁已创建' });
     reset();
     await mutateBlocks();
   };
@@ -193,10 +194,10 @@ export default function BlockManagement({
     });
     if (!response.ok) {
       const result = (await response.json().catch(() => null)) as { error?: string } | null;
-      setMessage(result?.error ?? '解除封禁失败');
+      setMessage({ type: 'error', text: result?.error ?? '解除封禁失败' });
       return;
     }
-    setMessage('封禁已解除');
+    setMessage({ type: 'success', text: '封禁已解除' });
     await mutateBlocks();
   };
 
@@ -321,7 +322,7 @@ export default function BlockManagement({
             <Button fullWidth onClick={() => void submit()}>
               {editingId ? '保存修改' : '创建封禁'}
             </Button>
-            {message && <p className='text-sm text-amber-700 dark:text-amber-300'>{message}</p>}
+            {message && <Notice variant={message.type}>{message.text}</Notice>}
           </div>
         </Card>
       )}

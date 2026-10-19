@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 
 import type { usePermissions } from '@/lib/auth/PermissionProvider';
+import Notice from '@/components/ui/Notice';
 
 import { useGameDataModerationList } from '../hooks/useGameDataModerationList';
 import GameDataActionModerationPanel from './GameDataActionModerationPanel';
@@ -34,11 +35,7 @@ export default function GameDataActionModeration({
 
   return (
     <>
-      {error && (
-        <p role='alert' className='text-status-error-foreground'>
-          改动列表加载失败，请重试刷新
-        </p>
-      )}
+      {error && <Notice variant='error'>改动列表加载失败，请重试刷新</Notice>}
       <GameDataActionModerationPanel
         canApproveActions={permissions.has('game_data_action.approve')}
         canRejectActions={permissions.has('game_data_action.reject')}

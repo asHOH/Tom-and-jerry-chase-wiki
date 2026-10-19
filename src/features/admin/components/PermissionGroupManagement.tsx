@@ -15,6 +15,7 @@ import { USER_API_KEY } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormControls';
+import Notice from '@/components/ui/Notice';
 import {
   CheckCircleIcon,
   ChevronRightIcon,
@@ -96,7 +97,7 @@ export default function PermissionGroupManagement({
   const [isDefault, setIsDefault] = useState(false);
   const [parentGroupId, setParentGroupId] = useState<string | null>(null);
   const [grants, setGrants] = useState<PermissionGrant[]>([]);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -147,10 +148,10 @@ export default function PermissionGroupManagement({
         grants: [],
         parentGroupId: null,
       });
-      setMessage('用户组已创建');
+      setMessage({ type: 'success', text: '用户组已创建' });
       await mutateGroups();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : '创建失败');
+      setMessage({ type: 'error', text: error instanceof Error ? error.message : '创建失败' });
     }
   };
 
@@ -166,10 +167,10 @@ export default function PermissionGroupManagement({
         grants: directGrants,
         parentGroupId,
       });
-      setMessage('用户组已保存');
+      setMessage({ type: 'success', text: '用户组已保存' });
       await Promise.all([mutateGroups(), mutateCache(USER_API_KEY)]);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : '保存失败');
+      setMessage({ type: 'error', text: error instanceof Error ? error.message : '保存失败' });
     } finally {
       setIsSaving(false);
     }
@@ -180,10 +181,10 @@ export default function PermissionGroupManagement({
     try {
       await request(`/api/admin/groups/${selected.id}`, 'DELETE');
       setSelectedId('');
-      setMessage('用户组已删除');
+      setMessage({ type: 'success', text: '用户组已删除' });
       await Promise.all([mutateGroups(), mutateCache(USER_API_KEY)]);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : '删除失败');
+      setMessage({ type: 'error', text: error instanceof Error ? error.message : '删除失败' });
     }
   };
 
@@ -565,14 +566,7 @@ export default function PermissionGroupManagement({
                 </div>
               </section>
 
-              {message && (
-                <p
-                  role='status'
-                  className='rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-300'
-                >
-                  {message}
-                </p>
-              )}
+              {message && <Notice variant={message.type}>{message.text}</Notice>}
               <datalist id='permission-resource-types'>
                 {SCOPABLE_RESOURCE_TYPES.map((type) => (
                   <option key={type} value={type} />

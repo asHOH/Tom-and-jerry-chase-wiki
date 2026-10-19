@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 
-import { cn } from '@/lib/design';
 import { requireSupabaseBrowserClient } from '@/lib/supabase/browserClient';
 import { Database } from '@/data/database.types';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
+import Notice from '@/components/ui/Notice';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 
@@ -145,14 +145,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
   return (
     <>
       {message && (
-        <div
-          className={cn(
-            'mb-4 rounded p-3',
-            message.type === 'success'
-              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200'
-              : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'
-          )}
-        >
+        <Notice variant={message.type} className='mb-4'>
           {message.text}
           <Button
             variant='unstyled'
@@ -161,7 +154,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
           >
             关闭
           </Button>
-        </div>
+        </Notice>
       )}
 
       {canCreate && (
