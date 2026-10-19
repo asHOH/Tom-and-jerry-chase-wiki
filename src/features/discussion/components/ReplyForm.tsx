@@ -76,13 +76,13 @@ export function ReplyForm({
   return (
     <Card bordered className={cn('px-5 py-4', className)}>
       {replyToNickname && (
-        <div className='mb-3 flex items-center justify-between gap-3 rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 dark:bg-slate-800 dark:text-gray-200'>
+        <div className='bg-surface-muted text-foreground mb-3 flex items-center justify-between gap-3 rounded-md px-3 py-2 text-sm'>
           <div className='min-w-0 truncate'>回复 {replyToNickname}</div>
           <Button
             variant='unstyled'
             type='button'
             onClick={onCancel}
-            className='shrink-0 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+            className='text-muted-foreground hover:text-foreground shrink-0'
             aria-label='取消回复'
           >
             ✕
