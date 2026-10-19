@@ -156,4 +156,29 @@ describe('PermissionGroupManagement', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     expect(mutateGroups).toHaveBeenCalledTimes(1);
   });
+
+  it('announces creation failure and success while the group list is empty', async () => {
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: false, json: async () => ({ error: '创建被拒绝' }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ ok: true }) });
+    const mutateGroups = jest.fn();
+    render(
+      <PermissionGroupManagement
+        groups={[]}
+        catalog={catalog}
+        resourceOptions={{}}
+        canManage
+        mutateGroups={mutateGroups}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: '新建' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('创建被拒绝');
+    expect(mutateGroups).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: '新建' }));
+    expect(await screen.findByRole('status')).toHaveTextContent('用户组已创建');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(mutateGroups).toHaveBeenCalledTimes(1);
+  });
 });

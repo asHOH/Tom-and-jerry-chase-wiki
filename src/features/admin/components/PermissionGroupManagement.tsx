@@ -280,6 +280,11 @@ export default function PermissionGroupManagement({
       </Card>
 
       <Card className='overflow-hidden p-0'>
+        {message && (
+          <Notice variant={message.type} className='m-4 sm:m-6'>
+            {message.text}
+          </Notice>
+        )}
         {!selected ? (
           <div className='flex min-h-72 flex-col items-center justify-center p-8 text-center'>
             <span className='bg-surface-muted mb-3 flex size-14 items-center justify-center rounded-2xl text-slate-400 dark:text-slate-500'>
@@ -566,7 +571,6 @@ export default function PermissionGroupManagement({
                 </div>
               </section>
 
-              {message && <Notice variant={message.type}>{message.text}</Notice>}
               <datalist id='permission-resource-types'>
                 {SCOPABLE_RESOURCE_TYPES.map((type) => (
                   <option key={type} value={type} />

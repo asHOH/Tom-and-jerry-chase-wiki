@@ -166,14 +166,17 @@ export default function BlockManagement({
       autoblock: targetType === 'account' ? autoblock : false,
       restrictions: buildRestrictions(),
     };
-    const response = await fetch(
-      editingId ? `/api/admin/blocks/${editingId}` : '/api/admin/blocks',
-      {
+    let response: Response;
+    try {
+      response = await fetch(editingId ? `/api/admin/blocks/${editingId}` : '/api/admin/blocks', {
         method: editingId ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-      }
-    );
+      });
+    } catch {
+      setMessage({ type: 'error', text: '保存封禁失败，请检查网络连接后重试。' });
+      return;
+    }
     const result = (await response.json().catch(() => null)) as { error?: string } | null;
     if (!response.ok) {
       setMessage({ type: 'error', text: result?.error ?? '保存封禁失败' });
@@ -187,11 +190,17 @@ export default function BlockManagement({
   const unblock = async (block: BlockRow) => {
     const unblockReason = window.prompt('请输入解除封禁理由', '误封或封禁期满')?.trim();
     if (!unblockReason) return;
-    const response = await fetch(`/api/admin/blocks/${block.id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reason: unblockReason }),
-    });
+    let response: Response;
+    try {
+      response = await fetch(`/api/admin/blocks/${block.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: unblockReason }),
+      });
+    } catch {
+      setMessage({ type: 'error', text: '解除封禁失败，请检查网络连接后重试。' });
+      return;
+    }
     if (!response.ok) {
       const result = (await response.json().catch(() => null)) as { error?: string } | null;
       setMessage({ type: 'error', text: result?.error ?? '解除封禁失败' });
