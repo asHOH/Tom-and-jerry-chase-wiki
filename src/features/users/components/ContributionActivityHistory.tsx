@@ -7,6 +7,7 @@ import type {
   ContributionActivityPage,
 } from '@/lib/users/contributionActivity';
 import Card from '@/components/ui/Card';
+import Notice from '@/components/ui/Notice';
 import { Skeleton } from '@/components/ui/Skeleton';
 import Link from '@/components/Link';
 
@@ -349,13 +350,10 @@ export function ContributionActivityHistory({
       </header>
 
       {hasError ? (
-        <div
-          role='alert'
-          className='rounded-lg border border-red-200 bg-red-50 px-4 py-5 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-950/25 dark:text-red-200'
-        >
+        <Notice variant='error' className='py-5'>
           <p className='font-medium'>贡献历史加载失败</p>
-          <p className='mt-1 text-red-700/80 dark:text-red-300/80'>请稍后刷新页面重试。</p>
-        </div>
+          <p className='mt-1'>请稍后刷新页面重试。</p>
+        </Notice>
       ) : isLoading ? (
         <ActivityLoadingState />
       ) : page && displayItems.length > 0 ? (

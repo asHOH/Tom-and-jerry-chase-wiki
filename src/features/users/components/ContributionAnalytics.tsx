@@ -5,6 +5,7 @@ import type {
   ContributionMonthlyBucket,
 } from '@/lib/users/contributionActivity';
 import Card from '@/components/ui/Card';
+import Notice from '@/components/ui/Notice';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 import {
@@ -206,12 +207,9 @@ function CategoryBreakdown({
       </div>
 
       {hasError ? (
-        <div
-          role='alert'
-          className='rounded-lg border border-red-200 bg-red-50 px-3 py-5 text-center text-sm text-red-800 dark:border-red-900/60 dark:bg-red-950/25 dark:text-red-200'
-        >
+        <Notice variant='error' className='px-3 py-5 text-center'>
           类型分布加载失败，请稍后重试。
-        </div>
+        </Notice>
       ) : visibleCategories.length === 0 ? (
         <p className='bg-surface-sunken rounded-lg px-3 py-6 text-center text-sm text-gray-500 dark:text-gray-400'>
           暂无类型数据
@@ -299,13 +297,10 @@ export function ContributionAnalytics({
       ) : (
         <>
           {hasMetricsError ? (
-            <div
-              role='alert'
-              className='rounded-lg border border-red-200 bg-red-50 px-4 py-5 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-950/25 dark:text-red-200'
-            >
+            <Notice variant='error' className='py-5'>
               <p className='font-medium'>贡献指标加载失败</p>
-              <p className='mt-1 text-red-700/80 dark:text-red-300/80'>请稍后刷新页面重试。</p>
-            </div>
+              <p className='mt-1'>请稍后刷新页面重试。</p>
+            </Notice>
           ) : metrics ? (
             <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
               {getMetricCards(metrics).map((metric) => (

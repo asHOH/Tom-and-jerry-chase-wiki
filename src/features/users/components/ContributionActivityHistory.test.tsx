@@ -33,6 +33,28 @@ const page: ContributionActivityPage = {
   totalPages: 10,
 };
 
+it('keeps filter navigation available while an error takes precedence over loading and data', () => {
+  render(
+    <ContributionActivityHistory
+      page={page}
+      filter='articles'
+      filterHrefs={filterHrefs}
+      pageHref={pageHref}
+      hasError
+      isLoading
+    />
+  );
+
+  const alert = screen.getByRole('alert');
+  expect(alert).toHaveTextContent('贡献历史加载失败');
+  expect(alert).toHaveTextContent('请稍后刷新页面重试。');
+  expect(alert).toHaveAttribute('aria-live', 'assertive');
+  expect(screen.getByRole('link', { name: '全部' })).toHaveAttribute('href', filterHrefs.all);
+  expect(screen.queryByLabelText('正在加载贡献记录')).not.toBeInTheDocument();
+  expect(screen.queryByText('编辑文章')).not.toBeInTheDocument();
+  expect(screen.queryByRole('navigation', { name: '贡献记录分页' })).not.toBeInTheDocument();
+});
+
 it('preserves filter links, page destinations, ellipses, and the current-page marker', () => {
   render(
     <ContributionActivityHistory

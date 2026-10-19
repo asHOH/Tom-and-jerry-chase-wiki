@@ -5,6 +5,7 @@ import type { KeyboardEvent } from 'react';
 import { cn } from '@/lib/design';
 import type { ContributionCalendarDay } from '@/lib/users/contributionActivity';
 import Card from '@/components/ui/Card';
+import Notice from '@/components/ui/Notice';
 import { Skeleton } from '@/components/ui/Skeleton';
 import Tooltip from '@/components/ui/Tooltip';
 
@@ -191,7 +192,7 @@ function CalendarLegend() {
           <span key={label} className='inline-flex items-center gap-1'>
             <span
               aria-hidden='true'
-              className={cn('h-3 w-3 rounded-[2px] ring-1 ring-inset', LEVEL_CLASSES[index])}
+              className={cn('h-3 w-3 rounded-xs ring-1 ring-inset', LEVEL_CLASSES[index])}
             />
             <span className='sr-only'>{index === 4 ? '4 次及以上' : `${label} 次`}</span>
           </span>
@@ -260,13 +261,10 @@ export function ContributionCalendar({
       </header>
 
       {hasError ? (
-        <div
-          role='alert'
-          className='rounded-lg border border-red-200 bg-red-50 px-4 py-5 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-950/25 dark:text-red-200'
-        >
+        <Notice variant='error' className='py-5'>
           <p className='font-medium'>贡献日历加载失败</p>
-          <p className='mt-1 text-red-700/80 dark:text-red-300/80'>请稍后刷新页面重试。</p>
-        </div>
+          <p className='mt-1'>请稍后刷新页面重试。</p>
+        </Notice>
       ) : isLoading ? (
         <CalendarSkeleton />
       ) : (
