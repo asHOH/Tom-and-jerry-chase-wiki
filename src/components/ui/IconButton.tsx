@@ -15,10 +15,10 @@ type IconButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'aria-label
 };
 
 const variantClasses: Record<IconButtonVariant, string> = {
-  add: 'bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/80 dark:text-green-200 dark:hover:bg-green-800/90',
+  add: 'bg-action-success-subtle text-action-success-subtle-foreground hover:bg-action-success-subtle-hover',
   delete:
-    'bg-red-200 text-red-800 hover:bg-red-300 dark:bg-red-900/90 dark:text-red-100 dark:hover:bg-red-800',
-  edit: 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/80 dark:text-blue-200 dark:hover:bg-blue-800/90',
+    'bg-action-danger-subtle text-action-danger-subtle-foreground hover:bg-action-danger-subtle-hover',
+  edit: 'bg-action-primary-subtle text-action-primary-subtle-foreground hover:bg-action-primary-subtle-hover',
 };
 
 const sizeClasses: Record<IconButtonSize, string> = {

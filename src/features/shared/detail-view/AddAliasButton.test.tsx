@@ -9,7 +9,12 @@ describe('AddAliasButton', () => {
     render(<AddAliasButton onAdd={onAdd} />);
 
     const button = screen.getByRole('button', { name: '添加别名' });
-    expect(button).toHaveClass('h-6', 'w-6', 'bg-green-100', 'text-green-800');
+    expect(button).toHaveClass(
+      'h-6',
+      'w-6',
+      'bg-action-success-subtle',
+      'text-action-success-subtle-foreground'
+    );
 
     fireEvent.click(button);
 

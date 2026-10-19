@@ -15,24 +15,30 @@ describe('Button', () => {
     );
   });
 
-  it('uses accessible foreground and background pairs for semantic actions', () => {
+  it('uses shared foreground and background pairs for semantic actions', () => {
     render(
       <>
+        <Button variant='danger'>删除</Button>
         <Button variant='success'>通过</Button>
         <Button variant='warning'>待审核</Button>
       </>
     );
 
+    expect(screen.getByRole('button', { name: '删除' })).toHaveClass(
+      'bg-action-danger',
+      'text-action-danger-foreground',
+      'hover:bg-action-danger-hover'
+    );
+
     expect(screen.getByRole('button', { name: '通过' })).toHaveClass(
-      'bg-green-700',
-      'text-white',
-      'dark:bg-green-800'
+      'bg-action-success',
+      'text-action-success-foreground',
+      'hover:bg-action-success-hover'
     );
     expect(screen.getByRole('button', { name: '待审核' })).toHaveClass(
-      'bg-amber-400',
-      'text-amber-950',
-      'dark:bg-amber-800',
-      'dark:text-white'
+      'bg-action-warning',
+      'text-action-warning-foreground',
+      'hover:bg-action-warning-hover'
     );
   });
 

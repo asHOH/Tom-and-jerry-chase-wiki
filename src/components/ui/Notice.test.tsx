@@ -9,7 +9,11 @@ describe('Notice', () => {
     const notice = screen.getByRole('alert');
     expect(notice).toHaveTextContent('保存失败');
     expect(notice).toHaveAttribute('aria-live', 'assertive');
-    expect(notice).toHaveClass('border-red-200', 'bg-red-50', 'text-red-800');
+    expect(notice).toHaveClass(
+      'border-status-error-border',
+      'bg-status-error',
+      'text-status-error-foreground'
+    );
   });
 
   it('renders non-error notices as polite status messages', () => {
@@ -17,7 +21,11 @@ describe('Notice', () => {
 
     const notice = screen.getByRole('status');
     expect(notice).toHaveAttribute('aria-live', 'polite');
-    expect(notice).toHaveClass('border-amber-200', 'bg-amber-50', 'text-amber-800');
+    expect(notice).toHaveClass(
+      'border-status-warning-border',
+      'bg-status-warning',
+      'text-status-warning-foreground'
+    );
   });
 
   it('allows role and aria-live overrides', () => {

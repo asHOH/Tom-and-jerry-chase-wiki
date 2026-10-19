@@ -248,9 +248,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
             disabled={isUploading}
           />
         </label>
-        {uploadError && (
-          <p className='mt-3 text-sm text-red-600 dark:text-red-400'>{uploadError}</p>
-        )}
+        {uploadError && <p className='text-status-error-foreground mt-3 text-sm'>{uploadError}</p>}
       </div>
       <div className='border-border bg-surface-sunken rounded-lg border p-4'>
         <p className='text-sm text-gray-700 dark:text-gray-300'>
@@ -292,7 +290,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           刷新
         </Button>
       </div>
-      {libraryError && <p className='text-sm text-red-600 dark:text-red-400'>{libraryError}</p>}
+      {libraryError && <p className='text-status-error-foreground text-sm'>{libraryError}</p>}
       {libraryLoading ? (
         <div className='flex items-center justify-center py-10 text-gray-500 dark:text-gray-400'>
           <LoadingSpinnerIcon className='mr-2 size-5 animate-spin' /> 加载中...
@@ -362,7 +360,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           </Button>
         </div>
       </div>
-      {siteError && <p className='text-sm text-red-600 dark:text-red-400'>{siteError}</p>}
+      {siteError && <p className='text-status-error-foreground text-sm'>{siteError}</p>}
       {siteLoading ? (
         <div className='flex items-center justify-center py-10 text-gray-500 dark:text-gray-400'>
           <LoadingSpinnerIcon className='mr-2 size-5 animate-spin' /> 加载中...

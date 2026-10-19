@@ -22,7 +22,12 @@ describe('EditButton', () => {
     render(<EditButton compact />);
 
     const button = screen.getByRole('button', { name: '编辑此页面' });
-    expect(button).toHaveClass('h-7', 'w-7', 'bg-blue-100', 'text-blue-800');
+    expect(button).toHaveClass(
+      'h-7',
+      'w-7',
+      'bg-action-primary-subtle',
+      'text-action-primary-subtle-foreground'
+    );
     expect(screen.queryByText('编辑')).not.toBeInTheDocument();
   });
 

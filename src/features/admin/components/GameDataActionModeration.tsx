@@ -35,7 +35,7 @@ export default function GameDataActionModeration({
   return (
     <>
       {error && (
-        <p role='alert' className='text-red-600 dark:text-red-400'>
+        <p role='alert' className='text-status-error-foreground'>
           改动列表加载失败，请重试刷新
         </p>
       )}

@@ -9,13 +9,10 @@ type NoticeProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 const noticeStyles: Record<NoticeVariant, string> = {
-  error:
-    'border-red-200 bg-red-50 text-red-800 dark:border-red-900/60 dark:bg-red-900/15 dark:text-red-200',
-  warning:
-    'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900/60 dark:bg-amber-900/15 dark:text-amber-200',
-  info: 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-900/60 dark:bg-blue-900/15 dark:text-blue-200',
-  success:
-    'border-green-200 bg-green-50 text-green-800 dark:border-green-900/60 dark:bg-green-900/15 dark:text-green-200',
+  error: 'border-status-error-border bg-status-error text-status-error-foreground',
+  warning: 'border-status-warning-border bg-status-warning text-status-warning-foreground',
+  info: 'border-status-info-border bg-status-info text-status-info-foreground',
+  success: 'border-status-success-border bg-status-success text-status-success-foreground',
 };
 
 const getDefaultAriaProps = (variant: NoticeVariant) =>

@@ -23,10 +23,9 @@ describe('IconButton', () => {
     expect(screen.getByRole('button', { name: '添加' })).toHaveClass(
       'h-8',
       'w-8',
-      'bg-green-100',
-      'text-green-800',
-      'dark:bg-green-900/80',
-      'dark:text-green-200',
+      'bg-action-success-subtle',
+      'text-action-success-subtle-foreground',
+      'hover:bg-action-success-subtle-hover',
       'focus-visible:outline-focus'
     );
   });
@@ -46,19 +45,17 @@ describe('IconButton', () => {
     expect(screen.getByRole('button', { name: '删除' })).toHaveClass(
       'h-6',
       'w-6',
-      'bg-red-200',
-      'text-red-800',
-      'dark:bg-red-900/90',
-      'dark:text-red-100',
+      'bg-action-danger-subtle',
+      'text-action-danger-subtle-foreground',
+      'hover:bg-action-danger-subtle-hover',
       'ml-auto'
     );
     expect(screen.getByRole('button', { name: '编辑' })).toHaveClass(
       'h-7',
       'w-7',
-      'bg-blue-100',
-      'text-blue-800',
-      'dark:bg-blue-900/80',
-      'dark:text-blue-200'
+      'bg-action-primary-subtle',
+      'text-action-primary-subtle-foreground',
+      'hover:bg-action-primary-subtle-hover'
     );
     expect(getIconButtonIconClassName('xs')).toBe('h-3 w-3');
     expect(getIconButtonIconClassName('sm')).toBe('h-3.5 w-3.5');

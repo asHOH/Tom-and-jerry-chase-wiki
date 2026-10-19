@@ -39,6 +39,6 @@ describe('FormControls', () => {
 
     const textarea = screen.getByRole('textbox', { name: '说明' });
     expect(textarea).toHaveAttribute('aria-invalid', 'true');
-    expect(textarea).toHaveClass('border-red-500', 'focus:ring-red-500');
+    expect(textarea).toHaveClass('border-validation-error', 'focus:ring-validation-error');
   });
 });

@@ -58,8 +58,8 @@ describe('ButtonLink', () => {
 
     const link = screen.getByRole('link', { name: '待审核' });
     expect(link).toHaveClass(
-      'bg-amber-400',
-      'text-amber-950',
+      'bg-action-warning',
+      'text-action-warning-foreground',
       'text-sm',
       'px-3',
       'py-2',

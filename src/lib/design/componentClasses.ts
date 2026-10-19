@@ -12,11 +12,11 @@ const actionButtonVariants = {
   secondary:
     'bg-control text-gray-800 hover:bg-control-hover border border-gray-200 dark:text-gray-100 dark:border-slate-600',
   ghost: 'text-gray-700 hover:bg-control dark:text-gray-200',
-  danger: 'bg-red-600 text-white shadow-sm hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600',
+  danger: 'bg-action-danger text-action-danger-foreground shadow-sm hover:bg-action-danger-hover',
   success:
-    'bg-green-700 text-white shadow-sm hover:bg-green-800 dark:bg-green-800 dark:hover:bg-green-700',
+    'bg-action-success text-action-success-foreground shadow-sm hover:bg-action-success-hover',
   warning:
-    'bg-amber-400 text-amber-950 shadow-sm hover:bg-amber-500 dark:bg-amber-800 dark:text-white dark:hover:bg-amber-700',
+    'bg-action-warning text-action-warning-foreground shadow-sm hover:bg-action-warning-hover',
 };
 
 const actionButtonSizes = {
@@ -43,7 +43,7 @@ const formControlSizes = {
 
 const formControlStateClasses = {
   default: 'border-gray-300 focus:border-transparent focus:ring-focus dark:border-gray-600',
-  invalid: 'border-red-500 focus:border-transparent focus:ring-red-500 dark:border-red-500',
+  invalid: 'border-validation-error focus:border-transparent focus:ring-validation-error',
 };
 
 /**

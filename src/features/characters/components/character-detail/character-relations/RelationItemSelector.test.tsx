@@ -36,7 +36,12 @@ describe('RelationItemSelector', () => {
     );
 
     const trigger = screen.getByRole('button', { name: '添加项目' });
-    expect(trigger).toHaveClass('h-8', 'w-8', 'bg-green-100', 'text-green-800');
+    expect(trigger).toHaveClass(
+      'h-8',
+      'w-8',
+      'bg-action-success-subtle',
+      'text-action-success-subtle-foreground'
+    );
 
     fireEvent.click(trigger);
 

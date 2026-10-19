@@ -379,7 +379,7 @@ function GameDataActionDetails({
         <div className='text-sm text-gray-500 dark:text-slate-400'>详情加载中…</div>
       )}
       {detailError && (
-        <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-900/30 dark:text-red-200'>
+        <div className='border-status-error-border bg-status-error text-status-error-foreground rounded border p-3 text-sm'>
           {detailError instanceof Error ? detailError.message : '操作失败'}
         </div>
       )}
