@@ -25,6 +25,18 @@ Dependabot 为 npm 包 `supabase` 的版本升级创建独立 PR。即使 migrat
 
 ## 迁移流程
 
+### Data API 显式授权
+
+Supabase 自 2026 年 10 月 30 日起停止为现有项目的 `public` 新表自动授予 Data API 权限；已有表保留原权限。新项目、预览环境和本地 reset 回放 migration 时会重新创建表，因此也必须具备显式授权。
+
+创建供 Data API 使用的表或视图时，在同一 migration 中按调用角色声明所需的 `GRANT`，并配置 RLS 与策略。`security_invoker` 视图还需要调用角色拥有底层表的读取权限；`service_role` 绕过 RLS，仍需对象权限。序列权限按实际调用需要单独授予。
+
+历史表的必要授权由 `20261020000000_explicit_data_api_grants.sql` 补齐。保留已有的 RPC 写入边界、通知 `read_at` 列级更新权限和发布操作表的服务端只读权限；避免通过 `GRANT ALL ON ALL TABLES` 恢复默认开放。已应用的历史 migration 保持原样，修正通过新 migration 完成。
+
+验证时应在关闭自动授权的可丢弃本地环境完整回放，再运行 `npm exec -- supabase test db` 检查权限与现有数据库行为。仓库当前锁定的 CLI 可在临时测试配置的 `[api]` 下设置 `auto_expose_new_tables = false`；该开关属于过渡配置，升级 CLI 时应核对是否仍支持。
+
+### 执行步骤
+
 1. 在本地回放并测试 migration。
 2. 运行 `npm run generate:database-types`，提交生成的 `src/data/database.generated.ts`；不要手工修改该文件。
 

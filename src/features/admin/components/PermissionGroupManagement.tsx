@@ -213,7 +213,7 @@ export default function PermissionGroupManagement({
   return (
     <div className='grid gap-4 lg:grid-cols-[19rem_minmax(0,1fr)]'>
       <Card className='h-fit overflow-hidden p-0 lg:sticky lg:top-4'>
-        <div className='border-border border-b bg-gradient-to-br from-indigo-50 to-blue-50 p-4 dark:from-indigo-950/30 dark:to-blue-950/20'>
+        <div className='border-border border-b bg-linear-to-br from-indigo-50 to-blue-50 p-4 dark:from-indigo-950/30 dark:to-blue-950/20'>
           <div className='flex items-center justify-between gap-3'>
             <div>
               <h2 className='font-bold text-slate-900 dark:text-white'>用户组</h2>
@@ -297,7 +297,7 @@ export default function PermissionGroupManagement({
           </div>
         ) : (
           <div>
-            <div className='border-border border-b bg-gradient-to-r from-slate-50 to-blue-50/70 p-4 sm:p-6 dark:from-slate-800 dark:to-blue-950/20'>
+            <div className='border-border border-b bg-linear-to-r from-slate-50 to-blue-50/70 p-4 sm:p-6 dark:from-slate-800 dark:to-blue-950/20'>
               <div className='flex flex-wrap items-start justify-between gap-3'>
                 <div>
                   <p className='text-xs font-semibold tracking-wider text-blue-600 uppercase dark:text-blue-400'>
