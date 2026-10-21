@@ -12,7 +12,7 @@ import {
   isPositioningTagVisible,
 } from '@/constants/positioningTagSequences';
 import { buffs } from '@/data/static';
-import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
+import { getActorJumpHeight, getOptionalActorProfile } from '@/features/actor-profiles/selectors';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
 import StreakCounter from '@/features/games/components/StreakCounter';
@@ -137,7 +137,7 @@ export default function GuessCharacterClient({ description, characters: charsSna
   const clues = useMemo<ClueEntry[]>(() => {
     const character = charsSnap[activeCharacterId];
     if (!character) return [];
-    const profile = getActorProfile(activeCharacterId);
+    const profile = getOptionalActorProfile(activeCharacterId);
 
     const entries: ClueEntry[] = [];
 
@@ -214,17 +214,14 @@ export default function GuessCharacterClient({ description, characters: charsSna
       }
     }
 
-    // HP range
-    entries.push({ label: '血量范围', value: bucketHp(profile.maxHp, character.factionId) });
-
-    // Move speed + Jump height
-    entries.push({
-      label: '移速 & 跳跃',
-      value: `移速: ${profile.runSpeed} · 跳跃: ${getActorJumpHeight(profile)}`,
-    });
-
-    // Attack boost
-    entries.push({ label: '攻击增伤', value: `${profile.attack ?? 0}%` });
+    if (profile) {
+      entries.push({ label: '血量范围', value: bucketHp(profile.maxHp, character.factionId) });
+      entries.push({
+        label: '移速 & 跳跃',
+        value: `移速: ${profile.runSpeed} · 跳跃: ${getActorJumpHeight(profile)}`,
+      });
+      entries.push({ label: '攻击增伤', value: `${profile.attack ?? 0}%` });
+    }
 
     // Description snippet
     const desc = character.description?.slice(0, 40) ?? '暂无简介';

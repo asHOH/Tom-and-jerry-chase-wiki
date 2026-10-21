@@ -1,4 +1,5 @@
-import { getActorProfile } from '@/features/actor-profiles/selectors';
+import { PENDING_ACTOR_PROFILE_NAMES } from '@/features/actor-profiles/pendingProfiles';
+import { getOptionalActorProfile } from '@/features/actor-profiles/selectors';
 
 import { cardData, characters } from '.';
 import {
@@ -39,7 +40,12 @@ describe('Data Validation', () => {
 
     it('should have valid HP values for all characters', () => {
       characterArray.forEach((character: Character) => {
-        const maxHp = getActorProfile(character.id).maxHp;
+        const profile = getOptionalActorProfile(character.id);
+        if (!profile) {
+          expect(PENDING_ACTOR_PROFILE_NAMES.has(character.id)).toBe(true);
+          return;
+        }
+        const maxHp = profile.maxHp;
         expect(maxHp).toBeGreaterThan(0);
         expect(maxHp).toBeLessThan(1000); // Reasonable upper limit
       });

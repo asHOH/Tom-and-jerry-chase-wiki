@@ -1,3 +1,4 @@
+import { PENDING_ACTOR_PROFILE_NAMES } from './pendingProfiles';
 import {
   assertValidActorProfiles,
   normalizeActorProfileName,
@@ -162,10 +163,11 @@ export const normalizeActorProfiles = (
 
   const profilesByName = new Map(includedProfiles.map((profile) => [profile.name, profile]));
   const playableNames = new Set(context.playableCharacters.map((character) => character.id));
-  const playableProfiles = context.playableCharacters.map((character) => {
+  const playableProfiles = context.playableCharacters.flatMap((character) => {
     const profile = profilesByName.get(character.id);
+    if (!profile && PENDING_ACTOR_PROFILE_NAMES.has(character.id)) return [];
     if (!profile) throw new Error(`character ${character.id}: missing canonical profile`);
-    return profile;
+    return [profile];
   });
   const remainingProfiles = includedProfiles
     .filter((profile) => !playableNames.has(profile.name))

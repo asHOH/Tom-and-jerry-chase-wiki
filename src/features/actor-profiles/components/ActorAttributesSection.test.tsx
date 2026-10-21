@@ -40,6 +40,15 @@ const getDisplayedAttributeLabels = (container: HTMLElement): string[] =>
   Array.from(container.querySelectorAll('p'), (row) => row.textContent?.split(':', 1)[0] ?? '');
 
 describe('ActorAttributesSection', () => {
+  it('shows a pending message without fabricated statistics', () => {
+    const { container } = render(
+      <ActorAttributesSection name='巴特' context='character' factionId='mouse' />
+    );
+    expect(screen.getByText('属性待补充')).toBeInTheDocument();
+    expect(container.querySelector('a')).toBeNull();
+    expect(screen.queryByText('Hp上限')).not.toBeInTheDocument();
+  });
+
   beforeEach(() => {
     mockIsDetailedView = false;
   });

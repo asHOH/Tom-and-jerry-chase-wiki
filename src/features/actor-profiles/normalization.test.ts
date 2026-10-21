@@ -218,6 +218,24 @@ describe('actor profile normalization', () => {
 });
 
 describe('actor profile validation', () => {
+  it('allows pending playable profiles while keeping other missing profiles and references invalid', () => {
+    const context = { ...createContext('巴特'), excludedNames: new Set<string>() };
+    expect(assertValidActorProfiles([], context)).toEqual([]);
+    expect(normalizeActorProfiles([], createContext('巴特'))).toEqual([]);
+    expect(() =>
+      assertValidActorProfiles([], { ...context, ...createContext('未知角色') })
+    ).toThrow('missing canonical profile');
+    expect(() => normalizeActorProfiles([], createContext('未知角色'))).toThrow(
+      'missing canonical profile'
+    );
+    expect(() =>
+      assertValidActorProfiles([], {
+        ...context,
+        references: [{ source: 'entity 测试', name: '巴特', hasLegacyRepresentation: false }],
+      })
+    ).toThrow('references missing canonical profile');
+  });
+
   it('should reject unknown keys and non-finite values', () => {
     expect(() => parseActorProfiles([{ ...createCanonicalProfile(), extra: true }])).toThrow(
       'unknown key'

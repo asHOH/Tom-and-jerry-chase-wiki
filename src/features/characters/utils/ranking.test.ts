@@ -23,6 +23,14 @@ const selectCharacters = (...ids: string[]): Character[] =>
   });
 
 describe('character ranking utilities', () => {
+  it('excludes pending profiles from rankings and property filters', () => {
+    const candidates = selectCharacters('巴特', '杰瑞');
+    expect(getCharactersWithProperty(candidates, 'maxHp').map(({ id }) => id)).toEqual(['杰瑞']);
+    expect(
+      rankCharactersByProperty(candidates, 'maxHp').map(({ character }) => character.id)
+    ).toEqual(['杰瑞']);
+  });
+
   it.each<[RankableProperty, (roleId: string) => number | undefined]>([
     ['maxHp', (id) => getActorProfile(id).maxHp],
     ['attackBoost', (id) => getActorProfile(id).attack],

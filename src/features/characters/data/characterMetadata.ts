@@ -36,6 +36,7 @@ export const mouseCharacterIds = [
   '梦游杰瑞',
   '鲍姆',
   '朝圣者泰菲',
+  '巴特',
 ] as const;
 
 export const catCharacterIds = [

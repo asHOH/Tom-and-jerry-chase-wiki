@@ -24,6 +24,7 @@ import type { ActorProfile } from '../schema';
 import {
   getActorProfile,
   getDisplayedActorGravity,
+  getOptionalActorProfile,
   isFactionDisplayedGravityUniform,
 } from '../selectors';
 
@@ -322,7 +323,10 @@ export default function ActorAttributesSection({
   const [expanded, setExpanded] = useState(false);
   const contentId = useId();
   const { isDetailedView } = useAppContext();
-  const profile = getActorProfile(name);
+  const profile = context === 'character' ? getOptionalActorProfile(name) : getActorProfile(name);
+  if (!profile) {
+    return <p className={cn('text-sm text-gray-500 dark:text-gray-400', className)}>属性待补充</p>;
+  }
   const hideGravity = context === 'character' && isFactionDisplayedGravityUniform(factionId);
   const visibleAttributes = createDisplayedActorAttributes(
     profile,

@@ -5,7 +5,7 @@
 import type { DeepReadonly } from '@/types/deep-readonly';
 import type { Character, FactionId } from '@/data/types';
 import type { ActorProfile } from '@/features/actor-profiles/schema';
-import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
+import { getActorJumpHeight, getOptionalActorProfile } from '@/features/actor-profiles/selectors';
 
 export type RankableProperty =
   | 'maxHp'
@@ -206,10 +206,10 @@ const getRequiredFactionId = (character: DeepReadonly<Character>): FactionId => 
 
 const joinCharacterWithActorProfile = (
   character: DeepReadonly<Character>
-): CharacterWithActorProfile => ({
-  character,
-  actorProfile: getActorProfile(character.id),
-});
+): CharacterWithActorProfile[] => {
+  const actorProfile = getOptionalActorProfile(character.id);
+  return actorProfile ? [{ character, actorProfile }] : [];
+};
 
 export function getPropertyInfo(property: RankableProperty): PropertyInfo | undefined {
   return RANKABLE_PROPERTIES.find((candidate) => candidate.key === property);
@@ -224,7 +224,7 @@ export function getCharactersWithProperty(
   if (!propertyInfo) return [];
 
   return characters
-    .map(joinCharacterWithActorProfile)
+    .flatMap(joinCharacterWithActorProfile)
     .filter(({ character }) => {
       const characterFactionId = getRequiredFactionId(character);
       return (
@@ -244,7 +244,7 @@ export function rankCharactersByProperty(
   if (!propertyInfo) return [];
 
   const sorted = characters
-    .map(joinCharacterWithActorProfile)
+    .flatMap(joinCharacterWithActorProfile)
     .filter(({ character }) => {
       const factionId = getRequiredFactionId(character);
       return propertyInfo.faction === undefined || propertyInfo.faction === factionId;

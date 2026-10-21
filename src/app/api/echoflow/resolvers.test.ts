@@ -81,6 +81,17 @@ describe('echoflow resolvers', () => {
       role: { name: '侦探汤姆', maxHp: 225, runSpeed: 780 },
     });
     expect(detectiveTom.actorProfile).toBe(detectiveTom.role);
+    expect(result.data.find((character: { id?: string }) => character.id === '巴特')).toMatchObject(
+      {
+        id: '巴特',
+        actorProfile: null,
+        role: null,
+      }
+    );
+    expect((await characterResolver.detail!('巴特'))?.data).toMatchObject({
+      actorProfile: null,
+      role: null,
+    });
   });
 
   it('should expose projected character relations in recommended data', async () => {

@@ -2,6 +2,11 @@ import { characters } from '@/data/static';
 
 import { preprocessText, resolveCharacterExpression, wrapAutoNamesInText } from './characterText';
 
+it('leaves pending character attribute expressions unresolved', () => {
+  expect(resolveCharacterExpression('maxHp', characters['巴特'])).toBeUndefined();
+  expect(resolveCharacterExpression('skills[0].name', characters['巴特'])).toBe('立体机动');
+});
+
 describe('wrapAutoNamesInText', () => {
   it('prefers higher-priority overlapping names over earlier lower-priority matches', () => {
     expect(wrapAutoNamesInText('ABC', ['BC', 'AB'], new Set())).toBe('A{BC}');

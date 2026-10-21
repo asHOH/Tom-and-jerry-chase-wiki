@@ -81,6 +81,7 @@ Maintainer checkouts remain linked to production; use `STAGING_DATABASE_URL` wit
 - `scripts/generate-doc-pages.mjs` writes `src/data/generated/docPages.json`. Changelog generation writes `src/data/generated/changeLogs.json`. Do not hand-edit generated JSON.
 - `npm run generate:history-dates` derives `src/data/generated/historyDates.json` from the game timeline. Regenerate it after editing `src/data/history.ts`; development startup and builds also refresh it.
 - Actor-profile changes must pass `npm run validate:actor-profiles`.
+- New characters also need registration in `src/features/characters/data/characterMetadata.ts` and a canonical actor profile. When verified attributes are pending, explicitly list the character in `src/features/actor-profiles/pendingProfiles.ts`; character views show pending attributes and omit statistics from rankings and games. Remove that entry when adding the verified profile. Never use placeholder numbers as canonical statistics.
 
 ## Rendering and Routing
 

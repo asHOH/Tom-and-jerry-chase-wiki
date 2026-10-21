@@ -2,7 +2,7 @@ import { Fragment, useMemo } from 'react';
 
 import { storage, StorageKey } from '@/lib/localStorage';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
-import { getActorProfile } from '@/features/actor-profiles/selectors';
+import { getOptionalActorProfile } from '@/features/actor-profiles/selectors';
 import { usePublishedCharacter } from '@/features/characters/components/character-detail/PublishedCharacterContext';
 import Tooltip from '@/components/ui/Tooltip';
 
@@ -36,8 +36,8 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
   const localCharacterCtx = useLocalCharacter();
   const currentCharacterId = localCharacterCtx.characterId;
   const localCharacter = usePublishedCharacter(currentCharacterId);
-  const actorProfile = localCharacter ? getActorProfile(currentCharacterId) : undefined;
-  const attackBoost = actorProfile?.attack ?? 0;
+  const actorProfile = localCharacter ? getOptionalActorProfile(currentCharacterId) : undefined;
+  const attackBoost = localCharacter && !actorProfile ? null : (actorProfile?.attack ?? 0);
   const wallCrackDamageBoost =
     localCharacter?.factionId === 'mouse' ? actorProfile?.wallDamage : undefined;
   const parsedText = useMemo(

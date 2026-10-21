@@ -52,6 +52,12 @@ jest.mock('@/components/GotoLink', () => ({
 }));
 
 describe('TextWithHoverTooltips', () => {
+  it('renders descriptions while a character profile is pending', () => {
+    mockCharacterId = '巴特';
+    render(<TextWithHoverTooltips text='[小蜘蛛](救援队友)' />);
+    expect(screen.getByText('小蜘蛛')).toHaveAttribute('data-tooltip', '救援队友');
+  });
+
   beforeEach(() => {
     mockCharacterId = '汤姆';
   });

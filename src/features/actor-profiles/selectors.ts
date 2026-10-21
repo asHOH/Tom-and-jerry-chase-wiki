@@ -2,6 +2,7 @@ import type { FactionId } from '@/data/types';
 import { characterFactionById } from '@/features/characters/data/characterMetadata';
 
 import { actorProfilesByName } from './data';
+import { PENDING_ACTOR_PROFILE_NAMES } from './pendingProfiles';
 import type { ActorProfile } from './schema';
 
 export const getActorProfile = (name: string): ActorProfile => {
@@ -15,6 +16,9 @@ export const getActorProfileForCharacter = (character: {
   factionId: FactionId;
 }): ActorProfile => getActorProfile(character.id);
 
+export const getOptionalActorProfile = (name: string): ActorProfile | undefined =>
+  PENDING_ACTOR_PROFILE_NAMES.has(name) ? actorProfilesByName.get(name) : getActorProfile(name);
+
 export const getActorJumpHeight = (profile: ActorProfile): number =>
   Math.round(profile.jumpSpeed ** 2 / (2 * Math.abs(profile.gravity)));
 
@@ -27,7 +31,9 @@ export const haveUniformDisplayedGravity = (profiles: readonly ActorProfile[]): 
 export const isFactionDisplayedGravityUniform = (factionId: FactionId): boolean => {
   const profiles = Object.entries(characterFactionById)
     .filter(([, characterFactionId]) => characterFactionId === factionId)
-    .map(([characterId]) => getActorProfile(characterId));
+    .map(([characterId]) => getOptionalActorProfile(characterId));
 
-  return haveUniformDisplayedGravity(profiles);
+  return (
+    profiles.every((profile) => profile !== undefined) && haveUniformDisplayedGravity(profiles)
+  );
 };

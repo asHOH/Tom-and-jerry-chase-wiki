@@ -1,5 +1,7 @@
 import type { FactionId } from '@/data/types';
 
+import { PENDING_ACTOR_PROFILE_NAMES } from './pendingProfiles';
+
 export type ActorType = 'mouse' | 'cat' | 'special';
 export type PhysicsType = FactionId | 'special';
 
@@ -352,6 +354,7 @@ export const assertValidActorProfiles = (
 
   for (const character of context.playableCharacters) {
     const profile = profilesByName.get(character.id);
+    if (!profile && PENDING_ACTOR_PROFILE_NAMES.has(character.id)) continue;
     if (!profile) fail(`character ${character.id}`, 'missing canonical profile');
 
     if (character.factionId === 'cat') {

@@ -13,11 +13,20 @@ import {
   haveUniformDisplayedGravity,
   isFactionDisplayedGravityUniform,
 } from '.';
+import { getOptionalActorProfile } from './selectors';
 
 describe('actor profile domain', () => {
   it('should strictly resolve canonical profiles', () => {
     expect(getActorProfile('汤姆').name).toBe('汤姆');
     expect(() => getActorProfile('不存在的角色')).toThrow('Missing canonical actor profile');
+  });
+
+  it('allows only explicitly pending profiles to be unavailable', () => {
+    expect(getOptionalActorProfile('巴特')).toBeUndefined();
+    expect(getOptionalActorProfile('杰瑞')).toBe(getActorProfile('杰瑞'));
+    expect(() => getOptionalActorProfile('不存在的角色')).toThrow(
+      'Missing canonical actor profile'
+    );
   });
 
   it('should calculate one integer jump height selector', () => {
@@ -41,7 +50,7 @@ describe('actor profile domain', () => {
 
   it('should determine gravity uniformity from playable faction membership', () => {
     expect(isFactionDisplayedGravityUniform('cat')).toBe(true);
-    expect(isFactionDisplayedGravityUniform('mouse')).toBe(true);
+    expect(isFactionDisplayedGravityUniform('mouse')).toBe(false);
 
     const baseProfile = getActorProfile('汤姆');
     expect(

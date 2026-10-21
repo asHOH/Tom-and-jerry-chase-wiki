@@ -1,6 +1,6 @@
 import type { FactionId } from '@/data/types';
 import type { ActorProfile } from '@/features/actor-profiles/schema';
-import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
+import { getActorJumpHeight, getOptionalActorProfile } from '@/features/actor-profiles/selectors';
 
 export type CharacterGameStatKey =
   | 'maxHp'
@@ -77,10 +77,11 @@ export const CHARACTER_GAME_STAT_INFO: Readonly<
 };
 
 const getApplicableValue = (
-  profile: ActorProfile,
+  profile: ActorProfile | undefined,
   factionId: FactionId,
   stat: CharacterGameStatInfo
 ): number | undefined => {
+  if (!profile) return undefined;
   if (stat.faction !== undefined && stat.faction !== factionId) return undefined;
   return stat.getValue(profile);
 };
@@ -89,7 +90,7 @@ export const getCharacterGameStats = ({
   id,
   factionId,
 }: PlayableCharacterReference): CharacterGameStats => {
-  const profile = getActorProfile(id);
+  const profile = getOptionalActorProfile(id);
   return {
     maxHp: getApplicableValue(profile, factionId, CHARACTER_GAME_STAT_INFO.maxHp),
     attackBoost: getApplicableValue(profile, factionId, CHARACTER_GAME_STAT_INFO.attackBoost),

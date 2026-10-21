@@ -1,7 +1,7 @@
 import { autoWrapNames } from '@/data/autoWrapNames';
 import { characters } from '@/data/static';
 import type { ActorProfile } from '@/features/actor-profiles/schema';
-import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
+import { getActorJumpHeight, getOptionalActorProfile } from '@/features/actor-profiles/selectors';
 
 import type { CharacterRecord } from './types';
 
@@ -161,7 +161,8 @@ export const resolveCharacterExpression = (
     typeof firstToken === 'string' ? ACTOR_PROFILE_EXPRESSIONS[firstToken] : undefined;
   let current: unknown;
   if (actorProfileExpression) {
-    current = actorProfileExpression(getActorProfile(character.id), character);
+    const profile = getOptionalActorProfile(character.id);
+    current = profile ? actorProfileExpression(profile, character) : undefined;
   } else {
     current = character;
     remainingTokens.unshift(firstToken!);

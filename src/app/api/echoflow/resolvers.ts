@@ -20,7 +20,7 @@ import { WikiChangeType } from '@/data/types';
 import { wikiHistoryData } from '@/data/wikiHistory';
 import { winRatesData } from '@/data/winRates';
 import type { ActorProfile } from '@/features/actor-profiles/schema';
-import { getActorProfile } from '@/features/actor-profiles/selectors';
+import { getOptionalActorProfile } from '@/features/actor-profiles/selectors';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 import { resolveSpecialSkill } from '@/features/special-skills/resolveSpecialSkill';
 
@@ -191,13 +191,13 @@ function safeDecode(value: string): string {
 }
 
 type ActorProfilePayload = {
-  actorProfile: ActorProfile;
+  actorProfile: ActorProfile | null;
   /** @deprecated Use actorProfile instead. */
-  role: ActorProfile;
+  role: ActorProfile | null;
 };
 
 function createActorProfilePayload(characterId: string): ActorProfilePayload {
-  const actorProfile = getActorProfile(characterId);
+  const actorProfile = getOptionalActorProfile(characterId) ?? null;
   return { actorProfile, role: actorProfile };
 }
 

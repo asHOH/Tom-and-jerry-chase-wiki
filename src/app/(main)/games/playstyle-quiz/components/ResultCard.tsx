@@ -7,7 +7,7 @@ import {
   isPositioningTagVisible,
 } from '@/constants/positioningTagSequences';
 import type { FactionId, PositioningTagLevel } from '@/data/types';
-import { getActorProfile } from '@/features/actor-profiles/selectors';
+import { getOptionalActorProfile } from '@/features/actor-profiles/selectors';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 
@@ -46,7 +46,7 @@ export default function ResultCard({
     faction === 'cat' ? character.catPositioningTags : character.mousePositioningTags
   )?.filter((tag) => isPositioningTagVisible(getPositioningTagLevel(tag)));
   const topSkills = character.skills?.slice(0, 3) ?? [];
-  const sex = getActorProfile(character.id).sex;
+  const sex = getOptionalActorProfile(character.id)?.sex;
 
   return (
     <div className='mx-auto max-w-lg space-y-6'>
@@ -59,7 +59,7 @@ export default function ResultCard({
         {character.EnglishName && (
           <p className='text-sm text-gray-500 dark:text-gray-400'>{character.EnglishName}</p>
         )}
-        {sex !== 'none' && (
+        {sex && sex !== 'none' && (
           <span className='text-sm text-gray-500 dark:text-gray-400'>
             {sex === 'male' ? '男' : '女'}
           </span>

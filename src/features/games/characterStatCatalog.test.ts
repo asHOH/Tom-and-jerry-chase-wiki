@@ -5,6 +5,12 @@ import {
 } from './characterStatCatalog';
 
 describe('characterStatCatalog', () => {
+  it('leaves pending character statistics unavailable', () => {
+    const stats = getCharacterGameStats({ id: '巴特', factionId: 'mouse' });
+    expect(Object.keys(stats)).toEqual(Object.keys(CHARACTER_GAME_STAT_INFO));
+    expect(Object.values(stats).every((value) => value === undefined)).toBe(true);
+  });
+
   it('omits mechanics that do not apply to the playable character faction', () => {
     const tom = getCharacterGameStats({ id: '汤姆', factionId: 'cat' });
     const jerry = getCharacterGameStats({ id: '杰瑞', factionId: 'mouse' });
