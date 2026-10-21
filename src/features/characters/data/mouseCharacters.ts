@@ -7294,6 +7294,136 @@ const mouseCharacterDefinitions = {
     ],
     aliases: ['朝菲', '圣菲'],
   },
+  /* ----------------------------------- 巴特 ----------------------------------- */
+  巴特: {
+    description:
+      '生活在神秘古堡里的小蝙蝠巴特，活泼好动，骨子里藏着一点小邪恶，一直渴望交到朋友。他喜欢玩模仿游戏，能灵活操控蛛丝，展开翅膀便可自由飞翔。自从汤姆和杰瑞误入古堡，他的世界终于有了色彩，于是跟随他们踏上了前往猫鼠之家的旅程。',
+    aliases: ['蝙蝠'],
+    mousePositioningTags: [
+      {
+        tagName: '救援',
+        level: 4,
+        description: '巴特机动性强，配合蛛丝可以实现远程救援，猫咪难以阻止。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '常规加点',
+        pattern: '12(1)0(1)22002',
+        weaponType: 'weapon1',
+        description: '武器技能升级可以补满使用次数，请在需要使用时再进行加点。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-无畏', 'S-铁血', 'B-逃之夭夭', 'C-救救我'],
+        description: '适合初学者。救援较为稳定，但队友很可能无法逃脱。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'S-护佑', 'C-救救我'],
+        description: '适合有一定基础的玩家。被救下的队友相对安全。',
+      },
+    ],
+    skills: [
+      {
+        name: '立体机动',
+        type: 'active',
+        description:
+          '拖动机能施展立体机动穿梭，穿梭期间免疫控制，穿梭结束后可短暂停留在空中或者倒挂在平台上。',
+        detailedDescription:
+          '拖动技能选择半径500范围内的指定位置，松开按键以该位置为终点施展$立体机动穿梭$text-blue-700 dark:text-blue-300 font-bold#，穿梭结束后：若处于空中，则$浮空$text-blue-700 dark:text-blue-300 font-bold#3秒；若自身位置上方有可悬挂平台，则改为永久$倒挂$text-blue-700 dark:text-blue-300 font-bold#在平台上。\n若因平台阻挡等原因而未能进行立体机动穿梭，则不会消耗使用次数。\n\n$立体机动穿梭$text-blue-700 dark:text-blue-300 font-bold#：向指定位置进行移动，期间免疫控制且不受重力影响。无法穿越部分平台、墙壁及障碍物。\n$浮空/倒挂$text-blue-700 dark:text-blue-300 font-bold#：不受重力影响，可正常投掷道具、使用技能、进行[部分交互](包括但不限于救援队友、使用望远镜/消防栓等；不包括推奶酪、开/关冰箱等)等。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '不可主动打断',
+        skillLevels: [
+          {
+            level: 1,
+            charges: 8,
+            description: '',
+            detailedDescription: '',
+            cooldown: 50,
+          },
+          {
+            level: 2,
+            charges: 8,
+            description: '提升悬空时间。补满本技能使用次数。',
+            detailedDescription: '提升悬空时间到5秒。升级时立即补充本技能8次可使用次数。',
+            cooldown: 50,
+          },
+          {
+            level: 3,
+            charges: 8,
+            description: '提升最大穿梭距离。补满本技能使用次数。',
+            detailedDescription: '提升25%穿梭的最大距离。升级时立即补充本技能8次可使用次数。',
+            cooldown: 30,
+          },
+        ],
+        forecast: 0,
+        aftercast: 0,
+      },
+      {
+        name: '蝙蝠与蛛丝',
+        type: 'weapon1',
+        description:
+          '向下放出{小蜘蛛}，当碰到绑有队友的火箭时，小蜘蛛将缠绕形成{蛛丝茧}，绑回火箭上的队友，但队友需要挣扎破茧才能离开。',
+        detailedDescription:
+          '以蛛丝作连接，向自身正下方放出{小蜘蛛}。小蜘蛛碰到绑有队友的火箭时，将缠绕形成{蛛丝茧}，茧内的队友将恢复少量健康值，同时拉回巴特此时所处位置，但会被包入茧内，需要挣扎3.5秒破茧才能离开。蛛丝茧在受到2次投掷道具或猫的爪击攻击时破坏。\n可在立体机动$浮空/倒挂$text-blue-700 dark:text-blue-300 font-bold#时使用，倒挂时将向上放出小蜘蛛。\n小蜘蛛救援可以继承巴特携带的知识卡（{无畏}、{舍己}等）。\n若巴特释放技能后出现了位移，则小蜘蛛会同步移动。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+            cooldown: 30,
+          },
+          {
+            level: 2,
+            description: '小蜘蛛没有碰到绑在火箭上的队友时，将返还冷却时间。',
+            detailedDescription: '小蜘蛛没有碰到绑在火箭上的队友时，将返还本技能75%冷却时间。',
+            cooldown: 30,
+          },
+          {
+            level: 3,
+            description: '小蜘蛛的运动速度大幅提升。',
+            detailedDescription: '小蜘蛛的向下和拉回的运动速度提升60%。',
+            cooldown: 30,
+          },
+        ],
+        cooldownTiming: '释放时',
+        forecast: 0,
+        aftercast: 0,
+      },
+      {
+        name: '动静结合',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '提高空中时的交互速度和健康值恢复速度，在浮空和倒挂状态下虚弱时，将自动进行3次立体机动后再进入虚弱。',
+            detailedDescription:
+              '[空中](包括角色起跳后的滞空，以及巴特使用主动技能后的浮空/倒挂等)时的交互速度提高50%，Hp恢复速度提高3点/秒，在浮空和倒挂状态下虚弱时，将自动进行3次$立体机动穿梭$text-blue-700 dark:text-blue-300 font-bold#后再进入虚弱。',
+          },
+          {
+            level: 2,
+            description: '大幅提高浮空时的交互速度。',
+            detailedDescription:
+              '[空中](包括角色起跳后的滞空，以及巴特使用主动技能后的浮空/倒挂等)时的交互速度改为提高100%。',
+          },
+          {
+            level: 3,
+            description: '在浮空和倒挂状态下虚弱时，改为自动进行5次立体机动后再进入虚弱。',
+            detailedDescription:
+              '在浮空和倒挂状态下虚弱时，改为自动进行5次$立体机动穿梭$text-blue-700 dark:text-blue-300 font-bold#后再进入虚弱。',
+          },
+        ],
+      },
+    ],
+  },
 } as const satisfies Readonly<Record<string, CharacterDefinition>>;
 
 // Process character definitions to assign IDs and process skills
