@@ -18,21 +18,10 @@ import {
   normalizeContributionDateKey,
 } from './utils';
 
-type ContributionCalendarDayInput = Pick<ContributionCalendarDay, 'date'> & {
-  /** Requested contract field names. */
-  articles?: number;
-  gameData?: number;
-  total?: number;
-  /** Current server-loader field names retained for compatibility. */
-  articleCount?: number;
-  gameDataCount?: number;
-  count?: number;
-};
-
 /** Props for the trailing-365-day contribution calendar. */
 export type ContributionCalendarProps = {
   /** The daily contribution rows. Missing dates are rendered as zero-contribution days. */
-  days: readonly ContributionCalendarDayInput[];
+  days: readonly ContributionCalendarDay[];
   /** Optional snapshot date in YYYY-MM-DD form. It is capped at today to avoid future cells. */
   asOf?: string;
   /** Renders the calendar's loading state when the supplemental calendar loader is pending. */
@@ -59,22 +48,22 @@ function getContributionLevel(total: number): number {
   return Math.min(4, Math.round(total));
 }
 
-function getDayTotal(day: ContributionCalendarDayInput | undefined): number {
-  const value = day?.total ?? day?.count ?? 0;
+function getDayTotal(day: ContributionCalendarDay | undefined): number {
+  const value = day?.total ?? 0;
   return Number.isFinite(value) ? Math.max(0, value) : 0;
 }
 
-function getDayArticleCount(day: ContributionCalendarDayInput | undefined): number {
-  const value = day?.articles ?? day?.articleCount ?? 0;
+function getDayArticleCount(day: ContributionCalendarDay | undefined): number {
+  const value = day?.articles ?? 0;
   return Number.isFinite(value) ? Math.max(0, value) : 0;
 }
 
-function getDayGameDataCount(day: ContributionCalendarDayInput | undefined): number {
-  const value = day?.gameData ?? day?.gameDataCount ?? 0;
+function getDayGameDataCount(day: ContributionCalendarDay | undefined): number {
+  const value = day?.gameData ?? 0;
   return Number.isFinite(value) ? Math.max(0, value) : 0;
 }
 
-function getDayLabel(date: string, day: ContributionCalendarDayInput | undefined): string {
+function getDayLabel(date: string, day: ContributionCalendarDay | undefined): string {
   const total = getDayTotal(day);
   const articles = getDayArticleCount(day);
   const gameData = getDayGameDataCount(day);
@@ -87,7 +76,7 @@ function DayTooltipContent({
   day,
 }: {
   date: string;
-  day: ContributionCalendarDayInput | undefined;
+  day: ContributionCalendarDay | undefined;
 }) {
   const total = getDayTotal(day);
   const articles = getDayArticleCount(day);
@@ -112,7 +101,7 @@ function CalendarCell({
   dayOfWeek,
 }: {
   date: string;
-  day: ContributionCalendarDayInput | undefined;
+  day: ContributionCalendarDay | undefined;
   cellIndex: number;
   dayOfWeek: number;
 }) {
@@ -222,7 +211,7 @@ export function ContributionCalendar({
 }: ContributionCalendarProps) {
   const range = getContributionCalendarRange(asOf);
   const weeks = buildContributionCalendarWeeks(asOf);
-  const daysByDate = new Map<string, ContributionCalendarDayInput>();
+  const daysByDate = new Map<string, ContributionCalendarDay>();
   const cellIndexes = new Map<string, number>();
 
   for (const day of days) {

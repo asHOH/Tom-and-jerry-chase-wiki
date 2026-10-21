@@ -44,9 +44,6 @@ export type ContributionCalendarDay = {
   total: number;
   articles: number;
   gameData: number;
-  count?: number;
-  articleCount?: number;
-  gameDataCount?: number;
 };
 
 export type ContributionCalendar = ContributionCalendarDay[];
@@ -284,9 +281,9 @@ function normalizeMetricDays(days: readonly ContributionCalendarDay[]): Contribu
   return days
     .filter((day) => dateOnlyToEpoch(day.date) !== null)
     .map((day) => {
-      const articles = toCount(day.articles ?? day.articleCount);
-      const gameData = toCount(day.gameData ?? day.gameDataCount);
-      const total = toCount(day.total ?? day.count) || articles + gameData;
+      const articles = toCount(day.articles);
+      const gameData = toCount(day.gameData);
+      const total = toCount(day.total) || articles + gameData;
 
       return { date: day.date, articles, gameData, total };
     })
