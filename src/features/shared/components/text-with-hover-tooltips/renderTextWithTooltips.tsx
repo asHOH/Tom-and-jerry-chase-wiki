@@ -6,7 +6,6 @@ import {
   parseDamageContent,
   renderDamageTooltip,
   renderExplicitLink,
-  renderSkillLink,
   resolveSkillLinkName,
 } from './explicitMarkupRendering';
 import { renderInlineClassTokens } from './inlineMarkup';
@@ -36,7 +35,8 @@ export const renderTextWithTooltips = (
   attackBoost: number | null,
   index: number,
   wallCrackDamageBoost?: number,
-  currentCharacterId?: string
+  currentCharacterId?: string,
+  linkedTargets = new Set<string>()
 ): RenderTextPart[] => {
   const parts: RenderTextPart[] = [];
   const semanticTokens = buildSemanticTextTokens(text, attackBoost !== null);
@@ -90,6 +90,7 @@ export const renderTextWithTooltips = (
             categoryHint,
             sourceIndex: token.sourceIndex,
             sourceEnd: token.sourceEnd,
+            linkedTargets,
           })
         );
         continue;
@@ -110,7 +111,16 @@ export const renderTextWithTooltips = (
 
     const skillLinkName = resolveSkillLinkName(contentText, currentCharacterId);
     if (skillLinkName) {
-      parts.push(renderSkillLink(visibleText, skillLinkName, token.sourceEnd));
+      parts.push(
+        renderExplicitLink({
+          linkName: skillLinkName,
+          displayText: visibleText,
+          categoryHint: '技能',
+          sourceIndex: token.sourceIndex,
+          sourceEnd: token.sourceEnd,
+          linkedTargets,
+        })
+      );
       continue;
     }
 
@@ -138,6 +148,7 @@ export const renderTextWithTooltips = (
           categoryHint,
           sourceIndex: token.sourceIndex,
           sourceEnd: token.sourceEnd,
+          linkedTargets,
         })
       );
       continue;

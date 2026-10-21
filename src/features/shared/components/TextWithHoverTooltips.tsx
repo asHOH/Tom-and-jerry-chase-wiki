@@ -58,6 +58,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
     const startTime = shouldMeasure ? getCurrentTime() : 0;
     const plannedTokens = claimHighlightedDamageSuffixes(parsedText.tokens, attackBoost !== null);
     const renderedParts: RenderTextPart[] = [];
+    const linkedTargets = new Set<string>();
     let highlightedChildren: RenderTextPart[] = [];
     let highlightGroupIndex = 0;
 
@@ -89,7 +90,8 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
           attackBoost,
           index,
           wallCrackDamageBoost,
-          currentCharacterId
+          currentCharacterId,
+          linkedTargets
         );
         tokenParts = token.isHighlighted
           ? semanticParts
@@ -102,7 +104,8 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
           attackBoost,
           token.sourceIndex,
           wallCrackDamageBoost,
-          currentCharacterId
+          currentCharacterId,
+          linkedTargets
         );
 
         const tooltipRendered = renderTextWithTooltips(

@@ -178,6 +178,56 @@ describe('TextWithHoverTooltips', () => {
     expect(screen.getByText('隐身')).toHaveAttribute('data-name', '隐身');
   });
 
+  it('links repeated entries once across automatic links, highlights and styled markup', () => {
+    const { container } = render(
+      <TextWithHoverTooltips text='布奇登场，**布奇**和{$布奇$text-orange-500#}再次登场。' />
+    );
+
+    expect(container.textContent).toBe('布奇登场，布奇和布奇再次登场。');
+    expect(container.querySelectorAll('[data-name="布奇"]')).toHaveLength(1);
+    expect(container.querySelector('.box-decoration-clone')).toHaveTextContent('布奇');
+    expect(container.querySelector('.text-orange-500')).toHaveTextContent('布奇');
+  });
+
+  it.each([
+    ['{击晕(知识卡)}和《击晕(知识卡)》', '击晕', '击晕和击晕'],
+    ['{2级主动}和{2级发怒冲刺}', '2级发怒冲刺', '2级主动和2级发怒冲刺'],
+  ])('links the repeated target once in %s', (text, target, visibleText) => {
+    const { container } = render(<TextWithHoverTooltips text={text} />);
+
+    expect(container.querySelectorAll(`[data-name="${target}"]`)).toHaveLength(1);
+    expect(container.textContent).toBe(visibleText);
+  });
+
+  it('keeps same-name entries in different categories and repeated damage tooltips', () => {
+    const { container } = render(
+      <TextWithHoverTooltips text='{隐身(技能)}{隐身(状态)}{隐身(技能)}{5*}伤害{5*}伤害' />
+    );
+
+    expect(container.querySelectorAll('[data-name="隐身"]')).toHaveLength(2);
+    expect(container.querySelector('[data-category="技能"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-category="状态"]')).toBeInTheDocument();
+    expect(container.querySelectorAll('[data-tooltip]')).toHaveLength(2);
+    expect(container.textContent).toBe('隐身隐身隐身5伤害5伤害');
+  });
+
+  it('keeps link tracking local to each description and separate from hidden tooltip content', () => {
+    const { container, rerender } = render(
+      <>
+        <TextWithHoverTooltips text='[说明](布奇)布奇' />
+        <TextWithHoverTooltips text='布奇和[布奇](说明)' />
+      </>
+    );
+
+    expect(container.querySelectorAll('[data-name="布奇"]')).toHaveLength(2);
+
+    rerender(<TextWithHoverTooltips text='布奇和布奇' />);
+    expect(container.querySelectorAll('[data-name="布奇"]')).toHaveLength(1);
+
+    rerender(<TextWithHoverTooltips text='布奇再次登场' />);
+    expect(container.querySelectorAll('[data-name="布奇"]')).toHaveLength(1);
+  });
+
   it('resolves leveled skill aliases for the current character', () => {
     render(<TextWithHoverTooltips text='强化{2级主动}' />);
 

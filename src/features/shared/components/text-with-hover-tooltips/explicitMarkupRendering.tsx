@@ -20,6 +20,7 @@ type ExplicitLinkOptions = {
   categoryHint: string | null;
   sourceIndex: number;
   sourceEnd: number;
+  linkedTargets: Set<string>;
 };
 
 type DamageKind = 'character' | 'wallCrack';
@@ -159,9 +160,19 @@ export const renderExplicitLink = ({
   categoryHint,
   sourceIndex,
   sourceEnd,
+  linkedTargets,
 }: ExplicitLinkOptions): React.ReactElement => {
   const card = cards[linkName as keyof typeof cards];
   const hint = isCategoryHint(categoryHint) ? categoryHint : undefined;
+  // shortcut: aliases track separately; use canonical targets if cross-alias deduplication is needed.
+  const target = `${hint ?? ''}:${linkName}`;
+
+  if (linkedTargets.has(target)) {
+    return (
+      <React.Fragment key={`${linkName}-${sourceEnd}`}>{asReactNode(displayText)}</React.Fragment>
+    );
+  }
+  linkedTargets.add(target);
 
   if ((!categoryHint || categoryHint === '知识卡') && card) {
     return (
@@ -220,21 +231,6 @@ export const resolveSkillLinkName = (
 
   return GENERIC_LEVELED_SKILL_PATTERN.test(content) ? content : null;
 };
-
-export const renderSkillLink = (
-  displayText: RenderableText,
-  linkName: string,
-  sourceEnd: number
-): React.ReactElement => (
-  <GotoLink
-    name={linkName}
-    className='underline'
-    key={`${linkName}-${sourceEnd}`}
-    categoryHint='技能'
-  >
-    {asReactNode(displayText)}
-  </GotoLink>
-);
 
 export const renderDamageTooltip = ({
   kind,
