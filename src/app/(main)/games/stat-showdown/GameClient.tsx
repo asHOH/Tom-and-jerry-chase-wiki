@@ -20,7 +20,7 @@ import StreakCounter from '@/features/games/components/StreakCounter';
 
 import ComparisonCard from './components/ComparisonCard';
 import GameOverDialog from './components/GameOverDialog';
-import { type GameMode } from './components/ModeSelector';
+import type { GameMode } from './components/ModeNav';
 import StatLabel from './components/StatLabel';
 import TimerDisplay from './components/TimerDisplay';
 

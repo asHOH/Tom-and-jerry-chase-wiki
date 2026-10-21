@@ -30,25 +30,6 @@ export function BouncingDots({ size = 'md', className = '' }: LoadingAnimationPr
 }
 
 /**
- * Pulsing circle animation
- */
-export function PulsingCircle({ size = 'md', className = '' }: LoadingAnimationProps) {
-  const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-6 h-6',
-    lg: 'w-8 h-8',
-  };
-
-  return (
-    <div className={cn('flex items-center justify-center', className)}>
-      <div
-        className={cn('animate-pulse rounded-full bg-blue-500 dark:bg-blue-400', sizeClasses[size])}
-      ></div>
-    </div>
-  );
-}
-
-/**
  * Ripple effect animation
  */
 export function RippleAnimation({ size = 'md', className = '' }: LoadingAnimationProps) {
@@ -84,84 +65,6 @@ export function SpinningBars({ size = 'md', className = '' }: LoadingAnimationPr
       <div className={cn('relative', sizeClasses[size])}>
         <div className='absolute inset-0 animate-spin rounded-full border-2 border-blue-500 border-t-transparent dark:border-blue-400'></div>
       </div>
-    </div>
-  );
-}
-
-/**
- * Wave animation
- */
-export function WaveAnimation({ size = 'md', className = '' }: LoadingAnimationProps) {
-  const heightClasses = {
-    sm: 'h-2',
-    md: 'h-3',
-    lg: 'h-4',
-  };
-
-  const widthClasses = {
-    sm: 'w-1',
-    md: 'w-1.5',
-    lg: 'w-2',
-  };
-
-  const barClass = cn(
-    'bg-blue-500 dark:bg-blue-400 rounded-full animate-pulse',
-    heightClasses[size],
-    widthClasses[size]
-  );
-
-  return (
-    <div className={cn('flex items-end justify-center space-x-1', className)}>
-      <div
-        className={cn(barClass, '[animation-delay:-0.4s]')}
-        style={{ animationDuration: '1.4s' }}
-      ></div>
-      <div
-        className={cn(barClass, '[animation-delay:-0.3s]')}
-        style={{ animationDuration: '1.2s' }}
-      ></div>
-      <div
-        className={cn(barClass, '[animation-delay:-0.2s]')}
-        style={{ animationDuration: '1.0s' }}
-      ></div>
-      <div
-        className={cn(barClass, '[animation-delay:-0.1s]')}
-        style={{ animationDuration: '1.2s' }}
-      ></div>
-      <div className={barClass} style={{ animationDuration: '1.4s' }}></div>
-    </div>
-  );
-}
-
-/**
- * Typing dots animation
- */
-export function TypingDots({ size = 'md', className = '' }: LoadingAnimationProps) {
-  const sizeClasses = {
-    sm: 'w-1 h-1',
-    md: 'w-1.5 h-1.5',
-    lg: 'w-2 h-2',
-  };
-
-  const dotClass = cn('bg-gray-500 dark:bg-gray-400 rounded-full', sizeClasses[size]);
-
-  return (
-    <div className={cn('flex items-center space-x-1', className)}>
-      <div
-        className={cn(dotClass, 'animate-[typing_1.4s_infinite_ease-in-out] [animation-delay:0s]')}
-      ></div>
-      <div
-        className={cn(
-          dotClass,
-          'animate-[typing_1.4s_infinite_ease-in-out] [animation-delay:0.2s]'
-        )}
-      ></div>
-      <div
-        className={cn(
-          dotClass,
-          'animate-[typing_1.4s_infinite_ease-in-out] [animation-delay:0.4s]'
-        )}
-      ></div>
     </div>
   );
 }

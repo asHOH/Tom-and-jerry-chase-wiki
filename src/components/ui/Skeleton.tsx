@@ -38,34 +38,6 @@ export function Skeleton({
   );
 }
 
-/**
- * Skeleton for text content
- */
-function SkeletonText({
-  lines = 1,
-  className = '',
-  animate = true,
-}: {
-  lines?: number;
-  className?: string;
-  animate?: boolean;
-}) {
-  return (
-    <div className={cn('space-y-2', className)}>
-      {Array.from({ length: lines }).map((_, i) => (
-        <Skeleton
-          key={i}
-          className={cn(
-            'h-4',
-            i === lines - 1 && lines > 1 ? 'w-3/4' : 'w-full' // Last line is shorter
-          )}
-          animate={animate}
-        />
-      ))}
-    </div>
-  );
-}
-
 function SkeletonCard({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <Card bordered className={cn('overflow-hidden p-0 shadow-sm', className)}>
@@ -174,37 +146,6 @@ export function SkeletonBuffCard({ animate = true }: { animate?: boolean }) {
         </div>
       </div>
     </SkeletonCard>
-  );
-}
-
-/**
- * Skeleton for article card
- */
-export function SkeletonArticleCard({ animate = true }: { animate?: boolean }) {
-  return (
-    <Card bordered className='space-y-3 px-4 pt-2 pb-5'>
-      {/* Article title */}
-      <Skeleton className='h-7 w-3/4' animate={animate} />
-
-      {/* Author and category */}
-      <div className='flex items-center gap-3'>
-        <Skeleton className='h-4 w-20' animate={animate} />
-        <Skeleton className='h-6 w-16 rounded' animate={animate} />
-      </div>
-
-      {/* Content preview */}
-      <SkeletonText lines={3} animate={animate} />
-
-      {/* Metadata and actions */}
-      <div className='flex items-center justify-between pt-2'>
-        <div className='space-y-1'>
-          <Skeleton className='h-3 w-24' animate={animate} />
-          <Skeleton className='h-3 w-24' animate={animate} />
-          <Skeleton className='h-3 w-16' animate={animate} />
-        </div>
-        <Skeleton className='h-8 w-8 rounded-lg' animate={animate} />
-      </div>
-    </Card>
   );
 }
 

@@ -5,8 +5,7 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 
-import ModeNav from '../components/ModeNav';
-import type { GameMode } from '../components/ModeSelector';
+import ModeNav, { type GameMode } from '../components/ModeNav';
 import GameClient from '../GameClient';
 
 export const dynamic = 'force-static';

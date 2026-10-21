@@ -6,7 +6,7 @@ import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import { SparklesIcon } from '@/components/icons/CommonIcons';
 
-import type { GameMode } from './ModeSelector';
+import type { GameMode } from './ModeNav';
 
 type GameOverDialogProps = {
   open: boolean;

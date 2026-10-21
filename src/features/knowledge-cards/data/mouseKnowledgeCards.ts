@@ -577,5 +577,3 @@ const pristineMouseCardsWithImages = Object.fromEntries(
 export function createMouseCardsWithImages() {
   return structuredClone(pristineMouseCardsWithImages);
 }
-
-export const mouseCardsWithImages = createMouseCardsWithImages();

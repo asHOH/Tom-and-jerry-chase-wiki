@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/design';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 
-import type { GameMode } from './ModeSelector';
+export type GameMode = 'cats' | 'mice' | 'all' | 'blitz';
 
 const MODES: { id: GameMode; label: string }[] = [
   { id: 'all', label: '全部角色' },
