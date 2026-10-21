@@ -10,7 +10,7 @@ const deployScript = readFileSync('scripts/ops/deploy_server.sh', 'utf8').replac
 const deploymentTestTimeout = process.platform === 'win32' ? 180_000 : 90_000;
 
 describe('VPS build rollback contract', () => {
-  it('requires artifacts on candidate releases, including public checks, but can recover an older release', () => {
+  it('requires artifacts on candidate and rollback releases, including public checks', () => {
     const functions = deployScript.slice(
       deployScript.indexOf('summarize_response()'),
       deployScript.indexOf('handle_exit()')
@@ -40,7 +40,9 @@ describe('VPS build rollback contract', () => {
         ];
       }),
       { body: { ...complete, commitSha: 'wrong' }, status: 1 },
-      { body: { commitSha: '12345678' }, recovery: true, status: 0 },
+      { body: complete, recovery: true, status: 0 },
+      { body: { commitSha: '12345678' }, recovery: true, status: 1 },
+      { body: complete, publicBody: { commitSha: '12345678' }, recovery: true, status: 1 },
       { body: { commitSha: 'wrong' }, recovery: true, status: 1 },
     ];
     // Batch the cases in one shell; every case still runs the real endpoint validators.
@@ -48,6 +50,9 @@ describe('VPS build rollback contract', () => {
 ${functions}
 CURRENT_HASH=12345678abcdef
 PM2_APP_NAME=test
+START_SCRIPT=start.sh
+LAST_KNOWN_GOOD_DIR=previous-release
+PREVIOUS_SOURCE_HASH=12345678abcdef
 HEALTH_CHECK_MAX_ATTEMPTS=1
 PUBLIC_VERSION_CHECK_URL=public-version
 fetch_endpoint() {
@@ -62,10 +67,13 @@ fetch_endpoint() {
 ensure_pm2_cli() { :; }
 run_quietly() { "$@"; }
 pm2() { :; }
+set_release_link() { :; }
 case_count=0
-while IFS=$'\t' read -r require_artifact expected_status TEST_VERSION_BODY TEST_PUBLIC_BODY; do
+while IFS=$'\t' read -r recovery expected_status TEST_VERSION_BODY TEST_PUBLIC_BODY; do
   case_count=$((case_count + 1))
-  if wait_for_application_health "$require_artifact"; then actual_status=0; else actual_status=$?; fi
+  check=wait_for_application_health
+  if [ "$recovery" = 1 ]; then check=restore_last_known_good_release; fi
+  if "$check"; then actual_status=0; else actual_status=$?; fi
   if [ "$actual_status" -ne "$expected_status" ]; then
     echo "Case $case_count: expected $expected_status, received $actual_status" >&2
     exit 1
@@ -79,7 +87,7 @@ printf 'Verified %s cases' "$case_count"`;
         ...process.env,
         TEST_CASES: cases
           .map(({ body, publicBody = body, recovery, status }) =>
-            [recovery ? 0 : 1, status, JSON.stringify(body), JSON.stringify(publicBody)].join('\t')
+            [recovery ? 1 : 0, status, JSON.stringify(body), JSON.stringify(publicBody)].join('\t')
           )
           .join('\n'),
       },

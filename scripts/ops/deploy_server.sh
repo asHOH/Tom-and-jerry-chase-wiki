@@ -35,7 +35,6 @@ DEPENDENCY_INSTALL_POLICY="npm-ci-ignore-scripts-v1"
 LAST_HEALTH_CHECK_ERROR=""
 FETCH_ENDPOINT_RESPONSE=""
 DEPLOY_STARTED_AT="$(date +%s)"
-DEPENDENCY_ACTION="not-started"
 PREVIOUS_SOURCE_HASH=""
 LAST_KNOWN_GOOD_DIR=""
 ROLLBACK_ARMED=0
@@ -368,7 +367,6 @@ check_health_endpoint() {
 check_version_endpoint() {
   local url="$1"
   local expected_commit="$2"
-  local require_artifact="${3:-1}"
   local response
 
   if ! fetch_endpoint "$url"; then
@@ -382,16 +380,16 @@ check_version_endpoint() {
     try {
       const body = JSON.parse(fs.readFileSync(0, "utf8"));
       if (body?.commitSha !== expected) process.exit(1);
-      if (process.argv[2] === "1" && (
+      if (
         !body.gameDataArtifact ||
         typeof body.gameDataArtifact !== "object" ||
         Array.isArray(body.gameDataArtifact)
-      )) process.exit(1);
+      ) process.exit(1);
     } catch {
       process.exit(1);
     }
-  ' "$expected_commit" "$require_artifact"; then
-    LAST_HEALTH_CHECK_ERROR="Invalid version response at $url; expected commit ${expected_commit:0:8} (require gameDataArtifact=$require_artifact), received: $(summarize_response "$response")"
+  ' "$expected_commit"; then
+    LAST_HEALTH_CHECK_ERROR="Invalid version response at $url; expected commit ${expected_commit:0:8} and gameDataArtifact object, received: $(summarize_response "$response")"
     return 1
   fi
 }
@@ -408,7 +406,6 @@ report_application_failure() {
 }
 
 wait_for_application_health() {
-  local require_artifact="${1:-1}"
   local health_url="${HEALTH_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/health}"
   local version_url="${VERSION_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/version}"
   local public_health_url="${PUBLIC_HEALTH_CHECK_URL:-}"
@@ -437,9 +434,9 @@ wait_for_application_health() {
   while [ "$attempt" -le "$max_attempts" ]; do
     LAST_HEALTH_CHECK_ERROR=""
     if check_health_endpoint "$health_url" &&
-      check_version_endpoint "$version_url" "$expected_commit" "$require_artifact" &&
+      check_version_endpoint "$version_url" "$expected_commit" &&
       { [ -z "$public_health_url" ] || check_health_endpoint "$public_health_url"; } &&
-      { [ -z "$public_version_url" ] || check_version_endpoint "$public_version_url" "$expected_commit" "$require_artifact"; }; then
+      { [ -z "$public_version_url" ] || check_version_endpoint "$public_version_url" "$expected_commit"; }; then
       echo "Verified: commit ${expected_commit:0:8} is serving."
       return 0
     fi
@@ -459,8 +456,7 @@ wait_for_application_health() {
 }
 
 ensure_pm2_process() {
-  local require_artifact="${1:-1}"
-  local release="$2"
+  local release="$1"
 
   if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
     run_quietly pm2 delete "$PM2_APP_NAME" || return 1
@@ -469,7 +465,7 @@ ensure_pm2_process() {
   ENV_FILE="$release/.env.production" run_quietly pm2 start "$release/$START_SCRIPT" \
     --name "$PM2_APP_NAME" --interpreter bash --cwd "$release" || return 1
 
-  wait_for_application_health "$require_artifact" || return 1
+  wait_for_application_health || return 1
   run_quietly pm2 save
 }
 
@@ -487,8 +483,7 @@ find_active_release() {
     return 0
   fi
   ACTIVE_RELEASE="$(cd "$ACTIVE_RELEASE" && pwd -P)"
-  if [ "$ACTIVE_RELEASE" != "$REPO_ROOT" ] &&
-    [ "$(dirname "$ACTIVE_RELEASE")" != "$RELEASES_DIR" ]; then
+  if [ "$(dirname "$ACTIVE_RELEASE")" != "$RELEASES_DIR" ]; then
     echo "Fatal: PM2 app '$PM2_APP_NAME' uses an unmanaged directory: $ACTIVE_RELEASE"
     return 1
   fi
@@ -505,7 +500,7 @@ verify_active_release() {
     return 1
   fi
   if ! check_health_endpoint "$health_url" ||
-    ! check_version_endpoint "$version_url" "$PREVIOUS_SOURCE_HASH" 0; then
+    ! check_version_endpoint "$version_url" "$PREVIOUS_SOURCE_HASH"; then
     echo "Fatal: the existing release could not be verified."
     [ -n "$LAST_HEALTH_CHECK_ERROR" ] && echo "$LAST_HEALTH_CHECK_ERROR"
     return 1
@@ -552,16 +547,6 @@ preserve_last_known_good_release() {
   fi
   verify_active_release || return 1
   LAST_KNOWN_GOOD_DIR="$ACTIVE_RELEASE"
-  if [ "$ACTIVE_RELEASE" = "$REPO_ROOT" ]; then
-    # One-time migration: retain the legacy release before updating the control checkout.
-    LAST_KNOWN_GOOD_DIR="$(mktemp -d "$RELEASES_DIR/${PREVIOUS_SOURCE_HASH:0:8}-legacy-XXXXXXXX")"
-    git -C "$REPO_ROOT" worktree add --detach "$LAST_KNOWN_GOOD_DIR" "$PREVIOUS_SOURCE_HASH" || return 1
-    cp -a --reflink=auto "$ACTIVE_RELEASE/.next" "$ACTIVE_RELEASE/node_modules" \
-      "$LAST_KNOWN_GOOD_DIR/" || return 1
-    cp -a --reflink=auto "$ACTIVE_RELEASE/public/." "$LAST_KNOWN_GOOD_DIR/public/" || return 1
-    cp -p "$ENV_FILE" "$LAST_KNOWN_GOOD_DIR/.env.production" || return 1
-    chmod 600 "$LAST_KNOWN_GOOD_DIR/.env.production" || return 1
-  fi
   echo "Retained verified last-known-good release ${PREVIOUS_SOURCE_HASH:0:8} at $LAST_KNOWN_GOOD_DIR."
 }
 
@@ -605,7 +590,7 @@ restore_last_known_good_release() {
   fi
   echo "Restoring last-known-good release ${PREVIOUS_SOURCE_HASH:0:8}..."
   EXPECTED_COMMIT_SHA="$PREVIOUS_SOURCE_HASH"
-  ensure_pm2_process 0 "$LAST_KNOWN_GOOD_DIR" || return 1
+  ensure_pm2_process "$LAST_KNOWN_GOOD_DIR" || return 1
   ACTIVE_RELEASE="$LAST_KNOWN_GOOD_DIR"
   set_release_link current "$ACTIVE_RELEASE" || return 1
   ROLLBACK_ARMED=0
@@ -632,9 +617,6 @@ handle_exit() {
     cd "$REPO_ROOT" || exit "$exit_code"
     if [ -n "$CANDIDATE_RELEASE" ]; then
       remove_release "$CANDIDATE_RELEASE" || echo "Warning: could not remove failed candidate $CANDIDATE_RELEASE."
-    fi
-    if [ "$ACTIVE_RELEASE" = "$REPO_ROOT" ] && [ -n "$LAST_KNOWN_GOOD_DIR" ]; then
-      remove_release "$LAST_KNOWN_GOOD_DIR" || echo "Warning: could not remove incomplete legacy snapshot $LAST_KNOWN_GOOD_DIR."
     fi
   fi
   exit "$exit_code"
@@ -746,10 +728,7 @@ if [ "${FORCE_DEPENDENCY_INSTALL:-0}" = "1" ] ||
   [ "$(cat "$DEPENDENCY_INPUTS_FILE")" != "$(calculate_dependency_inputs)" ]; then
   BUILD_REASONS+=("dependencies")
 fi
-# The first deployment must move the process out of the mutable control checkout.
-if [ "$ACTIVE_RELEASE" = "$REPO_ROOT" ]; then
-  BUILD_REASONS+=("release-migration")
-elif [ -z "$ACTIVE_RELEASE" ]; then
+if [ -z "$ACTIVE_RELEASE" ]; then
   BUILD_REASONS+=("no-active-release")
 fi
 
@@ -812,7 +791,7 @@ if [ -n "$CANDIDATE_RELEASE" ]; then
     ROLLBACK_ARMED=1
   fi
   CUTOVER_STARTED_AT="$(date +%s)"
-  ensure_pm2_process 1 "$CANDIDATE_RELEASE"
+  ensure_pm2_process "$CANDIDATE_RELEASE"
   CUTOVER_DURATION="$(format_duration "$(($(date +%s) - CUTOVER_STARTED_AT))")"
   ACTIVE_RELEASE="$CANDIDATE_RELEASE"
   set_release_link current "$ACTIVE_RELEASE"

@@ -34,14 +34,17 @@ git add .
 git commit -qm candidate
 export NEW_HASH="$(git rev-parse HEAD)"
 
-mkdir -p "$CONTROL/.next/server" "$CONTROL/.next/static" "$CONTROL/.next/cache" "$CONTROL/node_modules"
-printf 'old-build\n' > "$CONTROL/.next/BUILD_ID"
-printf 'old-cache\n' > "$CONTROL/.next/cache/value"
-printf 'old-dependency\n' > "$CONTROL/node_modules/value"
-printf 'old-worker\n' > "$CONTROL/public/sw.js"
+export OLD_RELEASE="$CONTROL.releases/${OLD_HASH:0:8}-initial"
+git -C "$CONTROL" worktree add -q --detach "$OLD_RELEASE" "$OLD_HASH"
+mkdir -p "$OLD_RELEASE/.next/server" "$OLD_RELEASE/.next/static" "$OLD_RELEASE/.next/cache" "$OLD_RELEASE/node_modules"
+printf 'old-build\n' > "$OLD_RELEASE/.next/BUILD_ID"
+printf 'old-cache\n' > "$OLD_RELEASE/.next/cache/value"
+printf 'old-dependency\n' > "$OLD_RELEASE/node_modules/value"
+printf 'old-worker\n' > "$OLD_RELEASE/public/sw.js"
 printf 'TEST_ENV=production\n' > "$CONTROL/.env.production"
-printf '{"commitSha":"%.8s"}\n' "$OLD_HASH" > "$CONTROL/.next/version.json"
-printf '%s' "$CONTROL" > "$TEST_ROOT/active"
+cp "$CONTROL/.env.production" "$OLD_RELEASE/.env.production"
+printf '{"commitSha":"%.8s","gameDataArtifact":{}}\n' "$OLD_HASH" > "$OLD_RELEASE/.next/version.json"
+printf '%s' "$OLD_RELEASE" > "$TEST_ROOT/active"
 
 cat > "$TEST_ROOT/mocks.sh" <<'MOCKS'
 ensure_nvm() { :; }
@@ -181,6 +184,20 @@ run_deploy() {
   if [ "$status" -ne "$expected" ]; then cat output; echo "Unexpected status for $TEST_MODE: $status"; exit 1; fi
 }
 
+# Reject retired layouts and incomplete active releases before preparing a candidate.
+printf '%s' "$CONTROL" > active
+run_deploy 1 success
+grep -q 'uses an unmanaged directory' output
+[ ! -s events ]
+[ "$(cat active)" = "$CONTROL" ]
+printf '%s' "$OLD_RELEASE" > active
+printf '{"commitSha":"%.8s"}\n' "$OLD_HASH" > "$OLD_RELEASE/.next/version.json"
+run_deploy 1 success
+grep -q 'the existing release could not be verified' output
+[ ! -s events ]
+[ "$(cat active)" = "$OLD_RELEASE" ]
+printf '{"commitSha":"%.8s","gameDataArtifact":{}}\n' "$OLD_HASH" > "$OLD_RELEASE/.next/version.json"
+
 for mode in low-disk low-inodes install-fail build-fail; do
   run_deploy 1 "$mode"
   if [[ "$mode" == low-* ]]; then
@@ -188,25 +205,25 @@ for mode in low-disk low-inodes install-fail build-fail; do
     [ ! -s events ]
   fi
   ! grep -q delete events
-  [ "$(cat active)" = "$CONTROL" ]
-  [ "$(cat "$CONTROL/public/sw.js")" = old-worker ]
+  [ "$(cat active)" = "$OLD_RELEASE" ]
+  [ "$(cat "$OLD_RELEASE/public/sw.js")" = old-worker ]
   [ "$(git -C "$CONTROL" rev-parse HEAD)" = "$OLD_HASH" ]
-  [ "$(git -C "$CONTROL" worktree list --porcelain | grep -c '^worktree ')" -eq 1 ]
+  [ "$(git -C "$CONTROL" worktree list --porcelain | grep -c '^worktree ')" -eq 2 ]
 done
 
 run_deploy 137 build-oom
 grep -q '137 / SIGKILL' output
 grep -q 'journalctl -k' output
 ! grep -q delete events
-[ "$(cat active)" = "$CONTROL" ]
+[ "$(cat active)" = "$OLD_RELEASE" ]
 [ "$(git -C "$CONTROL" rev-parse HEAD)" = "$OLD_HASH" ]
-[ "$(git -C "$CONTROL" worktree list --porcelain | grep -c '^worktree ')" -eq 1 ]
+[ "$(git -C "$CONTROL" worktree list --porcelain | grep -c '^worktree ')" -eq 2 ]
 
 for mode in start-fail activate-fail; do
   run_deploy 1 "$mode"
   grep -q 'Automatic rollback succeeded' output
   rollback="$(cat active)"
-  [ "$rollback" != "$CONTROL" ]
+  [ "$rollback" = "$OLD_RELEASE" ]
   [ "$(cat "$rollback/.next/BUILD_ID")" = old-build ]
   [ "$(cat "$rollback/node_modules/value")" = old-dependency ]
   [ "$(cat "$rollback/public/sw.js")" = old-worker ]
