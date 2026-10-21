@@ -427,8 +427,6 @@ wait_for_application_health() {
     return 1
   fi
 
-  echo "Waiting for application verification at $health_url..."
-  echo "Expecting deployed commit ${expected_commit:0:8} from $version_url."
   if [ -n "$public_health_url" ]; then
     echo "Public health verification is enabled at $public_health_url."
   fi
@@ -442,14 +440,12 @@ wait_for_application_health() {
       check_version_endpoint "$version_url" "$expected_commit" "$require_artifact" &&
       { [ -z "$public_health_url" ] || check_health_endpoint "$public_health_url"; } &&
       { [ -z "$public_version_url" ] || check_version_endpoint "$public_version_url" "$expected_commit" "$require_artifact"; }; then
-      echo "Application verification passed on attempt $attempt; commit ${expected_commit:0:8} is serving."
+      echo "Verified: commit ${expected_commit:0:8} is serving."
       return 0
     fi
 
     if [ "$attempt" -lt "$max_attempts" ]; then
-      if [ "$attempt" -eq 1 ]; then
-        echo "Application is starting; verification is not ready yet (attempt $attempt/$max_attempts)."
-      elif [ $((attempt % 5)) -eq 0 ]; then
+      if [ $((attempt % 5)) -eq 0 ]; then
         echo "Verification attempt $attempt/$max_attempts failed: $LAST_HEALTH_CHECK_ERROR"
       fi
       sleep "$retry_delay"
@@ -469,7 +465,7 @@ ensure_pm2_process() {
   if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
     run_quietly pm2 delete "$PM2_APP_NAME" || return 1
   fi
-  echo "Starting PM2 app '$PM2_APP_NAME' from $release..."
+  echo "Starting PM2 app '$PM2_APP_NAME'; verifying health and version..."
   ENV_FILE="$release/.env.production" run_quietly pm2 start "$release/$START_SCRIPT" \
     --name "$PM2_APP_NAME" --interpreter bash --cwd "$release" || return 1
 
@@ -816,7 +812,6 @@ if [ -n "$CANDIDATE_RELEASE" ]; then
     ROLLBACK_ARMED=1
   fi
   CUTOVER_STARTED_AT="$(date +%s)"
-  echo "Build is ready; beginning the brief PM2 cutover."
   ensure_pm2_process 1 "$CANDIDATE_RELEASE"
   CUTOVER_DURATION="$(format_duration "$(($(date +%s) - CUTOVER_STARTED_AT))")"
   ACTIVE_RELEASE="$CANDIDATE_RELEASE"
@@ -828,7 +823,7 @@ if [ -n "$CANDIDATE_RELEASE" ]; then
   CUTOVER_STARTED_AT=""
   # The primary checkout now holds operator tools; PM2 serves a separate release.
   cd "$REPO_ROOT"
-  git reset --hard "$CURRENT_HASH"
+  run_quietly git reset --hard "$CURRENT_HASH"
   cleanup_releases
 else
   wait_for_application_health

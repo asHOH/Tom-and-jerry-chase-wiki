@@ -142,6 +142,14 @@ pm2() {
 fetch_endpoint() {
   local live="$(cat "$TEST_ROOT/active")"
   if [[ "$1" == */api/health ]]; then
+    if [ "$TEST_MODE" = startup-retry ] && [ "$(git -C "$live" rev-parse HEAD)" = "$NEW_HASH" ]; then
+      startup_probes=$((startup_probes + 1))
+      if [ "$startup_probes" -eq 1 ]; then
+        LAST_HEALTH_CHECK_ERROR="Connection refused"
+        echo startup-retry >> "$TEST_ROOT/events"
+        return 1
+      fi
+    fi
     FETCH_ENDPOINT_RESPONSE='{"status":"ok"}'
   elif [ "$TEST_MODE" = activate-fail ] && [ "$(git -C "$live" rev-parse HEAD)" = "$NEW_HASH" ]; then
     FETCH_ENDPOINT_RESPONSE='{"commitSha":"wrong"}'
@@ -150,6 +158,10 @@ fetch_endpoint() {
   fi
 }
 HEALTH_CHECK_MAX_ATTEMPTS=1
+if [ "$TEST_MODE" = startup-retry ]; then
+  HEALTH_CHECK_MAX_ATTEMPTS=2
+  startup_probes=0
+fi
 MOCKS
 
 # Inject fakes after real functions are defined, then execute the real entry point.
@@ -201,7 +213,11 @@ for mode in start-fail activate-fail; do
   [ "$(git -C "$CONTROL" rev-parse HEAD)" = "$OLD_HASH" ]
 done
 
-run_deploy 0 success
+run_deploy 0 startup-retry
+grep -q startup-retry events
+grep -q "Verified: commit ${NEW_HASH:0:8} is serving." output
+! sed -n '/\[deploy 6\/6\]/,$p' output | grep -Eq 'attempt|Waiting for application|Expecting deployed|HEAD is now'
+grep -q 'dependencies=installed' output
 grep -q 'cutover_time=' output
 first_release="$(cat active)"
 [ "$first_release" != "$CONTROL" ]
