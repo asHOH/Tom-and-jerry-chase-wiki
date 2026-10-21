@@ -204,7 +204,7 @@ export default function PreviewCard({
 
                 return (
                   <div
-                    className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
+                    className='line-clamp-3 w-full text-sm whitespace-pre-wrap text-gray-600 dark:text-gray-300'
                     title={description}
                   >
                     <TextWithHoverTooltips text={description} />
