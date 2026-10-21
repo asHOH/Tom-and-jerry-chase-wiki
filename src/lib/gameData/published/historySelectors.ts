@@ -175,17 +175,6 @@ export function selectPublishedWikiHistory(
   );
 }
 
-export function selectPublishedEntityHistory(
-  snapshot: ApprovedActionSnapshot,
-  scope: PublishedEntityHistoryScope,
-  historyRows: readonly PublicActionRow[] = [],
-  options: WikiHistoryConversionOptions = {}
-): PublishedEntityHistoryEntry[] {
-  return selectHistoryEntries(selectPublishedWikiHistory(snapshot, historyRows, options), (item) =>
-    matchesScope(item, scope)
-  );
-}
-
 export async function getPublishedEntityHistoryReadModel(
   scope: PublishedEntityHistoryScope,
   snapshot?: ApprovedActionSnapshot,
