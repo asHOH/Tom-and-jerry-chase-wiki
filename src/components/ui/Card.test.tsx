@@ -8,8 +8,10 @@ describe('Card', () => {
 
     const card = screen.getByText('内容');
     expect(card).toHaveClass('rounded-lg', 'bg-surface');
-    expect(card).not.toHaveClass('border', 'border-border');
-    expect(card).not.toHaveClass('shadow-sm', 'hover:shadow-md');
+    expect(card).not.toHaveClass('border');
+    expect(card).not.toHaveClass('border-border');
+    expect(card).not.toHaveClass('shadow-sm');
+    expect(card).not.toHaveClass('hover:shadow-md');
   });
 
   it('adds a border only when requested', () => {
@@ -23,7 +25,8 @@ describe('Card', () => {
 
     const card = screen.getByText('可交互内容');
     expect(card).toHaveClass('shadow-sm', 'hover:shadow-md');
-    expect(card).not.toHaveClass('border', 'hover:border-blue-300');
+    expect(card).not.toHaveClass('border');
+    expect(card).not.toHaveClass('hover:border-blue-300');
   });
 
   it('adds border hover feedback to bordered interactive cards', () => {

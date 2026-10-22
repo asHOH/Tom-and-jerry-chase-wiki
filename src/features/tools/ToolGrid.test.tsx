@@ -70,7 +70,8 @@ describe('ToolGrid', () => {
     expect(screen.getByRole('heading', { level: 1, name: '工具栏' })).toBeInTheDocument();
     expect(screen.getByText('Tool page description')).toBeInTheDocument();
     expect(root).toHaveClass('max-w-7xl', 'space-y-2', 'md:space-y-8');
-    expect(root).not.toHaveClass('p-2', 'md:p-6');
+    expect(root).not.toHaveClass('p-2');
+    expect(root).not.toHaveClass('md:p-6');
     expect(sectionHeadings).toHaveLength(5);
     expect(screen.getByTestId('feedback-section')).toBeInTheDocument();
     expect(screen.getByTestId('change-logs')).toBeInTheDocument();
@@ -105,9 +106,11 @@ describe('ToolGrid', () => {
     const header = container.querySelector('header') as HTMLElement | null;
 
     expect(root).toHaveClass('mx-auto', 'w-full', 'max-w-7xl', 'space-y-2');
-    expect(root).not.toHaveClass('p-2', 'md:p-6');
+    expect(root).not.toHaveClass('p-2');
+    expect(root).not.toHaveClass('md:p-6');
     expect(header).toHaveClass('mb-4', 'space-y-2', 'text-center', 'md:mb-8', 'md:space-y-4');
-    expect(header).not.toHaveClass('px-2', 'md:px-4');
+    expect(header).not.toHaveClass('px-2');
+    expect(header).not.toHaveClass('md:px-4');
     expect(screen.getByText('Mobile description')).toBeInTheDocument();
   });
 });

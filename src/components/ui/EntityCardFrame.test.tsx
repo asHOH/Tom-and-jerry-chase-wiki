@@ -54,7 +54,8 @@ describe('EntityCardFrame', () => {
       'text-foreground',
       'h-full'
     );
-    expect(frame).not.toHaveClass('shadow-sm', 'hover:shadow-md');
+    expect(frame).not.toHaveClass('shadow-sm');
+    expect(frame).not.toHaveClass('hover:shadow-md');
   });
 
   it.each(['catalog', 'portrait'] as const)(
@@ -66,7 +67,8 @@ describe('EntityCardFrame', () => {
         </EntityCardFrame>
       );
 
-      expect(screen.getByText('角色预览').parentElement).not.toHaveClass('border', 'border-border');
+      expect(screen.getByText('角色预览').parentElement).not.toHaveClass('border');
+      expect(screen.getByText('角色预览').parentElement).not.toHaveClass('border-border');
     }
   );
 

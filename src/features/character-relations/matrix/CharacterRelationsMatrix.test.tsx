@@ -153,7 +153,8 @@ describe('CharacterRelationsMatrix', () => {
     const minorCell = screen.getByTestId(getCellTestId(viewModel, '鲍姆', '托普斯'));
     const minorTrigger =
       within(minorCell).getByLabelText(/鲍姆与托普斯互相克制：二者克制关系主要取决于托普斯/);
-    expect(minorTrigger).not.toHaveClass('bg-amber-400', 'dark:bg-amber-500/90');
+    expect(minorTrigger).not.toHaveClass('bg-amber-400');
+    expect(minorTrigger).not.toHaveClass('dark:bg-amber-500/90');
     expect(within(minorCell).getByTestId('relation-minor-dot')).toHaveClass(
       'bg-amber-400',
       'dark:bg-amber-500/90'
@@ -202,7 +203,8 @@ describe('CharacterRelationsMatrix', () => {
     const minorCell = screen.getByTestId(getCellTestId(viewModel, '鲍姆', '托普斯'));
     const minorDot = within(minorCell).getByTestId('relation-minor-dot');
     expect(minorDot).toHaveClass('bg-amber-400', 'dark:bg-amber-500/90');
-    expect(minorDot).not.toHaveClass('bg-amber-500', 'dark:bg-amber-400');
+    expect(minorDot).not.toHaveClass('bg-amber-500');
+    expect(minorDot).not.toHaveClass('dark:bg-amber-400');
 
     const counterEachOtherLegendMarker = screen.getByText('互克').querySelector('[aria-hidden]');
     expect(counterEachOtherLegendMarker).toHaveClass('bg-amber-400', 'dark:bg-amber-500/90');
@@ -269,7 +271,8 @@ describe('CharacterRelationsMatrix', () => {
     const minorButton = within(minorCell).getByRole('button', {
       name: '编辑 鲍姆 与 托普斯 的关系',
     });
-    expect(minorButton).not.toHaveClass('bg-amber-400', 'dark:bg-amber-500/90');
+    expect(minorButton).not.toHaveClass('bg-amber-400');
+    expect(minorButton).not.toHaveClass('dark:bg-amber-500/90');
     expect(within(minorButton).getByTestId('relation-minor-dot')).toHaveClass(
       'bg-amber-400',
       'dark:bg-amber-500/90'

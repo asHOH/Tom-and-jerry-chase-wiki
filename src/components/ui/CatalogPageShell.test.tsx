@@ -76,7 +76,8 @@ describe('CatalogPageShell', () => {
         <div>Content</div>
       </CatalogPageShell>
     );
-    expect(screen.getByText('Content').parentElement).not.toHaveClass('mt-6', 'md:mt-8');
+    expect(screen.getByText('Content').parentElement).not.toHaveClass('mt-6');
+    expect(screen.getByText('Content').parentElement).not.toHaveClass('md:mt-8');
   });
 
   it('applies caller overrides to each content slot', () => {

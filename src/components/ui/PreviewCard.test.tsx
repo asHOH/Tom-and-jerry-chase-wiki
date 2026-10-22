@@ -55,7 +55,8 @@ it.each([
     });
     expect(group).toHaveAttribute('tabindex', '0');
     expect(group.firstElementChild).toHaveClass('border-border', 'border', 'bg-surface');
-    expect(group.firstElementChild).not.toHaveClass('cursor-pointer', 'hover:shadow-md');
+    expect(group.firstElementChild).not.toHaveClass('cursor-pointer');
+    expect(group.firstElementChild).not.toHaveClass('hover:shadow-md');
     expect(screen.getByText(heading)).toBeInTheDocument();
     expect(screen.getAllByRole('link')).toHaveLength(1);
     expect(

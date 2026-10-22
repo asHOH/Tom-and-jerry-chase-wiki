@@ -22,7 +22,8 @@ describe('SectionHeader', () => {
     const heading = screen.getByRole('heading', { level: 2, name: '评论' });
 
     expect(heading).toHaveClass('text-lg', 'font-bold');
-    expect(heading).not.toHaveClass('py-2', 'text-2xl');
+    expect(heading).not.toHaveClass('py-2');
+    expect(heading).not.toHaveClass('text-2xl');
     expect(heading.parentElement?.parentElement).toHaveClass('mb-4');
     expect(screen.getByText('3 条')).toBeInTheDocument();
   });

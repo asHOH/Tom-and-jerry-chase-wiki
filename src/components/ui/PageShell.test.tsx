@@ -25,6 +25,7 @@ describe('PageShell', () => {
     const shell = screen.getByRole('region', { name: '页面区域' });
     expect(shell).toHaveTextContent('页面内容');
     expect(shell).toHaveClass('max-w-3xl', 'py-8', 'text-gray-700');
-    expect(shell).not.toHaveClass('max-w-6xl', 'text-foreground');
+    expect(shell).not.toHaveClass('max-w-6xl');
+    expect(shell).not.toHaveClass('text-foreground');
   });
 });
