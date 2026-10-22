@@ -6,9 +6,11 @@ import {
 import { createApprovedActionSnapshotFromRows } from './approvedActionSnapshot';
 import { createPublishedDomainCacheKey } from './cachePolicy';
 import { getCanonicalGameData } from './canonicalSources';
+import { getApprovedActionSnapshot } from './getApprovedActionSnapshot';
 import {
   composePublishedGameDataSnapshot,
   getPublishedDomainReadModel,
+  getPublishedDomainsReadModel,
   type PublishedDomainReader,
 } from './publishedSnapshot';
 import { createPublishedDomainRevision, createPublishedRevision } from './revision';
@@ -21,6 +23,9 @@ jest.mock('next/cache', () => ({
 }));
 jest.mock('./buildIdentity', () => ({
   PRODUCTION_BUILD_IDENTITY: 'test-build',
+}));
+jest.mock('./getApprovedActionSnapshot', () => ({
+  getApprovedActionSnapshot: jest.fn(),
 }));
 
 function createMapBackedReader(
@@ -47,6 +52,52 @@ function createMapBackedReader(
     return value;
   };
 }
+
+describe('getPublishedDomainsReadModel', () => {
+  it('returns requested data and revisions from one scoped approved snapshot', async () => {
+    const snapshot = createApprovedActionSnapshotFromRows([
+      {
+        id: 'item-edit',
+        entity_type: 'items',
+        entry: { op: 'set', path: '火箭.description', newValue: '同一快照中的火箭' },
+        created_at: '2026-10-04T00:00:00Z',
+        status: 'approved',
+        created_by: null,
+        message: null,
+        reviewed_at: null,
+      },
+      {
+        id: 'map-edit',
+        entity_type: 'maps',
+        entry: {
+          op: 'set',
+          path: `${Object.keys(getCanonicalGameData('maps'))[0]!}.description`,
+          newValue: '同一快照中的地图',
+        },
+        created_at: '2026-10-04T00:00:01Z',
+        status: 'approved',
+        created_by: null,
+        message: null,
+        reviewed_at: null,
+      },
+    ]);
+    jest.mocked(getApprovedActionSnapshot).mockResolvedValueOnce(snapshot);
+
+    const result = await getPublishedDomainsReadModel(['items', 'maps']);
+
+    expect(getApprovedActionSnapshot).toHaveBeenCalledTimes(1);
+    expect(getApprovedActionSnapshot).toHaveBeenCalledWith('items', 'maps');
+    expect(Object.keys(result.data)).toEqual(['items', 'maps']);
+    expect(Object.keys(result.revisions)).toEqual(['items', 'maps']);
+    expect(result.data.items['火箭']?.description).toBe('同一快照中的火箭');
+    expect(Object.values(result.data.maps)[0]?.description).toBe('同一快照中的地图');
+    for (const entityType of ['items', 'maps'] as const) {
+      expect(result.revisions[entityType]).toBe(
+        createPublishedDomainRevision('test-build', entityType, snapshot)
+      );
+    }
+  });
+});
 
 describe('composePublishedGameDataSnapshot', () => {
   it('composes every publishable domain from the same checked-replay snapshot', async () => {

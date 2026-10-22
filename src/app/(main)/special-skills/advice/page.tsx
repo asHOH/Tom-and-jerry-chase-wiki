@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 
-import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
-import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
+import { getPublishedDomainsReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
@@ -18,18 +17,14 @@ export const metadata: Metadata = generatePageMetadata({
 });
 
 export default async function SpecialSkillsPage() {
-  const snapshot = await getApprovedActionSnapshot('characters', 'specialSkills');
-  const [characters, specialSkills] = await Promise.all([
-    getPublishedDomainReadModel('characters', snapshot),
-    getPublishedDomainReadModel('specialSkills', snapshot),
-  ]);
+  const { data, revisions } = await getPublishedDomainsReadModel(['characters', 'specialSkills']);
 
   return (
-    <PublishedRevisionBoundary revisions={[specialSkills.revision]}>
+    <PublishedRevisionBoundary revisions={[revisions.specialSkills]}>
       <SpecialSkillAdviceClient
-        charactersData={characters.data}
-        specialSkillsData={specialSkills.data}
-        publishedRevision={characters.revision}
+        charactersData={data.characters}
+        specialSkillsData={data.specialSkills}
+        publishedRevision={revisions.characters}
       />
     </PublishedRevisionBoundary>
   );

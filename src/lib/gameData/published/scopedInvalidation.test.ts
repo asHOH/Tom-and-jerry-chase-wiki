@@ -2,7 +2,7 @@ import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActio
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import { readFreshApprovedActionRows } from '@/lib/gameData/runtimeActionSources';
 
-import { getPublishedDomainReadModel } from './publishedSnapshot';
+import { getPublishedDomainReadModel, getPublishedDomainsReadModel } from './publishedSnapshot';
 
 jest.mock('server-only', () => ({}), { virtual: true });
 jest.mock('react', () => ({
@@ -67,4 +67,39 @@ it('refreshes a published/revoked domain without refilling unrelated source and 
   expect(await getPublishedDomainReadModel('items')).toEqual(initialItems);
   expect(await getPublishedDomainReadModel('traits')).toEqual(initialTraits);
   expect(readSource).toHaveBeenCalledTimes(4);
+});
+
+it('refreshes a multi-domain read only when a requested domain is invalidated', async () => {
+  const readSource = jest.mocked(readFreshApprovedActionRows);
+  readSource.mockResolvedValue([]);
+  const initial = await getPublishedDomainsReadModel(['items', 'maps']);
+  expect(readSource).toHaveBeenCalledTimes(1);
+
+  invalidatePublicGameDataActionsCache(['traits']);
+  expect(await getPublishedDomainsReadModel(['items', 'maps'])).toEqual(initial);
+  expect(readSource).toHaveBeenCalledTimes(1);
+
+  readSource.mockResolvedValue([
+    {
+      id: 'approved-multi-domain-item',
+      entity_type: 'items',
+      entry: { op: 'set', path: '火箭.description', newValue: '组合页面的新描述' },
+      created_at: '2026-10-04T00:00:00Z',
+      status: 'approved',
+      created_by: null,
+      message: null,
+      reviewed_at: null,
+    },
+  ]);
+  invalidatePublicGameDataActionsCache(['items']);
+  const updated = await getPublishedDomainsReadModel(['items', 'maps']);
+  expect(updated.data.items['火箭']?.description).toBe('组合页面的新描述');
+  expect(updated.revisions.items).not.toBe(initial.revisions.items);
+  expect(updated.revisions.maps).toBe(initial.revisions.maps);
+  expect(readSource).toHaveBeenCalledTimes(2);
+
+  readSource.mockResolvedValue([]);
+  invalidatePublicGameDataActionsCache(['items']);
+  expect(await getPublishedDomainsReadModel(['items', 'maps'])).toEqual(initial);
+  expect(readSource).toHaveBeenCalledTimes(3);
 });

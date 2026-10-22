@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 
-import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
-import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
+import { getPublishedDomainsReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
@@ -20,36 +19,22 @@ export const metadata: Metadata = generatePageMetadata({
 });
 
 export default async function RelationsPage() {
-  const snapshot = await getApprovedActionSnapshot(
+  const { data, revisions } = await getPublishedDomainsReadModel([
     'characters',
     'cards',
     'specialSkills',
     'maps',
-    'modes'
-  );
-  const [characters, cards, specialSkills, maps, modes] = await Promise.all([
-    getPublishedDomainReadModel('characters', snapshot),
-    getPublishedDomainReadModel('cards', snapshot),
-    getPublishedDomainReadModel('specialSkills', snapshot),
-    getPublishedDomainReadModel('maps', snapshot),
-    getPublishedDomainReadModel('modes', snapshot),
+    'modes',
   ]);
-  const data = {
-    characters: characters.data,
-    cards: cards.data,
-    specialSkills: specialSkills.data,
-    maps: maps.data,
-    modes: modes.data,
-  };
 
   return (
     <PublishedRevisionBoundary
-      revisions={[cards.revision, specialSkills.revision, maps.revision, modes.revision]}
+      revisions={[revisions.cards, revisions.specialSkills, revisions.maps, revisions.modes]}
     >
       <RelationsClient
         description={DESCRIPTION}
         data={data}
-        publishedRevision={characters.revision}
+        publishedRevision={revisions.characters}
       />
     </PublishedRevisionBoundary>
   );

@@ -1,18 +1,13 @@
 import { render, screen } from '@testing-library/react';
 
-import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
-import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
+import { getPublishedDomainsReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { EditModeContext } from '@/context/EditModeContext';
 import { characters, maps } from '@/data/static';
 
 import RecommendedPage from './page';
 
-jest.mock('@/lib/gameData/published/getApprovedActionSnapshot', () => ({
-  getApprovedActionSnapshot: jest.fn(),
-}));
-
 jest.mock('@/lib/gameData/published/publishedSnapshot', () => ({
-  getPublishedDomainReadModel: jest.fn(),
+  getPublishedDomainsReadModel: jest.fn(),
 }));
 
 jest.mock('./RecommendedPageClient', () => ({
@@ -35,36 +30,28 @@ describe('recommended page published-data projection', () => {
   it('passes approved character and map values to the normal client', async () => {
     const publishedCharacterDescription = '__published_recommendation_character__';
     const publishedMapDescription = '__published_recommendation_map__';
-    const snapshot = { actionRevision: 'v1:test' };
-    jest.mocked(getApprovedActionSnapshot).mockResolvedValue(snapshot as never);
-    jest.mocked(getPublishedDomainReadModel).mockImplementation(async (entityType) => {
-      if (entityType === 'characters') {
-        const characterId = Object.keys(characters)[0]!;
-        return {
-          entityType,
-          revision: 'v1:test',
-          data: {
-            ...characters,
-            [characterId]: {
-              ...characters[characterId]!,
-              description: publishedCharacterDescription,
-            },
+    const characterId = Object.keys(characters)[0]!;
+    const mapName = Object.keys(maps)[0]!;
+    jest.mocked(getPublishedDomainsReadModel).mockResolvedValue({
+      revisions: { characters: 'v1:characters', maps: 'v1:maps' },
+      data: {
+        characters: {
+          ...characters,
+          [characterId]: {
+            ...characters[characterId]!,
+            description: publishedCharacterDescription,
           },
-        } as never;
-      }
-      const mapName = Object.keys(maps)[0]!;
-      return {
-        entityType,
-        revision: 'v1:test',
-        data: {
+        },
+        maps: {
           ...maps,
           [mapName]: {
             ...maps[mapName]!,
             description: publishedMapDescription,
           },
         },
-      } as never;
-    });
+      },
+    } as never);
+    const registerPublishedRevision = jest.fn((_revision: `v1:${string}`) => jest.fn());
 
     render(
       <EditModeContext.Provider
@@ -73,6 +60,7 @@ describe('recommended page published-data projection', () => {
           isLoading: false,
           isPreviewMode: false,
           setIsPreviewMode: jest.fn(),
+          registerPublishedRevision,
         }}
       >
         {await RecommendedPage()}
@@ -83,8 +71,10 @@ describe('recommended page published-data projection', () => {
       publishedCharacterDescription
     );
     expect(screen.getByTestId('published-map')).toHaveTextContent(publishedMapDescription);
-    expect(getPublishedDomainReadModel).toHaveBeenNthCalledWith(1, 'characters', snapshot);
-    expect(getPublishedDomainReadModel).toHaveBeenNthCalledWith(2, 'maps', snapshot);
-    expect(getApprovedActionSnapshot).toHaveBeenCalledWith('characters', 'maps');
+    expect(getPublishedDomainsReadModel).toHaveBeenCalledWith(['characters', 'maps']);
+    expect(registerPublishedRevision.mock.calls.map(([revision]) => revision)).toEqual([
+      'v1:characters',
+      'v1:maps',
+    ]);
   });
 });

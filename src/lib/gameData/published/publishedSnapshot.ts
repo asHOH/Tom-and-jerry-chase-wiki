@@ -16,7 +16,11 @@ import { PRODUCTION_BUILD_IDENTITY } from './buildIdentity';
 import { createPublishedDomainCacheKey } from './cachePolicy';
 import { getCanonicalGameData } from './canonicalSources';
 import { getApprovedActionSnapshot } from './getApprovedActionSnapshot';
-import { createPublishedDomainRevision, createPublishedRevision } from './revision';
+import {
+  createPublishedDomainRevision,
+  createPublishedRevision,
+  type PublishedRevision,
+} from './revision';
 import { selectPublishedGameData } from './selectPublishedDomain';
 import type {
   PublishedDomainReadModel,
@@ -111,5 +115,26 @@ export async function getPublishedDomainReadModel<EntityType extends Publishable
     ),
     entityType,
     data,
+  });
+}
+
+export async function getPublishedDomainsReadModel<EntityType extends PublishableEntityType>(
+  entityTypes: readonly [EntityType, ...EntityType[]]
+): Promise<{
+  readonly data: Pick<PublishedGameDataByType, EntityType>;
+  readonly revisions: Readonly<Record<EntityType, PublishedRevision>>;
+}> {
+  const snapshot = await getApprovedActionSnapshot(...entityTypes);
+  const domains = await Promise.all(
+    entityTypes.map((entityType) => getPublishedDomainReadModel(entityType, snapshot))
+  );
+
+  return Object.freeze({
+    data: Object.freeze(
+      Object.fromEntries(domains.map(({ entityType, data }) => [entityType, data]))
+    ) as Pick<PublishedGameDataByType, EntityType>,
+    revisions: Object.freeze(
+      Object.fromEntries(domains.map(({ entityType, revision }) => [entityType, revision]))
+    ) as Readonly<Record<EntityType, PublishedRevision>>,
   });
 }
