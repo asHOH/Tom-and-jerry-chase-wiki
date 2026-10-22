@@ -1,7 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import { NextResponse, type NextRequest } from 'next/server';
 import { createOpenAI } from '@ai-sdk/openai';
-import { convertToModelMessages, createUIMessageStreamResponse, streamText, tool } from 'ai';
+import {
+  convertToModelMessages,
+  createUIMessageStreamResponse,
+  stepCountIs,
+  streamText,
+  tool,
+} from 'ai';
 import { z } from 'zod';
 
 import { CHAT_CODE_MAX_LENGTH, executeChatCode } from '@/lib/ai/chatCodeExecution';
@@ -188,7 +194,7 @@ export async function POST(req: NextRequest) {
         executeCode,
       },
       maxOutputTokens: CHAT_MAX_OUTPUT_TOKENS,
-      stopWhen: () => false,
+      stopWhen: stepCountIs(5),
       abortSignal: req.signal,
       onAbort: () => {
         logDebug('Upstream chat generation was aborted.');

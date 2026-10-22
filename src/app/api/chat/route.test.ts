@@ -1,7 +1,7 @@
 /** @jest-environment node */
 
 import { NextRequest } from 'next/server';
-import { streamText } from 'ai';
+import { streamText, type StepResult, type ToolSet } from 'ai';
 
 import { executeChatCode } from '@/lib/ai/chatCodeExecution';
 import {
@@ -41,7 +41,6 @@ jest.mock('@ai-sdk/openai', () => ({ createOpenAI: () => () => 'model' }));
 jest.mock('ai', () => ({
   ...jest.requireActual('ai'),
   convertToModelMessages: jest.fn(async (messages) => messages),
-  stepCountIs: jest.fn(),
   tool: (definition: unknown) => definition,
   streamText: jest.fn(() => ({
     toUIMessageStream: ({ generateMessageId }: { generateMessageId: () => string }) =>
@@ -142,6 +141,16 @@ it('streams three rounds with published facts, cancellation, and no-store header
     })
   );
   expect(getPublishedGameDataSnapshot).toHaveBeenCalledTimes(1);
+});
+
+it('stops repeated tool steps after five generations', async () => {
+  await POST(request({ messages: [message('u')] }));
+  const stopWhen = jest.mocked(streamText).mock.calls[0]![0].stopWhen;
+  if (typeof stopWhen !== 'function') throw new Error('Expected a chat step limit');
+  const steps = Array.from({ length: 5 }, () => ({}) as StepResult<ToolSet>);
+  expect(await stopWhen({ steps: steps.slice(0, 1) })).toBe(false);
+  expect(await stopWhen({ steps: steps.slice(0, 4) })).toBe(false);
+  expect(await stopWhen({ steps })).toBe(true);
 });
 
 it('returns a browser-persistable proof and accepts it on the next turn', async () => {
