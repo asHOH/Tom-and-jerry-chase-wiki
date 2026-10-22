@@ -161,6 +161,7 @@ function SkillHeader({
         {skillTypeLabel} ·{' '}
         <e.span
           id={skillId}
+          className='scroll-mt-24'
           path={`skills.${skillIndex}.name`}
           initialValue={skill.name}
           isSingleLine={true}

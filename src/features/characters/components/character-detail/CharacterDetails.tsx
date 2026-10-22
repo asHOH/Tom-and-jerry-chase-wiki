@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
@@ -101,6 +101,10 @@ export default function CharacterDetails({
     character
   );
   const factionId = localCharacter.factionId!;
+  const skillAnchorIds = useMemo(
+    () => localCharacter.skills.map((skill) => `Skill:${skill.name}`),
+    [localCharacter.skills]
+  );
   const historyNames = [character.id, ...(character.aliases ?? [])];
   const localHistoryNames = [localCharacter.id, ...(localCharacter.aliases ?? [])];
   const characterHistory =
@@ -347,10 +351,6 @@ export default function CharacterDetails({
                     <SpecialSkillsSection />
                   </PendingActionWarningBoundary>
 
-                  <div className='hidden'>
-                    <CharacterSectionIndex />
-                  </div>
-
                   {/* Character Navigation */}
                   <div className='border-border border-t pt-4'>
                     <CharacterNavigationButtons currentCharacterId={localCharacter.id} />
@@ -360,6 +360,7 @@ export default function CharacterDetails({
             </div>
 
             <div className='overflow-y-hidden md:w-2/3'>
+              <CharacterSectionIndex character={localCharacter} />
               <SkillAllocationSection factionId={factionId} />
 
               <PendingActionWarningBoundary
@@ -374,7 +375,7 @@ export default function CharacterDetails({
                 <KnowledgeCardManager factionId={factionId} />
               </PendingActionWarningBoundary>
 
-              <CharacterSection title='技能描述'>
+              <CharacterSection title='技能描述' childAnchorIds={skillAnchorIds}>
                 <div className='space-y-6'>
                   {(() => {
                     const weaponSkills = localCharacter.skills.filter(

@@ -1,138 +1,54 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { cn } from '@/lib/design';
-import { useEditableEntity } from '@/hooks/useEditableGameData';
-import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
+import type { CharacterWithFaction } from '@/lib/types';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
-import type { Skill } from '@/data/types';
-import Button from '@/components/ui/Button';
-import { ChevronDownIcon } from '@/components/icons/CommonIcons';
+import { useEditMode } from '@/context/EditModeContext';
+import TableOfContents from '@/components/ui/TableOfContents';
 
-import { usePublishedCharacter } from '../PublishedCharacterContext';
+type CharacterSectionIndexProps = {
+  character: DeepReadonly<CharacterWithFaction>;
+};
 
-function CharacterSectionIndexItem({
-  name,
-  type = 'Section',
-  isActive = false,
-}: {
-  name: string;
-  type?: 'Section' | 'Skill';
-  isActive?: boolean;
-}) {
-  return (
-    <li>
-      <a
-        className={cn(
-          'focus:ring-focus flex items-center gap-0.5 rounded px-1 py-0.5 text-sm transition-colors hover:underline focus:ring-2 focus:outline-none',
-          isActive
-            ? 'bg-blue-100 font-medium text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
-            : 'text-gray-700 dark:text-gray-200'
-        )}
-        href={`#${type}:${name}`}
-        aria-label={name}
-      >
-        {name}
-      </a>
-    </li>
-  );
-}
-
-export default function CharacterSectionIndex() {
-  const { characterId } = useLocalCharacter();
-  const publishedCharacter = usePublishedCharacter(characterId);
-  const [character] = useEditableEntity(
-    { entityType: 'characters', entityId: characterId },
-    publishedCharacter
-  )!;
-  const [skillsOpen, setSkillsOpen] = useState(false);
-
-  // Generate all section IDs for scroll spy
-  const sectionIds = useMemo(() => {
-    const ids = [
-      'Section:推荐加点',
-      'Section:推荐知识卡组',
-      'Section:技能描述',
-      `Section:克制关系`,
-    ];
-
-    // Add skill IDs
-    character.skills.forEach((skill: DeepReadonly<Skill>) => {
-      ids.push(`Skill:${skill.name}`);
-    });
-
-    return ids;
-  }, [character.skills]);
-
-  const activeSection = useScrollSpy(sectionIds, {
-    threshold: 0.3,
-    rootMargin: '-10% 0px -50% 0px',
-  });
-
-  // Auto-expand skills section if a skill is active
-  const isSkillActive = activeSection?.startsWith('Skill:');
-  const shouldExpandSkills = skillsOpen || isSkillActive;
+export default function CharacterSectionIndex({ character }: CharacterSectionIndexProps) {
+  const { isEditMode } = useEditMode();
+  const { sections, skills, ids } = useMemo(() => {
+    const sections = [
+      ...(isEditMode || character.skillAllocations?.length ? ['推荐加点'] : []),
+      ...(isEditMode || character.knowledgeCardGroups?.length ? ['推荐知识卡组'] : []),
+      '技能描述',
+      character.factionId === 'cat' ? '克制关系' : '克制/协作关系',
+    ].map((label) => ({ id: `Section:${label}`, label, depth: 0 }));
+    const skills = character.skills.map((skill) => ({
+      id: `Skill:${skill.name}`,
+      label: skill.name,
+      depth: 0,
+    }));
+    const ids = sections.flatMap((section) =>
+      section.id === 'Section:技能描述'
+        ? [section.id, ...skills.map((skill) => skill.id)]
+        : [section.id]
+    );
+    return { sections, skills, ids };
+  }, [character, isEditMode]);
+  const activeId = useScrollSpy(ids);
 
   return (
-    <nav className='my-4 w-full' aria-label='角色详情索引'>
-      <h3 className='mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200'>目录</h3>
-      {/* Responsive: allow horizontal scroll on mobile if needed */}
-      <ul className='flex flex-col gap-1'>
-        <CharacterSectionIndexItem
-          name='推荐加点'
-          isActive={activeSection === 'Section:推荐加点'}
-        />
-        <CharacterSectionIndexItem
-          name='推荐知识卡组'
-          isActive={activeSection === 'Section:推荐知识卡组'}
-        />
-        <li>
-          <Button
-            variant='unstyled'
-            type='button'
-            aria-label={skillsOpen ? '折叠技能描述' : '展开技能描述'}
-            className={cn(
-              'mb-1 flex w-full cursor-pointer items-center justify-between px-1 py-1 text-sm font-bold transition-colors focus:outline-none',
-              activeSection === 'Section:技能描述' || isSkillActive
-                ? 'text-blue-800 dark:text-blue-200'
-                : 'dark:text-white'
-            )}
-            onClick={() => setSkillsOpen((open) => !open)}
-          >
-            <span>技能描述</span>
-            <ChevronDownIcon
-              className={cn(
-                'h-4 w-4 transform transition-transform duration-200 ease-out motion-reduce:transition-none',
-                shouldExpandSkills ? 'rotate-0' : '-rotate-90'
-              )}
-            />
-          </Button>
-          <div
-            className={cn(
-              'transition-all ease-out',
-              shouldExpandSkills ? 'duration-300' : 'duration-200',
-              shouldExpandSkills ? 'max-h-250 opacity-100' : 'max-h-0 opacity-0'
-            )}
-            style={{ pointerEvents: shouldExpandSkills ? 'auto' : 'none' }}
-            {...(!shouldExpandSkills && { 'aria-hidden': true })}
-          >
-            <ul className='ml-4 flex flex-col gap-0.5'>
-              {character.skills.map((skill: DeepReadonly<Skill>) => (
-                <CharacterSectionIndexItem
-                  key={skill.id}
-                  name={skill.name}
-                  type='Skill'
-                  isActive={activeSection === `Skill:${skill.name}`}
-                />
-              ))}
-            </ul>
-          </div>
-        </li>
-        <CharacterSectionIndexItem
-          name={character.factionId == 'cat' ? '克制关系' : '克制/协作关系'}
-          isActive={activeSection === `Section:克制关系`}
-        />
-      </ul>
-    </nav>
+    <div className='mb-4 space-y-2'>
+      <TableOfContents
+        items={sections}
+        activeId={activeId.startsWith('Skill:') ? 'Section:技能描述' : activeId}
+        ariaLabel='角色详情索引'
+        layout='inline'
+      />
+      {skills.length > 0 && (
+        <details>
+          <summary className='focus-visible:ring-focus cursor-pointer rounded px-2 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none'>
+            技能目录
+          </summary>
+          <TableOfContents items={skills} activeId={activeId} ariaLabel='角色技能目录' />
+        </details>
+      )}
+    </div>
   );
 }

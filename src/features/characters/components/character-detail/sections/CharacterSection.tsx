@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/design';
 import { useNavigation } from '@/hooks/useNavigation';
@@ -11,19 +11,79 @@ import {
   LinkIcon,
 } from '@/components/icons/CommonIcons';
 
+const NO_CHILD_ANCHORS: readonly string[] = [];
+
 export default function CharacterSection({
   title,
   children,
   to,
+  childAnchorIds = NO_CHILD_ANCHORS,
 }: {
   title: string;
   children: ReactNode;
   to?: string;
+  childAnchorIds?: readonly string[];
 }) {
   const sectionId = `Section:${title}`;
   const [isOpen, setIsOpen] = useState(true);
   const [isMounted, setIsMounted] = useState(true); // Unmount content when folded to avoid lingering overlays
+  const [isAnchorNavigation, setIsAnchorNavigation] = useState(false);
   const { navigate } = useNavigation();
+  const anchorIdsRef = useRef(childAnchorIds);
+
+  useEffect(() => {
+    anchorIdsRef.current = childAnchorIds;
+  }, [childAnchorIds]);
+
+  useEffect(() => {
+    let frame = 0;
+    const revealAnchor = (hash: string) => {
+      let id: string;
+      try {
+        id = decodeURIComponent(hash.slice(1));
+      } catch {
+        return; // Malformed external fragments cannot identify a section.
+      }
+      if (to || (id !== sectionId && !anchorIdsRef.current.includes(id))) return;
+      setIsAnchorNavigation(true);
+      setIsMounted(true);
+      setIsOpen(true);
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'instant', block: 'start' });
+      });
+    };
+    const handleHashChange = () => revealAnchor(window.location.hash);
+    const handleClick = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      )
+        return;
+      const anchor = event.target instanceof Element ? event.target.closest('a') : null;
+      if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download')) return;
+      const url = new URL(anchor.href, window.location.href);
+      if (
+        url.origin === window.location.origin &&
+        url.pathname === window.location.pathname &&
+        url.search === window.location.search
+      ) {
+        revealAnchor(url.hash);
+      }
+    };
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    document.addEventListener('click', handleClick);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('hashchange', handleHashChange);
+      document.removeEventListener('click', handleClick);
+    };
+  }, [sectionId, to]);
 
   const toggleOpen = () => {
     if (to) {
@@ -31,6 +91,7 @@ export default function CharacterSection({
       return;
     }
 
+    setIsAnchorNavigation(false);
     if (isOpen) {
       // Start closing animation; unmount on transition end
       setIsOpen(false);
@@ -44,7 +105,8 @@ export default function CharacterSection({
   return (
     <div
       className={cn(
-        'flex scroll-mt-24 flex-col transition-all',
+        'flex scroll-mt-24 flex-col',
+        !isAnchorNavigation && 'transition-all',
         isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in',
         isOpen ? 'mb-8' : 'mb-0'
       )}
@@ -57,6 +119,7 @@ export default function CharacterSection({
               variant='unstyled'
               type='button'
               className='cursor-pointer focus:outline-none'
+              aria-expanded={to ? undefined : isOpen}
               onClick={toggleOpen}
             >
               {title}
@@ -74,6 +137,7 @@ export default function CharacterSection({
         <Button
           variant='unstyled'
           type='button'
+          aria-expanded={to ? undefined : isOpen}
           aria-label={to ? `前往${title}` : isOpen ? `折叠${title}` : `展开${title}`}
           className='focus-visible:ring-focus ml-auto cursor-pointer rounded p-1 focus-visible:ring-2 focus-visible:outline-none'
           onClick={toggleOpen}
@@ -93,12 +157,13 @@ export default function CharacterSection({
       {isMounted && (
         <div
           className={cn(
-            'transition-all ease-out',
+            isAnchorNavigation ? '' : 'transition-all ease-out',
             isOpen ? 'duration-300' : 'duration-200',
             isOpen ? 'max-h-2500 opacity-100' : 'max-h-0 opacity-0'
           )}
           style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
           aria-hidden={!isOpen}
+          inert={!isOpen}
           onTransitionEnd={() => {
             if (!isOpen) setIsMounted(false);
           }}

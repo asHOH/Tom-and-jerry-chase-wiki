@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { toChineseNumeral } from '@/lib/textUtils';
+import { useScrollSpy } from '@/hooks/useScrollSpy';
 
 export type ArticleTocItem = {
   id: string;
@@ -125,7 +126,8 @@ export function useArticleToc({ articleId, content, showAutoNumbering }: UseArti
   const contentRef = useRef<HTMLDivElement | null>(null);
   const hasScrolledArticleRef = useRef<string | null>(null);
   const [tocItems, setTocItems] = useState<ArticleTocItem[]>([]);
-  const [activeHeadingId, setActiveHeadingId] = useState('');
+  const headingIds = useMemo(() => tocItems.map((item) => item.id), [tocItems]);
+  const activeHeadingId = useScrollSpy(headingIds);
 
   useLayoutEffect(() => {
     const container = contentRef.current;
@@ -163,7 +165,6 @@ export function useArticleToc({ articleId, content, showAutoNumbering }: UseArti
 
         if (!targetHeadings.length) {
           setTocItems((previousItems) => (previousItems.length ? [] : previousItems));
-          setActiveHeadingId((previousId) => (previousId ? '' : previousId));
           return;
         }
 
@@ -265,12 +266,6 @@ export function useArticleToc({ articleId, content, showAutoNumbering }: UseArti
           }
           return generatedItems;
         });
-
-        setActiveHeadingId((previousId) =>
-          previousId && generatedItems.some((item) => item.id === previousId)
-            ? previousId
-            : (generatedItems[0]?.id ?? '')
-        );
       } finally {
         isIterating = false;
         if (!isDisposed) {
@@ -287,34 +282,6 @@ export function useArticleToc({ articleId, content, showAutoNumbering }: UseArti
       observer?.disconnect();
     };
   }, [articleId, content, showAutoNumbering]);
-
-  useEffect(() => {
-    if (!tocItems.length) {
-      return;
-    }
-
-    const handleScroll = () => {
-      let currentId = tocItems[0]?.id ?? '';
-      for (const item of tocItems) {
-        const element = document.getElementById(item.id);
-        if (!element) {
-          continue;
-        }
-        const { top } = element.getBoundingClientRect();
-        if (top <= 128) {
-          currentId = item.id;
-        } else {
-          break;
-        }
-      }
-
-      setActiveHeadingId((previousId) => (previousId === currentId ? previousId : currentId));
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [tocItems]);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;

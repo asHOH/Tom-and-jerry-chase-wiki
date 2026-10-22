@@ -15,6 +15,7 @@ import Card from '@/components/ui/Card';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
+import TableOfContents from '@/components/ui/TableOfContents';
 import CommentsSection from '@/components/comments/CommentsSection';
 import {
   ClockIcon,
@@ -94,37 +95,16 @@ export default function ArticleClient({
     return tocItems.reduce((minLevel, item) => Math.min(minLevel, item.level), firstLevel);
   }, [tocItems]);
 
-  // Get bound character info if this is a game strategy article
-  const renderTocList = (itemClassName: string, showHeadingLabel = true) => (
-    <nav aria-label='文章目录'>
-      {showHeadingLabel && (
-        <div className='mb-3 text-sm font-semibold text-gray-800 dark:text-gray-200'>目录</div>
-      )}
-      <ul className='space-y-1'>
-        {tocItems.map((item) => {
-          const isActive = activeHeadingId === item.id;
-          const levelOffset = Math.max(item.level - minHeadingLevel, 0);
-          return (
-            <li key={item.id} style={{ marginLeft: `${levelOffset * 12}px` }}>
-              <a
-                href={`#${item.id}`}
-                className={cn(
-                  'block rounded px-2 py-1 text-sm transition-colors',
-                  itemClassName,
-                  isActive
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200'
-                    : 'text-muted-foreground hover:text-blue-600 dark:hover:text-blue-300'
-                )}
-              >
-                {showAutoNumbering && <span className='mr-1 opacity-70'>{item.prefix}</span>}
-                {item.text}
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
-  );
+  const directoryItems = tocItems.map((item) => ({
+    id: item.id,
+    depth: Math.max(item.level - minHeadingLevel, 0),
+    label: (
+      <>
+        {showAutoNumbering && <span className='mr-1 opacity-70'>{item.prefix}</span>}
+        {item.text}
+      </>
+    ),
+  }));
 
   return (
     <PageShell width='maximum' className='py-2 md:py-8'>
@@ -147,7 +127,12 @@ export default function ArticleClient({
             bordered
             className='bg-surface/60 dark:bg-background/40 sticky top-24 hidden h-max max-h-[75vh] overflow-auto shadow-sm backdrop-blur lg:block lg:w-64'
           >
-            {renderTocList('text-left')}
+            <div className='mb-3 text-sm font-semibold text-gray-800 dark:text-gray-200'>目录</div>
+            <TableOfContents
+              items={directoryItems}
+              activeId={activeHeadingId}
+              ariaLabel='文章目录'
+            />
           </Card>
         )}
 
@@ -267,7 +252,13 @@ export default function ArticleClient({
                 <summary className='cursor-pointer text-sm font-semibold text-gray-800 dark:text-gray-200'>
                   目录
                 </summary>
-                <div className='mt-3'>{renderTocList('text-left', false)}</div>
+                <div className='mt-3'>
+                  <TableOfContents
+                    items={directoryItems}
+                    activeId={activeHeadingId}
+                    ariaLabel='文章目录'
+                  />
+                </div>
               </details>
             </Card>
           )}
