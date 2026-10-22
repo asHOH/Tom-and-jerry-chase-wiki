@@ -1,3 +1,4 @@
+import { sanitizeNoticeHTML } from '@/lib/notices/sanitize';
 import { ALLOWED_CONTENT_CLASSES } from '@/lib/xssConfig';
 
 import { stripDisallowedImages } from './imagePolicy';
@@ -35,7 +36,7 @@ function addClassAttribute(attributes: string, className: string): string {
   );
 }
 
-export function normalizeTextAlignAttributes(html: string): string {
+function normalizeTextAlignAttributes(html: string): string {
   return html.replace(ALIGNABLE_BLOCK_TAG_REGEX, (tag, tagName: string, attributes: string) => {
     const style = attributes.match(STYLE_ATTR_REGEX)?.[2] ?? '';
     const alignValue = style.match(TEXT_ALIGN_STYLE_REGEX)?.[1]?.toLowerCase();
@@ -48,11 +49,11 @@ export function normalizeTextAlignAttributes(html: string): string {
   });
 }
 
-export function removeInlineStyleAttributes(html: string): string {
+function removeInlineStyleAttributes(html: string): string {
   return html.replace(/\sstyle=(?:"[^"]*"|'[^']*')/gi, '');
 }
 
-export function removeDisallowedClassAttributes(html: string): string {
+function removeDisallowedClassAttributes(html: string): string {
   return html.replace(
     TAG_WITH_CLASS_ATTR_REGEX,
     (
@@ -76,10 +77,15 @@ export function removeDisallowedClassAttributes(html: string): string {
   );
 }
 
-export function cleanHTMLForExport(html: string): string {
+export function normalizeEditorHtml(html: string, preset: 'full' | 'notice' = 'full'): string {
   let out = normalizeTextAlignAttributes(stripDisallowedImages(html));
   out = removeInlineStyleAttributes(out);
   out = removeDisallowedClassAttributes(out);
+  return preset === 'notice' ? sanitizeNoticeHTML(out) : out;
+}
+
+export function cleanHTMLForExport(html: string, preset: 'full' | 'notice' = 'full'): string {
+  let out = normalizeEditorHtml(html, preset);
   out = out.replace(/<colgroup>[\s\S]*?<\/colgroup>/gi, '');
   out = out.replace(/<(td|th)([^>]*)>\s*<p>([\s\S]*?)<\/p>\s*<\/\1>/gi, '<$1$2>$3</$1>');
   out = out.replace(/<table([^>]*)>\s*<p>\s*<\/p>/gi, '<table$1>');

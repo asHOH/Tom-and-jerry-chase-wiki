@@ -2,19 +2,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EditorContent } from '@tiptap/react';
 
 import { cn } from '@/lib/design';
-import { sanitizeNoticeHTML } from '@/lib/notices/sanitize';
-import {
-  cleanHTMLForExport,
-  normalizeTextAlignAttributes,
-  removeDisallowedClassAttributes,
-  removeInlineStyleAttributes,
-} from '@/lib/richtext/htmlTransforms';
+import { cleanHTMLForExport, normalizeEditorHtml } from '@/lib/richtext/htmlTransforms';
 import {
   createDecorativeImageAttributes,
   describeAllowedImageSources,
   normalizeHostedImageUrl,
   RTE_IMAGE_ALLOWED_MIME_TYPES,
-  stripDisallowedImages,
 } from '@/lib/richtext/imagePolicy';
 import { transposeTable as transposeTableUtil } from '@/lib/richtext/tableUtils';
 import { htmlToWikiText, wikiTextToHTML } from '@/lib/richTextUtils';
@@ -45,22 +38,13 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   className,
   preset = 'full',
 }) => {
-  const sanitizeEditorHtml = useCallback(
-    (html: string) => {
-      const sanitized = removeDisallowedClassAttributes(
-        removeInlineStyleAttributes(normalizeTextAlignAttributes(stripDisallowedImages(html)))
-      );
-      return preset === 'notice' ? sanitizeNoticeHTML(sanitized) : sanitized;
-    },
-    [preset]
-  );
   const sanitizedPlaceholder = useMemo(
-    () => sanitizeEditorHtml(placeholder),
-    [placeholder, sanitizeEditorHtml]
+    () => normalizeEditorHtml(placeholder, preset),
+    [placeholder, preset]
   );
   const sanitizedContent = useMemo(
-    () => sanitizeEditorHtml(content ?? ''),
-    [content, sanitizeEditorHtml]
+    () => normalizeEditorHtml(content ?? '', preset),
+    [content, preset]
   );
   const initialHtml = sanitizedContent || sanitizedPlaceholder;
 
@@ -77,6 +61,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     content: sanitizedContent || sanitizedPlaceholder || '',
     onChange,
     className,
+    preset,
   });
 
   const toolbarState = useRTEToolbarState(editor);
@@ -258,19 +243,18 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     // Determine conversions based on current view
     if (mode === 'wiki') {
       if (viewMode === 'html') {
-        const sanitizedHtml = sanitizeEditorHtml(rawContent);
+        const sanitizedHtml = normalizeEditorHtml(rawContent, preset);
         setRawContent(htmlToWikiText(sanitizedHtml));
       } else if (viewMode === 'rich') {
-        const currentHtml = sanitizeEditorHtml(editor.getHTML());
+        const currentHtml = normalizeEditorHtml(editor.getHTML(), preset);
         setRawContent(htmlToWikiText(currentHtml));
       }
     } else if (mode === 'html') {
       if (viewMode === 'wiki') {
-        const htmlFromWiki = sanitizeEditorHtml(wikiTextToHTML(rawContent));
-        setRawContent(cleanHTMLForExport(htmlFromWiki));
+        setRawContent(cleanHTMLForExport(wikiTextToHTML(rawContent), preset));
       } else if (viewMode === 'rich') {
         const currentHtml = editor.getHTML();
-        setRawContent(cleanHTMLForExport(currentHtml));
+        setRawContent(cleanHTMLForExport(currentHtml, preset));
       }
     } else {
       // Switching back to rich text
@@ -279,7 +263,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         newHtml = wikiTextToHTML(rawContent);
       }
       // If coming from HTML view, rawContent already holds HTML
-      const sanitizedHtml = sanitizeEditorHtml(newHtml);
+      const sanitizedHtml = normalizeEditorHtml(newHtml, preset);
       editor.commands.setContent(sanitizedHtml, { emitUpdate: true });
     }
     setViewMode(mode);
@@ -334,10 +318,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               const value = e.target.value;
               if (viewMode === 'wiki') {
                 setRawContent(value);
-                const convertedHTML = sanitizeEditorHtml(wikiTextToHTML(value));
+                const convertedHTML = normalizeEditorHtml(wikiTextToHTML(value), preset);
                 onChange?.(convertedHTML);
               } else {
-                const sanitizedHtml = sanitizeEditorHtml(value);
+                const sanitizedHtml = normalizeEditorHtml(value, preset);
                 setRawContent(sanitizedHtml);
                 onChange?.(sanitizedHtml);
               }

@@ -1,4 +1,45 @@
-import { cleanHTMLForExport, normalizeTextAlignAttributes } from './htmlTransforms';
+import { cleanHTMLForExport, normalizeEditorHtml } from './htmlTransforms';
+
+jest.mock('@/env', () => ({
+  env: {
+    NEXT_PUBLIC_SUPABASE_RTE_IMAGE_BUCKET: 'article-media',
+    NEXT_PUBLIC_SUPABASE_URL: 'https://project.supabase.co',
+  },
+}));
+
+const editorHtml =
+  '<p class="lead" style="color:red;text-align:center">Body</p>' +
+  '<table style="width:100%"><tr><td><p>Cell</p></td></tr></table>' +
+  '<img src="/images/local.png" onerror="alert(1)">' +
+  '<img src="https://project.supabase.co/storage/v1/object/public/article-media/hosted.png">' +
+  '<img src="https://example.com/blocked.png">';
+
+describe('normalizeEditorHtml', () => {
+  it('preserves full content and alignment while applying image, style and class policies', () => {
+    const output = normalizeEditorHtml(editorHtml);
+
+    expect(output).toContain('<p class="rte-text-center">Body</p>');
+    expect(output).toContain('<table><tr><td><p>Cell</p></td></tr></table>');
+    expect(output).toContain('<img src="/images/local.png" alt="">');
+    expect(output).toContain('article-media/hosted.png');
+    expect(output).not.toMatch(/style=|lead|onerror|blocked/);
+    expect(normalizeEditorHtml(output)).toBe(output);
+  });
+
+  it('applies the notice policy after converting alignment to allowed classes', () => {
+    const output = normalizeEditorHtml(editorHtml, 'notice');
+
+    expect(output).toBe('<p class="rte-text-center">Body</p><p>Cell</p>');
+    expect(normalizeEditorHtml(output, 'notice')).toBe(output);
+    expect(cleanHTMLForExport(editorHtml, 'notice')).toBe(output);
+  });
+
+  it('keeps existing alignment classes without duplicating them', () => {
+    expect(
+      normalizeEditorHtml('<p class="rte-text-center" style="text-align: center;">基础信息</p>')
+    ).toBe('<p class="rte-text-center">基础信息</p>');
+  });
+});
 
 describe('cleanHTMLForExport', () => {
   it('removes colgroup and inline styles on table', () => {
@@ -30,14 +71,6 @@ describe('cleanHTMLForExport', () => {
     );
     expect(out).not.toContain('style=');
     expect(out).not.toContain('lead');
-  });
-
-  it('normalizes text alignment classes without duplicating existing classes', () => {
-    const out = normalizeTextAlignAttributes(
-      '<p class="rte-text-center" style="text-align: center;">基础信息</p>'
-    );
-
-    expect(out).toBe('<p class="rte-text-center" style="text-align: center;">基础信息</p>');
   });
 
   it('unwraps p tags inside table cells', () => {

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createDocument } from '@tiptap/core';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { Table } from '@tiptap/extension-table';
@@ -9,12 +10,7 @@ import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
 import { cn } from '@/lib/design';
-import {
-  normalizeTextAlignAttributes,
-  removeDisallowedClassAttributes,
-  removeInlineStyleAttributes,
-} from '@/lib/richtext/htmlTransforms';
-import { stripDisallowedImages } from '@/lib/richtext/imagePolicy';
+import { normalizeEditorHtml } from '@/lib/richtext/htmlTransforms';
 import { TextAlignClasses } from '@/lib/richtext/textAlignClasses';
 
 interface UseRTEConfigurationProps {
@@ -22,6 +18,7 @@ interface UseRTEConfigurationProps {
   content: string;
   onChange?: ((content: string) => void) | undefined;
   className?: string | undefined;
+  preset?: 'full' | 'notice';
 }
 
 export function useRTEConfiguration({
@@ -29,6 +26,7 @@ export function useRTEConfiguration({
   content,
   onChange,
   className,
+  preset = 'full',
 }: UseRTEConfigurationProps) {
   const editor = useEditor({
     extensions: [
@@ -49,14 +47,13 @@ export function useRTEConfiguration({
       TableHeader,
       TableCell,
     ],
-    content: initialHtml,
+    content: normalizeEditorHtml(initialHtml, preset),
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      const sanitized = removeDisallowedClassAttributes(
-        removeInlineStyleAttributes(normalizeTextAlignAttributes(stripDisallowedImages(html)))
-      );
-      if (sanitized !== html) {
+      const sanitized = normalizeEditorHtml(html, preset);
+      // Compare parsed nodes because Tiptap restores defaults such as link target and rel.
+      if (sanitized !== html && !editor.state.doc.eq(createDocument(sanitized, editor.schema))) {
         editor.commands.setContent(sanitized, { emitUpdate: false });
       }
       onChange?.(sanitized);
@@ -77,11 +74,11 @@ export function useRTEConfiguration({
 
   useEffect(() => {
     if (!editor) return;
-    const current = stripDisallowedImages(editor.getHTML());
-    if (content !== current) {
-      editor.commands.setContent(content, { emitUpdate: true });
+    const target = normalizeEditorHtml(content, preset);
+    if (!editor.state.doc.eq(createDocument(target, editor.schema))) {
+      editor.commands.setContent(target, { emitUpdate: true });
     }
-  }, [editor, content]);
+  }, [editor, content, preset]);
 
   return editor;
 }
