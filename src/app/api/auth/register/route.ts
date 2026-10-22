@@ -1,6 +1,6 @@
-import { pbkdf2Sync, randomBytes } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { createPasswordCredentials } from '@/lib/auth/passwordCredentials';
 import {
   checkUsernameAvailability,
   createSupabaseUsernameAvailabilityDataSource,
@@ -19,10 +19,6 @@ import { TablesInsert } from '@/data/database.types';
 import { env } from '@/env';
 
 import { getAuthCreateUserFailure } from './authErrorUtils';
-
-const hashPassword = (password: string, salt: string) => {
-  return pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
-};
 
 export async function POST(request: NextRequest) {
   try {
@@ -126,8 +122,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const salt = randomBytes(16).toString('hex');
-    const passwordHash = password ? hashPassword(password, salt) : '';
+    const credentials = createPasswordCredentials(password);
 
     const authUserEmail = availability.authEmail;
     const { data: authData, error: authError } =
@@ -153,8 +148,7 @@ export async function POST(request: NextRequest) {
         id: authUserId, // Use the ID from auth.users
         username_hash: hashUsername(username),
         nickname,
-        password_hash: passwordHash,
-        salt,
+        ...credentials,
       } as TablesInsert<'users'>);
 
     if (insertError) {

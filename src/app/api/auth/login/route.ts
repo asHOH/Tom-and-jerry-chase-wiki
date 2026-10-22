@@ -1,6 +1,7 @@
-import { createHash, pbkdf2Sync, timingSafeEqual } from 'crypto';
+import { createHash } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { verifyPasswordCredentials } from '@/lib/auth/passwordCredentials';
 import { recordUserIp } from '@/lib/blocks/server';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
@@ -10,20 +11,6 @@ import { createSupabaseRouteClient } from '@/lib/supabase/ssrClient';
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
 };
-
-const hashPassword = (password: string, salt: string) => {
-  return pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
-};
-
-function stringTimingSafeEqual(a: string, b: string): boolean {
-  const bufA = Buffer.from(a, 'utf16le');
-  const bufB = Buffer.from(b, 'utf16le');
-  if (bufA.length !== bufB.length) {
-    return false;
-  }
-
-  return timingSafeEqual(bufA, bufB);
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -84,8 +71,9 @@ export async function POST(request: NextRequest) {
     if (!password || typeof password !== 'string') {
       return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
     }
-    const providedPasswordHash = hashPassword(password, user.salt);
-    if (!stringTimingSafeEqual(providedPasswordHash, user.password_hash)) {
+    if (
+      !verifyPasswordCredentials(password, { password_hash: user.password_hash, salt: user.salt })
+    ) {
       return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
     }
     // Password-based user is valid, create session and attach cookies to response
