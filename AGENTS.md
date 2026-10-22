@@ -4,12 +4,11 @@ Tom and Jerry Chase Wiki, whose Chinese name is 猫和老鼠手游百科 (short 
 
 - Production (VPS+Cloudflared): <https://www.tjwiki.com>
 - Development preview (Vercel): <https://dev.tjwiki.com>
-- Codex agents: use the Vercel plugin for vercel platform guidance and preview deployment/log diagnostics; production deployment remains governed by `DEPLOY.md`.
+- Codex agents: use the Vercel plugin for platform guidance and preview deployment/log diagnostics. `DEPLOY.md` governs production deployment and environment setup.
 - If `.codex/AGENTS.md` exists, read it before starting task work and treat it as private, project-local operator context. The file is intentionally untracked and may be absent.
 - Product UI language: `zh-CN`. This does not set the language of assistant responses.
 - Design mobile-first.
 - Use the Node.js and npm versions declared in `package.json` (`engines`, `packageManager`, and `devEngines`).
-- `DEPLOY.md` holds deployment options and environment setup; do not duplicate those details here.
 - If you discover an important gap or error in the project documentation, report it in your final response and suggest a correction.
 
 # Commands
@@ -22,52 +21,27 @@ npm run build:skip-images      # Same build without image optimization
 
 # Quality
 npm run lint                   # Oxlint
-npm run lint:fix               # Oxlint auto-fix
 npm run prettier:check         # Check formatting
-npm run prettier:fix           # Format the repository
-npm run format                 # Prettier, then Oxlint auto-fix
 npm run type-check             # tsc --noEmit
-npm run validate:actor-profiles
 
 # Tests
 npm test                       # All Jest tests
 npm run test:scripts           # Node.js tests under scripts/ and scripts/lib/
 npm test -- path/to/file.test.ts
-npm test -- --testPathPatterns=filterUtils
-npm run test:watch
-npm run test:changed           # Tests related to changed files; passes when none are found
-npm run test:coverage
-npm run test:ci                # CI Jest mode with coverage and 50% workers
 ```
 
-Tests are colocated with source as `*.test.ts` or `*.test.tsx`. Use React Testing Library for components and plain Jest for utilities. Jest only discovers tests under `src/`; `test/` currently contains mocks and support files. Script tests use Node.js's test runner via `npm run test:scripts` and run separately in CI; do not invoke those `.test.mjs` files from Jest wrappers.
+See `package.json` for other scripts. Tests are colocated as `*.test.ts` or `*.test.tsx`; use React Testing Library for components and plain Jest for utilities. Jest discovers tests under `src/`; `test/` holds mocks and support files. Script tests use Node.js's test runner separately; do not invoke `.test.mjs` files from Jest wrappers.
 
 # Project Structure
 
-```text
-src/
-├── app/                      # App Router pages, layouts, metadata, and route handlers
-│   ├── (main)/               # Public routes using GlobalLayout
-│   ├── admin/                # Dynamic admin UI
-│   ├── api/                  # Route handlers
-│   └── maps/                 # Legacy scene-map redirects outside (main)
-├── features/                 # Domain modules: data, components, hooks, and helpers
-├── components/               # Cross-feature and app-level components
-│   └── ui/                   # Shared UI primitives
-├── data/                     # Shared static data, generated data, types, and Valtio edit stores
-├── lib/                      # Business logic and integrations
-├── hooks/                    # Cross-feature hooks
-├── context/                  # Theme, edit mode, toast, and wiki-history providers
-└── styles/                   # Global theme, base, typography, component, pattern, and animation CSS
-
-scripts/                      # Generation, validation, reports, image processing, and ops scripts
-supabase/migrations/          # Database schema history; add migrations rather than editing old ones
-test/__mocks__/               # Jest-only mocks outside Jest's test discovery roots
-```
+- `src/app/`: routes, layouts, metadata, and API handlers; `(main)/` uses `GlobalLayout`.
+- `src/features/`: domain modules. `src/components/`, `src/hooks/`, and `src/context/`: shared UI, hooks, and providers.
+- `src/data/`: baseline/generated data, types, and edit stores. `src/lib/`: business logic and integrations. `src/styles/`: shared CSS and theme tokens.
+- `scripts/`: generation, validation, reports, image processing, and operations. `supabase/migrations/`: database schema history.
 
 After changing Supabase migrations or the pinned Supabase CLI version, replay the local database, run `npm run generate:database-types`, and commit any changes to `src/data/database.generated.ts` in the same PR. Follow the upgrade and validation steps in [the Supabase migration runbook](docs/operations/supabase-migrations.md). Do not manually edit that generated file.
 
-Maintainer checkouts remain linked to production; use `STAGING_DATABASE_URL` with `--db-url` for `tjwiki-test`. Confirm the target and dry run before every push, and preserve the same version and SQL for remotely applied migrations.
+The Supabase CLI may be linked to production. Verify the target and dry run before each remote database migration push; use `STAGING_DATABASE_URL` with `--db-url` for `tjwiki-test`. Preserve the version and SQL of remotely applied migrations; make corrections in new migrations. For Data API objects, follow the runbook's explicit grants and RLS requirements.
 
 # Architecture
 
@@ -75,12 +49,11 @@ Maintainer checkouts remain linked to production; use `STAGING_DATABASE_URL` wit
 
 - TypeScript and JSON data under `src/data/` and `src/features/*/data/` form the checked-in baseline.
 - Approved public rows from Supabase `game_data_actions` are composed with the checked-in baseline by the server-only modules under `src/lib/gameData/published/`. Public rendering should read through `getPublishedDomainReadModel` or `getPublishedEntityRouteReadModel`, not import the static baseline for render-time entity lookup. When adding an editable entity type, keep `publishableEntityTypes.ts`, the published data types and canonical sources, the edit stores and registry, and their exhaustiveness tests aligned.
-- Approved `game_data_actions` may update existing characters but must not add a new root-level `characters` entry; introduce new characters through the checked-in baseline instead. Character navigation currently uses checked-in membership to distinguish public characters from local drafts, so violating this invariant can misclassify an approved character as draft-only and route links through `/characters/user/...` until the baseline catches up.
-- New submissions require a UUID v4 `Idempotency-Key` and use the atomic request RPC. Character validation rejects unsupported fields, contradictory explicit relations, and new character roots; rows with no net change are rejected for every domain. Keep `src/lib/gameData/characterDataValidation.ts` aligned when adding character fields. Unchanged container checks may remain inside a row that makes a real edit.
+- Approved `game_data_actions` may update existing characters; new root-level characters must enter through the checked-in baseline, whose membership distinguishes public characters from local drafts.
+- New submissions require a UUID v4 `Idempotency-Key` and the atomic request RPC. Reject unsupported character fields, contradictory explicit relations, new character roots, and rows with no net change. Keep `src/lib/gameData/characterDataValidation.ts` aligned when adding character fields. Unchanged container checks may remain within a real edit.
 - Local edit mode lazily fetches the published baseline in `src/components/EditRuntime.tsx` and installs one `EditSession`. Feature code must use the typed editable-data hooks or session draft APIs; do not import raw edit stores, registry topology, subscribers, or browser-history helpers. Tests should use the behavior-oriented helpers in `src/testUtils/editRuntime.ts` and mutate/read through the session interface; shared action types and pure replay helpers remain available to server-side modules.
 - `scripts/generate-doc-pages.mjs` writes `src/data/generated/docPages.json`. Changelog generation writes `src/data/generated/changeLogs.json`. Do not hand-edit generated JSON.
 - `npm run generate:history-dates` derives `src/data/generated/historyDates.json` from the game timeline. Regenerate it after editing `src/data/history.ts`; development startup and builds also refresh it.
-- Actor-profile changes must pass `npm run validate:actor-profiles`.
 - New characters also need registration in `src/features/characters/data/characterMetadata.ts` and a canonical actor profile. When verified attributes are pending, explicitly list the character in `src/features/actor-profiles/pendingProfiles.ts`; character views show pending attributes and omit statistics from rankings and games. Remove that entry when adding the verified profile. Never use placeholder numbers as canonical statistics.
 
 ## Rendering and Routing
@@ -91,10 +64,11 @@ Maintainer checkouts remain linked to production; use `STAGING_DATABASE_URL` wit
 - React Compiler uses annotation mode. Preserve deliberate compiler directives such as `'use no memo'`; do not add compiler annotations casually.
 - `src/proxy.ts` is the request proxy. It refreshes Supabase sessions and applies preview no-index behavior; this project does not use a legacy root `middleware.ts`.
 - New public routes should follow adjacent metadata, canonical URL, structured-data, robots, and sitemap patterns.
+- For pages combining published domains, share an approved-action snapshot and register the consumed revisions. Follow `src/app/(main)/relations/page.tsx` and `PublishedRevisionBoundary`.
 
 ## Dynamic Services and State
 
-- Supabase-backed articles, comments, users, permissions, notifications, and game-data actions are dynamic. Client-side API reads generally use SWR.
+- Supabase-backed articles, comments, users, permissions, notifications, and game-data actions are dynamic.
 - `src/lib/supabase/client.ts`: browser singleton.
 - `src/lib/supabase/server.ts`: cookie-aware, cached RSC/route-handler client; call `await createClient()`.
 - `src/lib/supabase/public.ts`: server-only publishable-key client for unauthenticated public reads.
@@ -107,10 +81,10 @@ Maintainer checkouts remain linked to production; use `STAGING_DATABASE_URL` wit
 
 ## Environment and PWA
 
-- Add or change environment variables in `src/env.ts` and mirror public variables in `experimental__runtimeEnv`. Keep `.env.example` and relevant deployment documentation in sync.
+- Define application environment variables in `src/env.ts` and mirror public variables in `experimental__runtimeEnv`. Keep `.env.example` and relevant deployment documentation in sync; script-only and deployment-only variables follow their owning tool.
 - `SKIP_ENV_VALIDATION=1` bypasses validation. `SKIP_BUILD_CHECKS=true` only controls Next's TypeScript build-error handling; neither should be a normal development default.
 - Serwist builds `public/sw.js` from `src/sw.ts` using `serwist.config.mjs`. The service worker is disabled in development. Do not hand-maintain generated service-worker output.
-- Offline browsing preserves the homepage, both faction pages, and navigation/character images as startup content; other public pages are cached as visited. Editing/admin workflows are excluded. See `docs/operations/offline-browsing.md` for caching and verification details.
+- Keep editing/admin workflows excluded from offline caching. Follow `docs/operations/offline-browsing.md` when changing navigation or caching.
 
 # Code Conventions
 
@@ -123,13 +97,24 @@ Formatting and lint-enforced details are intentionally omitted here. Treat Prett
 
 ## React and Components
 
+Before adding UI, search `src/components/` and the relevant feature for an existing component. Read its props and one caller, then reuse or compose it when its behavior fits. Keep domain-specific UI in its feature; extend shared components only for shared behavior.
+
+Reusable entry points (under `src/components/ui/` unless qualified):
+
+- Layout: `PageShell`, `PageHeader`, `CatalogPageShell`, `SectionNavigationShell`.
+- Cards/lists: `Card`, `EntityCardFrame`, `CatalogCard`, `CatalogGrid`.
+- Actions/forms: `Button`, `ButtonLink`, `IconButton`; `FormInput`, `FormSelect`, `FormTextarea` from `FormControls.tsx`.
+- Overlays: `Tooltip`; `BaseDialog` handles layering, focus, scroll locking, and reduced motion.
+- Internal navigation: `@/components/Link` and `@/hooks/useNavigation` preserve offline navigation and progress behavior; `Link` also manages the edit parameter.
+- Images: `@/components/Image` handles generated formats and optimization settings; `GameImage` provides established game-image layouts.
+
 - Define props directly above the component and extend native element attributes when wrapping an HTML element.
 - Page modules and UI primitives generally use default exports. Utilities, hooks, and types use named exports. Follow the established pattern in the same directory.
-- Use `cn` from `@/lib/design` for conditional classes, reusable class composition, or merging an incoming `className`.
+- Reuse `@/lib/design` styling helpers; use `cn` for conditional classes and merging `className`.
 - Prefer Tailwind for static styling. Use global CSS in `src/styles/` for shared tokens and patterns, and inline `style` only for runtime-computed values or values Tailwind cannot express cleanly.
 - Prefer numeric sizing utilities (e.g. `min-h-105`, `min-w-30`) over arbitrary pixels (`min-h-[420px]`, `min-w-[120px]`), unless fixed CSS pixels are intentional; numeric sizes follow the rem-based spacing scale.
 - Keep dark-mode behavior via `dark:` variants and the existing theme tokens. Test both themes when changing colors.
-- Use responsive Tailwind prefixes and existing media/gesture hooks for mobile behavior.
+- Use responsive Tailwind prefixes, `useMobile` from `src/hooks/useMediaQuery.ts`, and `useSwipeGesture` for mobile behavior.
 - Preserve keyboard navigation, visible focus states, semantic and ARIA behavior, reduced-motion handling, and touch usability when changing interactive UI.
 
 ## Error Handling and Security
@@ -158,7 +143,7 @@ Validate in proportion to the scope of change:
 - Source: run `npm run lint`, `npm run type-check`, and relevant tests.
 - Broad or cross-cutting: run full `npm test` suite.
 - Scripts or script-test configuration: run `npm run test:scripts`.
-- Markdown-only: run Prettier on the changed file; source tests are unnecessary.
+- Markdown-only: run `npx prettier --write <changed-file>` and check formatting; source tests are unnecessary.
 - Actor-profile data: also run `npm run validate:actor-profiles`.
 - Build/config/generation: run `npm run build:skip-images` when practical.
 
