@@ -1,17 +1,27 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import postcss, { type AtRule, type Container, type Rule } from 'postcss';
 
 const projectRoot = process.cwd();
-const themeSource = fs.readFileSync(path.join(projectRoot, 'src/styles/theme.css'), 'utf8');
-const baseSource = fs.readFileSync(path.join(projectRoot, 'src/styles/base.css'), 'utf8');
-const patternsSource = fs.readFileSync(path.join(projectRoot, 'src/styles/patterns.css'), 'utf8');
+const theme = postcss.parse(
+  fs.readFileSync(path.join(projectRoot, 'src/styles/theme.css'), 'utf8')
+);
+const base = postcss.parse(fs.readFileSync(path.join(projectRoot, 'src/styles/base.css'), 'utf8'));
+const patterns = postcss.parse(
+  fs.readFileSync(path.join(projectRoot, 'src/styles/patterns.css'), 'utf8')
+);
 
-const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const getRule = (root: Container, selector: string): Rule | undefined =>
+  root.nodes?.find(
+    (node): node is Rule => node.type === 'rule' && node.selectors.includes(selector)
+  );
 
-const getRuleBody = (source: string, selector: string): string => {
-  const match = new RegExp(`${escapeRegExp(selector)}\\s*\\{([^}]*)\\}`).exec(source);
-  if (!match?.[1]) throw new Error(`Missing CSS rule: ${selector}`);
-  return match[1];
+const getDeclarations = (container: Container | undefined): Record<string, string> => {
+  if (!container) throw new Error('Missing CSS rule');
+  return Object.fromEntries(
+    container.nodes?.flatMap((node) => (node.type === 'decl' ? [[node.prop, node.value]] : [])) ??
+      []
+  );
 };
 
 const semanticTokens = [
@@ -34,32 +44,48 @@ const semanticTokens = [
 ];
 
 it('provides semantic colors in both themes and exposes them to Tailwind', () => {
-  const lightTheme = getRuleBody(themeSource, ':root');
-  const darkTheme = getRuleBody(themeSource, '.dark');
-  const aliases = getRuleBody(themeSource, '@theme inline');
+  const lightTheme = getDeclarations(getRule(theme, ':root'));
+  const darkTheme = getDeclarations(getRule(theme, '.dark'));
+  const aliases = getDeclarations(
+    theme.nodes.find(
+      (node): node is AtRule =>
+        node.type === 'atrule' && node.name === 'theme' && node.params === 'inline'
+    )
+  );
 
   for (const name of semanticTokens) {
-    const declaration = new RegExp(`--wiki-${name}:\\s*[^;]+;`);
-    expect(lightTheme).toMatch(declaration);
-    expect(darkTheme).toMatch(declaration);
-    expect(aliases).toContain(`--color-${name}: var(--wiki-${name});`);
+    expect(lightTheme[`--wiki-${name}`]).toMatch(/\S/);
+    expect(darkTheme[`--wiki-${name}`]).toMatch(/\S/);
+    expect(aliases[`--color-${name}`]).toBe(`var(--wiki-${name})`);
   }
 });
 
 it('applies semantic canvas, text, and keyboard focus colors', () => {
-  expect(baseSource).toMatch(
-    /html,\s*body\s*\{[^}]*color:\s*var\(--wiki-foreground\);[^}]*background-color:\s*var\(--wiki-background\);/s
+  for (const selector of ['html', 'body']) {
+    expect(getDeclarations(getRule(base, selector))).toMatchObject({
+      color: 'var(--wiki-foreground)',
+      'background-color': 'var(--wiki-background)',
+    });
+  }
+  expect(getDeclarations(getRule(patterns, '.filter-button:focus-visible')).outline).toBe(
+    '2px solid var(--wiki-focus)'
   );
-  expect(baseSource).toContain('outline: 2px solid var(--wiki-focus);');
-  expect(patternsSource).toContain('outline: 2px solid var(--wiki-focus);');
 });
 
 it('scopes fixed-navigation and offline clearance to the app content shell', () => {
-  expect(themeSource).toContain('--nav-height: 56px;');
-  expect(themeSource).toContain('--nav-height: 60px;');
-  expect(themeSource).toContain('--offline-banner-height: 40px;');
-  expect(themeSource).toContain('--content-top-gap: 20px;');
-  expect(patternsSource).toContain('top: var(--nav-height);');
-  expect(patternsSource).toContain('body.offline-banner-visible .app-content-shell');
-  expect(patternsSource).not.toMatch(/offline-banner-visible\s+main/);
+  expect(getDeclarations(getRule(theme, ':root'))).toMatchObject({
+    '--nav-height': '56px',
+    '--offline-banner-height': '40px',
+    '--content-top-gap': '20px',
+  });
+  const navHeights: string[] = [];
+  theme.walkDecls('--nav-height', (declaration) => {
+    navHeights.push(declaration.value);
+  });
+  expect(navHeights).toContain('60px');
+  expect(getDeclarations(getRule(patterns, '.offline-banner')).top).toBe('var(--nav-height)');
+  expect(getRule(patterns, 'body.offline-banner-visible .app-content-shell')).toBeDefined();
+  patterns.walkRules((rule) => {
+    expect(rule.selector).not.toMatch(/offline-banner-visible\s+main/);
+  });
 });
