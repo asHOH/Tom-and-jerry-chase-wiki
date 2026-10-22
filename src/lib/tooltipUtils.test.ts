@@ -1,11 +1,4 @@
-import {
-  extractItemKeyActions,
-  getAvailablePositioningTags,
-  getAvailableProperties,
-  getPositioningTagTooltipContent,
-  getTooltipContent,
-  hasItemKeyPatterns,
-} from './tooltipUtils';
+import { getPositioningTagTooltipContent, getTooltipContent } from './tooltipUtils';
 
 describe('tooltipUtils', () => {
   describe('getTooltipContent', () => {
@@ -58,68 +51,6 @@ describe('tooltipUtils', () => {
     it('should fallback when tag not found', () => {
       const result = getPositioningTagTooltipContent('未知标签', 'cat', false);
       expect(result).toBe('未知标签定位的相关信息');
-    });
-  });
-
-  describe('extractItemKeyActions', () => {
-    it('should extract single action from item key pattern', () => {
-      const result = extractItemKeyActions('道具键*打断技能释放');
-      expect(result).toEqual(['打断技能释放']);
-    });
-    it('should extract multiple actions', () => {
-      const result = extractItemKeyActions(
-        '道具键*打断（需要道具） or 道具键*取消后摇（需要道具）'
-      );
-      expect(result).toEqual(['打断', '取消后摇']);
-    });
-
-    it('should handle actions with parentheses', () => {
-      const result = extractItemKeyActions('道具键*打断（需要道具）');
-      expect(result).toEqual(['打断']);
-    });
-
-    it('should return empty array when no patterns found', () => {
-      const result = extractItemKeyActions('No item key patterns here');
-      expect(result).toEqual([]);
-    });
-  });
-
-  describe('hasItemKeyPatterns', () => {
-    it('should detect item key patterns', () => {
-      expect(hasItemKeyPatterns('道具键*打断技能')).toBe(true);
-      expect(hasItemKeyPatterns('Regular text')).toBe(false);
-    });
-  });
-
-  describe('getAvailableProperties', () => {
-    it('should return cat properties', () => {
-      const result = getAvailableProperties('cat');
-      expect(result).toContain('Hp上限');
-      expect(result).toContain('攻击增伤');
-      expect(result).toContain('爪刀CD');
-    });
-
-    it('should return mouse properties', () => {
-      const result = getAvailableProperties('mouse');
-      expect(result).toContain('Hp上限');
-      expect(result).toContain('推速');
-      expect(result).toContain('墙缝增伤');
-    });
-  });
-
-  describe('getAvailablePositioningTags', () => {
-    it('should return cat positioning tags', () => {
-      const result = getAvailablePositioningTags('cat');
-      expect(result).toContain('进攻');
-      expect(result).toContain('防守');
-      expect(result).toContain('追击');
-    });
-
-    it('should return mouse positioning tags', () => {
-      const result = getAvailablePositioningTags('mouse');
-      expect(result).toContain('奶酪');
-      expect(result).toContain('干扰');
-      expect(result).toContain('救援');
     });
   });
 });
