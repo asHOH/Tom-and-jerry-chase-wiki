@@ -69,7 +69,6 @@ describe('CatalogCard', () => {
         src: '/images/items/cheese.png',
         alt: '奶酪道具图标',
         size: 'ITEM_CARD',
-        className: 'h-32 w-auto hover:scale-105 md:h-auto',
       })
     );
   });
