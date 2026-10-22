@@ -5,8 +5,7 @@ import { projectMapModeRelationCharacters } from '@/lib/gameData/published/clien
 import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
-import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { maps as canonicalMaps } from '@/data/static';
 import type { Map as GameMap } from '@/data/types';
 import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
@@ -24,19 +23,12 @@ export function generateStaticParams() {
 
 function generateStructuredData(mapName: string, map: GameMap) {
   const desc = map.description ?? `${map.name}详细信息`;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  return createArticleJsonLd({
     headline: map.name,
     description: desc,
-    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     image: map.imageUrl,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/maps/${encodeURIComponent(mapName)}`,
-    },
-  };
+    path: `/maps/${encodeURIComponent(mapName)}`,
+  });
 }
 
 export async function generateMetadata({

@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import uniq from 'lodash-es/uniq';
+import type { Article, WithContext } from 'schema-dts';
 
 import { DEFAULT_KEYWORDS, SITE_NAME, SITE_SHORT_NAME, SITE_URL } from '@/constants/seo';
 
@@ -31,6 +32,29 @@ export function normalizeUrlWithTrailingSlash(url: string): string {
 export function getCanonicalUrl(path: string): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   return normalizeUrlWithTrailingSlash(cleanPath);
+}
+
+export function createArticleJsonLd({
+  headline,
+  description,
+  path,
+  image,
+}: {
+  headline: string;
+  description: string;
+  path: string;
+  image?: string | undefined;
+}): WithContext<Article> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline,
+    description,
+    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+    ...(image === undefined ? {} : { image }),
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}${path}` },
+  };
 }
 
 export function generatePageMetadata({

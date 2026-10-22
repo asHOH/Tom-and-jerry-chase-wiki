@@ -1,10 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Article, WithContext } from 'schema-dts';
 
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
-import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { entities as canonicalEntities } from '@/data/static';
 import type { Entity } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
@@ -19,20 +17,13 @@ export function generateStaticParams() {
   }));
 }
 
-function generateStructuredData(entityName: string, entity: Entity): WithContext<Article> {
+function generateStructuredData(entityName: string, entity: Entity) {
   const desc = entity.description ?? `${entity.name}详细信息`;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  return createArticleJsonLd({
     headline: entity.name,
     description: desc,
-    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/entities/${encodeURIComponent(entityName)}`,
-    },
-  };
+    path: `/entities/${encodeURIComponent(entityName)}`,
+  });
 }
 
 export async function generateMetadata({

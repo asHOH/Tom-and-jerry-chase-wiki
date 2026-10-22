@@ -1,13 +1,11 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Article, WithContext } from 'schema-dts';
 
 import { projectSpecialSkillCharacters } from '@/lib/gameData/published/clientProjections';
 import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
-import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { specialSkills as canonicalSpecialSkills } from '@/data/static';
 import type { FactionId, SpecialSkill } from '@/data/types';
 import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
@@ -27,25 +25,14 @@ export function generateStaticParams() {
   );
 }
 
-function generateStructuredData(
-  factionId: FactionId,
-  skillId: string,
-  skill: SpecialSkill
-): WithContext<Article> {
+function generateStructuredData(factionId: FactionId, skillId: string, skill: SpecialSkill) {
   const desc = skill.description ?? `${skill.name}技能详情`;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  return createArticleJsonLd({
     headline: skill.name,
     description: desc,
-    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     image: skill.imageUrl,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
-    },
-  };
+    path: `/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
+  });
 }
 
 export async function generateMetadata({

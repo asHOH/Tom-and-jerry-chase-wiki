@@ -5,8 +5,7 @@ import { projectMapModeRelationCharacters } from '@/lib/gameData/published/clien
 import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
-import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { modes as canonicalModes } from '@/data/static';
 import type { Mode } from '@/data/types';
 import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
@@ -24,19 +23,12 @@ export function generateStaticParams() {
 
 function generateStructuredData(modeName: string, mode: Mode) {
   const desc = mode.description ?? `${mode.name}详细信息`;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  return createArticleJsonLd({
     headline: mode.name,
     description: desc,
-    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     image: mode.imageUrl,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/modes/${encodeURIComponent(modeName)}`,
-    },
-  };
+    path: `/modes/${encodeURIComponent(modeName)}`,
+  });
 }
 
 export async function generateMetadata({

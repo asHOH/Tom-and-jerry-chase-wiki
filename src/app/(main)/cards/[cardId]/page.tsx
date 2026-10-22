@@ -1,13 +1,11 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Article, WithContext } from 'schema-dts';
 
 import { projectKnowledgeCardCharacters } from '@/lib/gameData/published/clientProjections';
 import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
-import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { cards as canonicalCards } from '@/data/static';
 import type { Card } from '@/data/types';
 import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
@@ -24,20 +22,13 @@ export function generateStaticParams() {
   }));
 }
 
-function generateStructuredData(cardId: string, card: Card): WithContext<Article> {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+function generateStructuredData(cardId: string, card: Card) {
+  return createArticleJsonLd({
     headline: card.id,
     description: card.description,
-    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    ...(card.imageUrl === undefined ? {} : { image: card.imageUrl }),
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/cards/${encodeURIComponent(cardId)}`,
-    },
-  };
+    image: card.imageUrl,
+    path: `/cards/${encodeURIComponent(cardId)}`,
+  });
 }
 
 export async function generateMetadata({

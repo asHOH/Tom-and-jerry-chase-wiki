@@ -2,8 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
-import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { fixtures as canonicalFixtures } from '@/data/static';
 import type { Fixture } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
@@ -20,19 +19,12 @@ export function generateStaticParams() {
 
 function generateStructuredData(fixtureName: string, fixture: Fixture) {
   const desc = fixture.description ?? `${fixture.name}详细信息`;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  return createArticleJsonLd({
     headline: fixture.name,
     description: desc,
-    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     image: fixture.imageUrl,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/fixtures/${encodeURIComponent(fixtureName)}`,
-    },
-  };
+    path: `/fixtures/${encodeURIComponent(fixtureName)}`,
+  });
 }
 
 export async function generateMetadata({

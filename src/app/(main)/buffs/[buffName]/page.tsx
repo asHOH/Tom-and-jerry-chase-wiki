@@ -1,10 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Article, WithContext } from 'schema-dts';
 
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
-import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { buffs as canonicalBuffs } from '@/data/static';
 import type { Buff } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
@@ -19,21 +17,14 @@ export function generateStaticParams() {
   }));
 }
 
-function generateStructuredData(buffName: string, buff: Buff): WithContext<Article> {
+function generateStructuredData(buffName: string, buff: Buff) {
   const desc = buff.description ?? `${buff.name}详细信息`;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  return createArticleJsonLd({
     headline: buff.name,
     description: desc,
-    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/buffs/${encodeURIComponent(buffName)}`,
-    },
+    path: `/buffs/${encodeURIComponent(buffName)}`,
     image: buff.imageUrl,
-  };
+  });
 }
 
 export async function generateMetadata({

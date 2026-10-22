@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { getItemGroupImageUrl } from '@/features/items/components/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 import StructuredData from '@/components/StructuredData';
 import { itemGroups } from '@/data';
@@ -18,19 +17,12 @@ export function generateStaticParams() {
 function generateStructuredData(itemGroupName: string) {
   const itemGroup = itemGroups[itemGroupName]!;
   const desc = itemGroup.description ?? `${itemGroup.name}详细信息`;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  return createArticleJsonLd({
     headline: itemGroup.name,
     description: desc,
-    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     image: getItemGroupImageUrl(itemGroup),
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/itemGroups/${encodeURIComponent(itemGroupName)}`,
-    },
-  };
+    path: `/itemGroups/${encodeURIComponent(itemGroupName)}`,
+  });
 }
 
 export async function generateMetadata({

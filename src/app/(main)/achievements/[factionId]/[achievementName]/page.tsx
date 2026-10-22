@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
-import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { achievements as canonicalAchievements } from '@/data/static';
 import type { Achievement, FactionId } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
@@ -27,19 +26,12 @@ function generateStructuredData(
   achievement: Achievement
 ) {
   const desc = achievement.description ?? `${achievement.name}详细信息`;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  return createArticleJsonLd({
     headline: achievement.name,
     description: desc,
-    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     image: achievement.imageUrl,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/achievements/${factionId}/${encodeURIComponent(achievementName)}`,
-    },
-  };
+    path: `/achievements/${factionId}/${encodeURIComponent(achievementName)}`,
+  });
 }
 
 export async function generateMetadata({

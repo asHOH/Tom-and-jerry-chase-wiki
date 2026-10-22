@@ -2,8 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
-import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { items as canonicalItems } from '@/data/static';
 import type { Item } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
@@ -20,19 +19,12 @@ export function generateStaticParams() {
 
 function generateStructuredData(itemName: string, item: Item) {
   const desc = item.description ?? `${item.name}详细信息`;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  return createArticleJsonLd({
     headline: item.name,
     description: desc,
-    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     image: item.imageUrl,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/items/${encodeURIComponent(itemName)}`,
-    },
-  };
+    path: `/items/${encodeURIComponent(itemName)}`,
+  });
 }
 
 export async function generateMetadata({
