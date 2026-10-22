@@ -177,7 +177,6 @@ export default function GotoLink({
   ) : data ? (
     <PreviewCard
       {...data}
-      clickable={false}
       hideImage={hideImagePreview || data.type === 'disambiguation'}
       className='w-full max-w-none'
     />

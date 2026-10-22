@@ -26,7 +26,6 @@ export type GotoPreviewCardProps = {
   skillLevel?: number;
   skillType?: SkillType;
   skillLevelDescription?: string;
-  clickable?: boolean;
 };
 
 const typeLabels: Record<string, string> = {
@@ -48,7 +47,6 @@ const typeLabels: Record<string, string> = {
 };
 
 export default function PreviewCard({
-  url,
   type,
   name,
   description,
@@ -63,7 +61,6 @@ export default function PreviewCard({
   skillLevel,
   skillType,
   skillLevelDescription,
-  clickable = true,
 }: GotoPreviewCardProps) {
   const characterTypeLabel = getFactionLabel(factionId)
     ? `${getFactionLabel(factionId)}${typeLabels[type] || type}`
@@ -71,26 +68,40 @@ export default function PreviewCard({
   const ownerSuffix =
     type === 'character-skill' ? getOwnerSuffix(ownerName, ownerFactionId) : undefined;
 
-  const disambiguationList =
-    type === 'disambiguation' && Array.isArray(candidates) && candidates.length > 0 ? (
+  let previewDescription = description;
+  if (type === 'character-skill') {
+    if (skillType === 'passive') {
+      previewDescription =
+        skillLevelDescription && skillLevelDescription.trim().length > 0
+          ? skillLevelDescription
+          : description || '';
+    } else {
+      const base = description || '';
+      const levelLine =
+        skillLevelDescription && String(skillLevel ?? '').length > 0
+          ? `\nLv. ${skillLevel}: ${skillLevelDescription}`
+          : '';
+      previewDescription = `${base}${levelLine}`.trim();
+    }
+  }
+
+  const relatedCandidates = type === 'disambiguation' ? candidates : suggestions;
+  const candidateList =
+    Array.isArray(relatedCandidates) && relatedCandidates.length > 0 ? (
       <div className='mt-2 w-full text-sm text-gray-700 dark:text-gray-300'>
-        <div className='mb-1'>{name}可能指：</div>
+        <div className='mb-1'>
+          {type === 'disambiguation' ? `${name}可能指：` : '你可能还想看：'}
+        </div>
         <ul className='list-inside list-disc space-y-1'>
-          {candidates.map((candidate) => (
+          {relatedCandidates.map((candidate) => (
             <li key={`${candidate.type}@@${candidate.url}`} className='leading-relaxed'>
-              {clickable ? (
-                <span>
-                  {candidate.name}（{candidate.categoryLabel}）
-                </span>
-              ) : (
-                <Link
-                  href={candidate.url}
-                  className='underline decoration-solid decoration-1 underline-offset-2'
-                  aria-label={`前往：${candidate.name}（${candidate.categoryLabel}）`}
-                >
-                  {candidate.name}（{candidate.categoryLabel}）
-                </Link>
-              )}
+              <Link
+                href={candidate.url}
+                className='underline decoration-solid decoration-1 underline-offset-2'
+                aria-label={`前往：${candidate.name}（${candidate.categoryLabel}）`}
+              >
+                {candidate.name}（{candidate.categoryLabel}）
+              </Link>
               <span className='text-muted-foreground'>（{candidate.kindDescription}）</span>
             </li>
           ))}
@@ -98,32 +109,21 @@ export default function PreviewCard({
       </div>
     ) : null;
 
-  const suggestionList =
-    type !== 'disambiguation' && Array.isArray(suggestions) && suggestions.length > 0 ? (
-      <div className='mt-2 w-full text-sm text-gray-700 dark:text-gray-300'>
-        <div className='mb-1'>你可能还想看：</div>
-        <ul className='list-inside list-disc space-y-1'>
-          {suggestions.map((candidate) => (
-            <li key={`${candidate.type}@@${candidate.url}`} className='leading-relaxed'>
-              {clickable ? (
-                <span>
-                  {candidate.name}（{candidate.categoryLabel}）
-                </span>
-              ) : (
-                <Link
-                  href={candidate.url}
-                  className='underline decoration-solid decoration-1 underline-offset-2'
-                  aria-label={`前往：${candidate.name}（${candidate.categoryLabel}）`}
-                >
-                  {candidate.name}（{candidate.categoryLabel}）
-                </Link>
-              )}
-              <span className='text-muted-foreground'>（{candidate.kindDescription}）</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    ) : null;
+  const nameAndOwner = (
+    <>
+      <span className='min-w-0 truncate text-lg font-bold text-gray-900 dark:text-gray-100'>
+        {typeof skillLevel === 'number' && type === 'character-skill'
+          ? `${skillLevel}级${name}`
+          : name}
+      </span>
+      {ownerSuffix ? (
+        <span className='text-sm whitespace-nowrap text-gray-500 dark:text-gray-400'>
+          {'\u00A0\u00A0'}
+          {ownerSuffix}
+        </span>
+      ) : null}
+    </>
+  );
 
   const content = (
     <EntityCardFrame
@@ -132,7 +132,7 @@ export default function PreviewCard({
         className
       )}
       variant='detail'
-      interactive={clickable}
+      interactive={false}
       role='link'
       tabIndex={-1}
     >
@@ -158,17 +158,7 @@ export default function PreviewCard({
               {type === 'character' ? characterTypeLabel : typeLabels[type] || type}
             </Tag>
             <div className='mb-1 flex w-full min-w-0 items-baseline' title={name}>
-              <span className='min-w-0 truncate text-lg font-bold text-gray-900 dark:text-gray-100'>
-                {typeof skillLevel === 'number' && type === 'character-skill'
-                  ? `${skillLevel}级${name}`
-                  : name}
-              </span>
-              {ownerSuffix ? (
-                <span className='text-sm whitespace-nowrap text-gray-500 dark:text-gray-400'>
-                  {'\u00A0\u00A0'}
-                  {ownerSuffix}
-                </span>
-              ) : null}
+              {nameAndOwner}
             </div>
           </>
         ) : (
@@ -179,93 +169,37 @@ export default function PreviewCard({
               </Tag>
             </div>
             <div className='flex min-w-0 flex-1 items-baseline' title={name}>
-              <span className='min-w-0 truncate text-lg font-bold text-gray-900 dark:text-gray-100'>
-                {typeof skillLevel === 'number' && type === 'character-skill'
-                  ? `${skillLevel}级${name}`
-                  : name}
-              </span>
-              {ownerSuffix ? (
-                <span className='text-sm whitespace-nowrap text-gray-500 dark:text-gray-400'>
-                  {'\u00A0\u00A0'}
-                  {ownerSuffix}
-                </span>
-              ) : null}
+              {nameAndOwner}
             </div>
           </div>
         )}
 
-        {type === 'disambiguation' && disambiguationList ? (
-          disambiguationList
+        {type === 'disambiguation' && candidateList ? (
+          candidateList
         ) : (
           <>
-            {(() => {
-              if (type !== 'character-skill') {
-                if (!description) return null;
-
-                return (
-                  <div
-                    className='line-clamp-3 w-full text-sm whitespace-pre-wrap text-gray-600 dark:text-gray-300'
-                    title={description}
-                  >
-                    <TextWithHoverTooltips text={description} />
-                  </div>
-                );
-              }
-
-              if (skillType === 'passive') {
-                const text =
-                  skillLevelDescription && skillLevelDescription.trim().length > 0
-                    ? skillLevelDescription
-                    : description || '';
-
-                if (!text) return null;
-
-                return (
-                  <div
-                    className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
-                    title={text}
-                  >
-                    <TextWithHoverTooltips text={text} />
-                  </div>
-                );
-              }
-
-              const base = description || '';
-              const levelLine =
-                skillLevelDescription && String(skillLevel ?? '').length > 0
-                  ? `\nLv. ${skillLevel}: ${skillLevelDescription}`
-                  : '';
-              const composed = `${base}${levelLine}`.trim();
-
-              if (!composed) return null;
-
-              return (
-                <div
-                  className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
-                  title={composed}
-                >
-                  <TextWithHoverTooltips text={composed} />
-                </div>
-              );
-            })()}
-            {suggestionList}
+            {previewDescription ? (
+              <div
+                className={
+                  type === 'character-skill'
+                    ? 'line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
+                    : 'line-clamp-3 w-full text-sm whitespace-pre-wrap text-gray-600 dark:text-gray-300'
+                }
+                title={previewDescription}
+              >
+                <TextWithHoverTooltips text={previewDescription} />
+              </div>
+            ) : null}
+            {candidateList}
           </>
         )}
       </div>
     </EntityCardFrame>
   );
 
-  if (!clickable) {
-    return (
-      <div tabIndex={0} role='group' aria-label={`${typeLabels[type] || type}: ${name}`}>
-        {content}
-      </div>
-    );
-  }
-
   return (
-    <Link href={url} tabIndex={0} aria-label={`前往${typeLabels[type] || type}: ${name}`}>
+    <div tabIndex={0} role='group' aria-label={`${typeLabels[type] || type}: ${name}`}>
       {content}
-    </Link>
+    </div>
   );
 }
