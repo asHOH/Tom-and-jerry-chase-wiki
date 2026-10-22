@@ -5,17 +5,11 @@ import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
 import type { ArticleCharacterOption } from '@/lib/articles/articleCharacterOptions';
-import {
-  articleSubmissionMessage,
-  type ArticleMutationResult,
-} from '@/lib/articles/mutationResult';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { fetchJson } from '@/lib/fetchJson';
-import { useClearArticleClientCache } from '@/hooks/useClearArticleClientCache';
-import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useUser } from '@/hooks/useUser';
-import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
+import { useArticleSubmission } from '@/features/articles/hooks/useArticleSubmission';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
@@ -34,15 +28,12 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
   const { isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
   const permissions = usePermissions();
   const canCreateArticle = permissions.has('article.create');
-  const { error: showError, warning } = useToast();
-  const showSubmissionFeedback = useContributionSubmissionFeedback();
-  const clearArticleClientCache = useClearArticleClientCache();
+  const { submit, isSubmitting } = useArticleSubmission();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [content, setContent] = useState('');
   const [characterId, setCharacterId] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { data: categoriesData, error: categoriesError } = useSWR<{ categories: Category[] }>(
@@ -131,53 +122,16 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
       return;
     }
 
-    let committed = false;
-    try {
-      setIsSubmitting(true);
-      setError(null);
-
-      const response = await fetch('/api/articles/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: title.trim(),
-          category,
-          content,
-          // Only send character_id when required to avoid schema rejection on null
-          character_id: showCharacterSelector ? characterId : undefined,
-        }),
-      });
-
-      if (response.ok) {
-        committed = true;
-        const result = (await response.json().catch(() => null)) as ArticleMutationResult | null;
-        const refreshWarning = await clearArticleClientCache(result?.article_id);
-        const message = [articleSubmissionMessage(result), refreshWarning]
-          .filter(Boolean)
-          .join('\n');
-        if (result?.status === 'approved' && result.article_id) {
-          // A document navigation also drops previously visited Router Cache entries.
-          window.alert(message);
-          window.location.assign(`/articles/${encodeURIComponent(result.article_id)}/`);
-        } else {
-          showSubmissionFeedback(message);
-          router.push('/articles');
-        }
-      } else {
-        const errorData = await response.json();
-        showError(errorData.error || errorData.message || '提交文章失败');
-      }
-    } catch (error) {
-      if (committed) {
-        console.error('Article saved but feedback/navigation failed:', error);
-        warning('提交已成功，页面跳转失败。请刷新页面或查看我的贡献，请勿重复提交。', 8000);
-      } else {
-        console.error('Error submitting article:', error);
-        showError('提交文章时发生错误，请稍后重试');
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    setError(null);
+    await submit({
+      kind: 'create',
+      draft: {
+        title,
+        category,
+        content,
+        characterId: showCharacterSelector ? characterId : undefined,
+      },
+    });
   };
 
   const handleCancel = () => {
