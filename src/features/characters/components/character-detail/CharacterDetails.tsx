@@ -4,6 +4,7 @@ import React, { useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
+import { cn } from '@/lib/design';
 import type { HistoryEntry } from '@/lib/historyUtils';
 import singleItemRreverse from '@/lib/singleItemReverse';
 import type { CharacterWithFaction, ContentEditor } from '@/lib/types';
@@ -43,6 +44,7 @@ import PositioningTagsSection from './positioning-tags/PositioningTagsSection';
 import { PublishedCharacterProvider } from './PublishedCharacterContext';
 import CharacterSection from './sections/CharacterSection';
 import CharacterSectionIndex from './sections/CharacterSectionIndex';
+import sectionIndexStyles from './sections/CharacterSectionIndex.module.css';
 import SkillAllocationSection from './skills/SkillAllocationSection';
 import SkillCard from './skills/SkillCard';
 import SpecialSkillsSection from './skills/SpecialSkillsSection';
@@ -359,7 +361,12 @@ export default function CharacterDetails({
               </Card>
             </div>
 
-            <div className='overflow-y-hidden md:w-2/3'>
+            <div
+              className={cn(
+                'min-w-0 overflow-x-clip md:w-2/3 [&_[id]]:scroll-mt-(--character-scroll-offset) [&_[id]_:focus]:scroll-mt-(--character-scroll-offset)',
+                sectionIndexStyles.content
+              )}
+            >
               <CharacterSectionIndex character={localCharacter} />
               <SkillAllocationSection factionId={factionId} />
 

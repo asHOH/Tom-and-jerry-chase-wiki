@@ -13,7 +13,8 @@ export function useScrollSpy(sectionIds: readonly string[]) {
         const element = document.getElementById(id);
         if (!element || element.closest('[aria-hidden="true"], [hidden]')) continue;
         if (!currentId) currentId = id;
-        if (element.getBoundingClientRect().top <= 128) currentId = id;
+        const offset = Math.max(128, parseFloat(getComputedStyle(element).scrollMarginTop) || 0);
+        if (element.getBoundingClientRect().top <= offset) currentId = id;
         else break;
       }
       setActiveSection(currentId);

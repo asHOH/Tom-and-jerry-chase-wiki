@@ -34,21 +34,23 @@ export default function CharacterSectionIndex({ character }: CharacterSectionInd
   const activeId = useScrollSpy(ids);
 
   return (
-    <div className='mb-4 space-y-2'>
-      <TableOfContents
-        items={sections}
-        activeId={activeId.startsWith('Skill:') ? 'Section:技能描述' : activeId}
-        ariaLabel='角色详情索引'
-        layout='inline'
-      />
+    <>
+      <div className='bg-surface-raised sticky top-(--character-nav-top) z-30 mb-2 h-12 px-1 py-1 shadow-sm'>
+        <TableOfContents
+          items={sections}
+          activeId={activeId.startsWith('Skill:') ? 'Section:技能描述' : activeId}
+          ariaLabel='角色详情索引'
+          layout='inline'
+        />
+      </div>
       {skills.length > 0 && (
-        <details>
+        <details className='mb-4'>
           <summary className='focus-visible:ring-focus cursor-pointer rounded px-2 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none'>
             技能目录
           </summary>
           <TableOfContents items={skills} activeId={activeId} ariaLabel='角色技能目录' />
         </details>
       )}
-    </div>
+    </>
   );
 }

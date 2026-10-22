@@ -1,0 +1,8 @@
+.content {
+  --character-nav-top: var(--nav-height);
+  --character-scroll-offset: calc(var(--character-nav-top) + 4rem);
+}
+
+:global(body.offline-banner-visible) .content {
+  --character-nav-top: calc(var(--nav-height) + var(--offline-banner-height));
+}

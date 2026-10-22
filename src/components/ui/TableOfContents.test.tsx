@@ -17,6 +17,24 @@ function Harness({ empty = false }: { empty?: boolean }) {
   return <TableOfContents items={items} activeId={activeId} ariaLabel='目录' />;
 }
 
+it('reveals focused links in the horizontal directory without moving list directories', () => {
+  const { rerender } = render(
+    <TableOfContents items={items} activeId='' ariaLabel='目录' layout='inline' />
+  );
+  const link = screen.getByRole('link', { name: '结尾' });
+  link.scrollIntoView = jest.fn();
+  fireEvent.focus(link);
+  expect(link.scrollIntoView).toHaveBeenCalledWith({
+    block: 'nearest',
+    inline: 'nearest',
+    behavior: 'instant',
+  });
+  jest.mocked(link.scrollIntoView).mockClear();
+  rerender(<TableOfContents items={items} activeId='' ariaLabel='目录' />);
+  fireEvent.focus(link);
+  expect(link.scrollIntoView).not.toHaveBeenCalled();
+});
+
 it('tracks heading positions, skips absent or folded targets, and clears an empty directory', () => {
   jest.useFakeTimers();
   const positions: Record<string, number> = { 介绍: -1000, 'Skill:技能': 100, 结尾: 500 };
@@ -39,7 +57,8 @@ it('tracks heading positions, skips absent or folded targets, and clears an empt
   act(() => jest.runOnlyPendingTimers());
   expect(screen.getByRole('link', { name: '介绍' })).toHaveAttribute('aria-current', 'location');
 
-  positions['结尾'] = 96;
+  positions['结尾'] = 164;
+  document.getElementById('结尾')!.style.scrollMarginTop = '164px';
   fireEvent.resize(window);
   act(() => jest.runOnlyPendingTimers());
   expect(screen.getByRole('link', { name: '结尾' })).toHaveAttribute('aria-current', 'location');
