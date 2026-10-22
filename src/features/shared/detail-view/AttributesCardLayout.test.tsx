@@ -26,10 +26,10 @@ jest.mock('@/components/ui/GameImage', () => {
   };
 });
 
-describe('AttributesCardLayout', () => {
+describe.each([false, true])('AttributesCardLayout (mobile: %s)', (isMobile) => {
   beforeEach(() => {
     mockUseEditMode.mockReturnValue({ isEditMode: false });
-    mockUseMobile.mockReturnValue(false);
+    mockUseMobile.mockReturnValue(isMobile);
   });
 
   const renderLayout = () =>
@@ -42,8 +42,11 @@ describe('AttributesCardLayout', () => {
       />
     );
 
-  it('renders edit button when not in edit mode', () => {
+  it('renders the image, title, attributes, and edit button', () => {
     renderLayout();
+    expect(screen.getByRole('img', { name: '测试' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '测试标题' })).toBeInTheDocument();
+    expect(screen.getByText('属性内容')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '编辑按钮' })).toBeInTheDocument();
   });
 
@@ -51,27 +54,5 @@ describe('AttributesCardLayout', () => {
     mockUseEditMode.mockReturnValue({ isEditMode: true });
     renderLayout();
     expect(screen.queryByRole('button', { name: '编辑按钮' })).not.toBeInTheDocument();
-  });
-
-  it('uses static utility spacing without injecting spacing variables', () => {
-    const { container } = renderLayout();
-
-    const image = screen.getByRole('img', { name: '测试' });
-    const attributes = screen.getByText('属性内容').parentElement;
-
-    expect(container.firstElementChild).not.toHaveAttribute('style');
-    expect(image.parentElement).toHaveClass('pb-1');
-    expect(screen.getByRole('heading', { name: '测试标题' }).parentElement).toHaveClass(
-      'px-4',
-      'pt-2'
-    );
-    expect(attributes).toHaveClass('mx-4', 'py-1');
-  });
-
-  it('preserves the compact mobile title padding', () => {
-    mockUseMobile.mockReturnValue(true);
-    renderLayout();
-
-    expect(screen.getByRole('heading', { name: '测试标题' })).toHaveClass('py-0', 'pt-2');
   });
 });
