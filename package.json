@@ -61,7 +61,7 @@
     "test:ci": "jest --ci --coverage --watchAll=false --maxWorkers=50%",
     "test:changed": "jest --onlyChanged --passWithNoTests",
     "clean": "rimraf .next out coverage",
-    "analyze": "cross-env ANALYZE=true npm run build",
+    "analyze": "next experimental-analyze",
     "audit:game-data-actions": "node scripts/audit-game-data-actions.mjs",
     "inspect:game-data-actions": "node scripts/inspect-game-data-actions.mjs",
     "verify:game-data-actions": "node scripts/verify-game-data-actions.mjs",
@@ -160,7 +160,6 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
-    "@next/bundle-analyzer": "^16.3.6",
     "@serwist/cli": "^9.5.12",
     "@size-limit/file": "^12.1.0",
     "@tailwindcss/postcss": "^4.3.3",

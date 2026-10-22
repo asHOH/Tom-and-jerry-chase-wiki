@@ -122,7 +122,8 @@ npm run test:ci         # CI 优化测试
 
 # 工具
 npm run clean           # 清理构建产物
-npm run analyze         # 包分析
+npm run analyze         # Turbopack 包分析（默认端口 4000）
+npm run analyze -- --output # 仅保存分析结果到 .next/diagnostics/analyze
 ```
 
 ## 🤝 一起完善这个项目吧

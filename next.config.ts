@@ -14,20 +14,6 @@ const buildCpuCount =
     ? requestedBuildCpuCount
     : undefined;
 
-let withBundleAnalyzer = (config: NextConfig) => config;
-
-if (process.env.ANALYZE === 'true') {
-  try {
-    // eslint-disable-next-line typescript/no-require-imports
-    const mod = require('@next/bundle-analyzer');
-    withBundleAnalyzer = mod.default({
-      enabled: true,
-    });
-  } catch (e) {
-    if (e instanceof Error) console.warn('Failed to load @next/bundle-analyzer:', e.message);
-  }
-}
-
 const withMDX = createMDX({
   options: {
     remarkPlugins: [
@@ -258,6 +244,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-const finalConfig = withBundleAnalyzer(withMDX(nextConfig));
+const finalConfig = withMDX(nextConfig);
 
 export default finalConfig;
