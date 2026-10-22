@@ -8,10 +8,11 @@
     "src/lib/supabase/middleware.ts",
     "src/lib/gameData/approvedReplayEpoch.ts",
     "src/lib/gameData/actionPatchTargets.ts",
+    "src/lib/ai/chatCodeRunner.cjs",
     "src/app/api/**/*.ts",
     "scripts/*.{mjs,cjs,js}"
   ],
-  "project": ["src/**/*.{ts,tsx,js,jsx}", "scripts/**/*.{mjs,cjs,js}"],
+  "project": ["src/**/*.{ts,tsx,js,jsx,cjs}", "scripts/**/*.{mjs,cjs,js}"],
   "ignore": ["**/*.stories.tsx", "**/*.test.tsx", "src/data/database.types.ts"],
   "ignoreDependencies": [
     "@tailwindcss/typography",
