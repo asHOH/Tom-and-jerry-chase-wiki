@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 
 import { getBuffTypeColors } from '@/lib/design';
@@ -16,6 +16,68 @@ import FilterRow from '@/components/ui/FilterRow';
 import BuffCardDisplay from './BuffCardDisplay';
 
 const TYPE_OPTIONS = ['状态', '瞬时效果', '持续效果', '属性'] as const;
+
+type BuffSectionProps = {
+  title: string;
+  buffs: Buff[];
+};
+
+function BuffSection({ title, buffs }: BuffSectionProps) {
+  const nonClass: Buff[] = [];
+  const groups = new Map<string, Buff[]>();
+  buffs.forEach((buff) => {
+    if (buff.class) {
+      const group = groups.get(buff.class);
+      if (group) group.push(buff);
+      else groups.set(buff.class, [buff]);
+    } else {
+      nonClass.push(buff);
+    }
+  });
+
+  return (
+    <>
+      <div className='relative py-4'>
+        <div className='absolute inset-0 flex items-center'>
+          <div className='border-border w-full border-t'></div>
+        </div>
+        <div className='relative flex justify-center'>
+          <h2 className='bg-background inline-block px-4 text-2xl font-bold'>{title}</h2>
+        </div>
+      </div>
+      {groups.size > 0 && (
+        <div className='mt-2 space-y-4 md:mt-8'>
+          {[...groups].map(([name, groupBuffs]) => (
+            <div key={name + '-title'} className='border-border relative mt-5 rounded border p-2'>
+              <div className='border-border bg-surface-muted text-foreground absolute -top-5 left-2.5 flex h-5 items-center border border-b-0 px-4 py-0.5 pl-2.5 text-xs font-bold [clip-path:polygon(0%_0%,calc(100%-12px)_0%,100%_100%,0%_100%)]'>
+                {name}
+              </div>
+              <div
+                key={name}
+                className='auto-fit-grid grid-container grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-1! md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'
+              >
+                {groupBuffs.map((buff) => (
+                  <CatalogGridItem key={buff.name} clip>
+                    <BuffCardDisplay buff={buff} />
+                  </CatalogGridItem>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {nonClass.length > 0 && (
+        <div className='auto-fit-grid grid-container mt-2 grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2! md:mt-8 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
+          {nonClass.map((buff) => (
+            <CatalogGridItem key={buff.name} clip>
+              <BuffCardDisplay buff={buff} />
+            </CatalogGridItem>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
 
 type Props = {
   description?: string;
@@ -37,56 +99,6 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
   });
   const filteredBuffs = filteredAll.filter((buff) => buff.type === '状态');
   const filteredEffects = filteredAll.filter((buff) => buff.type !== '状态');
-
-  const { nonClassBuffs, classGroups } = useMemo(() => {
-    const nonClass: Buff[] = [];
-    const groups = new Map<string, Buff[]>();
-    const classOrder: string[] = [];
-
-    filteredBuffs.forEach((buff) => {
-      if (buff.class) {
-        if (!groups.has(buff.class)) {
-          groups.set(buff.class, []);
-          classOrder.push(buff.class);
-        }
-        groups.get(buff.class)!.push(buff);
-      } else {
-        nonClass.push(buff);
-      }
-    });
-
-    const orderedGroups = classOrder.map((name) => ({
-      name,
-      buffs: groups.get(name)!,
-    }));
-
-    return { nonClassBuffs: nonClass, classGroups: orderedGroups };
-  }, [filteredBuffs]);
-
-  const { nonClassEffects, effectClassGroups } = useMemo(() => {
-    const nonClass: Buff[] = [];
-    const groups = new Map<string, Buff[]>();
-    const classOrder: string[] = [];
-
-    filteredEffects.forEach((buff) => {
-      if (buff.class) {
-        if (!groups.has(buff.class)) {
-          groups.set(buff.class, []);
-          classOrder.push(buff.class);
-        }
-        groups.get(buff.class)!.push(buff);
-      } else {
-        nonClass.push(buff);
-      }
-    });
-
-    const orderedGroups = classOrder.map((name) => ({
-      name,
-      buffs: groups.get(name)!,
-    }));
-
-    return { nonClassEffects: nonClass, effectClassGroups: orderedGroups };
-  }, [filteredEffects]);
 
   return (
     <CatalogPageShell
@@ -119,96 +131,8 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
         <span>。</span>
       </div>
 
-      {filteredBuffs.length > 0 && (
-        <>
-          <div className='relative py-4'>
-            <div className='absolute inset-0 flex items-center'>
-              <div className='border-border w-full border-t'></div>
-            </div>
-            <div className='relative flex justify-center'>
-              <h2 className='bg-background inline-block px-4 text-2xl font-bold'>状态</h2>
-            </div>
-          </div>
-          {classGroups.length > 0 && (
-            <div className='mt-2 space-y-4 md:mt-8'>
-              {classGroups.map((group) => (
-                <div
-                  key={group.name + '-title'}
-                  className='border-border relative mt-5 rounded border p-2'
-                >
-                  <div className='border-border bg-surface-muted text-foreground absolute -top-5 left-2.5 flex h-5 items-center border border-b-0 px-4 py-0.5 pl-2.5 text-xs font-bold [clip-path:polygon(0%_0%,calc(100%-12px)_0%,100%_100%,0%_100%)]'>
-                    {group.name}
-                  </div>
-                  <div
-                    key={group.name}
-                    className='auto-fit-grid grid-container grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-1! md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'
-                  >
-                    {group.buffs.map((buff) => (
-                      <CatalogGridItem key={buff.name} clip>
-                        <BuffCardDisplay buff={buff} />
-                      </CatalogGridItem>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {nonClassBuffs.length > 0 && (
-            <div className='auto-fit-grid grid-container mt-2 grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2! md:mt-8 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
-              {nonClassBuffs.map((buff) => (
-                <CatalogGridItem key={buff.name} clip>
-                  <BuffCardDisplay buff={buff} />
-                </CatalogGridItem>
-              ))}
-            </div>
-          )}
-        </>
-      )}
-      {filteredEffects.length > 0 && (
-        <>
-          <div className='relative py-4'>
-            <div className='absolute inset-0 flex items-center'>
-              <div className='border-border w-full border-t'></div>
-            </div>
-            <div className='relative flex justify-center'>
-              <h2 className='bg-background inline-block px-4 text-2xl font-bold'>效果&属性</h2>
-            </div>
-          </div>
-          {effectClassGroups.length > 0 && (
-            <div className='mt-2 space-y-4 md:mt-8'>
-              {effectClassGroups.map((group) => (
-                <div
-                  key={group.name + '-title'}
-                  className='border-border relative mt-5 rounded border p-2'
-                >
-                  <div className='border-border bg-surface-muted text-foreground absolute -top-5 left-2.5 flex h-5 items-center border border-b-0 px-4 py-0.5 pl-2.5 text-xs font-bold [clip-path:polygon(0%_0%,calc(100%-12px)_0%,100%_100%,0%_100%)]'>
-                    {group.name}
-                  </div>
-                  <div
-                    key={group.name}
-                    className='auto-fit-grid grid-container grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-1! md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'
-                  >
-                    {group.buffs.map((buff) => (
-                      <CatalogGridItem key={buff.name} clip>
-                        <BuffCardDisplay buff={buff} />
-                      </CatalogGridItem>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {nonClassEffects.length > 0 && (
-            <div className='auto-fit-grid grid-container mt-2 grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2! md:mt-8 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
-              {nonClassEffects.map((buff) => (
-                <CatalogGridItem key={buff.name} clip>
-                  <BuffCardDisplay buff={buff} />
-                </CatalogGridItem>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+      {filteredBuffs.length > 0 && <BuffSection title='状态' buffs={filteredBuffs} />}
+      {filteredEffects.length > 0 && <BuffSection title='效果&属性' buffs={filteredEffects} />}
     </CatalogPageShell>
   );
 }

@@ -4,7 +4,7 @@ import {
   type ImgHTMLAttributes,
   type ReactNode,
 } from 'react';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import {
   achievements,
@@ -18,6 +18,7 @@ import {
   modes,
   specialSkills,
 } from '@/data/static';
+import type { Buff } from '@/data/types';
 import AchievementGrid from '@/features/achievements/achievement-grid/AchievementGrid';
 import BuffGrid from '@/features/buffs/components/buff-grid/BuffGrid';
 import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
@@ -188,4 +189,57 @@ it.each([
   expect(container.querySelector('a a')).not.toBeInTheDocument();
   expect(within(link).getByRole('presentation')).toHaveAttribute('alt', '');
   expect(within(link).queryByRole('img')).not.toBeInTheDocument();
+});
+
+it('keeps buff groups and cards in first-seen order before ungrouped cards when filtering', () => {
+  const entries: Buff[] = [
+    { ...buff, name: '独立状态甲', type: '状态', class: '' },
+    { ...buff, name: '状态十甲', type: '状态', class: '10' },
+    { ...buff, name: '独立瞬时效果', type: '瞬时效果', class: '' },
+    { ...buff, name: '状态二', type: '状态', class: '2' },
+    { ...buff, name: '瞬时效果十', type: '瞬时效果', class: '10' },
+    { ...buff, name: '状态十乙', type: '状态', class: '10' },
+    { ...buff, name: '属性二', type: '属性', class: '2' },
+    { ...buff, name: '持续效果十', type: '持续效果', class: '10' },
+    { ...buff, name: '独立状态乙', type: '状态', class: '' },
+  ];
+  const { rerender } = render(
+    <BuffGrid data={Object.fromEntries(entries.map((entry) => [entry.name, entry]))} />
+  );
+  const cardNames = () => screen.queryAllByRole('heading', { level: 3 }).map((h) => h.textContent);
+  const sectionNames = () =>
+    screen.queryAllByRole('heading', { level: 2 }).map((h) => h.textContent);
+  const allNames = [
+    '状态十甲',
+    '状态十乙',
+    '状态二',
+    '独立状态甲',
+    '独立状态乙',
+    '瞬时效果十',
+    '持续效果十',
+    '属性二',
+    '独立瞬时效果',
+  ];
+  expect(sectionNames()).toEqual(['状态', '效果&属性']);
+  expect(cardNames()).toEqual(allNames);
+
+  fireEvent.click(screen.getByRole('button', { name: '属性' }));
+  expect(sectionNames()).toEqual(['效果&属性']);
+  expect(cardNames()).toEqual(['属性二']);
+
+  fireEvent.click(screen.getByRole('button', { name: '瞬时效果' }));
+  expect(cardNames()).toEqual(['瞬时效果十', '属性二', '独立瞬时效果']);
+
+  fireEvent.click(screen.getByRole('button', { name: '属性' }));
+  expect(cardNames()).toEqual(['瞬时效果十', '独立瞬时效果']);
+  fireEvent.click(screen.getByRole('button', { name: '瞬时效果' }));
+  expect(cardNames()).toEqual(allNames);
+
+  fireEvent.click(screen.getByRole('button', { name: '状态' }));
+  expect(sectionNames()).toEqual(['状态']);
+  expect(cardNames()).toEqual(allNames.slice(0, 5));
+
+  rerender(<BuffGrid data={{}} />);
+  expect(sectionNames()).toEqual([]);
+  expect(cardNames()).toEqual([]);
 });
