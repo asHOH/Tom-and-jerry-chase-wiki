@@ -8,16 +8,22 @@ import TableOfContents from '@/components/ui/TableOfContents';
 
 type CharacterSectionIndexProps = {
   character: DeepReadonly<CharacterWithFaction>;
+  showCharacterRelations?: boolean;
 };
 
-export default function CharacterSectionIndex({ character }: CharacterSectionIndexProps) {
+export default function CharacterSectionIndex({
+  character,
+  showCharacterRelations = true,
+}: CharacterSectionIndexProps) {
   const { isEditMode } = useEditMode();
   const { sections, skills, ids } = useMemo(() => {
     const sections = [
       ...(isEditMode || character.skillAllocations?.length ? ['推荐加点'] : []),
       ...(isEditMode || character.knowledgeCardGroups?.length ? ['推荐知识卡组'] : []),
       '技能描述',
-      character.factionId === 'cat' ? '克制关系' : '克制/协作关系',
+      ...(isEditMode || showCharacterRelations
+        ? [character.factionId === 'cat' ? '克制关系' : '克制/协作关系']
+        : []),
     ].map((label) => ({ id: `Section:${label}`, label, depth: 0 }));
     const skills = character.skills.map((skill) => ({
       id: `Skill:${skill.name}`,
@@ -30,7 +36,7 @@ export default function CharacterSectionIndex({ character }: CharacterSectionInd
         : [section.id]
     );
     return { sections, skills, ids };
-  }, [character, isEditMode]);
+  }, [character, isEditMode, showCharacterRelations]);
   const activeId = useScrollSpy(ids);
 
   return (

@@ -8,14 +8,16 @@ import { cn } from '@/lib/design';
 import type { HistoryEntry } from '@/lib/historyUtils';
 import singleItemRreverse from '@/lib/singleItemReverse';
 import type { CharacterWithFaction, ContentEditor } from '@/lib/types';
-import { useEditableEntity } from '@/hooks/useEditableGameData';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import { useTraitsData } from '@/context/TraitsContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
+import { characters as staticCharacters } from '@/data/static';
 import { Skill } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
+import { getEditableCharacterRelations } from '@/features/characters/utils/characterRelationOverlay';
 import { characterRelationTagPairs } from '@/features/characters/utils/characterRelationTags';
 import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
@@ -102,6 +104,13 @@ export default function CharacterDetails({
     { entityType: 'characters', entityId: characterId || character.id },
     character
   );
+  const [charactersSnapshot] = useEditableDomain('characters', staticCharacters);
+  const characterRelations = getEditableCharacterRelations(
+    charactersSnapshot,
+    localCharacter.id,
+    localCharacter
+  );
+  const hasCharacterRelations = Object.values(characterRelations).some((items) => items.length > 0);
   const factionId = localCharacter.factionId!;
   const skillAnchorIds = useMemo(
     () => localCharacter.skills.map((skill) => `Skill:${skill.name}`),
@@ -367,7 +376,10 @@ export default function CharacterDetails({
                 sectionIndexStyles.content
               )}
             >
-              <CharacterSectionIndex character={localCharacter} />
+              <CharacterSectionIndex
+                character={localCharacter}
+                showCharacterRelations={hasCharacterRelations}
+              />
               <SkillAllocationSection factionId={factionId} />
 
               <PendingActionWarningBoundary
@@ -444,11 +456,13 @@ export default function CharacterDetails({
                   ) : null}
                 </div>
               </CharacterSection>
-              <CharacterSection
-                title={localCharacter.factionId == 'cat' ? '克制关系' : '克制/协作关系'}
-              >
-                <CharacterRelationDisplay id={localCharacter.id} factionId={factionId} />
-              </CharacterSection>
+              {(isEditMode || hasCharacterRelations) && (
+                <CharacterSection
+                  title={localCharacter.factionId == 'cat' ? '克制关系' : '克制/协作关系'}
+                >
+                  <CharacterRelationDisplay id={localCharacter.id} factionId={factionId} />
+                </CharacterSection>
+              )}
               {children}
             </div>
           </div>
