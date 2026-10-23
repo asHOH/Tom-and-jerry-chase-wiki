@@ -64,27 +64,46 @@ it.each([
   expect(response.headers.get('X-Robots-Tag')).toBe('noindex, nofollow');
 });
 
-it('still blocks unsupported browsers on public pages', async () => {
+it('serves public pages to Baidu Browser without a server-side warning', async () => {
   const response = await proxy(
     new NextRequest('https://example.test/', { headers: { 'user-agent': 'BaiduBrowser Android' } })
   );
 
-  expect(response.status).toBe(403);
-  expect(response.headers.get('Cache-Control')).toBe('no-store');
+  expect(response.status).toBe(200);
+  expect(response.headers.get('x-middleware-next')).toBe('1');
+  expect(response.headers.get('X-Robots-Tag')).toBe('noindex, nofollow');
+  expect(response.headers.has('set-cookie')).toBe(false);
   expect(updateSession).not.toHaveBeenCalled();
 });
 
-it('still allows the explicit browser override on public pages', async () => {
+it('does not set browser override cookies on public pages', async () => {
   const response = await proxy(
     new NextRequest('https://example.test/?force_continue=1', {
       headers: { 'user-agent': 'BaiduBrowser Android' },
     })
   );
 
-  expect(response.cookies.get('force_continue')?.value).toBe('1');
+  expect(response.headers.has('set-cookie')).toBe(false);
   expect(response.headers.get('x-middleware-next')).toBe('1');
   expect(updateSession).not.toHaveBeenCalled();
 });
+
+it.each(['', '?force_continue=1'])(
+  'refreshes sessions for Baidu Browser on identity-dependent routes (%s)',
+  async (search) => {
+    const request = new NextRequest(`https://example.test/settings/${search}`, {
+      headers: { 'user-agent': 'BaiduBrowser Android', cookie: 'force_continue=1' },
+    });
+    const refreshedResponse = NextResponse.next();
+    refreshedResponse.cookies.set('sb-session', 'refreshed-token');
+    jest.mocked(updateSession).mockResolvedValueOnce(refreshedResponse);
+
+    expect(await proxy(request)).toBe(refreshedResponse);
+    expect(updateSession).toHaveBeenCalledWith(request);
+    expect(refreshedResponse.cookies.get('sb-session')?.value).toBe('refreshed-token');
+    expect(refreshedResponse.cookies.has('force_continue')).toBe(false);
+  }
+);
 
 describe.each(['GET', 'HEAD'])('AkariBot profile aliases (%s)', (method) => {
   it.each([
@@ -131,13 +150,16 @@ it('rejects malformed nickname encoding without throwing or refreshing the sessi
   expect(updateSession).not.toHaveBeenCalled();
 });
 
-it('keeps the browser override cookie when redirecting an alias', async () => {
+it('redirects Baidu Browser profile aliases without setting browser override cookies', async () => {
   const response = await proxy(
     new NextRequest('https://example.test/User:Editor/?force_continue=1', {
       headers: { 'user-agent': 'BaiduBrowser Android' },
     })
   );
   expect(response.status).toBe(307);
-  expect(response.cookies.get('force_continue')?.value).toBe('1');
+  expect(response.headers.get('Location')).toBe(
+    new URL(getUserProfileHref('Editor'), 'https://example.test').toString()
+  );
+  expect(response.headers.has('set-cookie')).toBe(false);
   expect(updateSession).not.toHaveBeenCalled();
 });

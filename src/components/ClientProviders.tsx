@@ -6,6 +6,7 @@ import { LazyMotion } from 'motion/react';
 import { PermissionProvider } from '@/lib/auth/PermissionProvider';
 import { ToastProvider } from '@/context/ToastContext';
 
+import BrowserCompatibilityWarning from './BrowserCompatibilityWarning';
 import { CacheDebugPanel } from './CacheDebugPanel';
 import { OfflineIndicator } from './OfflineIndicator';
 import { ServiceWorkerRegistration } from './ServiceWorkerRegistration';
@@ -20,6 +21,7 @@ export function ClientProviders({ children }: ClientProvidersProps) {
     <LazyMotion features={loadMotionFeatures} strict>
       <ToastProvider>
         <PermissionProvider>{children}</PermissionProvider>
+        <BrowserCompatibilityWarning />
         <ServiceWorkerRegistration />
         <CacheDebugPanel />
         <VersionChecker />

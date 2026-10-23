@@ -3,6 +3,7 @@ type JsonValue = unknown;
 export const enum StorageKey {
   AiConversationPrefix = 'tjwiki:ai-conversation:v1:',
   ArticleAutoNumbering = 'wiki_auto_numbering_enabled',
+  BrowserCompatibilityDismissed = 'tjwiki:browser-compatibility-dismissed',
   DetailedView = 'isDetailedView',
   EditMode = 'isEditMode',
   EditModeActionsPrefix = 'editmode:actions:',
