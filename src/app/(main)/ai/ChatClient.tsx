@@ -274,7 +274,7 @@ function Conversation({ userId, onUnauthorized }: { userId: string; onUnauthoriz
                       className='group size-14 rounded-full focus-visible:outline-2 focus-visible:outline-offset-4'
                     >
                       <Image
-                        src='/favicon.ico'
+                        src='/images/mouseSkills/朵朵2-能源装置.png'
                         alt='猫鼠百科'
                         width={56}
                         height={56}
