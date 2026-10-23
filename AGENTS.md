@@ -145,6 +145,6 @@ Validate in proportion to the scope of change:
 - Scripts or script-test configuration: run `npm run test:scripts`.
 - Markdown-only: run `npx prettier --write <changed-file>` and check formatting; source tests are unnecessary.
 - Actor-profile data: also run `npm run validate:actor-profiles`.
-- Build/config/generation: run `npm run build:skip-images` when practical.
+- Build/config/generation: avoid running `npm run build:skip-images` unless necessary.
 
 Git hooks and CI enforce formatting, linting, type-checking, tests, generated database types, and conventional commit messages. Treat their executable configuration as the source of truth.
