@@ -40,6 +40,34 @@ it('omits absent recommendations, keeps editor entry points, and uses the mouse 
   expect(screen.getByRole('link', { name: '推荐知识卡组' })).toBeInTheDocument();
 });
 
+it('omits the skill disclosure for an empty character and respects relationship visibility', () => {
+  const { rerender } = render(
+    <CharacterSectionIndex
+      character={{ ...character, skills: [] }}
+      showCharacterRelations={false}
+    />
+  );
+  expect(screen.queryByText('技能目录')).toBeNull();
+  expect(screen.queryByRole('navigation', { name: '角色技能目录' })).toBeNull();
+  expect(screen.getByRole('link', { name: '技能描述' })).toHaveAttribute(
+    'href',
+    '#Section:技能描述'
+  );
+  expect(screen.queryByRole('link', { name: '克制/协作关系' })).toBeNull();
+
+  mockIsEditMode = true;
+  rerender(
+    <CharacterSectionIndex
+      character={{ ...character, factionId: 'cat', skills: [] }}
+      showCharacterRelations={false}
+    />
+  );
+  expect(screen.getByRole('link', { name: '克制关系' })).toHaveAttribute(
+    'href',
+    '#Section:克制关系'
+  );
+});
+
 it('reopens unmounted skills, including repeated navigation to the current Chinese fragment', () => {
   jest.useFakeTimers();
   const scrollIntoView = jest.fn();
@@ -56,7 +84,15 @@ it('reopens unmounted skills, including repeated navigation to the current Chine
   );
   act(() => jest.runOnlyPendingTimers());
   expect(scrollIntoView).toHaveBeenCalled();
+  const disclosure = screen.getByText('技能目录').closest('details')!;
+  expect(disclosure).not.toHaveAttribute('open');
   fireEvent.click(screen.getByText('技能目录'));
+  expect(disclosure).toHaveAttribute('open');
+  expect(screen.getByRole('link', { name: '技能描述' })).toHaveAttribute(
+    'aria-current',
+    'location'
+  );
+  expect(screen.getByRole('link', { name: '奶酪' })).toHaveAttribute('aria-current', 'location');
   for (let repeat = 0; repeat < 2; repeat++) {
     fireEvent.click(screen.getByRole('button', { name: '折叠技能描述' }));
     fireEvent.transitionEnd(

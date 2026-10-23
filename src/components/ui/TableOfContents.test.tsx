@@ -17,7 +17,7 @@ function Harness({ empty = false }: { empty?: boolean }) {
   return <TableOfContents items={items} activeId={activeId} ariaLabel='目录' />;
 }
 
-it('reveals focused links in the horizontal directory without moving list directories', () => {
+it('reveals focused horizontal links without moving list or wrapping directories', () => {
   const { rerender } = render(
     <TableOfContents items={items} activeId='' ariaLabel='目录' layout='inline' />
   );
@@ -33,6 +33,19 @@ it('reveals focused links in the horizontal directory without moving list direct
   rerender(<TableOfContents items={items} activeId='' ariaLabel='目录' />);
   fireEvent.focus(link);
   expect(link.scrollIntoView).not.toHaveBeenCalled();
+  rerender(
+    <TableOfContents
+      items={items}
+      activeId='结尾'
+      ariaLabel='目录'
+      layout='wrap'
+      appearance='plain'
+    />
+  );
+  fireEvent.focus(link);
+  expect(link.scrollIntoView).not.toHaveBeenCalled();
+  expect(link).toHaveAttribute('href', '#结尾');
+  expect(link).toHaveAttribute('aria-current', 'location');
 });
 
 it('tracks heading positions, skips absent or folded targets, and clears an empty directory', () => {
