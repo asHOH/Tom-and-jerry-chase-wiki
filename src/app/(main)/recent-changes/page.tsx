@@ -134,7 +134,7 @@ function ChangeContent({ change }: { change: RecentChange }) {
               提交
             </>
           ) : (
-            '匿名或已删除用户提交'
+            '匿名用户提交'
           )}
         </p>
       </div>

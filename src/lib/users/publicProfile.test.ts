@@ -1,6 +1,10 @@
 import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
 
-import { getPublicUserProfile, mergeRecentContributions } from './publicProfile';
+import {
+  getCachedPublicUserProfile,
+  getPublicUserProfile,
+  mergeRecentContributions,
+} from './publicProfile';
 
 jest.mock('server-only', () => ({}), { virtual: true });
 jest.mock('@/lib/serverCache', () => ({
@@ -75,6 +79,13 @@ const { hasSupabaseAdminConfig, supabaseAdmin } = jest.requireMock('@/lib/supaba
     };
   };
 };
+
+it('returns an unavailable public profile when Supabase is disabled or unconfigured', async () => {
+  jest.replaceProperty(jest.requireMock('@/lib/supabase/admin'), 'supabaseAdmin', undefined);
+  await expect(getCachedPublicUserProfile('测试用户')).resolves.toBeNull();
+  expect(supabaseAdmin.from).not.toHaveBeenCalled();
+  expect(supabaseAdmin.auth.admin.getUserById).not.toHaveBeenCalled();
+});
 
 describe('mergeRecentContributions', () => {
   it('merges both contribution sources in reverse chronological order', () => {

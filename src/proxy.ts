@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { updateSession } from '@/lib/supabase/middleware';
+import { getUserProfileHref } from '@/lib/users/profileRoutes';
 
 const IS_VERCEL = process.env.VERCEL === '1';
 const IS_VERCEL_PREVIEW = IS_VERCEL && process.env.VERCEL_ENV !== 'production';
@@ -92,6 +93,32 @@ export async function proxy(request: NextRequest) {
     );
   }
 
+  // AkariBot constructs profile links from siteinfo's /$1 article path.
+  // Strip the routing slash before decoding so an encoded nickname slash survives.
+  const userAlias = /^\/User(?::|%3[Aa])(.+)$/.exec(url.pathname);
+  if ((request.method === 'GET' || request.method === 'HEAD') && userAlias) {
+    let nickname: string;
+    try {
+      nickname = decodeURIComponent(userAlias[1]!.replace(/\/$/, ''));
+    } catch {
+      return applyNoIndex(
+        NextResponse.json({ error: 'Invalid user nickname encoding' }, { status: 400 })
+      );
+    }
+    if (nickname) {
+      const response = applyNoIndex(
+        NextResponse.redirect(new URL(getUserProfileHref(nickname), url), {
+          status: 307,
+          headers: { 'Cache-Control': 'no-store' },
+        })
+      );
+      if (url.searchParams.get('force_continue') === '1') {
+        response.cookies.set('force_continue', '1', { path: '/' });
+      }
+      return response;
+    }
+  }
+
   // If force_continue param is set, set cookie for future requests
   if (url.searchParams.get('force_continue') === '1') {
     const res = applyNoIndex(NextResponse.next());
@@ -115,6 +142,8 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    // User nicknames may contain slashes or resemble asset filenames.
+    { source: '/:userTitle(User(?::|%3[Aa]).*)' },
     {
       source:
         '/((?!api|_next/static|_next/image|_next/data|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|sw.js|workbox-.*|swe-worker-.*|version.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|bmp|tiff|avif|js|css|mjs|json|txt|xml|map|mp4|webm|ogg|mp3|wav)$).*)',

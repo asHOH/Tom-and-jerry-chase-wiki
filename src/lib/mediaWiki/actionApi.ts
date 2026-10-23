@@ -2,6 +2,7 @@ import 'server-only';
 
 import { NextResponse } from 'next/server';
 
+import { getCachedPublicUserProfile } from '@/lib/users/publicProfile';
 import { SITE_NAME, SITE_URL } from '@/constants/seo';
 
 import {
@@ -46,6 +47,7 @@ const MAX_TITLE_LENGTH = 500;
 const MAX_SEARCH_LENGTH = 200;
 const MAX_EXTRACT_CHARS = 1000;
 const MAX_SEARCH_RESULTS = 10;
+const USER_PROPERTIES = new Set(['groups', 'blockinfo', 'registration', 'editcount', 'gender']);
 const SPECIAL_INTERWIKI_TITLE = 'Special:Interwiki';
 const SPECIAL_INTERWIKI_PAGE_ID = -1;
 
@@ -379,6 +381,7 @@ function siteInfo(catalog: MediaWikiCatalog): UnknownRecord {
       namespaces: {
         '-1': { '*': 'Special', canonical: 'Special', id: -1, case: 'first-letter' },
         '0': { '*': '', id: 0, case: 'first-letter', content: '' },
+        '2': { '*': 'User', canonical: 'User', id: 2, case: 'case-sensitive' },
       },
       namespacealiases: [],
       interwikimap: [],
@@ -551,6 +554,76 @@ function randomAction(
   };
 }
 
+async function usersAction(params: URLSearchParams): Promise<UnknownRecord | NextResponse> {
+  const parsed = parsePipeValues(params.get('ususers'), 'ususers');
+  if (parsed.error) return parsed.error;
+  const names = parsed.values;
+  if (!names || names.some((name) => !name.trim())) {
+    return mediaWikiError(
+      'invalidparam',
+      'The "ususers" parameter must contain non-empty nicknames.'
+    );
+  }
+
+  const props = new Set(
+    (params.get('usprop') ?? '')
+      .split('|')
+      .map((property) => property.trim())
+      .filter(Boolean)
+  );
+  for (const property of props) {
+    if (!USER_PROPERTIES.has(property)) {
+      return mediaWikiError('unknown_prop', `Unknown user property "${property}".`);
+    }
+  }
+
+  const users = await Promise.all(
+    names.map(async (name): Promise<UnknownRecord> => {
+      // Nicknames are account identifiers, not page titles: preserve their case,
+      // spaces and underscores when looking up the existing public profile.
+      const profile = await getCachedPublicUserProfile(name);
+      if (!profile) return { name, missing: true };
+
+      return {
+        name: profile.nickname,
+        ...(props.has('groups') ? { groups: profile.groups } : {}),
+        ...(props.has('registration') ? { registration: profile.registeredAt } : {}),
+        ...(props.has('editcount') ? { editcount: profile.contributionTotals.all } : {}),
+        ...(props.has('gender') ? { gender: 'unknown' } : {}),
+        // Accept blockinfo for AkariBot compatibility without publishing blocks.
+      };
+    })
+  );
+
+  return { batchcomplete: true, query: { users } };
+}
+
+async function userQueryAction(
+  params: URLSearchParams
+): Promise<UnknownRecord | NextResponse | null> {
+  const meta = params.get('meta');
+  const list = params.get('list');
+  if (meta !== 'allmessages' && list !== 'users') return null;
+
+  if ((meta && list) || params.has('titles') || params.has('pageids')) {
+    return mediaWikiError(
+      'invalidparammix',
+      'User modules cannot be mixed with other query modules.'
+    );
+  }
+
+  if (meta === 'allmessages') {
+    if (params.get('amprefix') !== 'group-') {
+      return mediaWikiError('invalidparam', 'Only the "group-" message prefix is supported.');
+    }
+    // Public group names already are display labels. AkariBot uses them when
+    // no group-* message overrides exist.
+    return { batchcomplete: true, query: { allmessages: [] } };
+  }
+
+  return usersAction(params);
+}
+
 function queryAction(
   catalog: MediaWikiCatalog,
   index: CatalogIndex,
@@ -660,6 +733,12 @@ export async function handleMediaWikiGet(request: Request): Promise<NextResponse
   }
 
   try {
+    // User lookup and group labels are independent of the game-data catalog.
+    const userResult = action === 'query' ? await userQueryAction(params) : null;
+    if (userResult) {
+      return userResult instanceof NextResponse ? userResult : jsonResponse(userResult, NO_CACHE);
+    }
+
     const catalog = await loadCatalog();
     const index = createCatalogIndex(catalog);
     const result =
@@ -668,11 +747,8 @@ export async function handleMediaWikiGet(request: Request): Promise<NextResponse
 
     return jsonResponse(result, NO_CACHE);
   } catch (error) {
-    console.error('MediaWiki API catalog failure:', error);
-    return mediaWikiError(
-      'internal_api_error',
-      'The MediaWiki catalog is temporarily unavailable.'
-    );
+    console.error('MediaWiki API failure:', error);
+    return mediaWikiError('internal_api_error', 'The MediaWiki API is temporarily unavailable.');
   }
 }
 
