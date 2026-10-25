@@ -7,7 +7,6 @@ import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
 import itemGroups from '@/features/items/data/itemGroups';
 import { mechanicsSectionsList } from '@/features/mechanics/sections';
 import { usagesSectionsList } from '@/features/usages/sections';
-import { env } from '@/env';
 
 export const dynamic = 'force-static';
 
@@ -34,20 +33,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   } = await getPublishedGameDataSnapshot();
   const baseUrl = SITE_URL;
-  const buildTime = env.NEXT_PUBLIC_BUILD_TIMESTAMP
-    ? new Date(env.NEXT_PUBLIC_BUILD_TIMESTAMP)
-    : new Date();
+  // shortcut: omit unverified lastModified values, restore when per-page content dates are tracked.
 
   const charactersMap: MetadataRoute.Sitemap = Object.keys(characters).map((characterId) => ({
     url: `${baseUrl}/characters/${encodeURIComponent(characterId)}`,
-    lastModified: buildTime,
     changeFrequency: 'weekly',
     priority: 0.5,
   }));
 
   const cardsMap: MetadataRoute.Sitemap = Object.keys(cards).map((cardId) => ({
     url: `${baseUrl}/cards/${encodeURIComponent(cardId)}`,
-    lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
   }));
@@ -55,7 +50,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const specialSkillsMap: MetadataRoute.Sitemap = (['cat', 'mouse'] as const).flatMap((factionId) =>
     Object.keys(specialSkills[factionId]).map((skillId) => ({
       url: `${baseUrl}/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
-      lastModified: buildTime,
       changeFrequency: 'monthly' as const,
       priority: 0.4,
     }))
@@ -63,63 +57,54 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const itemsMap: MetadataRoute.Sitemap = Object.keys(items).map((itemName) => ({
     url: `${baseUrl}/items/${encodeURIComponent(itemName)}`,
-    lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
   }));
 
   const itemGroupsMap: MetadataRoute.Sitemap = Object.keys(itemGroups).map((itemGroupName) => ({
     url: `${baseUrl}/itemGroups/${encodeURIComponent(itemGroupName)}`,
-    lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
   }));
 
   const buffsMap: MetadataRoute.Sitemap = Object.keys(buffs).map((buffName) => ({
     url: `${baseUrl}/buffs/${encodeURIComponent(buffName)}`,
-    lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
   }));
 
   const entitiesMap: MetadataRoute.Sitemap = Object.keys(entities).map((entityName) => ({
     url: `${baseUrl}/entities/${encodeURIComponent(entityName)}`,
-    lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
   }));
 
   const mapsMap: MetadataRoute.Sitemap = Object.keys(maps).map((mapId) => ({
     url: `${baseUrl}/maps/${encodeURIComponent(mapId)}`,
-    lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
   }));
 
   const modesMap: MetadataRoute.Sitemap = Object.keys(modes).map((modeId) => ({
     url: `${baseUrl}/modes/${encodeURIComponent(modeId)}`,
-    lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
   }));
 
   const fixturesMap: MetadataRoute.Sitemap = Object.keys(fixtures).map((fixtureId) => ({
     url: `${baseUrl}/fixtures/${encodeURIComponent(fixtureId)}`,
-    lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
   }));
 
   const mechanicsMap: MetadataRoute.Sitemap = mechanicsSectionsList.map((section) => ({
     url: `${baseUrl}/mechanics/${section}`,
-    lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
   }));
 
   const ranksMap: MetadataRoute.Sitemap = RANKABLE_PROPERTIES.map((property) => ({
     url: `${baseUrl}/ranks/${property.key}`,
-    lastModified: buildTime,
     changeFrequency: 'weekly',
     priority: 0.5,
   }));
@@ -127,7 +112,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const achievementsMap: MetadataRoute.Sitemap = (['cat', 'mouse'] as const).flatMap((factionId) =>
     Object.keys(achievements[factionId]).map((achievementName) => ({
       url: `${baseUrl}/achievements/${factionId}/${encodeURIComponent(achievementName)}`,
-      lastModified: buildTime,
       changeFrequency: 'monthly' as const,
       priority: 0.4,
     }))
@@ -135,7 +119,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const usagesMap: MetadataRoute.Sitemap = usagesSectionsList.map((section) => ({
     url: `${baseUrl}/usages/${section}`,
-    lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.3,
   }));
@@ -143,7 +126,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const statShowdownModes = ['all', 'cats', 'mice', 'blitz'] as const;
   const statShowdownModesMap: MetadataRoute.Sitemap = statShowdownModes.map((mode) => ({
     url: `${baseUrl}/games/stat-showdown/${mode}`,
-    lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.3,
   }));
@@ -151,26 +133,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 1,
     },
     // Characters
     {
       url: `${baseUrl}/factions/cat`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/factions/mouse`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/relations`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
@@ -178,7 +156,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Knowledge Cards
     {
       url: `${baseUrl}/cards`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
@@ -186,13 +163,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Special Skills
     {
       url: `${baseUrl}/special-skills`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/special-skills/advice`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.6,
     },
@@ -200,7 +175,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Items
     {
       url: `${baseUrl}/items`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
@@ -208,7 +182,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Item Groups
     {
       url: `${baseUrl}/itemGroups`,
-      lastModified: buildTime,
       changeFrequency: 'monthly',
       priority: 0.6,
     },
@@ -216,7 +189,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Entities
     {
       url: `${baseUrl}/entities`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
@@ -224,7 +196,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Buffs
     {
       url: `${baseUrl}/buffs`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
@@ -232,7 +203,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Maps
     {
       url: `${baseUrl}/maps`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
@@ -240,7 +210,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Modes
     {
       url: `${baseUrl}/modes`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
@@ -248,7 +217,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fixtures
     {
       url: `${baseUrl}/fixtures`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
@@ -256,7 +224,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Mechanics
     {
       url: `${baseUrl}/mechanics`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
@@ -264,7 +231,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Rankings
     {
       url: `${baseUrl}/ranks`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
@@ -272,45 +238,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Docs
     {
       url: `${baseUrl}/docs`,
-      lastModified: buildTime,
       changeFrequency: 'monthly',
       priority: 0.3,
     },
     // Tools
     {
       url: `${baseUrl}/tools`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.6,
     },
     {
       url: `${baseUrl}/recent-changes`,
-      lastModified: buildTime,
       changeFrequency: 'daily',
       priority: 0.6,
     },
     // Games
     {
       url: `${baseUrl}/games`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.6,
     },
     {
       url: `${baseUrl}/games/guess-character`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.5,
     },
     {
       url: `${baseUrl}/games/playstyle-quiz`,
-      lastModified: buildTime,
       changeFrequency: 'monthly',
       priority: 0.5,
     },
     {
       url: `${baseUrl}/games/stat-showdown`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.5,
     },
@@ -318,7 +277,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Achievements
     {
       url: `${baseUrl}/achievements`,
-      lastModified: buildTime,
       changeFrequency: 'monthly',
       priority: 0.5,
     },
@@ -326,7 +284,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Usage Guides
     {
       url: `${baseUrl}/usages`,
-      lastModified: buildTime,
       changeFrequency: 'monthly',
       priority: 0.5,
     },
@@ -334,7 +291,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Other
     {
       url: `${baseUrl}/win-rates`,
-      lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.6,
     },

@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { getGotoResult } from '@/lib/gotoUtils';
 
-import RootGotoPage from './page';
+import RootGotoPage, { metadata } from './page';
 
 jest.mock('next/navigation', () => ({
   notFound: jest.fn(() => {
@@ -30,6 +30,11 @@ describe('root goto page', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetPublishedGameDataSnapshot.mockResolvedValue({ data: publishedData } as never);
+  });
+
+  it('keeps lookup aliases out of search without inheriting the homepage canonical', () => {
+    expect(metadata.robots).toEqual({ index: false, follow: true });
+    expect(metadata.alternates).toBeNull();
   });
 
   it('redirects a matching root name to its resolved page', async () => {

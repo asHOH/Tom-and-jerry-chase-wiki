@@ -82,8 +82,8 @@ export async function generateMetadata({
   }
 
   return generatePageMetadata({
-    title: character.id,
-    description: character.description,
+    title: `${character.id}技能与属性`,
+    description: `猫和老鼠手游${character.id}角色资料，查看角色属性、技能效果、推荐加点等。${character.description}`,
     keywords: [character.id],
     canonicalUrl: getCanonicalUrl(`/characters/${encodeURIComponent(characterId)}`),
   });

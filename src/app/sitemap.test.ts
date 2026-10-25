@@ -53,6 +53,13 @@ describe('game data sitemap', () => {
     } as never);
   });
 
+  it('omits unverified content dates instead of reporting deployment time', async () => {
+    const result = await sitemap();
+
+    expect(result.length).toBeGreaterThan(0);
+    expect(result.every((entry) => entry.lastModified === undefined)).toBe(true);
+  });
+
   it('encodes special-skill route segments without encoding their separator', async () => {
     const result = await sitemap();
     const urls = result.map((entry) => entry.url);

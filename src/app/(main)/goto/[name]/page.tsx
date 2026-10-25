@@ -1,5 +1,4 @@
-'use server';
-
+import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
@@ -8,6 +7,11 @@ import Card from '@/components/ui/Card';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
 import GotoLink from '@/components/GotoLink';
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: true },
+  alternates: null,
+};
 
 export default async function GotoPage({
   params,
