@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server';
 
-import { parseApprovedActionArtifactPayload } from '@/lib/gameData/approvedActionArtifact';
-import {
-  hasBuildGameDataArtifact,
-  readBuildGameDataArtifact,
-} from '@/lib/gameData/buildArtifactReader';
 import packageJson from '@/../package.json';
 import { env } from '@/env';
 
@@ -15,6 +10,9 @@ export const revalidate = 43200;
 
 // Server start time for development (when this module loads)
 const SERVER_START_TIME = new Date().toISOString();
+const GAME_DATA_ARTIFACT_METADATA = JSON.parse(
+  process.env.TJWIKI_GAME_DATA_ARTIFACT_METADATA || 'null'
+);
 
 const sanitize = (value?: string | null) => {
   if (!value) {
@@ -119,19 +117,6 @@ const getVersionTimestamp = (environment: string) => {
   return env.NEXT_PUBLIC_BUILD_TIMESTAMP || SERVER_START_TIME;
 };
 
-const getGameDataArtifactMetadata = async () => {
-  if (!hasBuildGameDataArtifact()) return null;
-
-  const artifact = await readBuildGameDataArtifact();
-  const approvedActions = parseApprovedActionArtifactPayload(artifact.approvedActions);
-  return {
-    deploymentIdentity: artifact.deploymentIdentity,
-    replayEpoch: approvedActions.payload.replayEpoch,
-    actionRevision: approvedActions.snapshot.actionRevision,
-    rowCount: approvedActions.payload.rowCount,
-  };
-};
-
 // Generate version info without shell commands
 export async function GET() {
   const environment = getDeploymentEnvironment();
@@ -141,7 +126,7 @@ export async function GET() {
     buildTime: getVersionTimestamp(environment), // Smart timestamp based on environment
     environment,
     packageVersion: packageJson.version,
-    gameDataArtifact: await getGameDataArtifactMetadata(),
+    gameDataArtifact: GAME_DATA_ARTIFACT_METADATA,
   };
 
   return NextResponse.json(versionInfo, {

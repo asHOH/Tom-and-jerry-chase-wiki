@@ -8,10 +8,6 @@ import { readBuildGameDataArtifactFile } from './buildArtifactFile';
 import { BuildGameDataArtifactError } from './buildArtifactSchema';
 import { PRODUCTION_BUILD_IDENTITY } from './published/buildIdentity';
 
-export function hasBuildGameDataArtifact(): boolean {
-  return getBuildGameDataArtifactPath() !== undefined;
-}
-
 /** Shared tagged reader used by every artifact-backed game-data selector. */
 export async function readBuildGameDataArtifact() {
   const artifactPath = getBuildGameDataArtifactPath();

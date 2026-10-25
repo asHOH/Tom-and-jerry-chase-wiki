@@ -26,8 +26,13 @@ const {
   createEnabledBuildGameDataPrepass,
 } = jiti('../src/lib/gameData/buildGameDataPrepass.ts');
 const { runBuildAttemptCoordinator } = jiti('../src/lib/gameData/buildAttemptCoordinator.ts');
-const { removeBuildGameDataArtifactFile, writeBuildGameDataArtifactFile } = jiti(
-  '../src/lib/gameData/buildArtifactFile.ts'
+const {
+  readBuildGameDataArtifactFile,
+  removeBuildGameDataArtifactFile,
+  writeBuildGameDataArtifactFile,
+} = jiti('../src/lib/gameData/buildArtifactFile.ts');
+const { parseApprovedActionArtifactPayload } = jiti(
+  '../src/lib/gameData/approvedActionArtifact.ts'
 );
 const { queryCharacterContributorSource } = jiti(
   '../src/lib/gameData/characterContributorSourceQuery.ts'
@@ -109,15 +114,24 @@ await runBuildAttemptCoordinator({
     await writeBuildGameDataArtifactFile(artifactPath, result.artifact);
     return { artifactPath, replayEpoch: result.replayEpoch, summary: result.summary };
   },
-  runOutputPipeline: (_attempt, artifactPath) =>
-    runBuildOutput(outputScript, {
+  runOutputPipeline: async (_attempt, artifactPath) => {
+    const artifact = await readBuildGameDataArtifactFile(artifactPath, deploymentIdentity);
+    const approvedActions = parseApprovedActionArtifactPayload(artifact.approvedActions);
+    await runBuildOutput(outputScript, {
       cwd: projectRoot,
       env: {
         ...process.env,
         DEPLOY_BUILD_ID: deploymentIdentity,
         GAME_DATA_BUILD_ARTIFACT_PATH: artifactPath,
+        TJWIKI_GAME_DATA_ARTIFACT_METADATA: JSON.stringify({
+          deploymentIdentity: artifact.deploymentIdentity,
+          replayEpoch: approvedActions.payload.replayEpoch,
+          actionRevision: approvedActions.snapshot.actionRevision,
+          rowCount: approvedActions.payload.rowCount,
+        }),
       },
-    }),
+    });
+  },
   async readFinalEpoch() {
     if (!acquisitionClient) throw new Error('unexpected_disabled_epoch_read');
     const startedAt = performance.now();

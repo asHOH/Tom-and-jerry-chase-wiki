@@ -1,20 +1,5 @@
 import { dynamic, GET, revalidate } from './route';
 
-jest.mock('@/lib/gameData/buildArtifactReader', () => ({
-  hasBuildGameDataArtifact: () => true,
-  readBuildGameDataArtifact: async () => ({
-    deploymentIdentity: 'deployment-identity',
-    approvedActions: {},
-  }),
-}));
-
-jest.mock('@/lib/gameData/approvedActionArtifact', () => ({
-  parseApprovedActionArtifactPayload: () => ({
-    payload: { replayEpoch: 42, rowCount: 3 },
-    snapshot: { actionRevision: 'v1:artifact-revision' },
-  }),
-}));
-
 jest.mock('next/server', () => ({
   NextResponse: {
     json: (body: unknown, init?: { headers?: Record<string, string> }) => ({
@@ -30,6 +15,8 @@ jest.mock('next/server', () => ({
 }));
 
 describe('version route', () => {
+  afterEach(() => jest.restoreAllMocks());
+
   it('stays static with the project-wide maximum cache lifetime', () => {
     expect(dynamic).toBe('force-static');
     expect(revalidate).toBe(43200);
@@ -46,11 +33,25 @@ describe('version route', () => {
     expect(response.headers.get('Cache-Control')).toBe('no-cache, no-store, must-revalidate');
     expect(body.version).toBeTruthy();
     expect(body.environment).toBeTruthy();
-    expect(body.gameDataArtifact).toEqual({
+    expect(body.gameDataArtifact).toBeNull();
+  });
+
+  it('returns the embedded snapshot when loaded at runtime without the build artifact', async () => {
+    const metadata = {
       deploymentIdentity: 'deployment-identity',
       replayEpoch: 42,
       actionRevision: 'v1:artifact-revision',
       rowCount: 3,
+    };
+    jest.replaceProperty(process, 'env', {
+      ...process.env,
+      GAME_DATA_BUILD_ARTIFACT_PATH: undefined,
+      TJWIKI_GAME_DATA_ARTIFACT_METADATA: JSON.stringify(metadata),
+    });
+
+    await jest.isolateModulesAsync(async () => {
+      const { GET: runtimeGET } = await import('./route');
+      expect(await (await runtimeGET()).json()).toMatchObject({ gameDataArtifact: metadata });
     });
   });
 });
