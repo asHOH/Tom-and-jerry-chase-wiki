@@ -5,9 +5,14 @@ import type {
   FactionId,
   TraitRelationKind,
 } from '@/data/types';
+import {
+  CHARACTER_RELATION_PAIR_FIELD,
+  getCharacterRelationPairLocation,
+} from '@/features/characters/utils/characterRelationPairs';
 import { getCharacterRelationTagLabels } from '@/features/characters/utils/characterRelationTags';
 
 export type RelationItemOptions = {
+  characterId?: string;
   relationKind: TraitRelationKind;
   isEditable: boolean;
   getDescriptionPath?: (index: number, id: string) => string | undefined;
@@ -24,6 +29,7 @@ type RelationDisplayBase = {
   isMinor: boolean;
   isEditable: boolean;
   descriptionPath?: string;
+  descriptionCharacterId?: string;
   relationKind: TraitRelationKind;
   tagPairs: CharacterRelationTag[];
   tagLabels: string[];
@@ -120,7 +126,12 @@ export const buildCharacterItems = (
 ): CharacterDisplayItem[] => {
   return combined.map((item, index) => {
     const id = item.id;
-    const descriptionPath = options.getDescriptionPath?.(index, id);
+    const pair = options.characterId
+      ? getCharacterRelationPairLocation(options.characterId, id)
+      : undefined;
+    const descriptionPath = pair
+      ? `${CHARACTER_RELATION_PAIR_FIELD}.${pair.otherId}`
+      : options.getDescriptionPath?.(index, id);
     return {
       type: 'character',
       key: `character-${id}`,
@@ -132,6 +143,7 @@ export const buildCharacterItems = (
       onNavigate: () => handleSelectCharacter(id),
       isEditable: options.isEditable,
       relationKind: options.relationKind,
+      ...(pair ? { descriptionCharacterId: pair.ownerId } : {}),
       ...relationTagFields(item, options.relationKind),
       ...optionalRelationActions(id, options, descriptionPath),
       getToggleLabel: (currentIsMinor) => `切换${id}的关系为${currentIsMinor ? '主要' : '次要'}`,

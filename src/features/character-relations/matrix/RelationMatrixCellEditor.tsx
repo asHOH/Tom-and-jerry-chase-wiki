@@ -8,7 +8,7 @@ import type { EditableUpdate } from '@/hooks/useEditableGameData';
 import type { CharacterRelationTag, TraitRelationKind } from '@/data/types';
 import CharacterRelationTagSelect from '@/features/characters/components/character-detail/character-relations/CharacterRelationTagSelect';
 import {
-  removeCharacterRelationItemFromKinds,
+  removeCharacterRelationItem,
   upsertCharacterRelationItem,
 } from '@/features/characters/utils/characterRelationOverlay';
 import { supportsCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
@@ -17,12 +17,7 @@ import Button from '@/components/ui/Button';
 import { FormSelect, FormTextarea } from '@/components/ui/FormControls';
 
 import type { RelationMatrixCellSelection } from './CharacterRelationsMatrix';
-import {
-  getInverseCharacterRelationKind,
-  getLegalRelationKinds,
-  getRelationKindLabel,
-  getSiblingRelationKinds,
-} from './relationMatrixEditing';
+import { getLegalRelationKinds, getRelationKindLabel } from './relationMatrixEditing';
 import type { RelationMatrixColumnCategory } from './relationMatrixViewModel';
 
 type RelationMatrixCellEditorProps = {
@@ -41,15 +36,6 @@ const getInitialRelationKind = (
   if (sourceKind && legalKinds.includes(sourceKind)) return sourceKind;
   if (legalKinds.length === 1) return legalKinds[0]!;
   return '';
-};
-
-const toInverseRelationKinds = (legalKinds: readonly TraitRelationKind[]): TraitRelationKind[] => {
-  const inverseKinds: TraitRelationKind[] = [];
-  legalKinds.forEach((kind) => {
-    const inverseKind = getInverseCharacterRelationKind(kind);
-    if (inverseKind) inverseKinds.push(inverseKind);
-  });
-  return inverseKinds;
 };
 
 const normalizeTagPairs = (tags: readonly CharacterRelationTag[]) =>
@@ -86,7 +72,6 @@ export default function RelationMatrixCellEditor({
     return null;
   }
 
-  const isCharacterTarget = selection.column.type === 'character';
   const canSave = selectedKind !== '';
   const canRemove = selection.cell !== undefined;
 
@@ -120,60 +105,17 @@ export default function RelationMatrixCellEditor({
     };
 
     updateCharacters((characters) => {
-      removeCharacterRelationItemFromKinds(
-        characters,
-        selection.row.id,
-        getSiblingRelationKinds(selectedKind, legalKinds),
-        selection.column.id
-      );
-
-      if (isCharacterTarget) {
-        const inverseSelectedKind = getInverseCharacterRelationKind(selectedKind);
-        if (inverseSelectedKind) {
-          removeCharacterRelationItemFromKinds(
-            characters,
-            selection.column.id,
-            getSiblingRelationKinds(inverseSelectedKind, toInverseRelationKinds(legalKinds)),
-            selection.row.id
-          );
-        }
-      }
-
       upsertCharacterRelationItem(characters, selection.row.id, selectedKind, item);
-
-      if (isCharacterTarget) {
-        const inverseSelectedKind = getInverseCharacterRelationKind(selectedKind);
-        if (inverseSelectedKind) {
-          upsertCharacterRelationItem(characters, selection.column.id, inverseSelectedKind, {
-            id: selection.row.id,
-            description: trimmedDescription,
-            isMinor,
-            ...(normalizedTagPairs.length > 0 ? { tags: normalizedTagPairs } : {}),
-          });
-        }
-      }
     });
 
     onOpenChange(false);
   };
 
   const handleRemove = () => {
+    const relationKind = selection.cell?.sourceKind;
+    if (!relationKind) return;
     updateCharacters((characters) => {
-      removeCharacterRelationItemFromKinds(
-        characters,
-        selection.row.id,
-        legalKinds,
-        selection.column.id
-      );
-
-      if (isCharacterTarget) {
-        removeCharacterRelationItemFromKinds(
-          characters,
-          selection.column.id,
-          toInverseRelationKinds(legalKinds),
-          selection.row.id
-        );
-      }
+      removeCharacterRelationItem(characters, selection.row.id, relationKind, selection.column.id);
     });
 
     onOpenChange(false);

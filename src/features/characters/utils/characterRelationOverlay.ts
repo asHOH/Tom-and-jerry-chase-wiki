@@ -4,9 +4,16 @@ import { setNestedProperty } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import type { CharacterRelationItem, TraitRelationKind } from '@/data/types';
 import {
+  applyCharacterRelationOverrides,
   getCharacterRelation,
   getExplicitCharacterRelation,
 } from '@/features/characters/utils/relationReadModel';
+
+import {
+  getCharacterRelationPairLocation,
+  getInverseCharacterRelationKind,
+  isCharacterPairRelationKind,
+} from './characterRelationPairs';
 
 export type EditableCharacterRelations = Record<TraitRelationKind, CharacterRelationItem[]>;
 type CharacterRelationOverlayRecord = Partial<
@@ -14,6 +21,17 @@ type CharacterRelationOverlayRecord = Partial<
 >;
 type CharacterRelationsSource = DeepReadonly<Record<string, CharacterWithFaction>>;
 type MutableCharacters = Record<string, CharacterWithFaction>;
+
+const oppositeNonCharacterKind = {
+  countersKnowledgeCards: 'counteredByKnowledgeCards',
+  counteredByKnowledgeCards: 'countersKnowledgeCards',
+  countersSpecialSkills: 'counteredBySpecialSkills',
+  counteredBySpecialSkills: 'countersSpecialSkills',
+  advantageMaps: 'disadvantageMaps',
+  disadvantageMaps: 'advantageMaps',
+  advantageModes: 'disadvantageModes',
+  disadvantageModes: 'advantageModes',
+} as const;
 
 const normalizeCharacterRelationItem = (
   item: Readonly<CharacterRelationItem>
@@ -42,8 +60,6 @@ const isSameCharacterRelationItem = (
   !!left.isMinor === !!right.isMinor &&
   JSON.stringify(left.tags ?? []) === JSON.stringify(right.tags ?? []);
 
-// Edit-mode relation writes remain page-local overlays under characters.<id>.<relationKind>
-// so draft counting, publish payloads, and public replay keep the existing path contract.
 export const getCharacterRelationDescriptionPath = (
   relationKind: TraitRelationKind,
   index: number
@@ -81,7 +97,7 @@ export const getEditableCharacterRelations = (
     }
   });
 
-  return next;
+  return applyCharacterRelationOverrides(characters, characterId, next);
 };
 
 const writeCharacterRelationItems = (
@@ -132,7 +148,7 @@ export const addCharacterRelationItem = (
 ) => {
   const current = getExplicitCharacterRelation(characters, characterId)[relationKind];
   if (current.some((existing) => existing.id === item.id)) return;
-  writeCharacterRelationItems(characters, characterId, relationKind, [...current, item]);
+  upsertCharacterRelationItem(characters, characterId, relationKind, item);
 };
 
 export const upsertCharacterRelationItem = (
@@ -150,6 +166,30 @@ export const upsertCharacterRelationItem = (
     (existing) => existing.id === normalizedItem.id
   );
   if (displayed && isSameCharacterRelationItem(displayed, normalizedItem)) return;
+
+  if (isCharacterPairRelationKind(relationKind)) {
+    const location = getCharacterRelationPairLocation(characterId, item.id);
+    const { id: _id, ...metadata } = normalizedItem;
+    setNestedProperty(characters, location.path, {
+      kind:
+        location.ownerId === characterId
+          ? relationKind
+          : getInverseCharacterRelationKind(relationKind),
+      ...metadata,
+    });
+    return;
+  }
+
+  const oppositeKind = oppositeNonCharacterKind[relationKind];
+  const opposite = getExplicitCharacterRelation(characters, characterId)[oppositeKind];
+  if (opposite.some((existing) => existing.id === item.id)) {
+    writeCharacterRelationItems(
+      characters,
+      characterId,
+      oppositeKind,
+      opposite.filter((existing) => existing.id !== item.id)
+    );
+  }
 
   if (currentIndex === -1) {
     writeCharacterRelationItems(characters, characterId, relationKind, [
@@ -223,23 +263,20 @@ export const removeCharacterRelationItem = (
   relationKind: TraitRelationKind,
   itemId: string
 ) => {
-  const current = getExplicitCharacterRelation(characters, characterId)[relationKind];
-  if (!current.some((item) => item.id === itemId)) return;
-  writeCharacterRelationItems(
-    characters,
-    characterId,
-    relationKind,
-    current.filter((item) => item.id !== itemId)
-  );
-};
-
-export const removeCharacterRelationItemFromKinds = (
-  characters: MutableCharacters,
-  characterId: string,
-  relationKinds: readonly TraitRelationKind[],
-  itemId: string
-) => {
-  relationKinds.forEach((relationKind) => {
-    removeCharacterRelationItem(characters, characterId, relationKind, itemId);
-  });
+  if (isCharacterPairRelationKind(relationKind)) {
+    const displayed = getEditableCharacterRelations(characters, characterId)[relationKind];
+    if (!displayed.some((item) => item.id === itemId)) return;
+    setNestedProperty(characters, getCharacterRelationPairLocation(characterId, itemId).path, null);
+    return;
+  }
+  for (const kind of [relationKind, oppositeNonCharacterKind[relationKind]]) {
+    const current = getExplicitCharacterRelation(characters, characterId)[kind];
+    if (!current.some((item) => item.id === itemId)) continue;
+    writeCharacterRelationItems(
+      characters,
+      characterId,
+      kind,
+      current.filter((item) => item.id !== itemId)
+    );
+  }
 };

@@ -126,12 +126,13 @@ const createCharacterEntities = (
       return leftIndex - rightIndex;
     });
 
-  return characterIds.map((characterId) =>
-    createEntity(
+  return characterIds.map((characterId) => ({
+    ...createEntity(
       { name: characterId, type: 'character' },
       `/characters/${encodeURIComponent(characterId)}`
-    )
-  );
+    ),
+    factionId,
+  }));
 };
 
 const createKnowledgeCardEntities = (

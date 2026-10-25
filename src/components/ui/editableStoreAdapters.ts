@@ -132,9 +132,11 @@ function getActionPath(pathPrefix: string, path: string): string {
 
 export function useEditableCharactersAdapter(
   path: string,
-  factionId?: string | undefined
+  factionId?: string | undefined,
+  targetCharacterId?: string | undefined
 ): EditableStoreAdapter {
-  const { characterId } = useLocalCharacter();
+  const { characterId: routeCharacterId } = useLocalCharacter();
+  const characterId = targetCharacterId ?? routeCharacterId;
   const [character, updateCharacter] = useRecord({
     entityType: 'characters',
     entityId: characterId,

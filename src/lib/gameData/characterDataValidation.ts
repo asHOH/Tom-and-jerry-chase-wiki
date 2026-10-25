@@ -8,6 +8,11 @@ import {
 } from '@/lib/edit/characterRelationActions';
 import type { TraitRelationKind } from '@/data/types';
 import {
+  CHARACTER_PAIR_RELATION_KINDS,
+  CHARACTER_RELATION_PAIR_FIELD,
+  parseCharacterRelationPairPath,
+} from '@/features/characters/utils/characterRelationPairs';
+import {
   getExplicitCharacterRelation,
   normalizeCharacterRelationProjection,
 } from '@/features/characters/utils/relationReadModel';
@@ -55,6 +60,12 @@ const relations = z
     })
   )
   .optional();
+const pairRelation = z.strictObject({
+  kind: z.enum(CHARACTER_PAIR_RELATION_KINDS),
+  description: text.optional(),
+  isMinor: z.boolean(),
+  tags: z.array(z.strictObject({ counters: text, counteredBy: text })).optional(),
+});
 const relationFields = Object.fromEntries(
   CHARACTER_RELATION_KINDS.map((kind) => [kind, relations])
 ) as Record<TraitRelationKind, typeof relations>;
@@ -70,6 +81,7 @@ const character = z.strictObject({
   specialClawKnifeCdHit: z.number().optional(),
   specialClawKnifeCdUnhit: z.number().optional(),
   counterTags: z.array(text).optional(),
+  characterRelationOverrides: z.record(text, pairRelation.nullable()).optional(),
   ...relationFields,
   skills: z.array(
     z
@@ -155,6 +167,20 @@ export function validateCharacterData(
   target: Record<string, unknown>,
   actionPaths: readonly string[]
 ): void {
+  for (const path of actionPaths) {
+    if (path.split('.')[1] !== CHARACTER_RELATION_PAIR_FIELD) continue;
+    const pair = parseCharacterRelationPairPath(path);
+    if (!pair || pair.rest.length !== 0) {
+      throw new InvalidGameDataValueError({ path, reason: 'unsupported_field' });
+    }
+    if (
+      pair.ownerId >= pair.otherId ||
+      !Object.hasOwn(target, pair.ownerId) ||
+      !Object.hasOwn(target, pair.otherId)
+    ) {
+      throw new InvalidGameDataValueError({ path, reason: 'relation_conflict' });
+    }
+  }
   const scopes = new Set(actionPaths.map((path) => path.trim().split('.').slice(0, 2).join('.')));
   for (const scope of scopes) {
     const [root, field] = scope.split('.') as [string, string?];
@@ -184,13 +210,40 @@ export function validateCharacterData(
   if (
     actionPaths.some((path) => {
       const field = path.split('.')[1];
-      return field === undefined || field === 'factionId' || isCharacterRelationKind(field);
+      return (
+        field === undefined ||
+        field === 'factionId' ||
+        field === CHARACTER_RELATION_PAIR_FIELD ||
+        isCharacterRelationKind(field)
+      );
     })
   ) {
     const characters = target as CharacterGameData;
     // Check explicit relations before rendering drops conflicting entries. Tag-derived
     // suggestions intentionally retain their existing display-time precedence rules.
     for (const id of Object.keys(characters)) {
+      for (const [otherId, relation] of Object.entries(
+        characters[id]?.characterRelationOverrides ?? {}
+      )) {
+        const sourceFaction = characters[id]?.factionId;
+        const targetFaction = characters[otherId]?.factionId;
+        if (
+          id >= otherId ||
+          !Object.hasOwn(characters, otherId) ||
+          !sourceFaction ||
+          !targetFaction ||
+          (sourceFaction === 'cat' && targetFaction === 'cat') ||
+          (relation !== null &&
+            (sourceFaction === targetFaction
+              ? relation.kind !== 'collaborators'
+              : relation.kind === 'collaborators'))
+        ) {
+          throw new InvalidGameDataValueError({
+            path: `${id}.${CHARACTER_RELATION_PAIR_FIELD}.${otherId}`,
+            reason: 'relation_conflict',
+          });
+        }
+      }
       const explicit = getExplicitCharacterRelation(characters, id);
       const normalized = normalizeCharacterRelationProjection(id, explicit, {
         getCharacterFactionId: (targetId) => characters[targetId]?.factionId,
@@ -203,6 +256,46 @@ export function validateCharacterData(
           path: `${id}.${conflict}`,
           reason: 'relation_conflict',
         });
+      }
+    }
+  }
+}
+
+/** Existing pair records may only change through their complete, shared leaf. */
+export function validateCharacterRelationEditSources(
+  before: CharacterGameData,
+  after: CharacterGameData,
+  actionPaths: readonly string[]
+): void {
+  const paths = new Set(actionPaths);
+  for (const ownerId of new Set([...Object.keys(before), ...Object.keys(after)])) {
+    const previous = before[ownerId]?.characterRelationOverrides ?? {};
+    const next = after[ownerId]?.characterRelationOverrides ?? {};
+    for (const otherId of new Set([...Object.keys(previous), ...Object.keys(next)])) {
+      const path = `${ownerId}.${CHARACTER_RELATION_PAIR_FIELD}.${otherId}`;
+      if (!isEqual(previous[otherId], next[otherId]) && !paths.has(path)) {
+        throw new InvalidGameDataValueError({ path, reason: 'relation_conflict' });
+      }
+      for (const [sourceId, targetId] of [
+        [ownerId, otherId],
+        [otherId, ownerId],
+      ] as const) {
+        for (const kind of CHARACTER_PAIR_RELATION_KINDS) {
+          const items = (data: CharacterGameData) => {
+            const value = (data[sourceId] as Partial<Record<TraitRelationKind, unknown>>)?.[kind];
+            return Array.isArray(value)
+              ? value.filter(
+                  (item) => item !== null && typeof item === 'object' && item.id === targetId
+                )
+              : [];
+          };
+          if (!isEqual(items(before), items(after))) {
+            throw new InvalidGameDataValueError({
+              path: `${sourceId}.${kind}`,
+              reason: 'relation_conflict',
+            });
+          }
+        }
       }
     }
   }

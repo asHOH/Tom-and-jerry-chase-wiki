@@ -45,7 +45,7 @@ export const getLegalRelationKinds = (
   if (column.type === 'character') {
     if (row.id === column.id) return [];
 
-    const rowFaction = characterFactionById[row.id];
+    const rowFaction = row.factionId ?? characterFactionById[row.id];
     const columnFaction = getCharacterColumnFaction(column, columnCategory);
 
     if (rowFaction === 'mouse' && columnFaction === 'mouse') {
@@ -81,31 +81,3 @@ export const isEditableRelationCell = (
 ): boolean => getLegalRelationKinds(row, column, columnCategory).length > 0;
 
 export const getRelationKindLabel = (kind: TraitRelationKind): string => RELATION_KIND_LABELS[kind];
-
-export const getInverseCharacterRelationKind = (
-  kind: TraitRelationKind
-): TraitRelationKind | null => {
-  switch (kind) {
-    case 'counters':
-      return 'counteredBy';
-    case 'counteredBy':
-      return 'counters';
-    case 'counterEachOther':
-    case 'collaborators':
-      return kind;
-    case 'countersKnowledgeCards':
-    case 'counteredByKnowledgeCards':
-    case 'countersSpecialSkills':
-    case 'counteredBySpecialSkills':
-    case 'advantageMaps':
-    case 'advantageModes':
-    case 'disadvantageMaps':
-    case 'disadvantageModes':
-      return null;
-  }
-};
-
-export const getSiblingRelationKinds = (
-  kind: TraitRelationKind,
-  legalKinds: readonly TraitRelationKind[]
-): TraitRelationKind[] => legalKinds.filter((legalKind) => legalKind !== kind);

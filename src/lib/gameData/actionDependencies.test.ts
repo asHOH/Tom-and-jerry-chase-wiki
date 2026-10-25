@@ -47,6 +47,21 @@ function replayPair(
 }
 
 describe('areActionsOrderDependent', () => {
+  it('matches shared pair records with either legacy endpoint while keeping other pairs independent', () => {
+    const pair = set('A.characterRelationOverrides.B', undefined, { kind: 'counters' });
+    for (const path of ['A.counters', 'B.counteredBy.0.description', 'B', 'B.factionId']) {
+      expectPairDependency(pair, set(path, undefined, 'changed'), true);
+    }
+    for (const path of [
+      'A.characterRelationOverrides.C',
+      'A.description',
+      'B.advantageMaps',
+      'C.counters',
+    ]) {
+      expectPairDependency(pair, set(path, undefined, 'changed'), false);
+    }
+  });
+
   it('should detect repeated and ancestor-descendant writes', () => {
     expect(
       areActionsOrderDependent(

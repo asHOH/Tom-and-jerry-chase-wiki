@@ -1,6 +1,7 @@
 import type { Action, ActionHistoryEntry } from '@/lib/edit/diffUtils';
 
 import { parseActionPath, resolveArraySegment } from './actionPath';
+import { areCharacterRelationPathsDependent } from './characterRelationDependencies';
 
 type Path = readonly string[];
 
@@ -116,6 +117,7 @@ export function areActionDependencyDescriptorsOrderDependent(
   const leftPath = leftAnalysis.value.path;
   const rightPath = rightAnalysis.value.path;
   if (pathsOverlap(leftPath, rightPath)) return true;
+  if (areCharacterRelationPathsDependent(left.path, right.path)) return true;
 
   return (
     structuralParentAffectsPath(leftAnalysis.value, rightPath) ||

@@ -7,6 +7,21 @@ import {
 
 describe('editModeDrafts', () => {
   describe('splitActionHistoryByEntity', () => {
+    it('selects an incoming shared pair without selecting the owner’s other drafts', () => {
+      const selected = {
+        op: 'set' as const,
+        path: 'A.characterRelationOverrides.B',
+        oldValue: undefined,
+        newValue: null,
+      };
+      const otherPair = { ...selected, path: 'A.characterRelationOverrides.C' };
+      const ownerProse = { ...selected, path: 'A.description', newValue: 'owner prose' };
+
+      expect(
+        splitActionHistoryByEntity([[selected, otherPair, ownerProse]], 'B', 'characters')
+      ).toEqual({ matching: [selected], remaining: [[otherPair, ownerProse]] });
+      expect(splitActionHistoryByEntity([selected], 'B', 'items').matching).toEqual([]);
+    });
     it('should split matching and remaining action history by root entity id', () => {
       const history: ActionHistoryEntry[] = [
         {
@@ -87,6 +102,32 @@ describe('editModeDrafts', () => {
   });
 
   describe('buildDraftSummaryItemsForType', () => {
+    it('shows shared pair drafts under both endpoints', () => {
+      const summary = buildDraftSummaryItemsForType(
+        'characters',
+        [
+          {
+            op: 'set',
+            path: 'A.characterRelationOverrides.B',
+            oldValue: undefined,
+            newValue: null,
+          },
+          {
+            op: 'set',
+            path: 'A.characterRelationOverrides.C',
+            oldValue: undefined,
+            newValue: null,
+          },
+        ],
+        () => undefined
+      );
+
+      expect(summary).toEqual([
+        expect.objectContaining({ entityId: 'A', count: 2 }),
+        expect.objectContaining({ entityId: 'B', count: 1 }),
+        expect.objectContaining({ entityId: 'C', count: 1 }),
+      ]);
+    });
     it('should build counted summary items using resolved item labels', () => {
       const history: ActionHistoryEntry[] = [
         {

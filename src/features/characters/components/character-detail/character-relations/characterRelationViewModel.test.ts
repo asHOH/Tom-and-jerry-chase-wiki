@@ -7,6 +7,25 @@ import {
 } from './characterRelationViewModel';
 
 describe('characterRelationViewModel', () => {
+  it('points both character views at the same editable description', () => {
+    const targets = [
+      ['A', 'B'],
+      ['B', 'A'],
+    ].map(([source, target]) => {
+      const [item] = buildCharacterItems(
+        [{ id: target!, description: 'shared', isMinor: false }],
+        () => '',
+        jest.fn(),
+        { view: () => '', edit: () => '' },
+        { characterId: source!, relationKind: 'counterEachOther', isEditable: true }
+      );
+      return { owner: item?.descriptionCharacterId, path: item?.descriptionPath };
+    });
+    expect(targets).toEqual([
+      { owner: 'A', path: 'characterRelationOverrides.B' },
+      { owner: 'A', path: 'characterRelationOverrides.B' },
+    ]);
+  });
   it('should build editable character display items with relation callbacks', () => {
     const navigate = jest.fn();
     const toggleMinor = jest.fn();

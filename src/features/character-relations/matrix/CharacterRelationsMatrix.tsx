@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState, type CSSProperties } from 'react';
 import { cn } from '@/lib/design';
 import type { CategoryHint } from '@/lib/types';
 import { usePendingFieldAwareness } from '@/context/PendingActionAwarenessContext';
+import { getCharacterRelationPairLocation } from '@/features/characters/utils/characterRelationPairs';
 import Button from '@/components/ui/Button';
 import {
   getPendingActionWarningClassName,
@@ -13,7 +14,7 @@ import {
 import Tooltip from '@/components/ui/Tooltip';
 import GotoLink from '@/components/GotoLink';
 
-import { getInverseCharacterRelationKind, getLegalRelationKinds } from './relationMatrixEditing';
+import { getLegalRelationKinds } from './relationMatrixEditing';
 import {
   getRelationMatrixCell,
   type RelationMatrixCell,
@@ -194,24 +195,20 @@ const MatrixCell = ({
   const legalKinds = getLegalRelationKinds(row, column, viewModel.columnCategory);
   const isEditableCell = isEditMode && legalKinds.length > 0;
   const pendingDescriptors = useMemo(() => {
-    const descriptors = legalKinds.map((kind) => ({
+    if (column.type === 'character') {
+      return [
+        {
+          op: 'set' as const,
+          path: getCharacterRelationPairLocation(row.id, column.id).path,
+          hasNewValue: true,
+        },
+      ];
+    }
+    return legalKinds.map((kind) => ({
       op: 'set' as const,
       path: `${row.id}.${kind}`,
       hasNewValue: true,
     }));
-    if (column.type === 'character') {
-      for (const kind of legalKinds) {
-        const inverseKind = getInverseCharacterRelationKind(kind);
-        if (inverseKind) {
-          descriptors.push({
-            op: 'set',
-            path: `${column.id}.${inverseKind}`,
-            hasNewValue: true,
-          });
-        }
-      }
-    }
-    return descriptors;
   }, [column.id, column.type, legalKinds, row.id]);
   const pendingSummary = usePendingFieldAwareness(pendingDescriptors);
   const isRowHighlighted = highlightedCell !== null && highlightedCell.rowKey === row.key;

@@ -31,6 +31,7 @@ export const createEditableRelationItemOptions = ({
   onUpdateDescription,
   onUpdateTags,
 }: CreateEditableRelationItemOptionsParams): RelationItemOptions => ({
+  characterId,
   relationKind,
   isEditable: true,
   getDescriptionPath: (index) => getDescriptionPath(relationKind, index),

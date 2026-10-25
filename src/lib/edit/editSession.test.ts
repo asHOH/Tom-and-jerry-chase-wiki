@@ -4,6 +4,7 @@ import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import type { EditHistoryStore } from '@/lib/edit/editModeRegistry';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getEditModeActionsStorageKey } from '@/lib/localStorage';
+import type { CharacterPairRelation } from '@/data/types';
 
 import { createEditSession, type EditSession, type EditSessionDependencies } from './editSession';
 
@@ -296,6 +297,303 @@ describe('createEditSession', () => {
       },
     });
     expect(history.read('characters')).toEqual([unrelated, appended]);
+  });
+
+  describe('shared character relation drafts', () => {
+    const pairBaseline = {
+      ...baseline,
+      characters: Object.fromEntries(
+        ['A', 'B', 'C'].map((id) => [id, { ...baseline.characters.杰瑞!, id }])
+      ),
+    } as PublishedGameDataByType;
+    const relation: CharacterPairRelation = {
+      kind: 'counters',
+      description: 'Shared description',
+      isMinor: false,
+    };
+    const targetScope = {
+      kind: 'entity',
+      entity: { entityType: 'characters', entityId: 'B' },
+    } as const;
+    const pairPath = 'A.characterRelationOverrides.B';
+
+    it('records initial map writes as independent pairs visible from either endpoint', async () => {
+      const history = memoryHistory({});
+      session = createEditSession(pairBaseline, 'v1:test', { history: history.store });
+      session.updateDomain('characters', (characters) => {
+        characters.A!.characterRelationOverrides = {};
+        characters.A!.characterRelationOverrides.B = { ...relation };
+        characters.A!.characterRelationOverrides.C = { ...relation, isMinor: true };
+      });
+      await Promise.resolve();
+
+      expect(history.read('characters').flat()).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ path: pairPath, newValue: relation }),
+          expect.objectContaining({ path: 'A.characterRelationOverrides.C' }),
+        ])
+      );
+      expect(
+        history
+          .read('characters')
+          .flat()
+          .every((action) => action.path.split('.').length === 3)
+      ).toBe(true);
+      expect(session.readDraft(targetScope)).toEqual({
+        actionCount: 1,
+        publishEntries: [{ op: 'set', path: pairPath, oldValue: undefined, newValue: relation }],
+      });
+      expect(session.readDraftOverview()).toEqual([
+        { entityType: 'characters', entityId: 'A', actionCount: 2 },
+        { entityType: 'characters', entityId: 'B', actionCount: 1 },
+        { entityType: 'characters', entityId: 'C', actionCount: 1 },
+      ]);
+    });
+
+    it.each(['publish', 'discard'] as const)(
+      'can %s from the target while preserving another pair and owner prose',
+      async (operation) => {
+        const history = memoryHistory({});
+        const publish = jest.fn(async () => ({
+          status: 'published' as const,
+          outcome: 'pending' as const,
+        }));
+        session = createEditSession(pairBaseline, 'v1:test', { history: history.store, publish });
+        session.updateDomain('characters', (characters) => {
+          characters.A!.characterRelationOverrides = {};
+          characters.A!.characterRelationOverrides.B = { ...relation };
+          characters.A!.characterRelationOverrides.C = { ...relation, isMinor: true };
+          characters.A!.description = 'Unrelated owner prose';
+        });
+        await Promise.resolve();
+
+        if (operation === 'publish') {
+          await expect(session.publishDraft(targetScope)).resolves.toEqual({
+            status: 'published',
+            outcome: 'pending',
+          });
+          expect(publish).toHaveBeenCalledWith(
+            expect.objectContaining({
+              body: {
+                entityType: 'characters',
+                entries: [{ op: 'set', path: pairPath, oldValue: undefined, newValue: relation }],
+              },
+            })
+          );
+        } else {
+          expect(session.discardDraft(targetScope)).toEqual({ status: 'discarded' });
+          expect(session.readDomain('characters').A!.characterRelationOverrides?.B).toBeUndefined();
+        }
+
+        expect(session.readDomain('characters').A!.characterRelationOverrides?.C).toEqual({
+          ...relation,
+          isMinor: true,
+        });
+        expect(session.readDomain('characters').A!.description).toBe('Unrelated owner prose');
+        expect(session.readDraft(targetScope).actionCount).toBe(0);
+        expect(session.readDraft({ kind: 'character-relations' }).publishEntries).toEqual([
+          expect.objectContaining({ path: 'A.characterRelationOverrides.C' }),
+        ]);
+      }
+    );
+
+    it('normalizes restored map replacements before target-side discard', () => {
+      const history = memoryHistory({
+        characters: [
+          {
+            op: 'set',
+            path: 'A.characterRelationOverrides',
+            oldValue: undefined,
+            newValue: { B: relation, C: null },
+          },
+        ],
+      });
+      session = createEditSession(pairBaseline, 'v1:test', { history: history.store });
+
+      expect(session.readDraft(targetScope).actionCount).toBe(1);
+      expect(session.discardDraft(targetScope)).toEqual({ status: 'discarded' });
+      expect(session.readDomain('characters').A!.characterRelationOverrides).toEqual({ C: null });
+      session.dispose();
+      session = createEditSession(pairBaseline, 'v1:test', { history: history.store });
+      expect(session.readDomain('characters').A!.characterRelationOverrides).toEqual({ C: null });
+    });
+
+    it('preserves the stored map draft if normalization cannot be persisted', () => {
+      const original = {
+        op: 'set' as const,
+        path: 'A.characterRelationOverrides',
+        oldValue: undefined,
+        newValue: { B: relation },
+      };
+      const history = memoryHistory({ characters: [original] });
+
+      expect(() =>
+        createEditSession(pairBaseline, 'v1:test', {
+          history: { ...history.store, replace: () => false },
+        })
+      ).toThrow('Failed to restore one or more edit-mode drafts.');
+      expect(history.read('characters')).toEqual([original]);
+    });
+
+    it('keeps the pair draft and live value when target-side discard persistence fails', () => {
+      const draft = { op: 'set' as const, path: pairPath, oldValue: undefined, newValue: relation };
+      const history = memoryHistory({ characters: [draft] });
+      session = createEditSession(pairBaseline, 'v1:test', {
+        history: { ...history.store, replace: () => false },
+      });
+
+      expect(session.discardDraft(targetScope).status).toBe('storage-failed');
+      expect(session.readDomain('characters').A!.characterRelationOverrides?.B).toEqual(relation);
+      expect(history.read('characters')).toEqual([draft]);
+    });
+
+    it.each(['retry', 'discard'] as const)(
+      'shares the standalone pair operation across endpoints for %s',
+      async (operation) => {
+        const draft = {
+          op: 'set' as const,
+          path: pairPath,
+          oldValue: undefined,
+          newValue: relation,
+        };
+        const history = memoryHistory({ characters: [draft] });
+        const publish = jest
+          .fn(async (_request: Parameters<NonNullable<EditSessionDependencies['publish']>>[0]) => ({
+            status: 'published' as const,
+            outcome: 'pending' as const,
+          }))
+          .mockRejectedValueOnce(new Error('Unknown network outcome'));
+        session = createEditSession(pairBaseline, 'v1:test', { history: history.store, publish });
+        const ownerScope = {
+          kind: 'entity',
+          entity: { entityType: 'characters', entityId: 'A' },
+        } as const;
+
+        expect((await session.publishDraft(targetScope)).status).toBe('failed');
+        const operationKey = `game-data-publish-operation:v1:${encodeURIComponent(`relations:pair:${pairPath}`)}`;
+        expect(window.sessionStorage.getItem(operationKey)).not.toBeNull();
+        if (operation === 'retry') {
+          expect((await session.publishDraft(ownerScope)).status).toBe('published');
+          expect(publish.mock.calls[1]![0]).toEqual(publish.mock.calls[0]![0]);
+        } else {
+          expect(session.discardDraft(ownerScope)).toEqual({ status: 'discarded' });
+        }
+        expect(window.sessionStorage.getItem(operationKey)).toBeNull();
+      }
+    );
+
+    it.each([
+      {
+        label: 'character to matrix',
+        originalScope: targetScope,
+        retryScope: { kind: 'character-relations' } as const,
+        endpoint: '/api/game-data-actions/publish',
+      },
+      {
+        label: 'matrix to character',
+        originalScope: { kind: 'character-relations' } as const,
+        retryScope: targetScope,
+        endpoint: '/api/game-data-actions/publish-relations',
+      },
+    ])(
+      'retries an unknown $label outcome with the original transport after restore',
+      async (scenario) => {
+        const draft = {
+          op: 'set' as const,
+          path: pairPath,
+          oldValue: undefined,
+          newValue: relation,
+        };
+        const history = memoryHistory({ characters: [draft] });
+        const publish = jest
+          .fn(async (_request: Parameters<NonNullable<EditSessionDependencies['publish']>>[0]) => ({
+            status: 'published' as const,
+            outcome: 'pending' as const,
+          }))
+          .mockRejectedValueOnce(new Error('Unknown network outcome'));
+        const options = { message: 'Pair update', submitMode: 'force_pending' as const };
+        session = createEditSession(pairBaseline, 'v1:test', { history: history.store, publish });
+
+        expect((await session.publishDraft(scenario.originalScope, options)).status).toBe('failed');
+        expect(publish.mock.calls[0]![0].endpoint).toBe(scenario.endpoint);
+        expect(history.read('characters')).toEqual([draft]);
+        session.dispose();
+        session = createEditSession(pairBaseline, 'v1:test', { history: history.store, publish });
+
+        expect((await session.publishDraft(scenario.retryScope, options)).status).toBe('published');
+        expect(publish.mock.calls[1]![0]).toEqual(publish.mock.calls[0]![0]);
+        expect(history.read('characters')).toEqual([]);
+      }
+    );
+
+    it('keeps changed pair drafts blocked when retrying through the other transport', async () => {
+      const draft = {
+        op: 'set' as const,
+        path: pairPath,
+        oldValue: undefined,
+        newValue: relation,
+      };
+      const history = memoryHistory({ characters: [draft] });
+      const publish = jest.fn(async () => {
+        throw new Error('Unknown network outcome');
+      });
+      session = createEditSession(pairBaseline, 'v1:test', { history: history.store, publish });
+
+      expect((await session.publishDraft(targetScope)).status).toBe('failed');
+      session.updateDomain('characters', (characters) => {
+        characters.A!.characterRelationOverrides!.B = {
+          ...relation,
+          description: 'A changed draft',
+        };
+      });
+      await Promise.resolve();
+
+      await expect(session.publishDraft({ kind: 'character-relations' })).resolves.toEqual({
+        status: 'failed',
+        error: new Error('publish_operation_conflict'),
+      });
+      expect(publish).toHaveBeenCalledTimes(1);
+      expect(session.readDraft(targetScope).publishEntries).toEqual([
+        expect.objectContaining({ newValue: { ...relation, description: 'A changed draft' } }),
+      ]);
+    });
+
+    it('preserves new edits to the submitted pair and another pair during publication', async () => {
+      const history = memoryHistory({});
+      let finish!: () => void;
+      const waiting = new Promise<void>((resolve) => {
+        finish = resolve;
+      });
+      const publish = jest.fn(async () => {
+        await waiting;
+        return { status: 'published' as const, outcome: 'pending' as const };
+      });
+      session = createEditSession(pairBaseline, 'v1:test', { history: history.store, publish });
+      session.updateDomain('characters', (characters) => {
+        characters.A!.characterRelationOverrides = { B: { ...relation } };
+      });
+      await Promise.resolve();
+
+      const publishing = session.publishDraft(targetScope);
+      const updated = { ...relation, description: 'A later edit' };
+      session.updateDomain('characters', (characters) => {
+        characters.A!.characterRelationOverrides!.B = updated;
+        characters.A!.characterRelationOverrides!.C = null;
+      });
+      await Promise.resolve();
+      finish();
+      await expect(publishing).resolves.toEqual({ status: 'published', outcome: 'pending' });
+
+      expect(session.readDraft(targetScope).publishEntries).toEqual([
+        { op: 'set', path: pairPath, oldValue: relation, newValue: updated },
+      ]);
+      expect(session.readDraft({ kind: 'character-relations' }).actionCount).toBe(2);
+      expect(session.discardDraft(targetScope)).toEqual({ status: 'discarded' });
+      expect(session.readDomain('characters').A!.characterRelationOverrides).toEqual({
+        B: relation,
+        C: null,
+      });
+    });
   });
 
   it.each([

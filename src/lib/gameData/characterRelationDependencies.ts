@@ -1,6 +1,11 @@
 import { isCharacterRelationKind } from '@/lib/edit/characterRelationActions';
 import type { Action } from '@/lib/edit/diffUtils';
 import type { TraitRelationKind } from '@/data/types';
+import {
+  CHARACTER_PAIR_RELATION_KINDS,
+  CHARACTER_RELATION_PAIR_FIELD,
+  parseCharacterRelationPairPath,
+} from '@/features/characters/utils/characterRelationPairs';
 
 type RelationScope = {
   domain: string;
@@ -29,6 +34,13 @@ function relationScope(action: Action): RelationScope | null {
   // Multiple faction changes can preserve an untouched relationship together while
   // either change alone makes it illegal; those existing edges are not in the request.
   if (field === 'factionId') return { domain: 'character', characters: null };
+  if (field === CHARACTER_RELATION_PAIR_FIELD) {
+    const pair = parseCharacterRelationPairPath(action.path);
+    return {
+      domain: 'character',
+      characters: pair ? new Set([pair.ownerId, pair.otherId]) : null,
+    };
+  }
   if (!isCharacterRelationKind(field)) return null;
 
   const domain = domains[field];
@@ -52,6 +64,11 @@ function relationScope(action: Action): RelationScope | null {
 
 /** Dependencies in the explicit relation projection, beyond overlapping write paths. */
 export function areCharacterRelationsDependent(left: Action, right: Action): boolean {
+  const leftPair = parseCharacterRelationPairPath(left.path);
+  const rightPair = parseCharacterRelationPairPath(right.path);
+  if (leftPair && rightPair) {
+    return leftPair.ownerId === rightPair.ownerId && leftPair.otherId === rightPair.otherId;
+  }
   const a = relationScope(left);
   const b = relationScope(right);
   if (!a || !b) return false;
@@ -59,4 +76,23 @@ export function areCharacterRelationsDependent(left: Action, right: Action): boo
   if (a.domain !== b.domain) return false;
   if (a.characters === null || b.characters === null) return true;
   return [...a.characters].some((id) => b.characters!.has(id));
+}
+
+/** Legacy collections can affect either endpoint of a shared pair record. */
+export function areCharacterRelationPathsDependent(leftPath: string, rightPath: string): boolean {
+  const leftPair = parseCharacterRelationPairPath(leftPath);
+  const rightPair = parseCharacterRelationPairPath(rightPath);
+  if (leftPair && rightPair) {
+    return leftPair.ownerId === rightPair.ownerId && leftPair.otherId === rightPair.otherId;
+  }
+  const pair = leftPair ?? rightPair;
+  if (!pair) return false;
+  const [characterId, field] = (leftPair ? rightPath : leftPath).split('.');
+  if (characterId !== pair.ownerId && characterId !== pair.otherId) return false;
+  return (
+    field === undefined ||
+    field === 'factionId' ||
+    field === CHARACTER_RELATION_PAIR_FIELD ||
+    CHARACTER_PAIR_RELATION_KINDS.some((kind) => kind === field)
+  );
 }

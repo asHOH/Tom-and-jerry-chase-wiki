@@ -1,9 +1,11 @@
 import type { Action } from '@/lib/edit/diffUtils';
+import { getCharacterRelationActionTargetIds } from '@/lib/gameData/characterRelationActionTargets';
 import {
   isPublishableEntityType,
   type PublishableEntityType,
 } from '@/lib/gameData/publishableEntityTypes';
 import { SingleItem, SingleItemTypeName, WikiChangeType, WikiYearData } from '@/data/types';
+import { parseCharacterRelationPairPath } from '@/features/characters/utils/characterRelationPairs';
 
 import { flattenActionEntries, normalizePublicActionEntries } from './gameData/actionEntries';
 import type { PublicActionRow } from './gameData/publicActionsTypes';
@@ -69,6 +71,7 @@ const WIKI_HISTORY_FIELD_LABELS: Readonly<Record<string, string>> = {
   counteredBy: '被克制关系',
   counterEachOther: '互克关系',
   collaborators: '协作关系',
+  characterRelationOverrides: '角色关系',
   countersKnowledgeCards: '克制的知识卡',
   counteredByKnowledgeCards: '被克制的知识卡',
   countersSpecialSkills: '克制的特技',
@@ -456,6 +459,23 @@ function normalizedActionsToWikiHistory(
     for (const action of row.actions) {
       const info = actionToWikiHistoryInfo(action as Action, row.entityType, createdAt, options);
       if (!info) continue;
+      const pair =
+        row.entityType === 'characters' ? parseCharacterRelationPairPath(action.path) : null;
+      const removesPair = pair?.rest.length === 0 && action.newValue === null;
+      if (pair) {
+        info.description = `${removesPair ? '移除' : '更新'} 与 ${pair.otherId} 的角色关系`;
+        if (removesPair) info.changeType = WikiChangeType.REMOVE;
+      }
+      const related =
+        row.entityType === 'characters'
+          ? getCharacterRelationActionTargetIds(action)
+              .filter((id) => id !== info.item.name)
+              .map((id): WikiHistoryFromAction => ({
+                ...info,
+                item: { name: id, type: 'character' },
+                description: `${removesPair ? '移除' : '更新'} 与 ${info.item.name} 的角色关系`,
+              }))
+          : [];
 
       if (!yearMap.has(year)) {
         yearMap.set(year, new Map());
@@ -464,7 +484,7 @@ function normalizedActionsToWikiHistory(
       if (!dateMap.has(dateKey)) {
         dateMap.set(dateKey, []);
       }
-      dateMap.get(dateKey)!.push(info);
+      dateMap.get(dateKey)!.push(info, ...related);
     }
   }
 

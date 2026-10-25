@@ -1,6 +1,5 @@
 import 'server-only';
 
-import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { parseApprovedActionArtifactPayload } from '@/lib/gameData/approvedActionArtifact';
 import { readBuildGameDataArtifact } from '@/lib/gameData/buildArtifactReader';
 import {
@@ -18,7 +17,8 @@ import {
 import { cached } from '@/lib/serverCache';
 import { getBuildGameDataArtifactPath } from '@/lib/supabase/buildSourceGuard';
 
-import { normalizePublicActionEntries } from './actionEntries';
+import { flattenActionEntries, normalizePublicActionEntries } from './actionEntries';
+import { getCharacterRelationActionTargetIds } from './characterRelationActionTargets';
 import type { PublicActionRow } from './publicActionsTypes';
 import { getGameDataActionEntityKey } from './scopedEntityPaths';
 import {
@@ -68,17 +68,6 @@ async function readSyncedRowsForCurrentContext(fresh = false): Promise<PublicAct
   return fresh ? readFreshSyncedHistoryRows() : readCachedSyncedHistoryRows();
 }
 
-function extractActionPaths(entry: ActionHistoryEntry): string[] {
-  if (Array.isArray(entry)) {
-    const paths: string[] = [];
-    for (const action of entry) {
-      if (action.path) paths.push(action.path);
-    }
-    return paths;
-  }
-  return entry.path ? [entry.path] : [];
-}
-
 function extractEntryId(entityType: string, path: string): string | undefined {
   return getGameDataActionEntityKey(entityType, path);
 }
@@ -89,13 +78,16 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
 
   for (const action of actions) {
     const entries = normalizePublicActionEntries(action.entry);
-    for (const entry of entries) {
-      const paths = extractActionPaths(entry);
-      for (const path of paths) {
-        const entryId = extractEntryId(action.entity_type, path);
-        if (!entryId) continue;
+    for (const entry of flattenActionEntries(entries)) {
+      const entryId = extractEntryId(action.entity_type, entry.path);
+      if (!entryId) continue;
+      const targetIds = new Set([entryId]);
+      if (action.entity_type === 'characters') {
+        getCharacterRelationActionTargetIds(entry).forEach((id) => targetIds.add(id));
+      }
 
-        const historyKey = `${action.entity_type}:${entryId}`;
+      for (const targetId of targetIds) {
+        const historyKey = `${action.entity_type}:${targetId}`;
 
         const existing = historyMap.get(historyKey);
         const isLaterAction =
@@ -112,7 +104,7 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
             status: action.status,
             message: action.message ?? null,
             reviewedAt: action.reviewed_at ?? null,
-            affectedPath: path,
+            affectedPath: entry.path,
           });
         }
       }

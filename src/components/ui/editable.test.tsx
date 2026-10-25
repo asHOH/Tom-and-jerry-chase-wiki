@@ -158,6 +158,34 @@ describe('editable', () => {
     });
   });
 
+  it('reads a shared character field from its owner while editing the other character', async () => {
+    mockIsEditMode = true;
+    session.updateDomain('characters', (characters) => {
+      characters['shared-owner'] = {
+        ...characters['test-character']!,
+        id: 'shared-owner',
+        characterRelationOverrides: {
+          'test-character': { kind: 'counters', description: 'Shared description', isMinor: false },
+        },
+      };
+    });
+    const onSave = jest.fn();
+    const Span = editable('characters').span;
+    render(
+      <Span
+        characterId='shared-owner'
+        path='characterRelationOverrides.test-character.description'
+        initialValue='Legacy description'
+        onSave={onSave}
+      />
+    );
+
+    const field = await screen.findByText('Shared description');
+    expect(screen.queryByText('Legacy description')).not.toBeInTheDocument();
+    editAndBlur(field, 'Updated shared description');
+    expect(onSave).toHaveBeenCalledWith('Updated shared description');
+  });
+
   it('writes knowledge card fields through the cards adapter', async () => {
     mockIsEditMode = true;
     const Span = editable('cards').span;

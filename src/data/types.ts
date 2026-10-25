@@ -155,6 +155,13 @@ export type CharacterRelationItem = {
   tags?: CharacterRelationTag[];
 };
 
+export type CharacterPairRelationKind =
+  'counters' | 'counteredBy' | 'counterEachOther' | 'collaborators';
+
+export type CharacterPairRelation = Omit<CharacterRelationItem, 'id'> & {
+  kind: CharacterPairRelationKind;
+};
+
 // Character definition type (without id, for raw definitions)
 export type CharacterDefinition = {
   description: string;
@@ -168,6 +175,8 @@ export type CharacterDefinition = {
   catPositioningTags?: CatPositioningTag[]; // For cat characters
   mousePositioningTags?: MousePositioningTag[]; // For mouse characters
   counterTags?: string[]; // Generic counter traits paired in characterRelationTags.ts
+  // One shared record per pair, owned by the lexically smaller character ID; null removes it.
+  characterRelationOverrides?: Record<string, CharacterPairRelation | null>;
 
   // Skill allocations
   skillAllocations?: SkillAllocation[];

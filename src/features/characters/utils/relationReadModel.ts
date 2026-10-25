@@ -8,6 +8,11 @@ import type {
   TraitRelation,
   TraitRelationKind,
 } from '@/data/types';
+import {
+  CHARACTER_PAIR_RELATION_KINDS,
+  getCharacterRelationPairLocation,
+  getInverseCharacterRelationKind,
+} from '@/features/characters/utils/characterRelationPairs';
 import { characterRelationTagPairs } from '@/features/characters/utils/characterRelationTags';
 import {
   getRelationsByKind,
@@ -491,6 +496,34 @@ const mergeCharacterRelationProjection = (
   return merged;
 };
 
+/** Canonical pair records replace legacy copies and inferred suggestions in either view. */
+export function applyCharacterRelationOverrides(
+  characters: DeepReadonly<Record<string, CharacterWithFaction>>,
+  characterId: string,
+  relation: CharacterRelation
+): CharacterRelation {
+  const result = { ...relation };
+  for (const otherId of Object.keys(characters)) {
+    if (otherId === characterId) continue;
+    const location = getCharacterRelationPairLocation(characterId, otherId);
+    const overrides = characters[location.ownerId]?.characterRelationOverrides;
+    if (!overrides || !Object.hasOwn(overrides, location.otherId)) continue;
+    for (const kind of CHARACTER_PAIR_RELATION_KINDS) {
+      result[kind] = result[kind].filter((item) => item.id !== otherId);
+    }
+    const record = overrides[location.otherId];
+    if (!record) continue;
+    const { kind, tags, ...metadata } = record;
+    const displayKind =
+      characterId === location.ownerId ? kind : getInverseCharacterRelationKind(kind);
+    result[displayKind] = [
+      ...result[displayKind],
+      { id: otherId, ...metadata, ...(tags ? { tags: tags.map((tag) => ({ ...tag })) } : {}) },
+    ];
+  }
+  return result;
+}
+
 /** Explicit relations before display normalization or tag-derived suggestions. */
 export function getExplicitCharacterRelation(
   charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>,
@@ -498,10 +531,14 @@ export function getExplicitCharacterRelation(
 ): CharacterRelation {
   if (!charactersRecord[id]) return defaultRelation;
 
-  return mergeCharacterRelationProjection(
-    buildSharedTraitRelations(id),
-    buildSharedInverseCharacterRelations(id),
-    buildLegacyOverlayRelations(charactersRecord, id)
+  return applyCharacterRelationOverrides(
+    charactersRecord,
+    id,
+    mergeCharacterRelationProjection(
+      buildSharedTraitRelations(id),
+      buildSharedInverseCharacterRelations(id),
+      buildLegacyOverlayRelations(charactersRecord, id)
+    )
   );
 }
 
@@ -519,9 +556,11 @@ export function getCharacterRelation(
     derived.counteredBy
   );
 
-  return normalizeCharacterRelationProjection(id, mergedRelation, {
-    getCharacterFactionId: (characterId) => charactersRecord[characterId]?.factionId,
-  });
+  return normalizeCharacterRelationProjection(
+    id,
+    applyCharacterRelationOverrides(charactersRecord, id, mergedRelation),
+    { getCharacterFactionId: (characterId) => charactersRecord[characterId]?.factionId }
+  );
 }
 
 export const getSpecialSkillRelationSummary = (

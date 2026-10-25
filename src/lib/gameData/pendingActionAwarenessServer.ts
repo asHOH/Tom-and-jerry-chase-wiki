@@ -17,7 +17,9 @@ import { getGameDataActionEntityKey } from '@/lib/gameData/scopedEntityPaths';
 import { cached } from '@/lib/serverCache';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import type { Tables } from '@/data/database.types';
+import { CHARACTER_PAIR_RELATION_KINDS } from '@/features/characters/utils/characterRelationPairs';
 
+import { getCharacterRelationActionTargetIds } from './characterRelationActionTargets';
 import { summarizePendingActionTargets } from './pendingActionAwareness';
 import type {
   PendingActionOverlapResponse,
@@ -192,8 +194,18 @@ async function loadPendingTargetSnapshot(options: {
 
     for (const action of decoded.value.actions) {
       const entityKey = getGameDataActionEntityKey(row.entity_type, action.path);
-      if (!entityKey || (options.entityKey !== undefined && entityKey !== options.entityKey)) {
-        continue;
+      if (!entityKey) continue;
+      if (options.entityKey !== undefined && entityKey !== options.entityKey) {
+        if (row.entity_type !== 'characters') continue;
+        const relatedIds = getCharacterRelationActionTargetIds(action);
+        const field = action.path.split('.')[1];
+        // Older indexed/empty-array actions lack their inverse target; keep them for overlap checks.
+        const unknownRelationTargets =
+          relatedIds.length === 0 &&
+          (field === undefined ||
+            field === 'factionId' ||
+            CHARACTER_PAIR_RELATION_KINDS.some((kind) => kind === field));
+        if (!relatedIds.includes(options.entityKey) && !unknownRelationTargets) continue;
       }
       if (options.maxTargets !== undefined && targets.length >= options.maxTargets) {
         truncated = true;

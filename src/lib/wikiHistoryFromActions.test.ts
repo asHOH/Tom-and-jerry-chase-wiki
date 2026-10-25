@@ -184,4 +184,43 @@ describe('publicActionsToWikiHistory', () => {
       })
     );
   });
+
+  it.each([
+    [{ kind: 'counters', description: '共同说明', isMinor: false }, WikiChangeType.UPDATE, '更新'],
+    [null, WikiChangeType.REMOVE, '移除'],
+  ] as const)(
+    'attributes a shared character relation to both pages',
+    (newValue, changeType, verb) => {
+      const changes = getBatchChanges([
+        row('pair', { op: 'set', path: 'Jerry.characterRelationOverrides.Tom', newValue }),
+      ]);
+
+      expect(changes).toEqual([
+        {
+          item: { name: 'Jerry', type: 'character' },
+          changeType,
+          description: `${verb} 与 Tom 的角色关系`,
+        },
+        {
+          item: { name: 'Tom', type: 'character' },
+          changeType,
+          description: `${verb} 与 Jerry 的角色关系`,
+        },
+      ]);
+    }
+  );
+
+  it('attributes pair targets removed by a whole-map replacement', () => {
+    const changes = getBatchChanges([
+      row('pair-map', {
+        op: 'set',
+        path: 'Jerry.characterRelationOverrides',
+        oldValue: { Tom: null },
+        newValue: {},
+      }),
+    ]);
+
+    expect(changes.map((change) => change.item.name)).toEqual(['Jerry', 'Tom']);
+    expect(changes[1]?.description).toBe('更新 与 Jerry 的角色关系');
+  });
 });

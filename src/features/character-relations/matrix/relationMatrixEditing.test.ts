@@ -1,10 +1,9 @@
 import type { FactionId, TraitRelationKind } from '@/data/types';
+import { getInverseCharacterRelationKind } from '@/features/characters/utils/characterRelationPairs';
 
 import {
-  getInverseCharacterRelationKind,
   getLegalRelationKinds,
   getRelationKindLabel,
-  getSiblingRelationKinds,
   isEditableRelationCell,
 } from './relationMatrixEditing';
 import type { RelationMatrixColumnCategory, RelationMatrixEntity } from './relationMatrixViewModel';
@@ -84,16 +83,22 @@ describe('relationMatrixEditing', () => {
     expect(getInverseCharacterRelationKind('advantageMaps')).toBeNull();
   });
 
-  it('exposes labels and sibling kinds for relation editing controls', () => {
+  it('exposes labels for relation editing controls', () => {
     expect(getRelationKindLabel('counters')).toBe('克制');
     expect(getRelationKindLabel('counteredBy')).toBe('被克制');
     expect(getRelationKindLabel('counterEachOther')).toBe('互克');
     expect(getRelationKindLabel('collaborators')).toBe('协作');
     expect(getRelationKindLabel('advantageMaps')).toBe('优势地图');
     expect(getRelationKindLabel('disadvantageModes')).toBe('劣势模式');
+  });
 
-    expect(getSiblingRelationKinds('counters', ['counters', 'counteredBy'])).toEqual([
-      'counteredBy',
-    ]);
+  it('uses the current faction carried by each matrix character', () => {
+    expect(
+      getLegalRelationKinds(
+        { ...createCharacter('汤姆'), factionId: 'mouse' },
+        { ...createCharacter('杰瑞'), factionId: 'mouse' },
+        'mouse'
+      )
+    ).toEqual(['collaborators']);
   });
 });

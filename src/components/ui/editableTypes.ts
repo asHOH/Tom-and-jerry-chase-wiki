@@ -39,6 +39,7 @@ export type EditableFieldProps<TagName extends IntrinsicTagName> = Omit<
   deleteOnEmpty?: boolean | undefined;
   onSave?: ((newValue: string) => void) | undefined;
   factionId?: string | undefined;
+  characterId?: string | undefined;
   isSingleLine?: boolean;
   enableEdit?: boolean;
 };

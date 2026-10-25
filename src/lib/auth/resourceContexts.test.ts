@@ -26,4 +26,56 @@ describe('resourceContexts', () => {
       getGameActionResourceContexts('specialSkills', [{ path: 'cat.主动技能.冷却时间', value: 1 }])
     ).toEqual([{ resourceType: 'specialSkills', resourceId: '主动技能' }]);
   });
+
+  it('requires both character scopes for pair writes, including removal and nested legacy paths', () => {
+    expect(
+      getGameActionResourceContexts('characters', [
+        { path: 'Jerry.characterRelationOverrides.Tom', newValue: null },
+        { path: ['Jerry', 'characterRelationOverrides', 'Tom', 'description'], newValue: 'shared' },
+      ])
+    ).toEqual([
+      { resourceType: 'characters', resourceId: 'Jerry' },
+      { resourceType: 'characters', resourceId: 'Tom' },
+    ]);
+  });
+
+  it('includes old and new pair targets when replacing a character or its override map', () => {
+    expect(
+      getGameActionResourceContexts('characters', [
+        {
+          path: 'Jerry.characterRelationOverrides',
+          oldValue: { Tom: null },
+          newValue: { Tuffy: { kind: 'collaborators', isMinor: false } },
+        },
+        {
+          path: 'Jerry',
+          oldValue: { characterRelationOverrides: { Spike: null } },
+          newValue: { characterRelationOverrides: { Nibbles: null } },
+        },
+      ])
+    ).toEqual(
+      ['Jerry', 'Tom', 'Tuffy', 'Spike', 'Nibbles'].map((resourceId) => ({
+        resourceType: 'characters',
+        resourceId,
+      }))
+    );
+  });
+
+  it('preserves legacy-array authorization scope while adding only shared-record endpoints', () => {
+    expect(
+      getGameActionResourceContexts('characters', [
+        { path: 'Jerry.counters', newValue: [{ id: 'Tom', isMinor: false }] },
+        {
+          path: 'Jerry',
+          newValue: {
+            counters: [{ id: 'Tom', isMinor: false }],
+            characterRelationOverrides: { Tuffy: null },
+          },
+        },
+      ])
+    ).toEqual([
+      { resourceType: 'characters', resourceId: 'Jerry' },
+      { resourceType: 'characters', resourceId: 'Tuffy' },
+    ]);
+  });
 });

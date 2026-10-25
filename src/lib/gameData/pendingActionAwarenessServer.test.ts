@@ -1,6 +1,9 @@
 import type { Json } from '@/data/database.types';
 
-import { checkPendingActionAcknowledgement } from './pendingActionAwarenessServer';
+import {
+  checkPendingActionAcknowledgement,
+  getPendingActionTargets,
+} from './pendingActionAwarenessServer';
 
 jest.mock('server-only', () => ({}), { virtual: true });
 jest.mock('@/lib/serverCache', () => ({
@@ -99,5 +102,74 @@ describe('pending game data action acknowledgement', () => {
         operationId,
       })
     ).resolves.toMatchObject({ error: 'pending_action_overlap' });
+  });
+
+  it('includes incoming shared and legacy relation changes in character-scoped awareness', async () => {
+    fromMock.mockReturnValueOnce(
+      pendingRows(
+        [
+          { path: 'A.characterRelationOverrides.B', newValue: null },
+          { path: 'A.characterRelationOverrides.C', newValue: null },
+          { path: 'C.counters', newValue: [{ id: 'B', isMinor: false }] },
+          { path: 'D.counteredBy.0.description', newValue: 'legacy indexed edit' },
+          { path: 'A.description', newValue: 'unrelated prose' },
+        ].map((entry, index) => ({
+          id: `character-row-${index}`,
+          entity_type: 'characters',
+          entry: { op: 'set', ...entry },
+          created_at: '2026-10-25T00:00:00.000Z',
+          created_by: null,
+          is_public: false,
+          publish_operation_id: null,
+        }))
+      )
+    );
+
+    const result = await getPendingActionTargets({
+      entityType: 'characters',
+      entityKey: 'B',
+      userId: null,
+    });
+    expect(result.targets.map((target) => target.path)).toEqual([
+      'A.characterRelationOverrides.B',
+      'C.counters',
+      'D.counteredBy.0.description',
+    ]);
+  });
+
+  it('requires acknowledgement for legacy inverse edits overlapping a new shared record', async () => {
+    fromMock.mockReturnValueOnce(
+      pendingRows([
+        {
+          id: 'inverse-legacy-row',
+          entity_type: 'characters',
+          entry: { op: 'set', path: 'B.counters', newValue: [{ id: 'A', isMinor: false }] },
+          created_at: '2026-10-25T00:00:00.000Z',
+          created_by: null,
+          is_public: false,
+          publish_operation_id: null,
+        },
+      ])
+    );
+    const pairAction = {
+      op: 'set' as const,
+      path: 'A.characterRelationOverrides.B',
+      oldValue: undefined,
+      newValue: { kind: 'counteredBy', isMinor: false },
+    };
+    const pairPrepared = {
+      actions: [
+        {
+          entityType: 'characters' as const,
+          rows: [{ canonicalEntry: pairAction, actions: [pairAction] }],
+        },
+      ],
+    };
+    await expect(
+      checkPendingActionAcknowledgement({ prepared: pairPrepared, userId: null })
+    ).resolves.toMatchObject({
+      error: 'pending_action_overlap',
+      targets: [expect.objectContaining({ path: 'B.counters' })],
+    });
   });
 });

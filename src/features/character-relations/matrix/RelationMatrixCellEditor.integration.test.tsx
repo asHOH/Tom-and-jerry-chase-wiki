@@ -32,9 +32,11 @@ function createCharacters() {
   };
 }
 
-function renderEditor() {
-  const item = getCharacterRelation(session.readDomain('characters'), '汤姆').counters.find(
-    ({ id }) => id === '杰瑞'
+function renderEditor(source: '汤姆' | '杰瑞' = '汤姆') {
+  const target = source === '汤姆' ? '杰瑞' : '汤姆';
+  const kind = source === '汤姆' ? 'counters' : 'counteredBy';
+  const item = getCharacterRelation(session.readDomain('characters'), source)[kind].find(
+    ({ id }) => id === target
   )!;
   const onOpenChange = jest.fn();
   render(
@@ -42,29 +44,29 @@ function renderEditor() {
       open
       selection={{
         row: {
-          id: '汤姆',
-          key: 'character:汤姆:',
-          label: '汤姆',
+          id: source,
+          key: `character:${source}:`,
+          label: source,
           type: 'character',
           href: '/characters/汤姆/',
         },
         column: {
-          id: '杰瑞',
-          key: 'character:杰瑞:',
-          label: '杰瑞',
+          id: target,
+          key: `character:${target}:`,
+          label: target,
           type: 'character',
           href: '/characters/杰瑞/',
         },
         cell: {
-          sourceKind: 'counters',
-          displayKind: 'counter',
+          sourceKind: kind,
+          displayKind: kind === 'counters' ? 'counter' : 'counteredBy',
           description: item.description ?? '',
           tooltipContent: '',
           isMinor: !!item.isMinor,
           tagPairs: item.tags ?? [],
         },
       }}
-      columnCategory='mouse'
+      columnCategory={source === '汤姆' ? 'mouse' : 'cat'}
       onOpenChange={onOpenChange}
       updateCharacters={(mutate) => session.updateDomain('characters', mutate)}
     />
@@ -121,4 +123,48 @@ it('still records an intentional matrix edit', async () => {
   expect(getCharacterRelation(session.readDomain('characters'), '汤姆').counters).toEqual(
     expect.arrayContaining([expect.objectContaining({ id: '杰瑞', description: '经验证的说明' })])
   );
+});
+
+it('saves a changed relation kind as one shared record', async () => {
+  session = installTestEditSession({ characters: createCharacters() });
+  renderEditor('杰瑞');
+  fireEvent.change(screen.getByLabelText('关系类型'), { target: { value: 'counterEachOther' } });
+  await act(async () => fireEvent.click(screen.getByRole('button', { name: '保存' })));
+
+  expect(session.readDraft(scope).publishEntries).toEqual([
+    expect.objectContaining({
+      path: '杰瑞.characterRelationOverrides.汤姆',
+      newValue: expect.objectContaining({ kind: 'counterEachOther' }),
+    }),
+  ]);
+  expect(getCharacterRelation(session.readDomain('characters'), '汤姆').counters).toEqual([]);
+  expect(getCharacterRelation(session.readDomain('characters'), '杰瑞').counteredBy).toEqual([]);
+  expect(getCharacterRelation(session.readDomain('characters'), '汤姆').counterEachOther).toEqual([
+    expect.objectContaining({ id: '杰瑞' }),
+  ]);
+  expect(getCharacterRelation(session.readDomain('characters'), '杰瑞').counterEachOther).toEqual([
+    expect.objectContaining({ id: '汤姆' }),
+  ]);
+});
+
+it('removes the pair from either matrix direction with one draft action', async () => {
+  const characters = createCharacters();
+  Object.assign(characters.汤姆, {
+    counters: [{ id: '杰瑞', description: 'legacy left', isMinor: false }],
+  });
+  Object.assign(characters.杰瑞, {
+    counteredBy: [{ id: '汤姆', description: 'legacy right', isMinor: true }],
+  });
+  session = installTestEditSession({ characters });
+  renderEditor('杰瑞');
+  await act(async () => fireEvent.click(screen.getByRole('button', { name: '移除' })));
+
+  expect(session.readDraft(scope).publishEntries).toEqual([
+    expect.objectContaining({
+      path: '杰瑞.characterRelationOverrides.汤姆',
+      newValue: null,
+    }),
+  ]);
+  expect(getCharacterRelation(session.readDomain('characters'), '汤姆').counters).toEqual([]);
+  expect(getCharacterRelation(session.readDomain('characters'), '杰瑞').counteredBy).toEqual([]);
 });

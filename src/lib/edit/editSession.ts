@@ -37,6 +37,7 @@ import {
   clearPublishOperation,
   getOrCreatePublishOperationId,
   getPublishOperationFingerprint,
+  PublishOperationConflictError,
 } from '@/lib/gameData/publishOperation';
 import type { FactionScopedGameDataEntityType } from '@/lib/gameData/scopedEntityPaths';
 import {
@@ -45,6 +46,7 @@ import {
   type GameDataSubmitOutcome,
 } from '@/lib/gameData/submitMode';
 import type { FactionId } from '@/data/types';
+import { parseCharacterRelationPairPath } from '@/features/characters/utils/characterRelationPairs';
 import {
   findInvalidModifiedKnowledgeCardGroup,
   KNOWLEDGE_CARD_GROUP_COST_MESSAGE,
@@ -230,7 +232,17 @@ function scopeEntityKey(ref: EditEntityRef): string {
   return 'factionId' in ref && ref.factionId ? `${ref.factionId}.${ref.entityId}` : ref.entityId;
 }
 
-function operationScope(scope: EditDraftScope): string {
+function operationScope(scope: EditDraftScope, entries: readonly ActionHistoryEntry[]): string {
+  const actions = entries.flat();
+  const first = actions[0];
+  const pair = first && parseCharacterRelationPairPath(first.path);
+  if (
+    scopeEntityType(scope) === 'characters' &&
+    pair?.rest.length === 0 &&
+    actions.every((action) => action.path === first!.path)
+  ) {
+    return `relations:pair:${first!.path}`;
+  }
   if (scope.kind === 'character-relations') return 'relations:characters';
   if (scope.kind === 'domain') return `page:${scope.entityType}:`;
   return `page:${scope.entity.entityType}:${scopeEntityKey(scope.entity)}`;
@@ -246,7 +258,11 @@ function selectHistory(
   if (scope.kind === 'domain') {
     return { matching: [...source], remaining: [] };
   }
-  return splitActionHistoryByEntity([...source], scopeEntityKey(scope.entity));
+  return splitActionHistoryByEntity(
+    [...source],
+    scopeEntityKey(scope.entity),
+    scope.entity.entityType
+  );
 }
 
 export function createEditSession(
@@ -379,6 +395,10 @@ export function createEditSession(
       const entityType = scopeEntityType(scope);
       const source = history.read(entityType);
       const { matching, remaining } = selectHistory(scope, source);
+      const entries = squashActions(matching, {
+        currentRoot: mutableDomain(stores, entityType),
+      });
+      const discardScope = operationScope(scope, entries.length > 0 ? entries : matching);
       if (matching.length > 0) {
         registry.withRecordingSuppressed(entityType, () => {
           const root = mutableDomain(stores, entityType);
@@ -400,7 +420,7 @@ export function createEditSession(
           matching.forEach((entry) => applyActionEntry(root, entry));
         });
       }
-      if (cleanupSucceeded) clearPublishOperation(operationScope(scope));
+      if (cleanupSucceeded) clearPublishOperation(discardScope);
       invalidate();
       notifyDrafts();
       return cleanupSucceeded
@@ -418,7 +438,7 @@ export function createEditSession(
       const entries = squashActions(matching, {
         currentRoot: mutableDomain(stores, entityType),
       });
-      const publishScope = operationScope(scope);
+      const publishScope = operationScope(scope, entries.length > 0 ? entries : matching);
 
       if (entries.length === 0) {
         if (!history.replace(entityType, remaining)) {
@@ -447,21 +467,45 @@ export function createEditSession(
         }
       }
 
-      const endpoint =
+      let endpoint: PublishTransportRequest['endpoint'] =
         scope.kind === 'character-relations'
           ? '/api/game-data-actions/publish-relations'
           : '/api/game-data-actions/publish';
-      const fingerprint = getPublishOperationFingerprint({
-        endpoint,
-        entries,
-        message: options.message?.trim() || null,
-        submitMode: options.submitMode ?? 'default',
-      });
+      const fingerprintForEndpoint = (value: PublishTransportRequest['endpoint']) =>
+        getPublishOperationFingerprint({
+          endpoint: value,
+          entries,
+          message: options.message?.trim() || null,
+          submitMode: options.submitMode ?? 'default',
+        });
 
       try {
-        const operationId = getOrCreatePublishOperationId(publishScope, fingerprint);
+        let operationId: string;
+        try {
+          operationId = getOrCreatePublishOperationId(
+            publishScope,
+            fingerprintForEndpoint(endpoint)
+          );
+        } catch (error) {
+          if (
+            !(error instanceof PublishOperationConflictError) ||
+            !publishScope.startsWith('relations:pair:')
+          ) {
+            throw error;
+          }
+          // The server includes the endpoint's permission in its operation fingerprint.
+          // Retry the original transport only when the complete draft still matches.
+          endpoint =
+            endpoint === '/api/game-data-actions/publish'
+              ? '/api/game-data-actions/publish-relations'
+              : '/api/game-data-actions/publish';
+          operationId = getOrCreatePublishOperationId(
+            publishScope,
+            fingerprintForEndpoint(endpoint)
+          );
+        }
         const body: PublishTransportRequest['body'] = {
-          ...(scope.kind === 'character-relations' ? {} : { entityType }),
+          ...(endpoint === '/api/game-data-actions/publish-relations' ? {} : { entityType }),
           entries,
           ...(options.message === undefined ? {} : { message: options.message }),
           ...(options.pendingAcknowledgementToken === undefined

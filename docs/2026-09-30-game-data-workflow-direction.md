@@ -18,7 +18,7 @@ The user has explicitly established that:
 
 Keeping the existing editor initially is a recommendation, not a confirmed requirement. No observation deadline, automatic monitoring schedule, or threshold for starting the overhaul has been agreed.
 
-The follow-up review of PR #261 authorized a minimal, low-risk extraction. A shared canonical relation record remains a useful direction, but introducing a new published domain now would also require changes to permissions, draft scoping, validation, and historical replay. That migration remains deferred; it is not a prerequisite for the bounded editor fix below.
+The follow-up review of PR #261 authorized a minimal, low-risk extraction. On 2026-10-25, the user additionally confirmed that each character pair must have one shared description, tag set, and strength, editable from either character. This is implemented within the existing character domain; introducing a separate published domain or moving publication authority to the database remains deferred.
 
 ## Where things stand
 
@@ -33,9 +33,13 @@ The recent fixes add server-side protection against:
 
 Rows with no net change are also rejected. Unchanged array context is still allowed inside a row containing a real edit. Definitively rejected drafts remain editable, while uncertain network outcomes retain the operation identity needed for a safe retry.
 
-The relation editor now builds saved collections from explicit relations rather than the rendered projection, which also includes tag-derived suggestions. Saving unchanged relation fields does not create an overlay; deliberately editing a suggestion makes only that selected relation explicit. Other suggestions remain visible without being saved as incidental edits. Existing character-owned action paths, inverse writes in the matrix, permissions, and publication remain in place. This is an editor safety fix, not completion of #261's single-record relation model; existing drafts and published actions are not rewritten or cleaned up automatically.
+Character-pair edits now write one record at `characters.<owner>.characterRelationOverrides.<other>`, where the owner is the lexically smaller character ID. The record holds the relation kind from the owner's perspective and the shared description, tags, and strength. Both character pages and the matrix read that record and derive the inverse kind. A `null` record deliberately removes the pair from both views, including inferred suggestions. Non-character relations retain their existing collections.
 
-The matrix also compares normalized form values with the displayed cell before writing either direction. Opening and saving an unchanged cell preserves derived suggestions and any existing inverse metadata without creating draft actions. Pair-level deletion and character-scoped draft handling still need to be addressed together.
+The matrix compares normalized form values with the displayed cell before writing. Opening and saving an unchanged cell creates no draft actions. Deliberately editing a suggestion makes only that pair explicit; other suggestions remain derived. Existing baseline relations and legacy overlays remain readable until a shared record supersedes that pair. Historical accepted rows are preserved. New submissions and approvals reject legacy writes that would be masked by a shared record, retaining rejected local drafts for correction.
+
+Pair edits use independent leaf actions, so either character page can publish or discard the shared change while preserving unrelated pairs and prose. Restored map snapshots normalize into those leaf actions. Fresh legacy collection drafts also convert into pair leaves; stale or unsupported drafts and unresolved submissions retain their original history for recovery. Standalone pair retries share an operation identity across both pages and the matrix, preserving the original submission endpoint after an uncertain result. Permissions, pending-change warnings, public history, update metadata, and contributor attribution include both endpoints. Server validation checks canonical ownership, existing endpoints, legal factions and kinds, complete record writes, and freshness.
+
+Deploy `20261025000000_credit_both_character_relation_endpoints.sql` before enabling shared-pair writes so contributor attribution includes both characters. It updates the existing contributor extraction function; it adds no new tables or publication domain.
 
 The implementation session reported 2,024 passing tests, plus lint, type, formatting, and actor-profile checks. Those are historical validation results, not a claim about a later checkout or production deployment. The guards are present in the checkout inspected for this note; production deployment and current action backlog were not checked for this handoff. The earlier compaction's completion does not establish that the live backlog remains empty.
 
@@ -59,9 +63,9 @@ This should make routine baseline compaction unnecessary for the migrated conten
 
 Database authority here concerns editable published content. It does not imply moving application configuration, assets, or every static definition into the database.
 
-For character relations, the deferred goal is **canonical single-record storage**: each explicit relationship has one authoritative record, and character pages and the relation matrix edit that same fact. Inverse and symmetric views should be derived rather than independently saved copies. Tag-derived suggestions remain derived until an author deliberately makes one explicit. Single-record ownership is a separate decision from where published data lives; it does not require moving all game data into the database or adopting #261's implementation.
+Character-pair editing now uses **canonical single-record ownership** within the existing character action domain. Removing the legacy fallback and migrating all historical relation storage remain separate work. Single-record ownership is independent of where published data lives; it does not require moving all game data into the database or adopting #261's implementation.
 
-Before switching relation writes, settle relation identity and directional metadata, preserve permissions and draft recovery from either editing surface, and verify atomic publication, review, and undo. Migration must preserve the currently published result, including uncompacted approved actions, and account for pending submissions and existing drafts. This remains a future design goal, not authorization to begin migration.
+Any future storage migration must preserve the currently published result, including uncompacted approved actions, and account for pending submissions and existing drafts. Broader publication and undo changes remain future design work.
 
 ## Principles to preserve
 
@@ -87,7 +91,7 @@ No table layout, API inventory, migration sequence, or implementation timetable 
 
 - May code deployments intentionally replace published content, or should content changes always go through publication while deployments change structure and behavior?
 - What is the unit of review and undo: a submission, an entity, or a coherent group of related changes? Atomic persistence alone does not settle this product decision.
-- Which relation fields are shared, and which may differ by direction? A single authoritative relationship must not erase intentional differences in descriptions or other metadata between its two views.
+- How should conflicting historical legacy copies be reconciled during a future bulk migration? New pair records share all metadata; older records are retained as compatibility inputs until explicitly superseded.
 - Which observation would justify the overhaul: recurring incorrect submissions, excessive manual cleanup, or maintenance complexity despite otherwise correct behavior?
 - How should database outages and schema changes affect public reads? An old checked-in baseline must not silently become a competing current authority.
 

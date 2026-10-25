@@ -1,4 +1,5 @@
 import type { PermissionKey, ResourceContext } from '@/lib/auth/permissions';
+import { getCharacterRelationOverrideActionTargetIds } from '@/lib/gameData/characterRelationActionTargets';
 import type { Json } from '@/data/database.types';
 
 export const SCOPABLE_RESOURCE_TYPES = [
@@ -87,24 +88,26 @@ const collectRoots = (entityType: string, value: Json, roots: Set<string>) => {
   }
   if (!value || typeof value !== 'object') return;
   const path = value.path;
+  const parts =
+    typeof path === 'string'
+      ? path.split('.').filter(Boolean)
+      : Array.isArray(path)
+        ? path.filter((part): part is string => typeof part === 'string' && part.length > 0)
+        : [];
   let foundRoot = false;
-  if (typeof path === 'string') {
-    const parts = path.split('.').filter(Boolean);
+  if (parts.length > 0) {
     const root =
       entityType === 'specialSkills' || entityType === 'achievements' ? parts[1] : parts[0];
     if (root) {
       roots.add(root);
       foundRoot = true;
     }
-  } else if (Array.isArray(path)) {
-    const parts = path.filter(
-      (part): part is string => typeof part === 'string' && part.length > 0
-    );
-    const root =
-      entityType === 'specialSkills' || entityType === 'achievements' ? parts[1] : parts[0];
-    if (root) {
-      roots.add(root);
-      foundRoot = true;
+    if (entityType === 'characters') {
+      getCharacterRelationOverrideActionTargetIds({
+        path: parts.join('.'),
+        oldValue: value.oldValue,
+        newValue: value.newValue,
+      }).forEach((id) => roots.add(id));
     }
   }
   if (!foundRoot) {

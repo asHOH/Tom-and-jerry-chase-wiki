@@ -1,5 +1,7 @@
+import isEqual from 'lodash-es/isEqual';
 import { subscribe, unstable_enableOp } from 'valtio';
 
+import { normalizeCharacterRelationPairHistory } from '@/lib/edit/characterRelationActions';
 import {
   actionsFromValtioOps,
   applyActionEntry,
@@ -7,7 +9,9 @@ import {
   type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
 import type { EditStores } from '@/lib/edit/editStores';
+import { migrateLegacyCharacterRelationDrafts } from '@/lib/edit/legacyCharacterRelationDrafts';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
+import { hasPublishOperation } from '@/lib/gameData/publishOperation';
 import { getEditModeActionsStorageKey, storage } from '@/lib/localStorage';
 import { actionHistorySchema } from '@/lib/validation/schemas';
 
@@ -88,7 +92,11 @@ function syncEntityToLocalStorage(
   return subscribe(entity, (ops) => {
     const actions = actionsFromValtioOps(ops);
     if (actions.length === 0) return;
-    historyStore.append(entityType, actions.length === 1 ? actions[0]! : actions);
+    const entries =
+      entityType === 'characters'
+        ? normalizeCharacterRelationPairHistory([actions])
+        : [actions.length === 1 ? actions[0]! : actions];
+    entries.forEach((entry) => historyStore.append(entityType, entry));
   });
 }
 
@@ -138,7 +146,24 @@ export function createEditModeRegistry(
     const errors: unknown[] = [];
     entityRegistry.forEach((entity, entityType) => {
       try {
-        const history = historyStore.read(entityType);
+        const storedHistory = historyStore.read(entityType);
+        const normalizedHistory =
+          entityType === 'characters'
+            ? normalizeCharacterRelationPairHistory(storedHistory)
+            : storedHistory;
+        // An uncertain legacy submission must keep its original payload for an exact retry.
+        const history =
+          entityType === 'characters' &&
+          ![
+            'relations:characters',
+            'page:characters:',
+            ...Object.keys(entity).map((id) => `page:characters:${id}`),
+          ].some(hasPublishOperation)
+            ? migrateLegacyCharacterRelationDrafts(normalizedHistory, entity)
+            : normalizedHistory;
+        if (!isEqual(history, storedHistory) && !historyStore.replace(entityType, history)) {
+          throw new Error('Failed to persist normalized character relation drafts.');
+        }
         if (history.length === 0) return;
 
         if (history.length > DRAFT_HISTORY_WARNING_THRESHOLD) {

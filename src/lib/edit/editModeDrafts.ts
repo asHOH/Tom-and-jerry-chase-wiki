@@ -1,6 +1,7 @@
 import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type { FactionId } from '@/data/types';
+import { parseCharacterRelationPairPath } from '@/features/characters/utils/characterRelationPairs';
 
 import type { Action, ActionHistoryEntry } from './diffUtils';
 
@@ -29,21 +30,31 @@ function normalizeActionEntry(actions: Action[]): ActionHistoryEntry {
   return actions.length === 1 ? actions[0]! : actions;
 }
 
-function matchesEntityAction(action: Action, entityId: string): boolean {
+function matchesEntityAction(
+  action: Action,
+  entityId: string,
+  entityType?: DraftEntityType
+): boolean {
   if (!entityId) return true;
-  return action.path === entityId || action.path.startsWith(`${entityId}.`);
+  return (
+    action.path === entityId ||
+    action.path.startsWith(`${entityId}.`) ||
+    (entityType === 'characters' &&
+      parseCharacterRelationPairPath(action.path)?.otherId === entityId)
+  );
 }
 
 function splitActionEntryByEntity(
   entry: ActionHistoryEntry,
-  entityId: string
+  entityId: string,
+  entityType?: DraftEntityType
 ): { matching: ActionHistoryEntry | null; remaining: ActionHistoryEntry | null } {
   if (Array.isArray(entry)) {
     const matching: Action[] = [];
     const remaining: Action[] = [];
 
     entry.forEach((action) => {
-      if (matchesEntityAction(action, entityId)) {
+      if (matchesEntityAction(action, entityId, entityType)) {
         matching.push(action);
       } else {
         remaining.push(action);
@@ -56,7 +67,7 @@ function splitActionEntryByEntity(
     };
   }
 
-  if (matchesEntityAction(entry, entityId)) {
+  if (matchesEntityAction(entry, entityId, entityType)) {
     return { matching: entry, remaining: null };
   }
 
@@ -65,7 +76,8 @@ function splitActionEntryByEntity(
 
 export function splitActionHistoryByEntity(
   history: ActionHistoryEntry[],
-  entityId: string
+  entityId: string,
+  entityType?: DraftEntityType
 ): {
   matching: ActionHistoryEntry[];
   remaining: ActionHistoryEntry[];
@@ -76,7 +88,8 @@ export function splitActionHistoryByEntity(
   history.forEach((entry) => {
     const { matching: matchingEntry, remaining: remainingEntry } = splitActionEntryByEntity(
       entry,
-      entityId
+      entityId,
+      entityType
     );
 
     if (matchingEntry) matching.push(matchingEntry);
@@ -130,30 +143,35 @@ export function buildDraftSummaryItemsForType(
 
   history.forEach((entry) => {
     normalizeActionEntryToList(entry).forEach((action) => {
-      const pathParts = parseDraftPath(entityType, action.path);
-      if (!pathParts) return;
+      const source = parseDraftPath(entityType, action.path);
+      if (!source) return;
+      const pair = entityType === 'characters' ? parseCharacterRelationPairPath(action.path) : null;
+      const entities: DraftPathParts[] =
+        pair && pair.otherId !== source.entityId ? [source, { entityId: pair.otherId }] : [source];
 
-      const itemKey = `${pathParts.factionId ?? ''}:${pathParts.entityId}`;
-      const current = counters.get(itemKey);
-      if (current) {
-        current.count += 1;
-        return;
-      }
+      entities.forEach((pathParts) => {
+        const itemKey = `${pathParts.factionId ?? ''}:${pathParts.entityId}`;
+        const current = counters.get(itemKey);
+        if (current) {
+          current.count += 1;
+          return;
+        }
 
-      const nextCounter: {
-        entityId: string;
-        count: number;
-        factionId?: FactionId;
-      } = {
-        entityId: pathParts.entityId,
-        count: 1,
-      };
+        const nextCounter: {
+          entityId: string;
+          count: number;
+          factionId?: FactionId;
+        } = {
+          entityId: pathParts.entityId,
+          count: 1,
+        };
 
-      if (pathParts.factionId) {
-        nextCounter.factionId = pathParts.factionId;
-      }
+        if (pathParts.factionId) {
+          nextCounter.factionId = pathParts.factionId;
+        }
 
-      counters.set(itemKey, nextCounter);
+        counters.set(itemKey, nextCounter);
+      });
     });
   });
 

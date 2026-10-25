@@ -3,11 +3,19 @@ import 'server-only';
 import isEqual from 'lodash-es/isEqual';
 
 import type { CharacterGameData } from '@/lib/dataManager';
+import {
+  CHARACTER_RELATION_PAIR_FIELD,
+  parseCharacterRelationPairPath,
+} from '@/features/characters/utils/characterRelationPairs';
 import { findInvalidModifiedKnowledgeCardGroup } from '@/features/knowledge-cards/utils/groupCostValidation';
 
 import { parseActionPath, resolveArraySegment } from './actionPath';
 import type { ApprovedCandidateReplayRow } from './approvedCandidateReplay';
-import { InvalidGameDataValueError, validateCharacterData } from './characterDataValidation';
+import {
+  InvalidGameDataValueError,
+  validateCharacterData,
+  validateCharacterRelationEditSources,
+} from './characterDataValidation';
 import { applyCheckedAction, collectTouchedRootKeys } from './checkedActionReplay';
 import { isPublishableEntityType } from './publishableEntityTypes';
 import { createApprovedActionSnapshot } from './published/approvedActionSnapshot';
@@ -140,6 +148,19 @@ export function validateActionFreshness(
           // An omitted oldValue is evidence of absence, never permission to replace a value.
           if (action.oldValue === undefined && exists) fail();
         } else {
+          // The first pair edit creates this optional map; its leaf still checks absence.
+          if (
+            row.entityType === 'characters' &&
+            index === 1 &&
+            segment === CHARACTER_RELATION_PAIR_FIELD &&
+            !exists &&
+            action.op === 'set' &&
+            segments.length === 3 &&
+            parseCharacterRelationPairPath(action.path)
+          ) {
+            parent = {};
+            continue;
+          }
           if (current === null || typeof current !== 'object') fail();
           parent = current as Record<string, unknown> | unknown[];
         }
@@ -182,6 +203,11 @@ export function validateActionFreshness(
       .filter((row) => row.entityType === 'characters')
       .flatMap((row) => row.actions.map((action) => action.path));
     validateCharacterData(characters, actionPaths);
+    validateCharacterRelationEditSources(
+      originalCharacters!,
+      characters as CharacterGameData,
+      actionPaths
+    );
     const cards = selectPublishedGameData('cards', getCanonicalGameData('cards'), snapshot);
     const invalidGroup = findInvalidModifiedKnowledgeCardGroup(
       originalCharacters!,

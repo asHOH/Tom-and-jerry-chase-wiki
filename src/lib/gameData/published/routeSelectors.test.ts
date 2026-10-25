@@ -108,6 +108,43 @@ describe('published route and history selectors', () => {
     expect(result.history.entries.length).toBeGreaterThan(0);
   });
 
+  it('shows one shared relation edit in the history of both character pages', async () => {
+    const snapshot = createApprovedActionSnapshotFromRows([
+      {
+        id: 'shared-character-relation',
+        entity_type: 'characters',
+        entry: {
+          op: 'set',
+          path: '杰瑞.characterRelationOverrides.汤姆',
+          newValue: { kind: 'counteredBy', description: '共用的关系说明', isMinor: false },
+        },
+        created_at: '2026-10-20T00:00:00.000Z',
+        status: 'approved',
+        created_by: null,
+        message: null,
+        reviewed_at: null,
+      },
+    ]);
+
+    for (const [characterId, otherId] of [
+      ['杰瑞', '汤姆'],
+      ['汤姆', '杰瑞'],
+    ] as const) {
+      const result = await getPublishedEntityRouteReadModel(
+        'characters',
+        characterId,
+        undefined,
+        snapshot
+      );
+      expect(result.history.entries).toContainEqual({
+        year: 2026,
+        date: '10.20',
+        type: WikiChangeType.UPDATE,
+        description: `更新 与 ${otherId} 的角色关系`,
+      });
+    }
+  });
+
   it('returns null for missing IDs and faction-scoped IDs without a valid faction', async () => {
     const snapshot = createApprovedActionSnapshotFromRows([]);
     const missing = await getPublishedEntityRouteReadModel('items', '   ', undefined, snapshot);

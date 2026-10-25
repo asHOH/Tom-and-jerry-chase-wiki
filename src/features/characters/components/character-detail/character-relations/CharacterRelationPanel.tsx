@@ -315,6 +315,7 @@ function RelationItemCard({
           item.descriptionPath ? (
             <e.span
               path={`${item.descriptionPath}.description`}
+              characterId={item.descriptionCharacterId}
               initialValue={item.description}
               className={relationItemDescriptionClassName}
               onSave={(value) => item.onUpdateDescription?.(value)}

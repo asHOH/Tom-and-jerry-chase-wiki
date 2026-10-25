@@ -72,6 +72,10 @@ function readStoredOperation(scope: string): StoredPublishOperation | null {
   }
 }
 
+export function hasPublishOperation(scope: string): boolean {
+  return readStoredOperation(scope) !== null;
+}
+
 export function getOrCreatePublishOperationId(scope: string, fingerprint: string): string {
   const existing = readStoredOperation(scope);
   if (existing?.fingerprint === fingerprint) return existing.operationId;

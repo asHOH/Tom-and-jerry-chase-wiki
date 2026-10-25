@@ -596,10 +596,11 @@ function InlineEditableField<TagName extends IntrinsicTagName>({
 export function EditableCharactersField<TagName extends IntrinsicTagName>({
   path,
   factionId,
+  characterId,
   ...props
 }: EditableFieldProps<TagName> & { tag: TagName }) {
   'use no memo';
-  const adapter = useEditableCharactersAdapter(path, factionId);
+  const adapter = useEditableCharactersAdapter(path, factionId, characterId);
   return (
     <InlineEditableField
       {...(props as Omit<EditableFieldProps<TagName>, 'path'>)}

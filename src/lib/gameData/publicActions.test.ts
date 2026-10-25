@@ -127,6 +127,81 @@ describe('public game data actions', () => {
     });
   });
 
+  it('updates both character endpoints for a shared relation edit', async () => {
+    mockReadApprovedRows.mockResolvedValue([
+      approvedRows[0]!,
+      {
+        ...approvedRows[0]!,
+        id: 'shared-pair-edit',
+        created_at: '2026-05-11T00:00:00.000Z',
+        entry: {
+          op: 'set',
+          path: 'Jerry.characterRelationOverrides.Tom',
+          oldValue: null,
+          newValue: { kind: 'counteredBy', description: 'shared edit', isMinor: false },
+        },
+      },
+    ]);
+    mockReadSyncedRows.mockResolvedValue([]);
+
+    const history = await getEntityUpdateHistory();
+
+    for (const id of ['Jerry', 'Tom']) {
+      expect(history.get(`characters:${id}`)).toMatchObject({
+        actionId: 'shared-pair-edit',
+        updatedAt: '2026-05-11T00:00:00.000Z',
+        affectedPath: 'Jerry.characterRelationOverrides.Tom',
+      });
+    }
+  });
+
+  it('preserves both endpoints when shared relation history has been compacted', async () => {
+    mockReadSyncedRows.mockResolvedValue([
+      {
+        ...syncedRows[0]!,
+        entity_type: 'characters',
+        entry: [{ op: 'set', path: 'Jerry.characterRelationOverrides.Tom' }],
+      },
+    ]);
+
+    const history = await getEntityUpdateHistory();
+
+    for (const id of ['Jerry', 'Tom']) {
+      expect(history.get(`characters:${id}`)).toMatchObject({
+        actionId: 'build-synced-history-0',
+        status: 'synced',
+        affectedPath: 'Jerry.characterRelationOverrides.Tom',
+      });
+    }
+  });
+
+  it('keeps a newer reverse endpoint edit after an older shared relation removal', async () => {
+    mockReadApprovedRows.mockResolvedValue([
+      {
+        ...approvedRows[0]!,
+        created_at: '2026-05-11T00:00:00.000Z',
+      },
+      {
+        ...approvedRows[0]!,
+        id: 'shared-pair-removal',
+        entry: [
+          {
+            op: 'set',
+            path: 'Jerry.characterRelationOverrides.Tom',
+            oldValue: { kind: 'counteredBy', description: 'shared edit', isMinor: false },
+            newValue: null,
+          },
+        ],
+      },
+    ]);
+    mockReadSyncedRows.mockResolvedValue([]);
+
+    const history = await getEntityUpdateHistory();
+
+    expect(history.get('characters:Jerry')?.actionId).toBe('shared-pair-removal');
+    expect(history.get('characters:Tom')?.actionId).toBe('approved-character-row');
+  });
+
   it('propagates history acquisition failures instead of caching an empty update map', async () => {
     const failure = new Error('history unavailable');
     mockReadSyncedRows.mockRejectedValueOnce(failure);
