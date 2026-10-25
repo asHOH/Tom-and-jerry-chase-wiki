@@ -35,6 +35,8 @@ Rows with no net change are also rejected. Unchanged array context is still allo
 
 The relation editor now builds saved collections from explicit relations rather than the rendered projection, which also includes tag-derived suggestions. Saving unchanged relation fields does not create an overlay; deliberately editing a suggestion makes only that selected relation explicit. Other suggestions remain visible without being saved as incidental edits. Existing character-owned action paths, inverse writes in the matrix, permissions, and publication remain in place. This is an editor safety fix, not completion of #261's single-record relation model; existing drafts and published actions are not rewritten or cleaned up automatically.
 
+The matrix also compares normalized form values with the displayed cell before writing either direction. Opening and saving an unchanged cell preserves derived suggestions and any existing inverse metadata without creating draft actions. Pair-level deletion and character-scoped draft handling still need to be addressed together.
+
 The implementation session reported 2,024 passing tests, plus lint, type, formatting, and actor-profile checks. Those are historical validation results, not a claim about a later checkout or production deployment. The guards are present in the checkout inspected for this note; production deployment and current action backlog were not checked for this handoff. The earlier compaction's completion does not establish that the live backlog remains empty.
 
 ## What to learn while observing

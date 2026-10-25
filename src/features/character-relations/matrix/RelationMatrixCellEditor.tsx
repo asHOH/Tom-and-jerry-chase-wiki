@@ -52,6 +52,11 @@ const toInverseRelationKinds = (legalKinds: readonly TraitRelationKind[]): Trait
   return inverseKinds;
 };
 
+const normalizeTagPairs = (tags: readonly CharacterRelationTag[]) =>
+  tags
+    .map((tag) => ({ counters: tag.counters.trim(), counteredBy: tag.counteredBy.trim() }))
+    .filter((tag) => tag.counters && tag.counteredBy);
+
 export default function RelationMatrixCellEditor({
   open,
   selection,
@@ -90,13 +95,23 @@ export default function RelationMatrixCellEditor({
 
     const trimmedDescription = description.trim();
     const normalizedTagPairs = supportsCharacterRelationTags(selectedKind)
-      ? tagPairs
-          .map((tag) => ({
-            counters: tag.counters.trim(),
-            counteredBy: tag.counteredBy.trim(),
-          }))
-          .filter((tag) => tag.counters && tag.counteredBy)
+      ? normalizeTagPairs(tagPairs)
       : [];
+    if (
+      selection.cell &&
+      selectedKind === selection.cell.sourceKind &&
+      trimmedDescription === selection.cell.description.trim() &&
+      isMinor === selection.cell.isMinor &&
+      JSON.stringify(normalizedTagPairs) ===
+        JSON.stringify(
+          supportsCharacterRelationTags(selectedKind)
+            ? normalizeTagPairs(selection.cell.tagPairs ?? [])
+            : []
+        )
+    ) {
+      onOpenChange(false);
+      return;
+    }
     const item = {
       id: selection.column.id,
       description: trimmedDescription,
