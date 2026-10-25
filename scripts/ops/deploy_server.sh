@@ -367,6 +367,7 @@ check_health_endpoint() {
 check_version_endpoint() {
   local url="$1"
   local expected_commit="$2"
+  local allow_null_artifact="${3:-0}"
   local response
 
   if ! fetch_endpoint "$url"; then
@@ -380,7 +381,9 @@ check_version_endpoint() {
     try {
       const body = JSON.parse(fs.readFileSync(0, "utf8"));
       if (body?.commitSha !== expected) process.exit(1);
-      if (
+      if (process.argv[2] === "1" && body.gameDataArtifact === null) {
+        console.log(`Recovery: accepting null gameDataArtifact for existing release ${expected}; replacement metadata is still required.`);
+      } else if (
         !body.gameDataArtifact ||
         typeof body.gameDataArtifact !== "object" ||
         Array.isArray(body.gameDataArtifact)
@@ -388,7 +391,7 @@ check_version_endpoint() {
     } catch {
       process.exit(1);
     }
-  ' "$expected_commit"; then
+  ' "$expected_commit" "$allow_null_artifact"; then
     LAST_HEALTH_CHECK_ERROR="Invalid version response at $url; expected commit ${expected_commit:0:8} and gameDataArtifact object, received: $(summarize_response "$response")"
     return 1
   fi
@@ -406,6 +409,7 @@ report_application_failure() {
 }
 
 wait_for_application_health() {
+  local allow_null_artifact="${1:-0}"
   local health_url="${HEALTH_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/health}"
   local version_url="${VERSION_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/version}"
   local public_health_url="${PUBLIC_HEALTH_CHECK_URL:-}"
@@ -434,9 +438,9 @@ wait_for_application_health() {
   while [ "$attempt" -le "$max_attempts" ]; do
     LAST_HEALTH_CHECK_ERROR=""
     if check_health_endpoint "$health_url" &&
-      check_version_endpoint "$version_url" "$expected_commit" &&
+      check_version_endpoint "$version_url" "$expected_commit" "$allow_null_artifact" &&
       { [ -z "$public_health_url" ] || check_health_endpoint "$public_health_url"; } &&
-      { [ -z "$public_version_url" ] || check_version_endpoint "$public_version_url" "$expected_commit"; }; then
+      { [ -z "$public_version_url" ] || check_version_endpoint "$public_version_url" "$expected_commit" "$allow_null_artifact"; }; then
       echo "Verified: commit ${expected_commit:0:8} is serving."
       return 0
     fi
@@ -457,6 +461,7 @@ wait_for_application_health() {
 
 ensure_pm2_process() {
   local release="$1"
+  local allow_null_artifact="${2:-0}"
 
   if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
     run_quietly pm2 delete "$PM2_APP_NAME" || return 1
@@ -465,7 +470,7 @@ ensure_pm2_process() {
   ENV_FILE="$release/.env.production" run_quietly pm2 start "$release/$START_SCRIPT" \
     --name "$PM2_APP_NAME" --interpreter bash --cwd "$release" || return 1
 
-  wait_for_application_health || return 1
+  wait_for_application_health "$allow_null_artifact" || return 1
   run_quietly pm2 save
 }
 
@@ -500,7 +505,7 @@ verify_active_release() {
     return 1
   fi
   if ! check_health_endpoint "$health_url" ||
-    ! check_version_endpoint "$version_url" "$PREVIOUS_SOURCE_HASH"; then
+    ! check_version_endpoint "$version_url" "$PREVIOUS_SOURCE_HASH" "$FORCE_BUILD"; then
     echo "Fatal: the existing release could not be verified."
     [ -n "$LAST_HEALTH_CHECK_ERROR" ] && echo "$LAST_HEALTH_CHECK_ERROR"
     return 1
@@ -590,7 +595,7 @@ restore_last_known_good_release() {
   fi
   echo "Restoring last-known-good release ${PREVIOUS_SOURCE_HASH:0:8}..."
   EXPECTED_COMMIT_SHA="$PREVIOUS_SOURCE_HASH"
-  ensure_pm2_process "$LAST_KNOWN_GOOD_DIR" || return 1
+  ensure_pm2_process "$LAST_KNOWN_GOOD_DIR" "$FORCE_BUILD" || return 1
   ACTIVE_RELEASE="$LAST_KNOWN_GOOD_DIR"
   set_release_link current "$ACTIVE_RELEASE" || return 1
   ROLLBACK_ARMED=0

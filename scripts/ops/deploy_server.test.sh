@@ -106,6 +106,9 @@ npm() {
       echo new-build > .next/BUILD_ID
       echo new-worker > public/sw.js
       printf '{"commitSha":"%.8s","gameDataArtifact":{}}\n' "$CURRENT_HASH" > .next/version.json
+      if [ "$TEST_MODE" = candidate-null ]; then
+        printf '{"commitSha":"%.8s","gameDataArtifact":null}\n' "$CURRENT_HASH" > .next/version.json
+      fi
       echo build-complete >> "$TEST_ROOT/events"
       ;;
     *) echo "Unexpected npm command: $*" >&2; return 93 ;;
@@ -196,6 +199,9 @@ run_deploy 1 success
 grep -q 'the existing release could not be verified' output
 [ ! -s events ]
 [ "$(cat active)" = "$OLD_RELEASE" ]
+run_deploy 1 success --force-build
+grep -q 'the existing release could not be verified' output
+[ ! -s events ]
 printf '{"commitSha":"%.8s","gameDataArtifact":{}}\n' "$OLD_HASH" > "$OLD_RELEASE/.next/version.json"
 
 for mode in low-disk low-inodes install-fail build-fail; do
@@ -230,7 +236,22 @@ for mode in start-fail activate-fail; do
   [ "$(git -C "$CONTROL" rev-parse HEAD)" = "$OLD_HASH" ]
 done
 
-run_deploy 0 startup-retry
+# Recover metadata lost to runtime revalidation, while preserving strict candidate checks.
+printf '{"commitSha":"%.8s","gameDataArtifact":null}\n' "$OLD_HASH" > "$OLD_RELEASE/.next/version.json"
+run_deploy 1 success
+grep -q 'the existing release could not be verified' output
+[ ! -s events ]
+run_deploy 1 build-fail --force-build
+grep -q build events
+! grep -q delete events
+[ "$(cat active)" = "$OLD_RELEASE" ]
+run_deploy 1 candidate-null --force-build
+grep -q 'Automatic rollback succeeded' output
+[ "$(cat active)" = "$OLD_RELEASE" ]
+[ "$(git -C "$CONTROL" rev-parse HEAD)" = "$OLD_HASH" ]
+
+run_deploy 0 startup-retry --force-build
+grep -q 'Recovery: accepting null gameDataArtifact' output
 grep -q startup-retry events
 grep -q "Verified: commit ${NEW_HASH:0:8} is serving." output
 ! sed -n '/\[deploy 6\/6\]/,$p' output | grep -Eq 'attempt|Waiting for application|Expecting deployed|HEAD is now'

@@ -10,7 +10,7 @@ const deployScript = readFileSync('scripts/ops/deploy_server.sh', 'utf8').replac
 const deploymentTestTimeout = process.platform === 'win32' ? 180_000 : 90_000;
 
 describe('VPS build rollback contract', () => {
-  it('requires artifacts on candidate and rollback releases, including public checks', () => {
+  it('requires candidate metadata and permits null rollback metadata only during forced recovery', () => {
     const functions = deployScript.slice(
       deployScript.indexOf('summarize_response()'),
       deployScript.indexOf('handle_exit()')
@@ -29,6 +29,7 @@ describe('VPS build rollback contract', () => {
       body: unknown;
       publicBody?: unknown;
       recovery?: boolean;
+      forceBuild?: boolean;
       status: number;
     }> = [
       { body: complete, status: 0 },
@@ -44,6 +45,32 @@ describe('VPS build rollback contract', () => {
       { body: { commitSha: '12345678' }, recovery: true, status: 1 },
       { body: complete, publicBody: { commitSha: '12345678' }, recovery: true, status: 1 },
       { body: { commitSha: 'wrong' }, recovery: true, status: 1 },
+      { body: { ...complete, gameDataArtifact: null }, forceBuild: true, status: 1 },
+      {
+        body: complete,
+        publicBody: { ...complete, gameDataArtifact: null },
+        forceBuild: true,
+        status: 1,
+      },
+      ...[null, undefined, 'invalid', []].map((gameDataArtifact) => ({
+        body: { ...complete, gameDataArtifact },
+        recovery: true,
+        forceBuild: true,
+        status: gameDataArtifact === null ? 0 : 1,
+      })),
+      {
+        body: { ...complete, gameDataArtifact: null, commitSha: 'wrong' },
+        recovery: true,
+        forceBuild: true,
+        status: 1,
+      },
+      {
+        body: { ...complete, gameDataArtifact: null },
+        publicBody: { ...complete, gameDataArtifact: null, commitSha: 'wrong' },
+        recovery: true,
+        forceBuild: true,
+        status: 1,
+      },
     ];
     // Batch the cases in one shell; every case still runs the real endpoint validators.
     const harness = `set -euo pipefail
@@ -69,7 +96,7 @@ run_quietly() { "$@"; }
 pm2() { :; }
 set_release_link() { :; }
 case_count=0
-while IFS=$'\t' read -r recovery expected_status TEST_VERSION_BODY TEST_PUBLIC_BODY; do
+while IFS=$'\t' read -r recovery FORCE_BUILD expected_status TEST_VERSION_BODY TEST_PUBLIC_BODY; do
   case_count=$((case_count + 1))
   check=wait_for_application_health
   if [ "$recovery" = 1 ]; then check=restore_last_known_good_release; fi
@@ -86,8 +113,14 @@ printf 'Verified %s cases' "$case_count"`;
       env: {
         ...process.env,
         TEST_CASES: cases
-          .map(({ body, publicBody = body, recovery, status }) =>
-            [recovery ? 1 : 0, status, JSON.stringify(body), JSON.stringify(publicBody)].join('\t')
+          .map(({ body, publicBody = body, recovery, forceBuild, status }) =>
+            [
+              recovery ? 1 : 0,
+              forceBuild ? 1 : 0,
+              status,
+              JSON.stringify(body),
+              JSON.stringify(publicBody),
+            ].join('\t')
           )
           .join('\n'),
       },
