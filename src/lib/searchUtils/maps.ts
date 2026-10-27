@@ -13,11 +13,10 @@ export async function searchMaps(
       ...commonSearchFields(map),
       ...(map.mapSkin ?? []).map((skin): SearchField => [
         skin.name,
-        0.6,
-        0.55,
+        'name',
         `${map.name} (${skin.name})`,
       ]),
-      ...(map.mapSkin ?? []).map((skin): SearchField => [skin.description, 0.5, 0.45]),
+      ...(map.mapSkin ?? []).map((skin): SearchField => [skin.description, 'description']),
     ]);
     if (match) {
       results.push({

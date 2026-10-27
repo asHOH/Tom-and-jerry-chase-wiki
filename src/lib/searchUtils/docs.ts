@@ -29,8 +29,8 @@ export async function searchDocs(query: SearchQuery): Promise<SearchResult[]> {
   const results: SearchResult[] = [];
   for (const page of getDocPages()) {
     const match = await query.matchFields([
-      [page.title, 1, 0.95],
-      [page.slug, 0.9, 0.85],
+      [page.title, 'name'],
+      [page.slug, 'alias'],
     ]);
     if (match)
       results.push({

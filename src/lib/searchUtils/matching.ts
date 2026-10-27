@@ -1,9 +1,10 @@
 import { convertToPinyin } from '../pinyinUtils';
 
+const FIELD_PRIORITY = { name: 40, alias: 30, description: 20, detail: 10 };
+
 export type SearchField = readonly [
   text: string | undefined,
-  directPriority: number,
-  pinyinPriority: number,
+  kind: keyof typeof FIELD_PRIORITY,
   context?: string | undefined,
 ];
 
@@ -20,15 +21,14 @@ export function commonSearchFields(item: {
   detailedDescription?: string | undefined;
 }): SearchField[] {
   return [
-    [item.name, 1, 0.95],
+    [item.name, 'name'],
     ...(item.aliases ?? []).map((alias): SearchField => [
       alias,
-      0.9,
-      0.85,
+      'alias',
       `${item.name} (${alias})`,
     ]),
-    [item.description, 0.8, 0.75],
-    [item.detailedDescription, 0.7, 0.65],
+    [item.description, 'description'],
+    [item.detailedDescription, 'detail'],
   ];
 }
 
@@ -61,27 +61,33 @@ export function createSearchQuery(query: string) {
     return undefined;
   };
 
-  // Field order defines precedence; scores only rank results after an item matches.
+  // Names outrank aliases and prose across domains; equal matches retain field order.
   const matchFields = async (fields: readonly SearchField[]): Promise<SearchMatch | undefined> => {
-    for (const [text, directPriority, pinyinPriority, context] of fields) {
+    let bestMatch: SearchMatch | undefined;
+    for (const [text, kind, context] of fields) {
       if (!text) continue;
-      const isDirectMatch = text.toLowerCase().includes(lowerCaseQuery);
-      if (!isDirectMatch && !(pinyinQuery && (await convertToPinyin(text)).includes(pinyinQuery))) {
-        continue;
-      }
+      if (bestMatch && FIELD_PRIORITY[kind] + 3 <= bestMatch.priority) continue;
+      const lowerCaseText = text.toLowerCase();
+      const isDirectMatch = lowerCaseText.includes(lowerCaseQuery);
+      const matchedText = isDirectMatch ? lowerCaseText : await convertToPinyin(text);
+      const matchedQuery = isDirectMatch ? lowerCaseQuery : pinyinQuery;
+      if (!matchedQuery || !matchedText.includes(matchedQuery)) continue;
+      const priority =
+        FIELD_PRIORITY[kind] + (isDirectMatch ? 2 : 0) + (matchedText === matchedQuery ? 1 : 0);
+      if (bestMatch && priority <= bestMatch.priority) continue;
       const matchContext = context ?? (await findMatchContext([text]));
       if (matchContext) {
-        return {
+        bestMatch = {
           matchContext,
-          priority: isDirectMatch ? directPriority : pinyinPriority,
+          priority,
           isPinyinMatch: !isDirectMatch,
         };
       }
     }
-    return undefined;
+    return bestMatch;
   };
 
-  return { lowerCaseQuery, pinyinQuery, findMatchContext, matchFields };
+  return { lowerCaseQuery, pinyinQuery, matchFields };
 }
 
 export type SearchQuery = ReturnType<typeof createSearchQuery>;

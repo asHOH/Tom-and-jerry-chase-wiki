@@ -10,11 +10,11 @@ export async function searchCards(
   const results: SearchResult[] = [];
   for (const [entityId, card] of Object.entries(cards)) {
     const match = await query.matchFields([
-      [card.id, 0.2, 0.19, card.id],
-      [card.description, 0.18, 0.17, card.description],
-      [card.detailedDescription, 0.16, 0.15, card.detailedDescription],
-      ...(card.levels ?? []).map((level): SearchField => [level.description, 0.14, 0.13]),
-      ...(card.levels ?? []).map((level): SearchField => [level.detailedDescription, 0.12, 0.11]),
+      [card.id, 'name', card.id],
+      [card.description, 'description', card.description],
+      [card.detailedDescription, 'detail', card.detailedDescription],
+      ...(card.levels ?? []).map((level): SearchField => [level.description, 'detail']),
+      ...(card.levels ?? []).map((level): SearchField => [level.detailedDescription, 'detail']),
     ]);
     if (match)
       results.push({

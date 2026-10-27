@@ -11,8 +11,8 @@ export async function searchModes(
   for (const [entityId, mode] of Object.entries(modes)) {
     const match = await query.matchFields([
       ...commonSearchFields(mode),
-      [mode.rules, 0.6, 0.55],
-      [mode.detailedRules, 0.5, 0.45],
+      [mode.rules, 'description'],
+      [mode.detailedRules, 'detail'],
     ]);
     if (match) {
       results.push({

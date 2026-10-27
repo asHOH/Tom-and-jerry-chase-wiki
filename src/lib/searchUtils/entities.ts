@@ -11,19 +11,18 @@ export async function searchEntities(
   for (const [entityId, entity] of Object.entries(entities)) {
     const match = await query.matchFields([
       ...commonSearchFields(entity),
-      [entity.create, 0.6, 0.55],
-      [entity.detailedCreate, 0.5, 0.45],
-      ...(entity.skills ?? []).map((skill): SearchField => [skill.name, 0.4, 0.35]),
+      [entity.create, 'description'],
+      [entity.detailedCreate, 'detail'],
+      ...(entity.skills ?? []).map((skill): SearchField => [skill.name, 'name']),
       ...(entity.skills ?? []).flatMap((skill) =>
         (skill.aliases ?? []).map((alias): SearchField => [
           alias,
-          0.34,
-          0.33,
+          'alias',
           `${skill.name} (${alias})`,
         ])
       ),
-      ...(entity.skills ?? []).map((skill): SearchField => [skill.description, 0.3, 0.25]),
-      ...(entity.skills ?? []).map((skill): SearchField => [skill.detailedDescription, 0.2, 0.18]),
+      ...(entity.skills ?? []).map((skill): SearchField => [skill.description, 'description']),
+      ...(entity.skills ?? []).map((skill): SearchField => [skill.detailedDescription, 'detail']),
     ]);
     if (match) {
       results.push({

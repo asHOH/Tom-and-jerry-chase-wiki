@@ -3,7 +3,6 @@ import type { FactionId, SingleItem, SingleItemTypeName } from '@/data/types';
 import allBuffDetailedDescriptionsRaw from '@/features/buffs/data/allBuffDetailedDescriptions.json';
 import { buffMappingTable } from '@/features/buffs/data/buffMappingTable';
 
-import { convertToPinyin } from '../pinyinUtils';
 import { getSingleItemHref } from '../singleItemTools';
 import { commonSearchFields, type SearchQuery } from './matching';
 import type { SearchResult } from './types';
@@ -70,9 +69,9 @@ export async function searchBuffs(
         ...buff,
         aliases: buff.aliases?.filter((alias) => !alias.startsWith('#') && !alias.startsWith('%')),
       }),
-      [buff.stack, 0.6, 0.55],
-      [buff.detailedStack, 0.5, 0.45],
-      [buff.sourceDescription, 0.4, 0.35],
+      [buff.stack, 'description'],
+      [buff.detailedStack, 'detail'],
+      [buff.sourceDescription, 'description'],
     ]);
     if (match)
       results.push({
@@ -87,47 +86,30 @@ export async function searchBuffs(
 }
 
 export async function searchDetailedBuffs(query: SearchQuery): Promise<SearchResult[]> {
-  const { lowerCaseQuery, pinyinQuery, findMatchContext } = query;
+  const { lowerCaseQuery, pinyinQuery } = query;
   const results: SearchResult[] = [];
   const shouldSearchPinyin = /^[a-z]+$/.test(pinyinQuery);
 
   for (const buff of detailedBuffs) {
-    let matchContext: string | undefined;
-    let priority = -1;
-    let isPinyinMatch = false;
+    const match = await query.matchFields([
+      [
+        shouldSearchPinyin || buff.name.toLowerCase().includes(lowerCaseQuery)
+          ? buff.name
+          : undefined,
+        'name',
+      ],
+      // Keep this large secondary corpus's descriptions limited to literal matches.
+      [
+        buff.description.toLowerCase().includes(lowerCaseQuery) ? buff.description : undefined,
+        'description',
+      ],
+    ]);
 
-    const nameLowerCase = buff.name.toLowerCase();
-    if (nameLowerCase === lowerCaseQuery) {
-      matchContext = buff.name;
-      priority = -0.9;
-    } else if (nameLowerCase.includes(lowerCaseQuery)) {
-      matchContext = buff.name;
-      priority = -0.91;
-    } else if (shouldSearchPinyin) {
-      const namePinyin = await convertToPinyin(buff.name);
-      if (namePinyin === pinyinQuery) {
-        matchContext = buff.name;
-        priority = -0.92;
-        isPinyinMatch = true;
-      } else if (namePinyin.includes(pinyinQuery)) {
-        matchContext = buff.name;
-        priority = -0.93;
-        isPinyinMatch = true;
-      }
-    }
-
-    if (!matchContext && buff.description.toLowerCase().includes(lowerCaseQuery)) {
-      matchContext = await findMatchContext([buff.description]);
-      priority = -1.1;
-    }
-
-    if (matchContext) {
+    if (match) {
       results.push({
         type: 'buff',
         name: buff.name,
-        matchContext,
-        priority,
-        isPinyinMatch,
+        ...match,
         detailedBuffId: buff.buffId,
         href: buff.href ? `${buff.href.split('#')[0]}#buff-${buff.buffId}` : '/buffs',
       });

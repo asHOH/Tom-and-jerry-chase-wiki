@@ -52,7 +52,7 @@ jest.mock('@/data', () => {
       cat: { a: { name: '共同特技', factionId: 'cat' } },
       mouse: { a: { name: '共同特技', factionId: 'mouse' } },
     },
-    itemGroups: {},
+    itemGroups: { group: { name: '道具组合' } },
   };
 });
 jest.mock('@/data/static', () => ({
@@ -140,13 +140,13 @@ describe('performSearch', () => {
     expect(results.slice(0, 7).map((result) => 'name' in result && result.name)).toEqual(
       Array.from({ length: 7 }, (_, i) => `奶酪道具${i}`)
     );
-    expect(results.every((result) => result.priority === 1 && !result.isPinyinMatch)).toBe(true);
+    expect(results.every((result) => !result.isPinyinMatch)).toBe(true);
   });
 
   it.each(['  NAI LAO  ', "nai'lao"])('normalizes pinyin query %s', async (query) => {
     const results = await search(query);
     expect(results).toHaveLength(25);
-    expect(results.every((result) => result.priority === 0.95 && result.isPinyinMatch)).toBe(true);
+    expect(results.every((result) => result.isPinyinMatch)).toBe(true);
   });
 
   it.each(['', '   ', '没有匹配结果', "'"])('returns no results for %j', async (query) => {
@@ -158,7 +158,6 @@ describe('performSearch', () => {
       type: 'item',
       name: '奶酪道具0',
       matchContext: '奶酪道具0 (cheese)',
-      priority: 0.9,
     });
   });
 
@@ -167,36 +166,34 @@ describe('performSearch', () => {
       expect.objectContaining({
         type: 'item',
         matchContext: 'prefix TARGET trailing',
-        priority: 0.8,
       }),
     ]);
   });
 
   it.each([
-    ['召唤文本', 'entity', 0.6],
-    ['技能简称', 'entity', 0.34],
-    ['雪夜', 'map', 0.6],
-    ['皮肤描述', 'map', 0.5],
-    ['特殊规则', 'mode', 0.6],
-    ['详细规则', 'mode', 0.5],
-    ['知识卡', 'card', 0.2],
-    ['卡片等级', 'card', 0.14],
-    ['叠加效果', 'buff', 0.6],
-    ['普通别名', 'buff', 0.9],
-    ['help', 'doc', 0.9],
-  ])('preserves domain-specific matching for %s', async (query, type, priority) => {
+    ['召唤文本', 'entity'],
+    ['技能简称', 'entity'],
+    ['雪夜', 'map'],
+    ['皮肤描述', 'map'],
+    ['特殊规则', 'mode'],
+    ['详细规则', 'mode'],
+    ['知识卡', 'card'],
+    ['卡片等级', 'card'],
+    ['叠加效果', 'buff'],
+    ['普通别名', 'buff'],
+    ['help', 'doc'],
+  ])('preserves domain-specific matching for %s', async (query, type) => {
     expect(await search(query as string)).toEqual([
-      expect.objectContaining({ type, priority, isPinyinMatch: false }),
+      expect.objectContaining({ type, isPinyinMatch: false }),
     ]);
   });
 
-  it('excludes regex buff aliases and retains detailed-buff links and ranking', async () => {
+  it('excludes regex buff aliases and retains detailed-buff links', async () => {
     expect(await search('模板别名')).toEqual([]);
     expect(await search('护盾')).toEqual([
       expect.objectContaining({
         type: 'buff',
         name: '护盾',
-        priority: -0.9,
         detailedBuffId: '1',
         href: '/items/example/#buff-1',
       }),
@@ -212,15 +209,123 @@ describe('performSearch', () => {
   });
 
   it.each([
-    ['技能甲', '技能甲', 0.9],
-    ['技能别名', '技能乙', 0.84],
-    ['等级内容', '技能乙', 0.2],
+    ['技能甲', '技能甲'],
+    ['技能别名', '技能甲'],
+    ['等级内容', '技能甲'],
   ])(
-    'preserves character skill navigation and precedence for %s',
-    async (query, matchedSkillName, priority) => {
+    'links to the first equally relevant character skill for %s',
+    async (query, matchedSkillName) => {
       expect(await search(query as string)).toEqual([
-        expect.objectContaining({ type: 'character', id: '汤姆', matchedSkillName, priority }),
+        expect.objectContaining({
+          type: 'character',
+          id: '汤姆',
+          matchedSkillName,
+          href: `/characters/tom#Skill:${encodeURIComponent(matchedSkillName)}`,
+        }),
       ]);
     }
   );
+
+  it.each([
+    ['汤姆', '/characters/tom'],
+    ['知识卡', '/cards/card'],
+    ['共同特技', '/special-skills/cat/a'],
+    ['道具组合', `/itemGroups/${encodeURIComponent('道具组合')}`],
+    ['片段道具', '/items/excerpt'],
+    ['衍生物', '/entities/special'],
+    ['状态', '/buffs/buff'],
+    ['雪夜', '/maps/special'],
+    ['奶酪组件0', '/fixtures/0'],
+    ['模式', '/modes/mode'],
+    ['共同成就', '/achievements/cat/a'],
+    ['帮助文档', '/help/'],
+    ['护盾', '/items/example/#buff-1'],
+  ])(
+    'ranks the exact name %s above partial names, aliases, and prose across sources',
+    async (query, href) => {
+      const results = await performSearch(query, {
+        ...gameData,
+        items: {
+          ...gameData.items,
+          partial: { ...gameData.items.excerpt!, name: `${query}扩展`, imageUrl: '' },
+          alias: { ...gameData.items.excerpt!, name: '别名条目', aliases: [query], imageUrl: '' },
+          prose: {
+            ...gameData.items.excerpt!,
+            name: '说明条目',
+            description: `包含${query}的说明`,
+            imageUrl: '',
+          },
+        },
+      });
+      expect(results[0]).toMatchObject({ href });
+      expect(results.map((result) => result.href)).toEqual(
+        expect.arrayContaining(['/items/partial', '/items/alias', '/items/prose'])
+      );
+      const position = (destination: string) =>
+        results.findIndex((result) => result.href === destination);
+      expect(position('/items/partial')).toBeLessThan(position('/items/alias'));
+      expect(position('/items/alias')).toBeLessThan(position('/items/prose'));
+    }
+  );
+
+  it.each([
+    ['tangmu', '/characters/tom'],
+    ['zhishika', '/cards/card'],
+    ['hudun', '/items/example/#buff-1'],
+  ])('ranks the pinyin name %s above a literal description match', async (query, href) => {
+    const results = await performSearch(query, {
+      ...gameData,
+      items: {
+        prose: {
+          ...gameData.items.excerpt!,
+          name: '说明条目',
+          description: `包含 ${query} 的说明`,
+          imageUrl: '',
+        },
+      },
+    });
+    expect(results[0]).toMatchObject({ href, isPinyinMatch: true });
+    expect(results.at(-1)).toMatchObject({ href: '/items/prose', isPinyinMatch: false });
+  });
+
+  it('chooses a stronger later field and its skill destination over an earlier prose match', async () => {
+    const character = gameData.characters.tom!;
+    const results = await performSearch('技能乙', {
+      ...gameData,
+      characters: {
+        tom: {
+          ...character,
+          description: '有关技能乙的介绍',
+          skills: [{ ...character.skills[0]!, name: '技能乙扩展' }, character.skills[1]!],
+        },
+      },
+      entities: {
+        special: {
+          ...gameData.entities.special!,
+          description: '有关技能乙的介绍',
+          skills: [{ ...gameData.entities.special!.skills![0]!, name: '技能乙' }],
+        },
+      },
+    });
+    expect(results[0]).toMatchObject({
+      href: `/characters/tom#Skill:${encodeURIComponent('技能乙')}`,
+      matchContext: '技能乙',
+    });
+    expect(results[1]).toMatchObject({ href: '/entities/special', matchContext: '技能乙' });
+  });
+
+  it('ranks literal names above pinyin names and descriptions above details', async () => {
+    const results = await performSearch('hudun', {
+      ...gameData,
+      items: {
+        detail: { ...gameData.items.excerpt!, name: '详情条目', detailedDescription: 'hudun' },
+        prose: { ...gameData.items.excerpt!, name: '说明条目', description: '包含 hudun 的说明' },
+        pinyin: { ...gameData.items.excerpt!, name: '护盾' },
+        literal: { ...gameData.items.excerpt!, name: 'hudun' },
+      },
+    });
+    expect(results.filter((result) => result.type === 'item').map((result) => result.href)).toEqual(
+      ['/items/literal', '/items/pinyin', '/items/prose', '/items/detail']
+    );
+  });
 });
