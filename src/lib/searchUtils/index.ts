@@ -15,10 +15,6 @@ import { searchModes } from './modes';
 import { searchSpecialSkills } from './specialSkills';
 import { SearchResult } from './types';
 
-// Search configuration constants
-const MAX_RESULTS_PER_TYPE = 5;
-const MAX_TOTAL_RESULTS = 20;
-
 export async function performSearch(
   query: string,
   gameData: PublishedGameDataByType
@@ -42,21 +38,7 @@ export async function performSearch(
     searchDetailedBuffs(searchQuery),
   ]);
 
-  // Limit results per type and sort by priority
-  const limitedResults: SearchResult[] = [];
-
-  for (const results of allSearchResults) {
-    const sortedResults = results.sort((a, b) => b.priority - a.priority);
-    const limitedTypeResults = sortedResults.slice(0, MAX_RESULTS_PER_TYPE);
-    limitedResults.push(...limitedTypeResults);
-  }
-
-  // Sort all results by priority and apply total limit
-  const finalResults = limitedResults
-    .sort((a, b) => b.priority - a.priority)
-    .slice(0, MAX_TOTAL_RESULTS);
-
-  return finalResults;
+  return allSearchResults.flat().sort((a, b) => b.priority - a.priority);
 }
 
 export type { SearchResult };

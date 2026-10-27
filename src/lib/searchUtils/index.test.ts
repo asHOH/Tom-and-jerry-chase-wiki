@@ -128,24 +128,24 @@ describe('performSearch', () => {
     expect(await search(query)).toEqual([expect.objectContaining({ href })]);
   });
 
-  it('returns arrays, preserves stable ties, and limits each source to five and the total to twenty', async () => {
+  it('returns every match across sources and preserves stable ties', async () => {
     const results = await search('奶酪');
-    expect(results).toHaveLength(20);
+    expect(results).toHaveLength(25);
     expect(results.map((result) => result.type)).toEqual([
-      ...Array(5).fill('item'),
-      ...Array(5).fill('entity'),
-      ...Array(5).fill('map'),
-      ...Array(5).fill('fixture'),
+      ...Array(7).fill('item'),
+      ...Array(6).fill('entity'),
+      ...Array(6).fill('map'),
+      ...Array(6).fill('fixture'),
     ]);
-    expect(results.slice(0, 5).map((result) => 'name' in result && result.name)).toEqual(
-      Array.from({ length: 5 }, (_, i) => `奶酪道具${i}`)
+    expect(results.slice(0, 7).map((result) => 'name' in result && result.name)).toEqual(
+      Array.from({ length: 7 }, (_, i) => `奶酪道具${i}`)
     );
     expect(results.every((result) => result.priority === 1 && !result.isPinyinMatch)).toBe(true);
   });
 
   it.each(['  NAI LAO  ', "nai'lao"])('normalizes pinyin query %s', async (query) => {
     const results = await search(query);
-    expect(results).toHaveLength(20);
+    expect(results).toHaveLength(25);
     expect(results.every((result) => result.priority === 0.95 && result.isPinyinMatch)).toBe(true);
   });
 

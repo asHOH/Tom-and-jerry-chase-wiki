@@ -21,6 +21,8 @@ type SearchDialogProps = {
   isMobile: boolean;
 };
 
+const RESULTS_PER_PAGE = 20;
+
 const highlightMatch = (text: string, query: string, isPinyinMatch: boolean) => {
   if (isPinyinMatch) {
     return <>{text}</>; // Do not highlight if it's a pinyin match
@@ -82,6 +84,7 @@ const highlightMatch = (text: string, query: string, isPinyinMatch: boolean) => 
 const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [visibleCount, setVisibleCount] = useState(RESULTS_PER_PAGE);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -90,6 +93,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
   const resultsListRef = useRef<HTMLUListElement>(null);
   const { navigate } = useNavigation();
   const gameData = useSearchGameData(open);
+  const shownCount = Math.min(visibleCount, searchResults.length);
 
   useEffect(() => {
     if (!open) return;
@@ -172,23 +176,24 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
         return;
       if (event.key === 'Enter' && event.target !== searchInputRef.current) return;
       // Handle navigation keys
-      const totalResults = searchResults.length;
+      const totalResults = shownCount;
       if (totalResults === 0) return;
       switch (event.key) {
         case 'ArrowDown':
+        case 'ArrowUp': {
           event.preventDefault();
-          setHighlightedIndex((prev) => {
-            const newIndex = prev + 1;
-            return newIndex >= totalResults ? 0 : newIndex; // Wrap to top
-          });
+          const nextIndex =
+            event.key === 'ArrowDown'
+              ? (highlightedIndex + 1) % totalResults
+              : highlightedIndex <= 0
+                ? totalResults - 1
+                : highlightedIndex - 1;
+          setHighlightedIndex(nextIndex);
+          if (event.target !== searchInputRef.current) {
+            resultsListRef.current?.children[nextIndex]?.querySelector('button')?.focus();
+          }
           break;
-        case 'ArrowUp':
-          event.preventDefault();
-          setHighlightedIndex((prev) => {
-            const newIndex = prev - 1;
-            return newIndex < 0 ? totalResults - 1 : newIndex; // Wrap to bottom
-          });
-          break;
+        }
         case 'Enter':
           // Only handle Enter if search input is not focused or if we have a highlighted result
           if (document.activeElement !== searchInputRef.current || highlightedIndex >= 0) {
@@ -209,7 +214,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [open, highlightedIndex, searchResults, handleResultClick]);
+  }, [open, highlightedIndex, searchResults, shownCount, handleResultClick]);
 
   // Scroll highlighted item into view
   useEffect(() => {
@@ -231,6 +236,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     const currentId = searchIdRef.current;
 
     setSearchResults([]);
+    setVisibleCount(RESULTS_PER_PAGE);
     setHighlightedIndex(-1);
     setSearchError(null);
     setIsSearching(Boolean(searchQuery.trim()));
@@ -284,9 +290,13 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
         >
           搜索
         </h2>
-        <div className='h-5 text-sm text-gray-500 dark:text-gray-400'>
+        <div role='status' className='h-5 text-sm text-gray-500 dark:text-gray-400'>
           {searchQuery.length > 0 &&
-            (isSearching ? '搜索中…' : searchError ? '' : `${searchResults.length} 个结果`)}
+            (isSearching
+              ? '搜索中…'
+              : searchError
+                ? ''
+                : `已显示 ${shownCount} / 共 ${searchResults.length} 条`)}
         </div>
       </div>
       <div className='relative mb-4 shrink-0'>
@@ -309,22 +319,11 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
       {searchQuery.length > 0 && (
         <div className={cn('flex min-h-0 flex-col gap-3', isMobile ? 'flex-1' : 'h-100')}>
           <div className='border-border min-h-0 flex-1 overflow-y-auto rounded-md border [overflow-anchor:none]'>
-            <m.ul
-              ref={resultsListRef}
-              initial='hidden'
-              animate='visible'
-              variants={{
-                visible: {
-                  transition: {
-                    staggerChildren: 0.05, // Stagger animation for children
-                  },
-                },
-              }}
-            >
+            <m.ul ref={resultsListRef} initial='hidden' animate='visible'>
               {/* Regular search results */}
-              {searchResults.map((result, index) => (
+              {searchResults.slice(0, shownCount).map((result, index) => (
                 <m.li
-                  key={`${result.type}:${result.href}`}
+                  key={`${result.type}:${result.href}:${'detailedBuffId' in result ? result.detailedBuffId : ''}`}
                   className='border-border border-b last:border-b-0'
                   variants={{
                     hidden: { opacity: 0, y: 10 },
@@ -341,6 +340,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
                       highlightedIndex === index && 'bg-control'
                     )}
                     onMouseEnter={() => setHighlightedIndex(index)}
+                    onFocus={() => setHighlightedIndex(index)}
                   >
                     {result.imageUrl && (
                       <Image
@@ -385,6 +385,21 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
               )
             )}
           </div>
+          {shownCount < searchResults.length && (
+            <Button
+              variant='secondary'
+              className='shrink-0'
+              onClick={() => {
+                setVisibleCount((count) => count + RESULTS_PER_PAGE);
+                setHighlightedIndex(shownCount);
+                window.requestAnimationFrame(() => {
+                  resultsListRef.current?.children[shownCount]?.querySelector('button')?.focus();
+                });
+              }}
+            >
+              加载更多
+            </Button>
+          )}
         </div>
       )}
     </BaseDialog>
