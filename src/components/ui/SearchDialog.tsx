@@ -23,60 +23,23 @@ type SearchDialogProps = {
 
 const RESULTS_PER_PAGE = 20;
 
-const highlightMatch = (text: string, query: string, isPinyinMatch: boolean) => {
-  if (isPinyinMatch) {
-    return <>{text}</>; // Do not highlight if it's a pinyin match
-  }
-
-  let processedText = text;
-  let processedLowerCaseText = text.toLowerCase();
-  const lowerCaseQuery = query.toLowerCase();
+const renderMatchContext = ({ matchContext, highlightRanges }: SearchResult) => {
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
 
-  let firstMatchIndex = processedLowerCaseText.indexOf(lowerCaseQuery);
-
-  if (firstMatchIndex !== -1) {
-    let lastCommaIndex = -1;
-    // Search for the last comma (English or Chinese) before the first match
-    for (let i = firstMatchIndex - 1; i >= 0; i--) {
-      const char = processedText.charAt(i);
-      if (char === ',' || char === '，') {
-        lastCommaIndex = i;
-        break;
-      }
-    }
-
-    if (lastCommaIndex !== -1) {
-      // Truncate the text to start after the last comma
-      processedText = processedText.substring(lastCommaIndex + 1).trim();
-      processedLowerCaseText = processedText.toLowerCase();
-      // Recalculate firstMatchIndex relative to the new processedText
-      firstMatchIndex = processedLowerCaseText.indexOf(lowerCaseQuery);
-    }
-  }
-
-  let matchIndex = firstMatchIndex; // Start the loop with the (potentially new) firstMatchIndex
-
-  while (matchIndex !== -1) {
-    if (matchIndex > lastIndex) {
-      parts.push(processedText.substring(lastIndex, matchIndex));
-    }
+  for (const [start, end] of highlightRanges) {
+    parts.push(matchContext.substring(lastIndex, start));
     parts.push(
       <span
-        key={matchIndex} // Using matchIndex as key, assuming it's unique enough for this context
+        key={start}
         className='rounded bg-yellow-300 px-0.5 text-black dark:bg-yellow-600 dark:text-white'
       >
-        {processedText.substring(matchIndex, matchIndex + query.length)}
+        {matchContext.substring(start, end)}
       </span>
     );
-    lastIndex = matchIndex + query.length;
-    matchIndex = processedLowerCaseText.indexOf(lowerCaseQuery, lastIndex);
+    lastIndex = end;
   }
-
-  if (lastIndex < processedText.length) {
-    parts.push(processedText.substring(lastIndex));
-  }
+  parts.push(matchContext.substring(lastIndex));
 
   return <>{parts}</>;
 };
@@ -148,10 +111,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
       return result.factionId === 'mouse' ? 'special-skill-mouse' : 'special-skill-cat';
     }
     return result.type;
-  };
-
-  const getResultName = (result: SearchResult): string => {
-    return 'id' in result ? result.id : result.name;
   };
 
   const handleResultClick = useCallback(
@@ -323,7 +282,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
               {/* Regular search results */}
               {searchResults.slice(0, shownCount).map((result, index) => (
                 <m.li
-                  key={`${result.type}:${result.href}:${'detailedBuffId' in result ? result.detailedBuffId : ''}`}
+                  key={result.key}
                   className='border-border border-b last:border-b-0'
                   variants={{
                     hidden: { opacity: 0, y: 10 },
@@ -345,7 +304,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
                     {result.imageUrl && (
                       <Image
                         src={result.imageUrl}
-                        alt={getResultName(result)}
+                        alt={result.title}
                         width={32}
                         height={32}
                         className='mr-3 object-cover'
@@ -353,11 +312,11 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
                     )}
                     <div className='min-w-0 flex-1'>
                       <span className='block truncate text-gray-900 dark:text-white'>
-                        {getResultName(result)}
+                        {result.title}
                       </span>
                       {result.matchContext && (
                         <span className='mt-0.5 hidden truncate text-sm text-gray-500 md:block dark:text-gray-400'>
-                          {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
+                          {renderMatchContext(result)}
                         </span>
                       )}
                     </div>

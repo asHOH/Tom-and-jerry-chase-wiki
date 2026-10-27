@@ -13,8 +13,9 @@ export async function searchFixtures(
     if (match) {
       results.push({
         type: 'fixture',
+        key: `fixture:${entityId}`,
         href: `/fixtures/${encodeURIComponent(entityId)}`,
-        name: fixture.name,
+        title: fixture.name,
         imageUrl: fixture.imageUrl,
         ...match,
       });

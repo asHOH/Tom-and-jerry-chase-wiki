@@ -19,8 +19,9 @@ export async function searchCards(
     if (match)
       results.push({
         type: 'card',
+        key: `card:${entityId}`,
         href: `/cards/${encodeURIComponent(entityId)}`,
-        id: card.id,
+        title: card.id,
         imageUrl: card.imageUrl!,
         ...match,
       });

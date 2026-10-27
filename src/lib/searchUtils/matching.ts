@@ -1,4 +1,5 @@
 import { convertToPinyin } from '../pinyinUtils';
+import type { SearchMatch } from './types';
 
 const FIELD_PRIORITY = { name: 40, alias: 30, description: 20, detail: 10 };
 
@@ -7,12 +8,6 @@ export type SearchField = readonly [
   kind: keyof typeof FIELD_PRIORITY,
   context?: string | undefined,
 ];
-
-export type SearchMatch = {
-  matchContext: string;
-  priority: number;
-  isPinyinMatch: boolean;
-};
 
 export function commonSearchFields(item: {
   name: string;
@@ -36,31 +31,6 @@ export function createSearchQuery(query: string) {
   const lowerCaseQuery = query.toLowerCase().trim();
   const pinyinQuery = lowerCaseQuery.replace(/'/g, '').replace(/ /g, '');
 
-  const findMatchContext = async (texts: (string | undefined)[]): Promise<string | undefined> => {
-    for (const text of texts) {
-      if (!text) continue;
-      const matchIndex = text.toLowerCase().indexOf(lowerCaseQuery);
-      if (matchIndex !== -1) {
-        let startIndex = 0;
-        for (let i = matchIndex - 1; i >= 0; i--) {
-          if (['.', '!', '?'].includes(text.charAt(i))) {
-            startIndex = i + 1;
-            break;
-          }
-        }
-        for (let i = startIndex; i < matchIndex; i++) {
-          if (text[i] === ',' || text[i] === '，') {
-            startIndex = i + 1;
-            break;
-          }
-        }
-        return text.substring(startIndex).trim();
-      }
-      if (pinyinQuery && (await convertToPinyin(text)).includes(pinyinQuery)) return text.trim();
-    }
-    return undefined;
-  };
-
   // Names outrank aliases and prose across domains; equal matches retain field order.
   const matchFields = async (fields: readonly SearchField[]): Promise<SearchMatch | undefined> => {
     let bestMatch: SearchMatch | undefined;
@@ -68,17 +38,43 @@ export function createSearchQuery(query: string) {
       if (!text) continue;
       if (bestMatch && FIELD_PRIORITY[kind] + 3 <= bestMatch.priority) continue;
       const lowerCaseText = text.toLowerCase();
-      const isDirectMatch = lowerCaseText.includes(lowerCaseQuery);
+      const matchIndex = lowerCaseText.indexOf(lowerCaseQuery);
+      const isDirectMatch = matchIndex !== -1;
       const matchedText = isDirectMatch ? lowerCaseText : await convertToPinyin(text);
       const matchedQuery = isDirectMatch ? lowerCaseQuery : pinyinQuery;
       if (!matchedQuery || !matchedText.includes(matchedQuery)) continue;
       const priority =
         FIELD_PRIORITY[kind] + (isDirectMatch ? 2 : 0) + (matchedText === matchedQuery ? 1 : 0);
       if (bestMatch && priority <= bestMatch.priority) continue;
-      const matchContext = context ?? (await findMatchContext([text]));
+      const source = context ?? text;
+      const sourceMatchIndex = isDirectMatch
+        ? context === undefined
+          ? matchIndex
+          : source.toLowerCase().indexOf(lowerCaseQuery)
+        : -1;
+      let startIndex = 0;
+      // Explicit contexts retain their sentence; both paths begin after the last preceding comma.
+      const separators = context === undefined ? '.!?,，' : ',，';
+      for (let i = sourceMatchIndex - 1; i >= 0; i--) {
+        if (separators.includes(source.charAt(i))) {
+          startIndex = i + 1;
+          break;
+        }
+      }
+      const matchContext = source.substring(startIndex).trim();
       if (matchContext) {
+        const highlightRanges: SearchMatch['highlightRanges'] = [];
+        if (isDirectMatch) {
+          const lowerCaseContext = matchContext.toLowerCase();
+          let index = lowerCaseContext.indexOf(lowerCaseQuery);
+          while (index !== -1) {
+            highlightRanges.push([index, index + lowerCaseQuery.length]);
+            index = lowerCaseContext.indexOf(lowerCaseQuery, index + lowerCaseQuery.length);
+          }
+        }
         bestMatch = {
           matchContext,
+          highlightRanges,
           priority,
           isPinyinMatch: !isDirectMatch,
         };

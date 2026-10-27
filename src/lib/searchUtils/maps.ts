@@ -21,8 +21,9 @@ export async function searchMaps(
     if (match) {
       results.push({
         type: 'map',
+        key: `map:${entityId}`,
         href: `/maps/${encodeURIComponent(entityId)}`,
-        name: map.name,
+        title: map.name,
         imageUrl: map.imageUrl,
         ...match,
       });

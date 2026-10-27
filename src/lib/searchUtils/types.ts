@@ -1,83 +1,30 @@
-import {
-  Achievement,
-  Buff,
-  Card,
-  Character,
-  Entity,
-  Fixture,
-  Item,
-  ItemGroup,
-  Map as MapType,
-  Mode,
-  SpecialSkill,
-} from '@/data/types';
+import type { FactionId } from '@/data/types';
 
-export type SearchResult = { href: string } & (
-  | ({
-      type: 'character';
-      matchContext: string;
-      priority: number;
-      isPinyinMatch: boolean;
-      matchedSkillName?: string;
-    } & Pick<Character, 'id' | 'imageUrl'>)
-  | ({ type: 'card'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
-      Card,
-      'id' | 'imageUrl'
-    >)
-  | ({
-      type: 'specialSkill';
-      matchContext: string;
-      priority: number;
-      isPinyinMatch: boolean;
-    } & Pick<SpecialSkill, 'name' | 'imageUrl' | 'factionId'>)
-  | {
-      type: 'itemGroup';
-      matchContext: string;
-      priority: number;
-      isPinyinMatch: boolean;
-      name: ItemGroup['name'];
-      imageUrl?: string;
-    }
-  | ({ type: 'item'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
-      Item,
-      'name' | 'imageUrl'
-    >)
-  | ({ type: 'entity'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
-      Entity,
-      'name' | 'imageUrl'
-    >)
-  | ({
-      type: 'buff';
-      matchContext: string;
-      priority: number;
-      isPinyinMatch: boolean;
-      detailedBuffId?: string;
-    } & Pick<Buff, 'name'> &
-      Partial<Pick<Buff, 'imageUrl'>>)
-  | ({ type: 'map'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
-      MapType,
-      'name' | 'imageUrl'
-    >)
-  | ({ type: 'fixture'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
-      Fixture,
-      'name' | 'imageUrl'
-    >)
-  | ({ type: 'mode'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
-      Mode,
-      'name' | 'imageUrl'
-    >)
-  | {
-      type: 'doc';
-      matchContext: string;
-      priority: number;
-      isPinyinMatch: boolean;
-      name: string;
-      slug: string;
-      path: string;
-      imageUrl?: string;
-    }
-  | ({ type: 'achievement'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
-      Achievement,
-      'name' | 'imageUrl' | 'factionId'
-    >)
-);
+export type SearchMatch = {
+  matchContext: string;
+  highlightRanges: [start: number, end: number][];
+  priority: number;
+  isPinyinMatch: boolean;
+};
+
+export type SearchResult = SearchMatch & {
+  key: string;
+  title: string;
+  href: string;
+  imageUrl?: string | undefined;
+} & (
+    | {
+        type:
+          | 'character'
+          | 'card'
+          | 'itemGroup'
+          | 'item'
+          | 'entity'
+          | 'buff'
+          | 'map'
+          | 'fixture'
+          | 'mode'
+          | 'doc';
+      }
+    | { type: 'specialSkill' | 'achievement'; factionId: FactionId }
+  );

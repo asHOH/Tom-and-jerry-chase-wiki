@@ -76,17 +76,21 @@ describe('SearchDialog', () => {
     jest.mocked(performSearch).mockResolvedValue([
       {
         type: 'character',
-        id: '汤姆',
+        key: 'character:tom-key',
+        title: '汤姆',
         href: '/characters/tom-key',
         matchContext: '',
+        highlightRanges: [],
         priority: 1,
         isPinyinMatch: false,
       },
       {
         type: 'character',
-        id: '杰瑞',
+        key: 'character:jerry-key',
+        title: '杰瑞',
         href: '/characters/jerry-key',
         matchContext: '',
+        highlightRanges: [],
         priority: 1,
         isPinyinMatch: false,
       },
@@ -158,14 +162,61 @@ describe('SearchDialog', () => {
     expect(screen.getByRole('status')).toHaveTextContent('已显示 2 / 共 2 条');
   });
 
+  it('renders the supplied excerpt and highlights without reinterpreting the input', async () => {
+    jest.mocked(performSearch).mockResolvedValueOnce([
+      {
+        type: 'item',
+        key: 'item:excerpt',
+        title: '片段条目',
+        href: '/items/excerpt',
+        matchContext: 'lead, TARGET / target',
+        highlightRanges: [
+          [6, 12],
+          [15, 21],
+        ],
+        priority: 1,
+        isPinyinMatch: false,
+      },
+    ]);
+    render(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '  TaRgEt  ' } });
+    const result = await screen.findByRole('button', { name: /片段条目/ });
+    expect(result).toHaveTextContent('lead, TARGET / target');
+    expect(screen.getByText('TARGET')).toHaveClass('bg-yellow-300');
+    expect(screen.getByText('target')).toHaveClass('bg-yellow-300');
+    fireEvent.click(result);
+    expect(mockNavigate).toHaveBeenCalledWith('/items/excerpt');
+  });
+
+  it('renders the full pinyin excerpt when search supplies no highlight ranges', async () => {
+    jest.mocked(performSearch).mockResolvedValueOnce([
+      {
+        type: 'buff',
+        key: 'buff:shield',
+        title: '护盾条目',
+        href: '/buffs/shield',
+        matchContext: '保留前文，护盾',
+        highlightRanges: [],
+        priority: 1,
+        isPinyinMatch: true,
+      },
+    ]);
+    render(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'hudun' } });
+    expect(await screen.findByText('保留前文，护盾')).toBeInTheDocument();
+    expect(screen.queryByText('护盾', { exact: true })).not.toBeInTheDocument();
+  });
+
   it('reveals all results in batches and keeps keyboard navigation within visible results', async () => {
     jest.mocked(performSearch).mockResolvedValue(
       Array.from({ length: 45 }, (_, index) => ({
         type: 'item',
-        name: `道具${index + 1}`,
+        key: `item:${index + 1}`,
+        title: `道具${index + 1}`,
         imageUrl: '',
         href: `/items/${index + 1}`,
         matchContext: '',
+        highlightRanges: [],
         priority: 1,
         isPinyinMatch: false,
       }))
@@ -207,10 +258,11 @@ describe('SearchDialog', () => {
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
     const results: SearchResult[] = Array.from({ length: 21 }, (_, index) => ({
       type: 'buff',
-      name: `状态${index + 1}`,
-      detailedBuffId: String(index + 1),
+      title: `状态${index + 1}`,
+      key: `buff-detail:${index + 1}`,
       href: '/buffs',
       matchContext: '',
+      highlightRanges: [],
       priority: 1,
       isPinyinMatch: false,
     }));
@@ -233,10 +285,12 @@ describe('SearchDialog', () => {
       jest.mocked(performSearch).mockResolvedValue(
         Array.from({ length: 21 }, (_, index) => ({
           type: 'item',
-          name: `道具${index + 1}`,
+          key: `item:${index + 1}`,
+          title: `道具${index + 1}`,
           imageUrl: '',
           href: `/items/${index + 1}`,
           matchContext: '',
+          highlightRanges: [],
           priority: 1,
           isPinyinMatch: false,
         }))

@@ -14,8 +14,9 @@ export async function searchAchievements(
       if (match) {
         results.push({
           type: 'achievement',
+          key: `achievement:${factionId}:${entityId}`,
           href: `/achievements/${factionId}/${encodeURIComponent(entityId)}`,
-          name: achievement.name,
+          title: achievement.name,
           imageUrl: achievement.imageUrl,
           factionId,
           ...match,

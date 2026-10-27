@@ -55,11 +55,11 @@ export async function searchCharacters(
     if (match) {
       results.push({
         type: 'character',
+        key: `character:${entityId}`,
         href: `/characters/${encodeURIComponent(entityId)}${matchedSkillName ? `#Skill:${encodeURIComponent(matchedSkillName)}` : ''}`,
-        id: character.id,
+        title: character.id,
         imageUrl: character.imageUrl!,
         ...match,
-        ...(matchedSkillName ? { matchedSkillName } : {}),
       });
     }
   }

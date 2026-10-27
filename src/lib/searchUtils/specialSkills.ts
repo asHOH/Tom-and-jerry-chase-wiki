@@ -14,8 +14,9 @@ export async function searchSpecialSkills(
       if (match) {
         results.push({
           type: 'specialSkill',
+          key: `specialSkill:${factionId}:${entityId}`,
           href: `/special-skills/${factionId}/${encodeURIComponent(entityId)}`,
-          name: skill.name,
+          title: skill.name,
           imageUrl: skill.imageUrl,
           factionId,
           ...match,

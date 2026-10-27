@@ -3,9 +3,16 @@ import { createApprovedActionSnapshot } from '@/lib/gameData/published/approvedA
 import { selectPublishedGameData } from '@/lib/gameData/published/selectPublishedDomain';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 
+import { convertToPinyin } from '../pinyinUtils';
 import { performSearch } from './index';
 
 jest.mock('server-only', () => ({}), { virtual: true });
+
+jest.mock('../pinyinUtils', () => ({
+  convertToPinyin: jest.fn(
+    jest.requireActual<typeof import('../pinyinUtils')>('../pinyinUtils').convertToPinyin
+  ),
+}));
 
 jest.mock('@/data', () => {
   const records = (count: number, prefix: string) =>
@@ -79,6 +86,8 @@ jest.mock('@/features/buffs/data/buffMappingTable', () => ({
 }));
 jest.mock('@/features/buffs/data/allBuffDetailedDescriptions.json', () => ({
   '1': '“护盾”详细状态说明',
+  '2': '“无映射效果甲”说明',
+  '3': '“无映射效果乙”说明',
 }));
 jest.mock('@/data/generated/docPages.json', () => [
   { title: '帮助文档', slug: 'help', path: '/help/' },
@@ -108,7 +117,7 @@ describe('performSearch', () => {
 
     expect(await search('已发布别名')).toEqual([]);
     expect(await performSearch('已发布别名', published)).toEqual([
-      expect.objectContaining({ id: '汤姆', href: '/characters/tom' }),
+      expect.objectContaining({ title: '汤姆', href: '/characters/tom' }),
     ]);
     expect(await search('已发布别名')).toEqual([]);
   });
@@ -137,7 +146,7 @@ describe('performSearch', () => {
       ...Array(6).fill('map'),
       ...Array(6).fill('fixture'),
     ]);
-    expect(results.slice(0, 7).map((result) => 'name' in result && result.name)).toEqual(
+    expect(results.slice(0, 7).map((result) => result.title)).toEqual(
       Array.from({ length: 7 }, (_, i) => `奶酪道具${i}`)
     );
     expect(results.every((result) => !result.isPinyinMatch)).toBe(true);
@@ -156,7 +165,7 @@ describe('performSearch', () => {
   it('keeps aliases and their context separate from the display name', async () => {
     expect((await search('cheese'))[0]).toMatchObject({
       type: 'item',
-      name: '奶酪道具0',
+      title: '奶酪道具0',
       matchContext: '奶酪道具0 (cheese)',
     });
   });
@@ -168,6 +177,59 @@ describe('performSearch', () => {
         matchContext: 'prefix TARGET trailing',
       }),
     ]);
+  });
+
+  it.each(['target', '  TaRgEt  '])(
+    'prepares the final excerpt and all highlight ranges for %j',
+    async (query) => {
+      const results = await performSearch(query, {
+        ...gameData,
+        items: {
+          excerpt: {
+            ...gameData.items.excerpt!,
+            description: 'Before. lead，middle, prefix TARGET trailing target',
+          },
+        },
+      });
+      expect(results).toEqual([
+        expect.objectContaining({
+          title: '片段道具',
+          matchContext: 'prefix TARGET trailing target',
+          highlightRanges: [
+            [7, 13],
+            [23, 29],
+          ],
+        }),
+      ]);
+    }
+  );
+
+  it('retains alias context and prepares its highlight after trimming the query', async () => {
+    expect((await search('  ChEeSe  '))[0]).toMatchObject({
+      matchContext: '奶酪道具0 (cheese)',
+      highlightRanges: [[7, 13]],
+    });
+  });
+
+  it('prepares a pinyin excerpt without repeating conversion or highlighting literal text', async () => {
+    const results = await search("  NAI'LAO  ");
+    expect(results[0]).toMatchObject({
+      matchContext: '奶酪道具0',
+      highlightRanges: [],
+      isPinyinMatch: true,
+    });
+    expect(
+      jest.mocked(convertToPinyin).mock.calls.filter(([text]) => text === '奶酪道具0')
+    ).toHaveLength(1);
+  });
+
+  it('returns distinct stable keys for shared destinations and changing skill links', async () => {
+    const buffs = await search('无映射效果');
+    expect(buffs).toHaveLength(2);
+    expect(buffs.map((result) => result.href)).toEqual(['/buffs', '/buffs']);
+    expect(new Set(buffs.map((result) => result.key)).size).toBe(2);
+    expect((await search('无映射效果甲'))[0]?.key).toBe(buffs[0]?.key);
+    expect((await search('汤姆'))[0]?.key).toBe((await search('技能甲'))[0]?.key);
   });
 
   it.each([
@@ -193,8 +255,8 @@ describe('performSearch', () => {
     expect(await search('护盾')).toEqual([
       expect.objectContaining({
         type: 'buff',
-        name: '护盾',
-        detailedBuffId: '1',
+        title: '护盾',
+        key: 'buff-detail:1',
         href: '/items/example/#buff-1',
       }),
     ]);
@@ -218,8 +280,7 @@ describe('performSearch', () => {
       expect(await search(query as string)).toEqual([
         expect.objectContaining({
           type: 'character',
-          id: '汤姆',
-          matchedSkillName,
+          title: '汤姆',
           href: `/characters/tom#Skill:${encodeURIComponent(matchedSkillName)}`,
         }),
       ]);
@@ -258,6 +319,8 @@ describe('performSearch', () => {
         },
       });
       expect(results[0]).toMatchObject({ href });
+      expect(results.every((result) => result.title && result.key)).toBe(true);
+      expect(new Set(results.map((result) => result.key)).size).toBe(results.length);
       expect(results.map((result) => result.href)).toEqual(
         expect.arrayContaining(['/items/partial', '/items/alias', '/items/prose'])
       );

@@ -17,8 +17,9 @@ export async function searchModes(
     if (match) {
       results.push({
         type: 'mode',
+        key: `mode:${entityId}`,
         href: `/modes/${encodeURIComponent(entityId)}`,
-        name: mode.name,
+        title: mode.name,
         imageUrl: mode.imageUrl,
         ...match,
       });

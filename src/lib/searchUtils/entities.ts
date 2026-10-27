@@ -27,8 +27,9 @@ export async function searchEntities(
     if (match) {
       results.push({
         type: 'entity',
+        key: `entity:${entityId}`,
         href: `/entities/${encodeURIComponent(entityId)}`,
-        name: entity.name,
+        title: entity.name,
         imageUrl: entity.imageUrl,
         ...match,
       });

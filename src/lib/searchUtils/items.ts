@@ -13,8 +13,9 @@ export async function searchItems(
     if (match) {
       results.push({
         type: 'item',
+        key: `item:${entityId}`,
         href: `/items/${encodeURIComponent(entityId)}`,
-        name: item.name,
+        title: item.name,
         imageUrl: item.imageUrl,
         ...match,
       });

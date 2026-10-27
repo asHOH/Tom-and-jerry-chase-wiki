@@ -76,8 +76,9 @@ export async function searchBuffs(
     if (match)
       results.push({
         type: 'buff',
+        key: `buff:${entityId}`,
         href: `/buffs/${encodeURIComponent(entityId)}`,
-        name: buff.name,
+        title: buff.name,
         imageUrl: buff.imageUrl,
         ...match,
       });
@@ -108,9 +109,9 @@ export async function searchDetailedBuffs(query: SearchQuery): Promise<SearchRes
     if (match) {
       results.push({
         type: 'buff',
-        name: buff.name,
+        key: `buff-detail:${buff.buffId}`,
+        title: buff.name,
         ...match,
-        detailedBuffId: buff.buffId,
         href: buff.href ? `${buff.href.split('#')[0]}#buff-${buff.buffId}` : '/buffs',
       });
     }

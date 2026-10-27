@@ -35,10 +35,9 @@ export async function searchDocs(query: SearchQuery): Promise<SearchResult[]> {
     if (match)
       results.push({
         type: 'doc',
+        key: `doc:${page.path}`,
         href: page.path,
-        name: page.title,
-        slug: page.slug,
-        path: page.path,
+        title: page.title,
         ...match,
       });
   }
