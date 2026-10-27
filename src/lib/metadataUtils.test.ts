@@ -4,9 +4,37 @@ import {
   getCanonicalUrl,
   normalizeUrlWithTrailingSlash,
 } from '@/lib/metadataUtils';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { SITE_NAME, SITE_SHORT_NAME, SITE_URL } from '@/constants/seo';
 
 describe('metadataUtils', () => {
+  it('preserves the absolute homepage title in browser and sharing metadata', () => {
+    const metadata = generatePageMetadata({
+      title: SITE_NAME,
+      description: '首页',
+      canonicalUrl: SITE_URL,
+      absoluteTitle: true,
+    });
+
+    expect(metadata.title).toEqual({ absolute: SITE_NAME });
+    expect(metadata.openGraph?.title).toBe(SITE_NAME);
+    expect(metadata.twitter?.title).toBe(SITE_NAME);
+  });
+
+  it.each(['地图', `地图 - ${SITE_SHORT_NAME}`, `地图 - ${SITE_NAME}`])(
+    'keeps one site suffix for the page title %s',
+    (title) => {
+      const metadata = generatePageMetadata({
+        title,
+        description: '地图页面',
+        canonicalUrl: `${SITE_URL}/maps/`,
+      });
+
+      expect(metadata.title).toBe('地图');
+      expect(metadata.openGraph?.title).toBe(`地图 - ${SITE_SHORT_NAME}`);
+      expect(metadata.twitter?.title).toBe(`地图 - ${SITE_SHORT_NAME}`);
+    }
+  );
+
   it('builds the Article envelope while preserving encoded paths and image URLs', () => {
     const path = `/items/${encodeURIComponent('测试 /?#名称')}`;
     expect(

@@ -75,9 +75,10 @@ export function generatePageMetadata({
 
   const mergedKeywords = uniq([...(keywords || []), ...DEFAULT_KEYWORDS]);
 
-  const ogTitle = cleanTitle.includes(SITE_SHORT_NAME)
-    ? cleanTitle
-    : `${cleanTitle} - ${SITE_SHORT_NAME}`;
+  const ogTitle =
+    absoluteTitle || cleanTitle.includes(SITE_SHORT_NAME)
+      ? cleanTitle
+      : `${cleanTitle} - ${SITE_SHORT_NAME}`;
 
   const metadata: Metadata = {
     title: absoluteTitle ? { absolute: cleanTitle } : cleanTitle,
