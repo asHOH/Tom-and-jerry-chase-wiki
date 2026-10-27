@@ -181,18 +181,19 @@ npm run start
 
 #### 第 3 步 安装 cloudflared
 
-如果你的服务器的操作系统是 Ubuntu 或 Debian，你可以参照以下这个示例：
+Ubuntu / Debian：
 
 ```bash
-curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloudflare-main.gpg
-echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-main.list
+sudo mkdir -p --mode=0755 /usr/share/keyrings
+curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main' | sudo tee /etc/apt/sources.list.d/cloudflared.list
 sudo apt update
 sudo apt install -y cloudflared
 ```
 
-#### 第 4 步 作为服务运行
+#### 第 4 步 运行服务
 
-打开刚创建的 Tunnel，选择添加 connector/replica，然后复制 Dashboard 显示的 Linux 安装命令。命令形式如下，其中 token 属于敏感凭据，不要提交到 Git 或分享给他人：
+打开刚创建的 Tunnel，选择添加 connector/replica，然后复制 Dashboard 显示的 Linux 安装命令，形式如下。其中 token 属于敏感凭据，不要提交到 Git 或分享给他人：
 
 ```bash
 sudo cloudflared service install <TUNNEL_TOKEN>
