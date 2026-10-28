@@ -78,6 +78,11 @@ describe('resolveEditFormState', () => {
       category: 'pending-category',
       characterId: 'Tom',
       content: 'pending content',
+      baseVersionId: null,
+      baseVersionKnown: false,
+      pendingVersionId: 'pending-v1',
+      pendingRevision: null,
+      sourcePendingVersionId: 'pending-v1',
     });
   });
 
@@ -89,6 +94,11 @@ describe('resolveEditFormState', () => {
       category: 'approved-category',
       characterId: null,
       content: 'approved content',
+      baseVersionId: 'approved-v1',
+      baseVersionKnown: true,
+      pendingVersionId: null,
+      pendingRevision: null,
+      sourcePendingVersionId: null,
     });
   });
 });

@@ -85,7 +85,10 @@ export async function POST(
 
       const mappedError = mapModerationActionError(action as ModerationAction, actionError.message);
       if (mappedError) {
-        return NextResponse.json({ error: mappedError.error }, { status: mappedError.status });
+        return NextResponse.json(
+          { error: mappedError.error, ...(mappedError.code && { code: mappedError.code }) },
+          { status: mappedError.status }
+        );
       }
 
       return NextResponse.json({ error: `Failed to ${action} article version` }, { status: 500 });

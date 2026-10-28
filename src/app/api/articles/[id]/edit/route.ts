@@ -7,6 +7,10 @@ import {
   ArticleRequestConflictError,
   submitArticleRequest,
 } from '@/lib/articles/submitArticleRequest';
+import {
+  ArticleRefreshRequiredError,
+  ArticleVersionConflictError,
+} from '@/lib/articles/versionConflict';
 import { canAccess } from '@/lib/auth/permissions';
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
 import { getRequestIp, requireNotBlocked } from '@/lib/blocks/server';
@@ -142,6 +146,18 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       { status: 200 }
     );
   } catch (err) {
+    if (err instanceof ArticleVersionConflictError) {
+      return NextResponse.json(
+        { error: err.message, code: 'article_edit_conflict' },
+        { status: 409 }
+      );
+    }
+    if (err instanceof ArticleRefreshRequiredError) {
+      return NextResponse.json(
+        { error: err.message, code: 'article_refresh_required' },
+        { status: 409 }
+      );
+    }
     if (err instanceof InvalidPublishOperationIdError) {
       return NextResponse.json(
         { error: '提交缺少有效的重试标识，请保存当前内容并刷新页面后重试。' },

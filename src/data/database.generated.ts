@@ -72,9 +72,12 @@ export type Database = {
       article_versions: {
         Row: {
           article_id: string;
+          base_version_id: string | null;
+          base_version_known: boolean;
           commit_message: string | null;
           content: string;
           created_at: string;
+          draft_revision: string;
           editor_id: string;
           id: string;
           metadata_snapshot_complete: boolean | null;
@@ -91,9 +94,12 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           article_id: string;
+          base_version_id?: string | null;
+          base_version_known?: boolean;
           commit_message?: string | null;
           content: string;
           created_at?: string;
+          draft_revision?: string;
           editor_id: string;
           id?: string;
           metadata_snapshot_complete?: never;
@@ -109,9 +115,12 @@ export type Database = {
         };
         Update: {
           article_id?: string;
+          base_version_id?: string | null;
+          base_version_known?: boolean;
           commit_message?: string | null;
           content?: string;
           created_at?: string;
+          draft_revision?: string;
           editor_id?: string;
           id?: string;
           metadata_snapshot_complete?: never;
@@ -1391,9 +1400,12 @@ export type Database = {
         Args: { p_token: string };
         Returns: {
           article_id: string;
+          base_version_id: string | null;
+          base_version_known: boolean;
           commit_message: string | null;
           content: string;
           created_at: string;
+          draft_revision: string;
           editor_id: string;
           id: string;
           metadata_snapshot_complete: boolean | null;
@@ -1566,9 +1578,13 @@ export type Database = {
           p_character_id: string;
           p_commit_message: string;
           p_content: string;
+          p_expected_base_version_id: string;
+          p_expected_pending_revision: string;
+          p_expected_pending_version_id: string;
           p_ip: unknown;
           p_operation_id: string;
           p_request_fingerprint: string;
+          p_source_pending_version_id: string;
           p_title: string;
         };
         Returns: {
@@ -1778,6 +1794,7 @@ export type Database = {
         Args: {
           p_actor_id: string;
           p_article_id: string;
+          p_base_version_id?: string;
           p_category_id: string;
           p_character_id?: string;
           p_commit_message?: string;
@@ -1806,11 +1823,13 @@ export type Database = {
           p_actor_id: string;
           p_article_id: string;
           p_category_id: string;
-          p_character_id?: string;
+          p_character_id: string;
           p_content: string;
+          p_expected_base_version_id: string;
+          p_expected_revision: string;
           p_ip: unknown;
           p_title: string;
-          p_update_character?: boolean;
+          p_update_character: boolean;
           p_version_id: string;
         };
         Returns: undefined;
@@ -1878,6 +1897,7 @@ export type Database = {
       submit_article: {
         Args: {
           p_article_id: string;
+          p_base_version_id?: string;
           p_category_id: string;
           p_character_id?: string;
           p_commit_message?: string;
@@ -1905,6 +1925,8 @@ export type Database = {
           p_category_id: string;
           p_character_id: string;
           p_content: string;
+          p_expected_base_version_id: string;
+          p_expected_revision: string;
           p_title: string;
           p_update_character: boolean;
           p_version_id: string;

@@ -302,7 +302,13 @@ describe.each([
             category: 'c',
             content: '<p>新内容</p>',
             ...(required && { character_id: '汤姆' }),
-            ...(mode === 'edit' && { commit_message: '更新攻略' }),
+            ...(mode === 'edit' && {
+              commit_message: '更新攻略',
+              base_version_id: 'old',
+              pending_version_id: null,
+              pending_revision: null,
+              source_pending_version_id: null,
+            }),
           }),
         }
       );
@@ -473,6 +479,60 @@ describe.each([
 });
 
 describe('edit source safety', () => {
+  it('preserves a conflicted draft and adopts only the exact snapshot reviewed', async () => {
+    const nextInfo: ArticleEditInfoResponse = {
+      ...defaultInfo,
+      edit_sources: {
+        ...defaultInfo.edit_sources,
+        approved: {
+          ...defaultInfo.edit_sources.approved!,
+          version_id: 'reviewed-version',
+          title: 'Reviewed title',
+          content: '<p>Reviewed content</p>',
+        },
+      },
+    };
+    jest
+      .mocked(fetch)
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 409,
+        json: async () => ({ error: 'Changed', code: 'article_edit_conflict' }),
+      } as Response)
+      .mockResolvedValueOnce({ ok: true, json: async () => nextInfo } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+      } as Response);
+    const view = render(<EditArticleClient characterOptions={[]} />);
+    fireEvent.change(screen.getByLabelText('标题'), { target: { value: 'Keep my draft' } });
+    fireEvent.change(screen.getByLabelText('提交说明'), { target: { value: 'Merge changes' } });
+    fireEvent.click(screen.getByText('提交'));
+    await waitFor(() => expect(screen.getByText('获取最新版本用于核对')).toBeInTheDocument());
+    expect(screen.getByLabelText('标题')).toHaveValue('Keep my draft');
+    fireEvent.click(screen.getByText('获取最新版本用于核对'));
+    await waitFor(() => expect(screen.getByText('Reviewed content')).toBeInTheDocument());
+    mockInfo = {
+      ...nextInfo,
+      edit_sources: {
+        ...nextInfo.edit_sources,
+        approved: { ...nextInfo.edit_sources.approved!, version_id: 'unreviewed-newer-version' },
+      },
+    };
+    view.rerender(<EditArticleClient characterOptions={[]} />);
+    fireEvent.change(screen.getByLabelText('标题'), { target: { value: 'Manually merged draft' } });
+    fireEvent.click(screen.getByText('已核对并合并，保留草稿更新编辑起点'));
+    fireEvent.click(screen.getByText('提交'));
+    await waitFor(() => expect(mockFeedback).toHaveBeenCalled());
+    expect(JSON.parse(jest.mocked(fetch).mock.calls[2]![1]!.body as string)).toMatchObject({
+      title: 'Manually merged draft',
+      base_version_id: 'reviewed-version',
+      source_pending_version_id: null,
+    });
+    expect(jest.mocked(fetch).mock.calls[2]![1]!.headers).not.toEqual(
+      jest.mocked(fetch).mock.calls[0]![1]!.headers
+    );
+  });
   const renderEditor = () => {
     mockInfo = {
       ...defaultInfo,
@@ -481,6 +541,9 @@ describe('edit source safety', () => {
         pending_mine: {
           ...defaultInfo.edit_sources.approved!,
           version_id: 'pending',
+          base_version_id: 'old',
+          base_version_known: true,
+          draft_revision: 'revision',
           title: '待审核标题',
           content: '<p>待审核内容</p>',
         },

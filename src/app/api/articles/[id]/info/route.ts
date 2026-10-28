@@ -25,7 +25,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const { data: article, error: articleError } = await requireSupabaseAdminClient()
       .from('articles')
-      .select('id, title, category_id, character_id, created_at, author_id')
+      .select(
+        `id, title, category_id, character_id, created_at, author_id,
+        current_version:article_versions!articles_current_version_id_fkey(id, content, created_at)`
+      )
       .eq('id', id)
       .single();
 
@@ -49,29 +52,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { data: approvedVersion, error: approvedError } = await requireSupabaseAdminClient()
-      .from('article_versions')
-      .select('id, content, created_at')
-      .eq('article_id', id)
-      .eq('status', 'approved')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (approvedError) {
-      console.error('Supabase approved version query error:', approvedError);
-      return NextResponse.json({ error: 'Failed to fetch approved version' }, { status: 500 });
-    }
+    const approvedVersion = article.current_version;
 
     const { data: ownPendingVersion, error: pendingError } = await requireSupabaseAdminClient()
       .from('article_versions')
       .select(
-        'id, content, created_at, commit_message, proposed_title, proposed_category_id, proposed_character_id'
+        'id, content, created_at, commit_message, proposed_title, proposed_category_id, proposed_character_id, metadata_snapshot_complete, base_version_id, base_version_known, draft_revision'
       )
       .eq('article_id', id)
       .eq('editor_id', userId)
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
+      .order('id', { ascending: false })
       .limit(1)
       .maybeSingle();
 
@@ -96,10 +88,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           version_id: ownPendingVersion.id,
           title: ownPendingVersion.proposed_title ?? article.title,
           category_id: ownPendingVersion.proposed_category_id ?? article.category_id,
-          character_id: ownPendingVersion.proposed_character_id ?? article.character_id,
+          character_id: ownPendingVersion.metadata_snapshot_complete
+            ? ownPendingVersion.proposed_character_id
+            : article.character_id,
           content: ownPendingVersion.content,
           created_at: ownPendingVersion.created_at,
           commit_message: ownPendingVersion.commit_message,
+          base_version_id: ownPendingVersion.base_version_id,
+          base_version_known: ownPendingVersion.base_version_known,
+          draft_revision: ownPendingVersion.draft_revision,
         }
       : null;
 

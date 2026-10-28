@@ -32,9 +32,17 @@ export const articleSubmitSchema = articleWriteSchema;
 
 export const articleEditSchema = articleWriteSchema.extend({
   commit_message: z.string().trim().min(1).max(ARTICLE_COMMIT_MESSAGE_MAX_LENGTH),
+  // Optional here so an older saved request can recover its receipt before requiring a refresh.
+  base_version_id: z.uuid().nullable().optional(),
+  pending_version_id: z.uuid().nullable().optional(),
+  pending_revision: z.uuid().nullable().optional(),
+  source_pending_version_id: z.uuid().nullable().optional(),
 });
 
-export const articleEditPendingSchema = articleWriteSchema;
+export const articleEditPendingSchema = articleWriteSchema.extend({
+  base_version_id: z.uuid().nullable(),
+  pending_revision: z.uuid(),
+});
 
 const COMMENT_SCOPES = [
   'articles',

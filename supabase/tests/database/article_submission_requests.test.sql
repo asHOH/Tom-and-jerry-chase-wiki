@@ -23,7 +23,10 @@ RETURNS TABLE(article_id uuid, submitted_version_id uuid, submitted_status publi
 LANGUAGE sql AS $$
   SELECT * FROM public.prepared_article_submission_request(
     op, actor, fingerprint, NULL, article, 'Title', '<p>Content</p>',
-    'a3000000-0000-4000-8000-000000000001', NULL, 'Edit'
+    'a3000000-0000-4000-8000-000000000001', NULL, 'Edit',
+    (SELECT current_version_id FROM public.articles WHERE id = article),
+    (SELECT id FROM public.article_versions WHERE article_id = article AND editor_id = actor AND status = 'pending' LIMIT 1),
+    (SELECT draft_revision FROM public.article_versions WHERE article_id = article AND editor_id = actor AND status = 'pending' LIMIT 1), NULL
   );
 $$;
 
@@ -52,6 +55,6 @@ SELECT is((SELECT count(*) FROM public.article_submission_requests WHERE operati
 
 SELECT ok(NOT has_table_privilege('authenticated','public.article_submission_requests','SELECT,INSERT,UPDATE,DELETE'), 'receipts stay private');
 SELECT ok(has_table_privilege('service_role','public.article_submission_requests','SELECT') AND NOT has_table_privilege('service_role','public.article_submission_requests','INSERT,UPDATE,DELETE'), 'server can read receipts but only the RPC writes them');
-SELECT ok(NOT has_function_privilege('service_role','public.prepared_create_article(uuid,inet,text,text,uuid,text,text)','EXECUTE'), 'legacy creation cannot bypass the request receipt');
+SELECT ok(NOT has_function_privilege('service_role','public.prepared_submit_article(uuid,inet,uuid,text,text,uuid,text,text,uuid)','EXECUTE'), 'legacy creation cannot bypass the request receipt');
 SELECT * FROM finish();
 ROLLBACK;

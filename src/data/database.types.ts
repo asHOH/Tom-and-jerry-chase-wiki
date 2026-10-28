@@ -36,7 +36,15 @@ type OverrideFunctionArgs<FunctionType, ArgsOverride> = FunctionType extends {
 type FunctionOverrides = {
   prepared_article_submission_request: OverrideFunctionArgs<
     PublicFunctions['prepared_article_submission_request'],
-    { p_article_id: string | null; p_character_id: string | null; p_commit_message: string | null }
+    {
+      p_article_id: string | null;
+      p_character_id: string | null;
+      p_commit_message: string | null;
+      p_expected_base_version_id: string | null;
+      p_expected_pending_version_id: string | null;
+      p_expected_pending_revision: string | null;
+      p_source_pending_version_id: string | null;
+    }
   >;
   create_autoblock_for_request: Omit<PublicFunctions['create_autoblock_for_request'], 'Returns'> & {
     Returns: string | null;
@@ -86,7 +94,7 @@ type FunctionOverrides = {
   >;
   prepared_update_pending_article: OverrideFunctionArgs<
     PublicFunctions['prepared_update_pending_article'],
-    { p_character_id?: string | null }
+    { p_character_id: string | null; p_expected_base_version_id: string | null }
   >;
   save_permission_group_v2: OverrideFunctionArgs<
     PublicFunctions['save_permission_group_v2'],

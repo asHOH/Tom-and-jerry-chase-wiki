@@ -1,8 +1,11 @@
+import { ARTICLE_VERSION_CONFLICT_MESSAGE } from './versionConflict';
+
 export type ModerationAction = 'approve' | 'reject' | 'revoke';
 
 type ModerationErrorResponse = {
   error: string;
   status: 403 | 404 | 409;
+  code?: string;
 };
 
 export function mapModerationActionError(
@@ -10,6 +13,9 @@ export function mapModerationActionError(
   message: string
 ): ModerationErrorResponse | null {
   const normalizedMessage = message.toLowerCase();
+  if (normalizedMessage.includes('article_edit_conflict')) {
+    return { error: ARTICLE_VERSION_CONFLICT_MESSAGE, code: 'article_edit_conflict', status: 409 };
+  }
 
   if (normalizedMessage.includes('insufficient permissions')) {
     return {

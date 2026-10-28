@@ -11,6 +11,7 @@ import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { fetchJson } from '@/lib/fetchJson';
 import { useUser } from '@/hooks/useUser';
+import ArticleConflictNotice from '@/features/articles/components/ArticleConflictNotice';
 import ArticleSubmissionRecovery from '@/features/articles/components/ArticleSubmissionRecovery';
 import { useArticleAuthoring } from '@/features/articles/hooks/useArticleAuthoring';
 import { BaseDialog } from '@/components/ui/BaseDialog';
@@ -63,6 +64,10 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
     selectSource,
     sourceChange,
     resolveSourceChange,
+    needsReconciliation,
+    reconciliation,
+    loadReconciliation,
+    confirmReconciliation,
   } = useArticleAuthoring({
     kind: 'edit',
     articleId: id,
@@ -223,6 +228,15 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
       />
 
       {/* Main Content */}
+      {needsReconciliation && (
+        <ArticleConflictNotice
+          snapshot={reconciliation}
+          categories={categories}
+          busy={isSubmitting || recovery?.status === 'pending'}
+          onLoad={loadReconciliation}
+          onConfirm={confirmReconciliation}
+        />
+      )}
       <ArticleForm
         characterOptions={characterOptions}
         title={draft.title}

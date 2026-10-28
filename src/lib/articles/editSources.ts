@@ -8,6 +8,9 @@ export interface EditSourceSnapshot {
   content: string;
   created_at: string;
   commit_message?: string | null;
+  base_version_id?: string | null;
+  base_version_known?: boolean;
+  draft_revision?: string;
 }
 
 export interface ArticleEditInfoResponse {
@@ -34,6 +37,11 @@ export interface EditFormState {
   category: string;
   characterId: string | null;
   content: string;
+  baseVersionId: string | null;
+  baseVersionKnown: boolean;
+  pendingVersionId: string | null;
+  pendingRevision: string | null;
+  sourcePendingVersionId: string | null;
 }
 
 const parseTimestamp = (value: string | null | undefined) => {
@@ -75,11 +83,17 @@ export function resolveEditFormState(
   const snapshot = preferred ?? fallback;
 
   if (!snapshot) return null;
+  const fromPending = snapshot === payload.edit_sources.pending_mine;
 
   return {
     title: snapshot.title,
     category: snapshot.category_id,
     characterId: snapshot.character_id,
     content: snapshot.content,
+    baseVersionId: fromPending ? (snapshot.base_version_id ?? null) : snapshot.version_id,
+    baseVersionKnown: !fromPending || snapshot.base_version_known === true,
+    pendingVersionId: payload.edit_sources.pending_mine?.version_id ?? null,
+    pendingRevision: payload.edit_sources.pending_mine?.draft_revision ?? null,
+    sourcePendingVersionId: fromPending ? snapshot.version_id : null,
   };
 }

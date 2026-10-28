@@ -5,6 +5,7 @@ import {
   resolveArticleCharacterForWrite,
 } from '@/lib/articles/articleWriteRelations';
 import { invalidateArticleCache } from '@/lib/articles/invalidateArticleCache';
+import { ARTICLE_VERSION_CONFLICT_MESSAGE } from '@/lib/articles/versionConflict';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getRequestIp, requireNotBlocked } from '@/lib/blocks/server';
 import { checkRateLimit } from '@/lib/rateLimit';
@@ -37,7 +38,7 @@ export async function POST(
       { status: 400 }
     );
   }
-  const { title, category, content, character_id } = parsed.data;
+  const { title, category, content, character_id, base_version_id, pending_revision } = parsed.data;
 
   try {
     // Get the article_id from the version.
@@ -81,10 +82,18 @@ export async function POST(
         p_category_id: category,
         p_character_id: resolvedCharacterId,
         p_update_character: true,
+        p_expected_base_version_id: base_version_id,
+        p_expected_revision: pending_revision,
       }
     );
 
     if (rpcError) {
+      if (rpcError.message.includes('article_edit_conflict')) {
+        return NextResponse.json(
+          { error: ARTICLE_VERSION_CONFLICT_MESSAGE, code: 'article_edit_conflict' },
+          { status: 409 }
+        );
+      }
       console.error('Supabase RPC error:', rpcError);
       if (rpcError.message.includes('Insufficient permissions')) {
         return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });

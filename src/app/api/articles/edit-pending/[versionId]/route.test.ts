@@ -9,7 +9,10 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { POST } from './route';
 
 function jsonResponse(body: unknown, init?: { status?: number }): Response {
-  return { status: init?.status ?? 200, json: async () => body } as Response;
+  return {
+    status: init?.status ?? 200,
+    json: async () => body,
+  } as Response;
 }
 
 jest.mock('next/cache', () => ({ revalidateTag: jest.fn() }));
@@ -42,9 +45,28 @@ const versionQuery = {
   maybeSingle: jest.fn(),
 };
 
-const createRequest = (body: unknown) => ({ json: async () => body }) as Request;
+const createRequest = (body: unknown) =>
+  ({
+    json: async () =>
+      body && typeof body === 'object'
+        ? { base_version_id: null, pending_revision: CATEGORY_ID, ...body }
+        : body,
+  }) as Request;
 
 describe('pending article edit route', () => {
+  it('returns an explicit conflict when the pending revision changed', async () => {
+    adminRpcMock.mockResolvedValue({
+      data: null,
+      error: { message: 'article_edit_conflict' },
+    } as never);
+    const response = await POST(
+      createRequest({ title: 'Title', category: CATEGORY_ID, content: 'Draft' }),
+      { params: Promise.resolve({ versionId: 'version-1' }) }
+    );
+    expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({ code: 'article_edit_conflict' });
+    expect(revalidateTag).not.toHaveBeenCalled();
+  });
   beforeEach(() => {
     jest.clearAllMocks();
     checkRateLimitMock.mockResolvedValue({ allowed: true });

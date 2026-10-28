@@ -13,6 +13,8 @@ import {
   articleSubmissionMessage,
   type ArticleMutationResult,
 } from '@/lib/articles/mutationResult';
+import { ARTICLE_VERSION_CONFLICT_MESSAGE } from '@/lib/articles/versionConflict';
+import { fetchJson } from '@/lib/fetchJson';
 import {
   clearPublishOperation,
   getOrCreatePublishOperationId,
@@ -46,6 +48,11 @@ const emptyDraft: ArticleDraft = {
   content: '',
   characterId: null,
   commitMessage: '',
+  baseVersionId: null,
+  baseVersionKnown: true,
+  pendingVersionId: null,
+  pendingRevision: null,
+  sourcePendingVersionId: null,
 };
 
 export function useArticleAuthoring(options: AuthoringOptions) {
@@ -69,6 +76,8 @@ export function useArticleAuthoring(options: AuthoringOptions) {
   const [sourceChange, setSourceChange] = useState<EditSourceKey | null>(null);
   const [recovery, setRecovery] = useState<ArticleRecovery | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hasConflict, setHasConflict] = useState(false);
+  const [reconciliation, setReconciliation] = useState<ArticleEditInfoResponse | null>(null);
   const info = options.kind === 'edit' ? options.info : undefined;
   const showCharacterSelector =
     options.categories.find((category) => category.id === draft.category)?.requires_character ??
@@ -118,6 +127,8 @@ export function useArticleAuthoring(options: AuthoringOptions) {
       info.edit_sources[source] ? source : source === 'approved' ? 'pending_mine' : 'approved'
     );
     setError(null);
+    setHasConflict(false);
+    setReconciliation(null);
   };
 
   useEffect(() => {
@@ -162,6 +173,8 @@ export function useArticleAuthoring(options: AuthoringOptions) {
   };
 
   const validateDraft = (): string | null => {
+    if (options.kind === 'edit' && (!draft.baseVersionKnown || hasConflict))
+      return ARTICLE_VERSION_CONFLICT_MESSAGE;
     if (options.kind === 'edit' && !original) return '无法加载文章，请刷新页面重试';
     if (options.categories.length === 0) return '无法加载分类信息，请刷新页面重试';
     if (draft.category && !options.categories.some((category) => category.id === draft.category))
@@ -213,7 +226,13 @@ export function useArticleAuthoring(options: AuthoringOptions) {
         category: draft.category,
         content: draft.content,
         character_id: showCharacterSelector ? draft.characterId : undefined,
-        ...(submission.kind === 'edit' && { commit_message: draft.commitMessage.trim() }),
+        ...(submission.kind === 'edit' && {
+          commit_message: draft.commitMessage.trim(),
+          base_version_id: draft.baseVersionId,
+          pending_version_id: draft.pendingVersionId,
+          pending_revision: draft.pendingRevision,
+          source_pending_version_id: draft.sourcePendingVersionId,
+        }),
       });
       if (
         attempt.current &&
@@ -279,7 +298,9 @@ export function useArticleAuthoring(options: AuthoringOptions) {
           response.status >= 400 &&
           response.status < 500 &&
           response.status !== 408 &&
-          (!attempt.current.uncertain || errorData.code === 'invalid_article_body')
+          (!attempt.current.uncertain ||
+            errorData.code === 'invalid_article_body' ||
+            errorData.code === 'article_edit_conflict')
         ) {
           clearPublishOperation(scope);
           attempt.current = null;
@@ -287,6 +308,11 @@ export function useArticleAuthoring(options: AuthoringOptions) {
         } else if (attempt.current) {
           attempt.current.uncertain = true;
           setRecovery({ status: 'pending' });
+        }
+        if (errorData.code === 'article_edit_conflict') {
+          setHasConflict(true);
+          setReconciliation(null);
+          setError(ARTICLE_VERSION_CONFLICT_MESSAGE);
         }
         showError(
           errorData.error ||
@@ -336,6 +362,40 @@ export function useArticleAuthoring(options: AuthoringOptions) {
     submit: () => submit(false),
     recoverSubmission: () => submit(true),
     recovery,
+    needsReconciliation: hasConflict || (original !== null && !draft.baseVersionKnown),
+    reconciliation,
+    loadReconciliation: async () => {
+      if (options.kind !== 'edit' || pending.current || attempt.current) return;
+      pending.current = true;
+      setIsSubmitting(true);
+      try {
+        const latest = await fetchJson<ArticleEditInfoResponse>(
+          '/api/articles/' + options.articleId + '/info'
+        );
+        setReconciliation(latest);
+      } catch (error) {
+        console.error('Failed to load article for reconciliation:', error);
+        showError('无法获取最新版本，请稍后重试。当前草稿已保留。');
+      } finally {
+        pending.current = false;
+        setIsSubmitting(false);
+      }
+    },
+    confirmReconciliation: () => {
+      if (!reconciliation || pending.current || attempt.current) return;
+      // Adopt only the exact snapshot shown for review, even if publication changed again.
+      setDraft((current) => ({
+        ...current,
+        baseVersionId: reconciliation.edit_sources.approved?.version_id ?? null,
+        baseVersionKnown: true,
+        pendingVersionId: reconciliation.edit_sources.pending_mine?.version_id ?? null,
+        pendingRevision: reconciliation.edit_sources.pending_mine?.draft_revision ?? null,
+        sourcePendingVersionId: null,
+      }));
+      setHasConflict(false);
+      setReconciliation(null);
+      setError(null);
+    },
     releaseSubmission: () => {
       if (pending.current || !attempt.current || completed.current) return;
       clearPublishOperation(attempt.current.scope);

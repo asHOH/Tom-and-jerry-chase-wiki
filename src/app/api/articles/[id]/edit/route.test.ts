@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { revalidateTag } from 'next/cache';
 
 import { resolveArticleCharacterForWrite } from '@/lib/articles/articleWriteRelations';
@@ -8,6 +9,7 @@ import { notifyArticleVersionSubscribers, publishNotification } from '@/lib/noti
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
+import { articleEditSchema } from '@/lib/validation/schemas';
 
 import { POST } from './route';
 
@@ -85,10 +87,77 @@ const receiptQuery = { select: jest.fn(), eq: jest.fn(), maybeSingle: jest.fn() 
 const createRequest = (body: unknown) =>
   ({
     headers: new Headers({ 'Idempotency-Key': '10000000-0000-4000-8000-000000000001' }),
-    json: async () => body,
+    json: async () =>
+      body && typeof body === 'object'
+        ? {
+            base_version_id: null,
+            pending_version_id: null,
+            pending_revision: null,
+            source_pending_version_id: null,
+            ...body,
+          }
+        : body,
   }) as Request;
 
 describe('article edit route', () => {
+  it('recovers a completed old-format request before requiring version fields', async () => {
+    const body = {
+      title: 'Old client',
+      category: CATEGORY_ID,
+      content: '<p>Saved</p>',
+      commit_message: 'Edit',
+    };
+    const request = createRequest(body);
+    request.json = async () => body;
+    const params = { params: Promise.resolve({ id: 'article-1' }) };
+    const absent = await POST(request, params);
+    expect(absent.status).toBe(409);
+    expect(await absent.json()).toMatchObject({ code: 'article_refresh_required' });
+    receiptQuery.maybeSingle.mockResolvedValue({
+      data: {
+        actor_id: 'editor-1',
+        request_fingerprint: createHash('sha256')
+          .update(
+            JSON.stringify({
+              actorId: 'editor-1',
+              articleId: 'article-1',
+              draft: articleEditSchema.parse(body),
+            })
+          )
+          .digest('hex'),
+        article_id: 'article-1',
+        version_id: 'version-old',
+        initial_status: 'pending',
+      },
+      error: null,
+    });
+    expect(await (await POST(request, params)).json()).toMatchObject({
+      version_id: 'version-old',
+      status: 'pending',
+    });
+    expect(adminRpcMock).not.toHaveBeenCalled();
+    expect(notifyArticleVersionSubscribersMock).not.toHaveBeenCalled();
+  });
+
+  it('returns a recoverable conflict without invalidating or notifying a rejected write', async () => {
+    adminRpcMock.mockResolvedValue({
+      data: null,
+      error: { message: 'article_edit_conflict' },
+    } as never);
+    const response = await POST(
+      createRequest({
+        title: 'Title',
+        category: CATEGORY_ID,
+        content: '<p>Draft</p>',
+        commit_message: 'Edit',
+      }),
+      { params: Promise.resolve({ id: 'article-1' }) }
+    );
+    expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({ code: 'article_edit_conflict' });
+    expect(revalidateTag).not.toHaveBeenCalled();
+    expect(notifyArticleVersionSubscribersMock).not.toHaveBeenCalled();
+  });
   beforeEach(() => {
     jest.clearAllMocks();
     receiptQuery.select.mockReturnValue(receiptQuery);

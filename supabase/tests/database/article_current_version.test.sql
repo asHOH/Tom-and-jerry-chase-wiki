@@ -5,6 +5,9 @@ SET search_path = public, extensions;
 
 SELECT plan(18);
 
+-- These fixtures model known/reconciled bases; unknown historical bases have separate tests.
+ALTER TABLE public.article_versions ALTER COLUMN base_version_known SET DEFAULT true;
+
 -- Keep the real foreign key active; the local postgres role cannot disable system triggers.
 INSERT INTO auth.users (id)
 VALUES ('10000000-0000-0000-0000-000000000001');
@@ -67,8 +70,9 @@ UPDATE public.article_versions
 SET status = 'approved'
 WHERE id = '40000000-0000-0000-0000-000000000001';
 
+-- Model an explicit reconciliation before publishing the older submitted snapshot.
 UPDATE public.article_versions
-SET status = 'approved'
+SET status = 'approved', base_version_id = '40000000-0000-0000-0000-000000000001'
 WHERE id = '40000000-0000-0000-0000-000000000002';
 
 SELECT is(
