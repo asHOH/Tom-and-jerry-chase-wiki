@@ -1,23 +1,18 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
 import type { ArticleCharacterOption } from '@/lib/articles/articleCharacterOptions';
-import {
-  resolveEditFormState,
-  type ArticleEditInfoResponse,
-  type EditSourceKey,
-} from '@/lib/articles/editSources';
+import type { ArticleEditInfoResponse } from '@/lib/articles/editSources';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { fetchJson } from '@/lib/fetchJson';
-import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useUser } from '@/hooks/useUser';
-import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
-import { useArticleSubmission } from '@/features/articles/hooks/useArticleSubmission';
+import { useArticleAuthoring } from '@/features/articles/hooks/useArticleAuthoring';
+import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Notice from '@/components/ui/Notice';
@@ -41,18 +36,6 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
   const permissions = usePermissions();
   const canEditArticle =
     permissions.has('article.update_own') || permissions.has('article.update_any');
-  const { submit, isSubmitting } = useArticleSubmission();
-
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [content, setContent] = useState('');
-  const [characterId, setCharacterId] = useState<string | null>(null);
-  const [commitMessage, setCommitMessage] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [placeholder, setPlaceholder] = useState('');
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [selectedSource, setSelectedSource] = useState<EditSourceKey>('approved');
-
   const { data: categoriesData, error: categoriesError } = useSWR<{ categories: Category[] }>(
     canEditArticle ? '/api/categories' : null,
     fetchJson
@@ -60,130 +43,35 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
   const categories: Category[] = categoriesData?.categories || [];
   const isLoadingCategories = !categoriesData && !categoriesError;
 
-  const showCharacterSelector =
-    categories.find((categoryOption) => categoryOption.id === category)?.requires_character ??
-    false;
-
   const { data: articleData, error: articleError } = useSWR<ArticleEditInfoResponse>(
     id && canEditArticle ? `/api/articles/${id}/info` : null,
     fetchJson
   );
 
-  const applySourceToForm = useCallback(
-    (source: EditSourceKey) => {
-      if (!articleData) return;
-      const values = resolveEditFormState(articleData, source);
-      if (!values) return;
-
-      const normalizedContent = normalizeHeadingLevels(values.content || '');
-      setTitle(values.title);
-      setCategory(values.category);
-      setCharacterId(values.characterId);
-      setPlaceholder(normalizedContent);
-      setContent(normalizedContent);
-    },
-    [articleData]
-  );
-
-  useEffect(() => {
-    if (articleData && !isInitialized) {
-      const initialSource = articleData.policy.default_source;
-      setSelectedSource(initialSource);
-      applySourceToForm(initialSource);
-      setIsInitialized(true);
-    }
-  }, [articleData, isInitialized, applySourceToForm]);
+  const {
+    draft,
+    updateDraft,
+    submit,
+    isSubmitting,
+    error,
+    showCharacterSelector,
+    selectedSource,
+    selectSource,
+    sourceChange,
+    resolveSourceChange,
+  } = useArticleAuthoring({
+    kind: 'edit',
+    articleId: id,
+    info: articleData,
+    categories,
+    isLoadingCategories,
+  });
 
   useEffect(() => {
     if (!canEditArticle && !isUserLoading && !isUserValidating) {
       router.push('/articles');
     }
   }, [canEditArticle, isUserLoading, isUserValidating, router]);
-
-  const handleContentChange = (newContent: string) => {
-    setContent(newContent);
-  };
-
-  const handleSourceChange = (source: EditSourceKey) => {
-    setSelectedSource(source);
-    applySourceToForm(source);
-  };
-
-  const handleCategoryChange = (newCategory: string) => {
-    setCategory(newCategory);
-    const requiresCharacter =
-      categories.find((categoryOption) => categoryOption.id === newCategory)?.requires_character ??
-      false;
-    if (!requiresCharacter) {
-      setCharacterId(null);
-    }
-  };
-
-  const isContentEmpty = (html: string) => {
-    if (!html) return true;
-    const stripped = html
-      .replace(/<br\s*\/?>(?=\s*<\/p>|\s*$)/gi, '')
-      .replace(/<[^>]+>/g, '')
-      .replace(/&nbsp;|\s+/g, '')
-      .trim();
-    if (stripped.length === 0) return true;
-    return stripped === ARTICLE_EDITOR_PLACEHOLDER.replace(/\s+/g, '');
-  };
-
-  const handleSave = async () => {
-    if (isSubmitting || isLoadingCategories) {
-      return;
-    }
-
-    if (categories.length === 0) {
-      setError('无法加载分类信息，请刷新页面重试');
-      return;
-    }
-
-    const selectedCategory = categories.find((c) => c.id === category);
-    if (category && !selectedCategory) {
-      setError('未能匹配到所选分类，请刷新页面后重试');
-      return;
-    }
-
-    if (!title.trim()) {
-      setError('请输入文章标题');
-      return;
-    }
-
-    if (!category) {
-      setError('请选择文章分类');
-      return;
-    }
-
-    if (showCharacterSelector && !characterId) {
-      setError('角色攻略文章需要选择一个关联角色');
-      return;
-    }
-
-    if (isContentEmpty(content)) {
-      setError('请输入文章内容');
-      return;
-    }
-
-    if (!commitMessage.trim()) {
-      setError('请填写提交说明');
-      return;
-    }
-
-    setError(null);
-    await submit({
-      kind: 'edit',
-      articleId: id,
-      commitMessage,
-      draft: {
-        title,
-        category,
-        content,
-        characterId: showCharacterSelector ? characterId : undefined,
-      },
-    });
-  };
 
   const handleCancel = () => {
     router.push(`/articles/${id}`);
@@ -257,7 +145,8 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
               <Button
                 variant='unstyled'
                 type='button'
-                onClick={() => handleSourceChange('approved')}
+                disabled={isSubmitting}
+                onClick={() => selectSource('approved')}
                 className={cn(
                   'rounded-lg border p-3 text-left transition-colors',
                   selectedSource === 'approved'
@@ -276,7 +165,8 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
               <Button
                 variant='unstyled'
                 type='button'
-                onClick={() => handleSourceChange('pending_mine')}
+                disabled={isSubmitting}
+                onClick={() => selectSource('pending_mine')}
                 className={cn(
                   'rounded-lg border p-3 text-left transition-colors',
                   selectedSource === 'pending_mine'
@@ -301,29 +191,48 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
         </div>
       )}
 
+      <BaseDialog
+        open={sourceChange !== null}
+        onOpenChange={(open) => {
+          if (!open) resolveSourceChange(false);
+        }}
+        ariaLabel='切换编辑起点'
+        size='sm'
+      >
+        <div className='space-y-4 p-5'>
+          <h2 className='text-lg font-semibold'>切换编辑起点</h2>
+          <p>当前有未提交的修改。切换将替换这些修改及提交说明。</p>
+          <div className='flex justify-end gap-3'>
+            <Button variant='secondary' onClick={() => resolveSourceChange(false)}>
+              继续编辑
+            </Button>
+            <Button onClick={() => resolveSourceChange(true)}>放弃修改并切换</Button>
+          </div>
+        </div>
+      </BaseDialog>
+
       {/* Main Content */}
       <ArticleForm
         characterOptions={characterOptions}
-        title={title}
-        onTitleChange={setTitle}
-        category={category}
-        onCategoryChange={handleCategoryChange}
-        content={content}
-        onContentChange={handleContentChange}
+        title={draft.title}
+        onTitleChange={(value) => updateDraft({ title: value })}
+        category={draft.category}
+        onCategoryChange={(value) => updateDraft({ category: value })}
+        content={draft.content}
+        onContentChange={(value, origin) => updateDraft({ content: value }, origin)}
         categories={categories.filter((cat) => cat.name != '根分类')}
         isLoadingCategories={isLoadingCategories}
         isSubmitting={isSubmitting}
-        onSave={handleSave}
+        onSave={submit}
         onCancel={handleCancel}
         submitLabel='更新文章'
         submittingLabel='更新中...'
         errorMessage={error || articleError?.message || categoriesError?.message || null}
-        contentPlaceholder={placeholder}
         showCharacterSelector={showCharacterSelector}
-        characterId={characterId}
-        onCharacterChange={setCharacterId}
-        commitMessage={commitMessage}
-        onCommitMessageChange={setCommitMessage}
+        characterId={draft.characterId}
+        onCharacterChange={(value) => updateDraft({ characterId: value })}
+        commitMessage={draft.commitMessage}
+        onCommitMessageChange={(value) => updateDraft({ commitMessage: value })}
         showCommitMessage={true}
         submitNoticeMessage={submitNoticeMessage}
       />

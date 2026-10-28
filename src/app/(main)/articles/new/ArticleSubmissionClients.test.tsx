@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import type { ArticleEditInfoResponse } from '@/lib/articles/editSources';
 import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
 import type ArticleForm from '@/components/articles/ArticleForm';
 
@@ -14,7 +15,7 @@ const mockWarning = jest.fn();
 const mockClearCache = jest.fn();
 let mockRequiresCharacter = false;
 let mockSave: ComponentProps<typeof ArticleForm>['onSave'];
-const mockInfo = {
+const defaultInfo: ArticleEditInfoResponse = {
   article: { id: 'a', title: '旧标题', category_id: 'c', character_id: null, created_at: '' },
   edit_sources: {
     approved: {
@@ -29,6 +30,9 @@ const mockInfo = {
   },
   policy: { default_source: 'approved', show_source_picker: false, will_override_pending: false },
 };
+
+let mockInfo = defaultInfo;
+let mockFormProps: ComponentProps<typeof ArticleForm>;
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
@@ -68,6 +72,7 @@ jest.mock('@/components/articles/ArticleForm', () => ({
   __esModule: true,
   default: (props: ComponentProps<typeof ArticleForm>) => {
     mockSave = props.onSave;
+    mockFormProps = props;
     return (
       <div>
         <input
@@ -96,6 +101,7 @@ jest.mock('@/components/articles/ArticleForm', () => ({
 const originalFetch = global.fetch;
 beforeEach(() => {
   mockRequiresCharacter = false;
+  mockInfo = defaultInfo;
   global.fetch = jest.fn();
   jest.spyOn(window, 'alert').mockImplementation(() => {});
   // jsdom cannot navigate documents; browser navigation is checked separately.
@@ -242,6 +248,30 @@ describe.each([
     }
   );
 
+  it('preserves content typed during a failed submission for the next attempt', async () => {
+    let finish!: (response: Response) => void;
+    jest.mocked(fetch).mockReturnValueOnce(
+      new Promise((resolve) => {
+        finish = resolve;
+      })
+    );
+    fillForm();
+    fireEvent.click(screen.getByText('提交'));
+    act(() => mockFormProps.onContentChange('<p>请求期间新增内容</p>'));
+    expect(mockFormProps.content).toBe('<p>请求期间新增内容</p>');
+    await act(async () => {
+      finish({ ok: false, json: async () => ({ error: '写入失败' }) } as Response);
+    });
+    jest
+      .mocked(fetch)
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ status: 'pending' }) } as Response);
+    fireEvent.click(screen.getByText('提交'));
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
+    expect(JSON.parse(jest.mocked(fetch).mock.calls[1]![1]!.body as string).content).toBe(
+      '<p>请求期间新增内容</p>'
+    );
+  });
+
   it('sends one write for repeat submissions before the pending state renders', async () => {
     let resolveResponse!: (response: Response) => void;
     jest.mocked(fetch).mockReturnValue(
@@ -262,5 +292,93 @@ describe.each([
     });
     expect(mockFeedback).toHaveBeenCalledTimes(1);
     expect(screen.getByText('提交')).toBeEnabled();
+  });
+});
+
+describe('edit source safety', () => {
+  const renderEditor = () => {
+    mockInfo = {
+      ...defaultInfo,
+      edit_sources: {
+        ...defaultInfo.edit_sources,
+        pending_mine: {
+          ...defaultInfo.edit_sources.approved!,
+          version_id: 'pending',
+          title: '待审核标题',
+          content: '<p>待审核内容</p>',
+        },
+      },
+      policy: {
+        default_source: 'pending_mine',
+        show_source_picker: true,
+        will_override_pending: true,
+      },
+    };
+    return render(<EditArticleClient characterOptions={[]} />);
+  };
+
+  it('keeps all local fields when the selected source is clicked', () => {
+    renderEditor();
+    fireEvent.change(screen.getByLabelText('标题'), { target: { value: '正在写的标题' } });
+    fireEvent.click(screen.getByText('填写内容'));
+    fireEvent.change(screen.getByLabelText('提交说明'), { target: { value: '我的说明' } });
+    fireEvent.click(screen.getByRole('button', { name: /我的待审核版本/ }));
+    expect(mockFormProps.title).toBe('正在写的标题');
+    expect(mockFormProps.content).toBe('<p>新内容</p>');
+    expect(mockFormProps.commitMessage).toBe('我的说明');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('switches clean sources directly', () => {
+    renderEditor();
+    fireEvent.click(screen.getByRole('button', { name: /公开版本/ }));
+    expect(screen.getByLabelText('标题')).toHaveValue('旧标题');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('preserves cancelled changes and replaces them only after confirmation', async () => {
+    renderEditor();
+    fireEvent.change(screen.getByLabelText('标题'), { target: { value: '正在写的标题' } });
+    fireEvent.change(screen.getByLabelText('提交说明'), { target: { value: '我的说明' } });
+    fireEvent.click(screen.getByRole('button', { name: /公开版本/ }));
+    expect(screen.getByRole('dialog', { name: '切换编辑起点' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '继续编辑' }));
+    expect(screen.getByLabelText('标题')).toHaveValue('正在写的标题');
+    fireEvent.click(screen.getByRole('button', { name: /公开版本/ }));
+    fireEvent.click(screen.getByRole('button', { name: '放弃修改并切换' }));
+    expect(screen.getByLabelText('标题')).toHaveValue('旧标题');
+    expect(mockFormProps.commitMessage).toBe('');
+  });
+
+  it('preserves the draft when fetched sources refresh', () => {
+    const { rerender } = renderEditor();
+    fireEvent.change(screen.getByLabelText('标题'), { target: { value: '正在写的标题' } });
+    mockInfo = {
+      ...mockInfo,
+      edit_sources: {
+        ...mockInfo.edit_sources,
+        pending_mine: { ...mockInfo.edit_sources.pending_mine!, title: '服务器更新' },
+      },
+    };
+    rerender(<EditArticleClient characterOptions={[]} />);
+    expect(screen.getByLabelText('标题')).toHaveValue('正在写的标题');
+  });
+
+  it('blocks source changes while a submission is pending', async () => {
+    let finish!: (response: Response) => void;
+    jest.mocked(fetch).mockReturnValue(
+      new Promise((resolve) => {
+        finish = resolve;
+      })
+    );
+    renderEditor();
+    fireEvent.change(screen.getByLabelText('提交说明'), { target: { value: '提交说明' } });
+    fireEvent.click(screen.getByText('提交'));
+    expect(screen.getByRole('button', { name: /公开版本/ })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: /公开版本/ }));
+    expect(screen.getByLabelText('标题')).toHaveValue('待审核标题');
+    await act(async () => {
+      finish({ ok: true, json: async () => ({ status: 'pending' }) } as Response);
+    });
   });
 });

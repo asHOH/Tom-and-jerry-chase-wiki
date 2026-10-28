@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
@@ -9,7 +9,7 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { fetchJson } from '@/lib/fetchJson';
 import { useUser } from '@/hooks/useUser';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
-import { useArticleSubmission } from '@/features/articles/hooks/useArticleSubmission';
+import { useArticleAuthoring } from '@/features/articles/hooks/useArticleAuthoring';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
@@ -28,14 +28,6 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
   const { isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
   const permissions = usePermissions();
   const canCreateArticle = permissions.has('article.create');
-  const { submit, isSubmitting } = useArticleSubmission();
-
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [content, setContent] = useState('');
-  const [characterId, setCharacterId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
   const { data: categoriesData, error: categoriesError } = useSWR<{ categories: Category[] }>(
     canCreateArticle ? '/api/categories' : null,
     fetchJson
@@ -51,88 +43,14 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
     ) || [];
   const isLoadingCategories = !categoriesData && !categoriesError;
 
-  const showCharacterSelector =
-    categories.find((categoryOption) => categoryOption.id === category)?.requires_character ??
-    false;
-
-  const isContentEmpty = (html: string) => {
-    if (!html) return true;
-    const stripped = html
-      .replace(/<br\s*\/?>(?=\s*<\/p>|\s*$)/gi, '')
-      .replace(/<[^>]+>/g, '')
-      .replace(/&nbsp;|\s+/g, '')
-      .trim();
-    if (stripped.length === 0) return true;
-    return stripped === ARTICLE_EDITOR_PLACEHOLDER.replace(/\s+/g, '');
-  };
+  const { draft, updateDraft, submit, isSubmitting, error, showCharacterSelector } =
+    useArticleAuthoring({ kind: 'create', categories, isLoadingCategories });
 
   useEffect(() => {
     if (!canCreateArticle && !isUserLoading && !isUserValidating) {
       router.push('/articles');
     }
   }, [canCreateArticle, isUserLoading, isUserValidating, router]);
-
-  const handleContentChange = (newContent: string) => {
-    setContent(newContent);
-  };
-
-  const handleCategoryChange = (newCategory: string) => {
-    setCategory(newCategory);
-    const requiresCharacter =
-      categories.find((categoryOption) => categoryOption.id === newCategory)?.requires_character ??
-      false;
-    if (!requiresCharacter) {
-      setCharacterId(null);
-    }
-  };
-
-  const handleSave = async () => {
-    if (isSubmitting || isLoadingCategories) {
-      return;
-    }
-
-    if (categories.length === 0) {
-      setError('无法加载分类信息，请刷新页面重试');
-      return;
-    }
-
-    const selectedCategory = categories.find((c) => c.id === category);
-    if (category && !selectedCategory) {
-      setError('未能匹配到所选分类，请刷新页面后重试');
-      return;
-    }
-
-    if (!title.trim()) {
-      setError('请输入文章标题');
-      return;
-    }
-
-    if (!category) {
-      setError('请选择文章分类');
-      return;
-    }
-
-    if (showCharacterSelector && !characterId) {
-      setError('角色攻略文章需要选择一个关联角色');
-      return;
-    }
-
-    if (isContentEmpty(content)) {
-      setError('请输入文章内容');
-      return;
-    }
-
-    setError(null);
-    await submit({
-      kind: 'create',
-      draft: {
-        title,
-        category,
-        content,
-        characterId: showCharacterSelector ? characterId : undefined,
-      },
-    });
-  };
 
   const handleCancel = () => {
     router.push('/articles');
@@ -174,24 +92,24 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
       {/* Main Content */}
       <ArticleForm
         characterOptions={characterOptions}
-        title={title}
-        onTitleChange={setTitle}
-        category={category}
-        onCategoryChange={handleCategoryChange}
-        content={content}
-        onContentChange={handleContentChange}
+        title={draft.title}
+        onTitleChange={(value) => updateDraft({ title: value })}
+        category={draft.category}
+        onCategoryChange={(value) => updateDraft({ category: value })}
+        content={draft.content}
+        onContentChange={(value, origin) => updateDraft({ content: value }, origin)}
         categories={categories}
         isLoadingCategories={isLoadingCategories}
         isSubmitting={isSubmitting}
-        onSave={handleSave}
+        onSave={submit}
         onCancel={handleCancel}
         submitLabel='提交文章'
         submittingLabel='提交中...'
         errorMessage={error || categoriesError?.message || null}
         contentPlaceholder={ARTICLE_EDITOR_PLACEHOLDER}
         showCharacterSelector={showCharacterSelector}
-        characterId={characterId}
-        onCharacterChange={setCharacterId}
+        characterId={draft.characterId}
+        onCharacterChange={(value) => updateDraft({ characterId: value })}
       />
     </PageShell>
   );

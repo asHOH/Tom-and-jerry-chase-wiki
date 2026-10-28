@@ -28,7 +28,7 @@ interface ArticleFormProps {
   category: string;
   onCategoryChange: (value: string) => void;
   content: string;
-  onContentChange: (value: string) => void;
+  onContentChange: (value: string, origin?: 'sync') => void;
   categories: CategoryOption[];
   isLoadingCategories: boolean;
   isSubmitting: boolean;

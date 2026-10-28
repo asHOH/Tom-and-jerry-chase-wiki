@@ -16,7 +16,7 @@ import { TextAlignClasses } from '@/lib/richtext/textAlignClasses';
 interface UseRTEConfigurationProps {
   initialHtml: string;
   content: string;
-  onChange?: ((content: string) => void) | undefined;
+  onChange?: ((content: string, origin?: 'sync') => void) | undefined;
   className?: string | undefined;
   preset?: 'full' | 'notice';
 }
@@ -76,9 +76,10 @@ export function useRTEConfiguration({
     if (!editor) return;
     const target = normalizeEditorHtml(content, preset);
     if (!editor.state.doc.eq(createDocument(target, editor.schema))) {
-      editor.commands.setContent(target, { emitUpdate: true });
+      editor.commands.setContent(target, { emitUpdate: false });
+      onChange?.(normalizeEditorHtml(editor.getHTML(), preset), 'sync');
     }
-  }, [editor, content, preset]);
+  }, [editor, content, preset, onChange]);
 
   return editor;
 }

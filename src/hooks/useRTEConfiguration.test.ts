@@ -97,7 +97,10 @@ describe('useRTEConfiguration', () => {
 
     expect(result.current!.getHTML()).toBe('<p class="rte-text-center">Body</p><p>Cell</p>');
     expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange).toHaveBeenLastCalledWith('<p class="rte-text-center">Body</p><p>Cell</p>');
+    expect(onChange).toHaveBeenLastCalledWith(
+      '<p class="rte-text-center">Body</p><p>Cell</p>',
+      'sync'
+    );
 
     act(() => {
       result.current!.commands.setContent(content.replace('Body', 'Updated'), {
@@ -126,6 +129,6 @@ describe('useRTEConfiguration', () => {
 
     expect(result.current!.getHTML()).toBe('<p>External</p>');
     expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange).toHaveBeenLastCalledWith('<p>External</p>');
+    expect(onChange).toHaveBeenLastCalledWith('<p>External</p>', 'sync');
   });
 });

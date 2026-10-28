@@ -23,7 +23,7 @@ import { LoadingSpinnerIcon } from './RichTextEditorIcons';
 
 interface RichTextEditorProps {
   content?: string;
-  onChange?: (content: string) => void;
+  onChange?: (content: string, origin?: 'sync') => void;
   placeholder?: string;
   className?: string;
   preset?: 'full' | 'notice';
@@ -68,7 +68,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   useEffect(() => {
     if (content !== undefined && content !== sanitizedContent) {
-      onChange?.(sanitizedContent);
+      onChange?.(sanitizedContent, 'sync');
     }
   }, [content, onChange, sanitizedContent]);
 
