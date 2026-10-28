@@ -57,7 +57,7 @@ jest.mock('@/lib/rateLimit', () => ({
 }));
 
 jest.mock('@/lib/supabase/admin', () => ({
-  supabaseAdmin: { rpc: jest.fn() },
+  supabaseAdmin: { from: jest.fn(), rpc: jest.fn() },
 }));
 
 const requirePermissionMock = jest.mocked(requirePermission);
@@ -69,14 +69,21 @@ const checkRateLimitMock = jest.mocked(checkRateLimit);
 const rpcMock = jest.mocked(supabaseAdmin!.rpc);
 const CATEGORY_ID = '11111111-1111-4111-8111-111111111111';
 
+const receiptQuery = { select: jest.fn(), eq: jest.fn(), maybeSingle: jest.fn() };
+
 const createRequest = (body: unknown) =>
   ({
+    headers: new Headers({ 'Idempotency-Key': '10000000-0000-4000-8000-000000000001' }),
     json: async () => body,
   }) as Request;
 
 describe('article submit route', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    receiptQuery.select.mockReturnValue(receiptQuery);
+    receiptQuery.eq.mockReturnValue(receiptQuery);
+    receiptQuery.maybeSingle.mockResolvedValue({ data: null, error: null });
+    jest.mocked(supabaseAdmin!.from).mockReturnValue(receiptQuery as never);
     checkRateLimitMock.mockResolvedValue({ allowed: true });
     requirePermissionMock.mockResolvedValue({
       userId: 'author-1',
@@ -234,5 +241,59 @@ describe('article submit route', () => {
 
     expect(response.status).toBe(429);
     expect(requirePermissionMock).not.toHaveBeenCalled();
+  });
+  it('replays the original receipt before revalidating category policy or notifying again', async () => {
+    const body = { title: '文章', category: CATEGORY_ID, content: '内容' };
+    rpcMock.mockResolvedValue({
+      data: [
+        {
+          article_id: 'article-1',
+          submitted_version_id: 'version-1',
+          submitted_status: 'pending',
+          replayed: false,
+        },
+      ],
+      error: null,
+    } as never);
+    expect((await POST(createRequest(body))).status).toBe(200);
+    const fingerprint = (rpcMock.mock.calls[0]![1] as { p_request_fingerprint: string })
+      .p_request_fingerprint;
+    receiptQuery.maybeSingle.mockResolvedValue({
+      data: {
+        actor_id: 'author-1',
+        request_fingerprint: fingerprint,
+        article_id: 'article-1',
+        version_id: 'version-1',
+        initial_status: 'pending',
+      },
+      error: null,
+    });
+    const retry = await POST(createRequest(body));
+    expect(await retry.json()).toMatchObject({
+      article_id: 'article-1',
+      version_id: 'version-1',
+      status: 'pending',
+    });
+    expect(rpcMock).toHaveBeenCalledTimes(1);
+    expect(resolveArticleCharacterForWriteMock).toHaveBeenCalledTimes(1);
+    expect(notifyArticleVersionSubscribersMock).toHaveBeenCalledTimes(1);
+    expect((await POST(createRequest({ ...body, content: 'Changed' }))).status).toBe(409);
+    expect(rpcMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('requires a retry key before starting a write', async () => {
+    const request = createRequest({ title: '文章', category: CATEGORY_ID, content: '内容' });
+    request.headers.delete('Idempotency-Key');
+    expect((await POST(request)).status).toBe(400);
+    expect(rpcMock).not.toHaveBeenCalled();
+  });
+
+  it('stops when receipt lookup fails instead of risking a duplicate', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    receiptQuery.maybeSingle.mockResolvedValue({ data: null, error: { message: 'unavailable' } });
+    expect(
+      (await POST(createRequest({ title: '文章', category: CATEGORY_ID, content: '内容' }))).status
+    ).toBe(500);
+    expect(rpcMock).not.toHaveBeenCalled();
   });
 });

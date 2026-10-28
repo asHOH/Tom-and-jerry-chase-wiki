@@ -9,6 +9,7 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { fetchJson } from '@/lib/fetchJson';
 import { useUser } from '@/hooks/useUser';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
+import ArticleSubmissionRecovery from '@/features/articles/components/ArticleSubmissionRecovery';
 import { useArticleAuthoring } from '@/features/articles/hooks/useArticleAuthoring';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
@@ -43,8 +44,17 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
     ) || [];
   const isLoadingCategories = !categoriesData && !categoriesError;
 
-  const { draft, updateDraft, submit, isSubmitting, error, showCharacterSelector } =
-    useArticleAuthoring({ kind: 'create', categories, isLoadingCategories });
+  const {
+    recovery,
+    recoverSubmission,
+    releaseSubmission,
+    draft,
+    updateDraft,
+    submit,
+    isSubmitting,
+    error,
+    showCharacterSelector,
+  } = useArticleAuthoring({ kind: 'create', categories, isLoadingCategories });
 
   useEffect(() => {
     if (!canCreateArticle && !isUserLoading && !isUserValidating) {
@@ -88,6 +98,13 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
           <span className='text-gray-900 dark:text-gray-100'>创建新文章</span>
         </div>
       </PageHeader>
+
+      <ArticleSubmissionRecovery
+        recovery={recovery}
+        busy={isSubmitting}
+        onRetry={recoverSubmission}
+        onRelease={releaseSubmission}
+      />
 
       {/* Main Content */}
       <ArticleForm

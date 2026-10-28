@@ -23,6 +23,52 @@ export type Database = {
   };
   public: {
     Tables: {
+      article_submission_requests: {
+        Row: {
+          actor_id: string;
+          article_id: string | null;
+          created_at: string;
+          initial_status: Database['public']['Enums']['version_status'] | null;
+          operation_id: string;
+          request_fingerprint: string;
+          version_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          actor_id: string;
+          article_id?: string | null;
+          created_at?: string;
+          initial_status?: Database['public']['Enums']['version_status'] | null;
+          operation_id: string;
+          request_fingerprint: string;
+          version_id?: string | null;
+        };
+        Update: {
+          actor_id?: string;
+          article_id?: string | null;
+          created_at?: string;
+          initial_status?: Database['public']['Enums']['version_status'] | null;
+          operation_id?: string;
+          request_fingerprint?: string;
+          version_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'article_submission_requests_actor_id_fkey';
+            columns: ['actor_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'article_submission_requests_actor_id_fkey';
+            columns: ['actor_id'];
+            isOneToOne: false;
+            referencedRelation: 'users_public_view';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       article_versions: {
         Row: {
           article_id: string;
@@ -1512,6 +1558,26 @@ export type Database = {
             };
             Returns: undefined;
           };
+      prepared_article_submission_request: {
+        Args: {
+          p_actor_id: string;
+          p_article_id: string;
+          p_category_id: string;
+          p_character_id: string;
+          p_commit_message: string;
+          p_content: string;
+          p_ip: unknown;
+          p_operation_id: string;
+          p_request_fingerprint: string;
+          p_title: string;
+        };
+        Returns: {
+          article_id: string;
+          replayed: boolean;
+          submitted_status: Database['public']['Enums']['version_status'];
+          submitted_version_id: string;
+        }[];
+      };
       prepared_article_version_moderation: {
         Args: {
           p_action: string;

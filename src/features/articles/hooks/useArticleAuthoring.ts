@@ -13,11 +13,23 @@ import {
   articleSubmissionMessage,
   type ArticleMutationResult,
 } from '@/lib/articles/mutationResult';
+import {
+  clearPublishOperation,
+  getOrCreatePublishOperationId,
+  hasPublishOperation,
+  PublishOperationConflictError,
+  readPublishOperation,
+} from '@/lib/gameData/publishOperation';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
+import {
+  getOptionalSupabaseBrowserClient,
+  requireSupabaseBrowserClient,
+} from '@/lib/supabase/browserClient';
 import { useClearArticleClientCache } from '@/hooks/useClearArticleClientCache';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
+import type { ArticleRecovery } from '@/features/articles/components/ArticleSubmissionRecovery';
 
 type ArticleDraft = EditFormState & { commitMessage: string };
 type AuthoringOptions = {
@@ -42,17 +54,54 @@ export function useArticleAuthoring(options: AuthoringOptions) {
   const showSubmissionFeedback = useContributionSubmissionFeedback();
   const clearArticleClientCache = useClearArticleClientCache();
   const pending = useRef(false);
+  const completed = useRef(false);
+  const attempt = useRef<{
+    scope: string;
+    operationId: string;
+    body: string;
+    uncertain: boolean;
+  } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [draft, setDraft] = useState(emptyDraft);
   const [original, setOriginal] = useState<ArticleDraft | null>(null);
   const [selectedSource, setSelectedSource] = useState<EditSourceKey>('approved');
   const [sourceChange, setSourceChange] = useState<EditSourceKey | null>(null);
+  const [recovery, setRecovery] = useState<ArticleRecovery | null>(null);
   const [error, setError] = useState<string | null>(null);
   const info = options.kind === 'edit' ? options.info : undefined;
   const showCharacterSelector =
     options.categories.find((category) => category.id === draft.category)?.requires_character ??
     false;
+
+  const articleId = options.kind === 'edit' ? options.articleId : null;
+  useEffect(() => {
+    let active = true;
+    const client = getOptionalSupabaseBrowserClient();
+    if (!client) return;
+    void client.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        if (!active || !session) return;
+        const scope = articleId
+          ? 'article:edit:' + session.user.id + ':' + articleId
+          : 'article:create:' + session.user.id;
+        const saved = readPublishOperation(scope);
+        if (saved && !attempt.current && !completed.current) {
+          attempt.current = {
+            scope,
+            operationId: saved.operationId,
+            body: saved.fingerprint,
+            uncertain: true,
+          };
+          setRecovery({ status: 'pending' });
+        }
+      })
+      .catch((error) => console.error('Failed to check article submission recovery:', error));
+    return () => {
+      active = false;
+    };
+  }, [articleId]);
 
   const applySource = (source: EditSourceKey) => {
     if (!info) return;
@@ -131,9 +180,15 @@ export function useArticleAuthoring(options: AuthoringOptions) {
     return null;
   };
 
-  const submit = async () => {
-    if (pending.current || options.isLoadingCategories || sourceChange) return;
-    const validationError = validateDraft();
+  const submit = async (recoverOriginal = false) => {
+    if (
+      pending.current ||
+      completed.current ||
+      sourceChange ||
+      (!recoverOriginal && options.isLoadingCategories)
+    )
+      return;
+    const validationError = recoverOriginal ? null : validateDraft();
     setError(validationError);
     if (validationError) return;
     const submission = options;
@@ -142,34 +197,74 @@ export function useArticleAuthoring(options: AuthoringOptions) {
 
     let committed = false;
     try {
+      const {
+        data: { session },
+      } = await requireSupabaseBrowserClient().auth.getSession();
+      if (!session) {
+        showError('请登录后再提交文章。');
+        return;
+      }
+      const scope =
+        submission.kind === 'create'
+          ? 'article:create:' + session.user.id
+          : 'article:edit:' + session.user.id + ':' + submission.articleId;
+      const body = JSON.stringify({
+        title: draft.title.trim(),
+        category: draft.category,
+        content: draft.content,
+        character_id: showCharacterSelector ? draft.characterId : undefined,
+        ...(submission.kind === 'edit' && { commit_message: draft.commitMessage.trim() }),
+      });
+      if (
+        attempt.current &&
+        (attempt.current.scope !== scope || (!recoverOriginal && attempt.current.body !== body))
+      )
+        throw new PublishOperationConflictError();
+      if (recoverOriginal && !attempt.current) return;
+      const existingOperation = hasPublishOperation(scope);
+      attempt.current ??= {
+        scope,
+        body,
+        operationId: getOrCreatePublishOperationId(scope, body),
+        uncertain: existingOperation,
+      };
       const response = await fetch(
         submission.kind === 'create'
           ? '/api/articles/submit'
-          : `/api/articles/${submission.articleId}/edit`,
+          : '/api/articles/' + submission.articleId + '/edit',
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: draft.title.trim(),
-            category: draft.category,
-            content: draft.content,
-            character_id: showCharacterSelector ? draft.characterId : undefined,
-            ...(submission.kind === 'edit' && {
-              commit_message: draft.commitMessage.trim(),
-            }),
-          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Idempotency-Key': attempt.current.operationId,
+          },
+          body: attempt.current.body,
         }
       );
 
       if (response.ok) {
         committed = true;
+        completed.current = true;
         const result = (await response.json().catch(() => null)) as ArticleMutationResult | null;
+        if (!result?.article_id || !result.version_id) {
+          completed.current = false;
+          attempt.current.uncertain = true;
+          setRecovery({ status: 'pending' });
+          showSubmissionFeedback(articleSubmissionMessage(result));
+          return;
+        }
+        clearPublishOperation(scope);
         const refreshWarning = await clearArticleClientCache(
           result?.article_id ?? (submission.kind === 'edit' ? submission.articleId : undefined)
         );
         const message = [articleSubmissionMessage(result), refreshWarning]
           .filter(Boolean)
           .join('\n');
+        if (recoverOriginal) {
+          setRecovery({ status: 'confirmed', articleId: result.article_id });
+          showSubmissionFeedback(message);
+          return;
+        }
         if (result?.status === 'approved' && result.article_id) {
           // A document navigation also drops previously visited Router Cache entries.
           window.alert(message);
@@ -180,6 +275,19 @@ export function useArticleAuthoring(options: AuthoringOptions) {
         }
       } else {
         const errorData = await response.json();
+        if (
+          response.status >= 400 &&
+          response.status < 500 &&
+          response.status !== 408 &&
+          (!attempt.current.uncertain || errorData.code === 'invalid_article_body')
+        ) {
+          clearPublishOperation(scope);
+          attempt.current = null;
+          setRecovery(null);
+        } else if (attempt.current) {
+          attempt.current.uncertain = true;
+          setRecovery({ status: 'pending' });
+        }
         showError(
           errorData.error ||
             errorData.message ||
@@ -187,6 +295,15 @@ export function useArticleAuthoring(options: AuthoringOptions) {
         );
       }
     } catch (error) {
+      if (error instanceof PublishOperationConflictError) {
+        setRecovery({ status: 'pending' });
+        showError('上次提交结果尚未确认，请使用“重试原始提交”确认结果。当前修改已保留。');
+        return;
+      }
+      if (attempt.current && !committed) {
+        attempt.current.uncertain = true;
+        setRecovery({ status: 'pending' });
+      }
       if (committed) {
         console.error('Article saved but feedback/navigation failed:', error);
         warning('提交已成功，页面跳转失败。请刷新页面或查看我的贡献，请勿重复提交。', 8000);
@@ -216,7 +333,15 @@ export function useArticleAuthoring(options: AuthoringOptions) {
     sourceChange,
     selectSource,
     resolveSourceChange,
-    submit,
+    submit: () => submit(false),
+    recoverSubmission: () => submit(true),
+    recovery,
+    releaseSubmission: () => {
+      if (pending.current || !attempt.current || completed.current) return;
+      clearPublishOperation(attempt.current.scope);
+      attempt.current = null;
+      setRecovery(null);
+    },
     isSubmitting,
   };
 }

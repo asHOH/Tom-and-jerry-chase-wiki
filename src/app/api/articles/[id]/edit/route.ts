@@ -1,14 +1,16 @@
 import { NextResponse } from 'next/server';
 
-import {
-  ArticleWriteValidationError,
-  resolveArticleCharacterForWrite,
-} from '@/lib/articles/articleWriteRelations';
+import { ArticleWriteValidationError } from '@/lib/articles/articleWriteRelations';
 import { invalidateArticleCache } from '@/lib/articles/invalidateArticleCache';
 import { notifyArticleOutcome } from '@/lib/articles/notifyArticleOutcome';
+import {
+  ArticleRequestConflictError,
+  submitArticleRequest,
+} from '@/lib/articles/submitArticleRequest';
 import { canAccess } from '@/lib/auth/permissions';
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
 import { getRequestIp, requireNotBlocked } from '@/lib/blocks/server';
+import { InvalidPublishOperationIdError } from '@/lib/gameData/publishOperation';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { createClient } from '@/lib/supabase/server';
@@ -73,11 +75,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     const parsed = articleEditSchema.safeParse(await request.json().catch(() => null));
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Invalid request body', details: formatZodError(parsed.error) },
+        {
+          error: 'Invalid request body',
+          code: 'invalid_article_body',
+          details: formatZodError(parsed.error),
+        },
         { status: 400 }
       );
     }
-    const { title, category, content, character_id, commit_message } = parsed.data;
+    const { title, category } = parsed.data;
     if (
       category !== article.category_id &&
       !canAccess(grants, canUpdateAny ? 'article.update_any' : 'article.update_own', {
@@ -99,38 +105,20 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     });
     if (block) return block;
 
-    const resolvedCharacterId = await resolveArticleCharacterForWrite({
-      categoryId: category,
-      characterId: character_id,
+    const submittedVersion = await submitArticleRequest({
+      request,
+      actorId: userId,
+      ip: getRequestIp(request),
+      articleId: id,
+      draft: parsed.data,
     });
 
-    const { data, error } = await requireSupabaseAdminClient().rpc('prepared_submit_article', {
-      p_actor_id: userId,
-      p_ip: getRequestIp(request),
-      p_article_id: id,
-      p_title: title,
-      p_content: content,
-      p_category_id: category,
-      p_character_id: resolvedCharacterId,
-      p_commit_message: commit_message,
-    });
-
-    if (error) {
-      console.error('Supabase RPC error:', error);
-      return NextResponse.json({ error: 'Failed to update article' }, { status: 500 });
-    }
-
-    const submittedVersion = data?.[0];
-    if (!submittedVersion) {
-      console.error('Committed article edit returned no version:', { articleId: id });
-    }
     const refreshResult = invalidateArticleCache({
       articleId: id,
-      versionId: submittedVersion?.submitted_version_id ?? 'unknown',
-      // Conservatively expire public content if a committed RPC omits its result.
-      status: submittedVersion?.submitted_status ?? 'approved',
+      versionId: submittedVersion.submitted_version_id,
+      status: submittedVersion.submitted_status,
     });
-    if (submittedVersion) {
+    if (!submittedVersion.replayed) {
       await notifyArticleOutcome({
         source: 'edit',
         articleId: id,
@@ -145,15 +133,24 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     return NextResponse.json(
       {
         message: 'Article updated successfully',
-        data,
+        data: [submittedVersion],
         article_id: id,
-        version_id: submittedVersion?.submitted_version_id ?? null,
-        status: submittedVersion?.submitted_status ?? null,
+        version_id: submittedVersion.submitted_version_id,
+        status: submittedVersion.submitted_status,
         ...refreshResult,
       },
       { status: 200 }
     );
   } catch (err) {
+    if (err instanceof InvalidPublishOperationIdError) {
+      return NextResponse.json(
+        { error: '提交缺少有效的重试标识，请保存当前内容并刷新页面后重试。' },
+        { status: 400 }
+      );
+    }
+    if (err instanceof ArticleRequestConflictError) {
+      return NextResponse.json({ error: err.message }, { status: 409 });
+    }
     if (err instanceof ArticleWriteValidationError) {
       return NextResponse.json({ error: err.message }, { status: 400 });
     }

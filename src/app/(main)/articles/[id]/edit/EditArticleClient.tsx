@@ -11,6 +11,7 @@ import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { fetchJson } from '@/lib/fetchJson';
 import { useUser } from '@/hooks/useUser';
+import ArticleSubmissionRecovery from '@/features/articles/components/ArticleSubmissionRecovery';
 import { useArticleAuthoring } from '@/features/articles/hooks/useArticleAuthoring';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
@@ -49,6 +50,9 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
   );
 
   const {
+    recovery,
+    recoverSubmission,
+    releaseSubmission,
     draft,
     updateDraft,
     submit,
@@ -210,6 +214,13 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
           </div>
         </div>
       </BaseDialog>
+
+      <ArticleSubmissionRecovery
+        recovery={recovery}
+        busy={isSubmitting}
+        onRetry={recoverSubmission}
+        onRelease={releaseSubmission}
+      />
 
       {/* Main Content */}
       <ArticleForm

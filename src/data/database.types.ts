@@ -34,6 +34,10 @@ type OverrideFunctionArgs<FunctionType, ArgsOverride> = FunctionType extends {
   : never;
 
 type FunctionOverrides = {
+  prepared_article_submission_request: OverrideFunctionArgs<
+    PublicFunctions['prepared_article_submission_request'],
+    { p_article_id: string | null; p_character_id: string | null; p_commit_message: string | null }
+  >;
   create_autoblock_for_request: Omit<PublicFunctions['create_autoblock_for_request'], 'Returns'> & {
     Returns: string | null;
   };

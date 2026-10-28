@@ -51,7 +51,7 @@ function storageKey(scope: string): string {
   return `${STORAGE_PREFIX}${encodeURIComponent(scope)}`;
 }
 
-function readStoredOperation(scope: string): StoredPublishOperation | null {
+export function readPublishOperation(scope: string): StoredPublishOperation | null {
   const storage = getSessionStorage();
   if (!storage) return null;
 
@@ -73,11 +73,11 @@ function readStoredOperation(scope: string): StoredPublishOperation | null {
 }
 
 export function hasPublishOperation(scope: string): boolean {
-  return readStoredOperation(scope) !== null;
+  return readPublishOperation(scope) !== null;
 }
 
 export function getOrCreatePublishOperationId(scope: string, fingerprint: string): string {
-  const existing = readStoredOperation(scope);
+  const existing = readPublishOperation(scope);
   if (existing?.fingerprint === fingerprint) return existing.operationId;
   if (existing) throw new PublishOperationConflictError();
 

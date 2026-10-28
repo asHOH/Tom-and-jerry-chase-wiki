@@ -80,14 +80,20 @@ const articleQuery = {
   maybeSingle: jest.fn(),
 };
 
+const receiptQuery = { select: jest.fn(), eq: jest.fn(), maybeSingle: jest.fn() };
+
 const createRequest = (body: unknown) =>
   ({
+    headers: new Headers({ 'Idempotency-Key': '10000000-0000-4000-8000-000000000001' }),
     json: async () => body,
   }) as Request;
 
 describe('article edit route', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    receiptQuery.select.mockReturnValue(receiptQuery);
+    receiptQuery.eq.mockReturnValue(receiptQuery);
+    receiptQuery.maybeSingle.mockResolvedValue({ data: null, error: null });
 
     createClientMock.mockResolvedValue({
       auth: {
@@ -114,6 +120,7 @@ describe('article edit route', () => {
     });
 
     adminFromMock.mockImplementation((table: string) => {
+      if (table === 'article_submission_requests') return receiptQuery as never;
       if (table === 'articles') return articleQuery as never;
       throw new Error(`Unexpected table: ${table}`);
     });
@@ -145,7 +152,9 @@ describe('article edit route', () => {
 
   it('notifies subscribers when an edit stays pending', async () => {
     adminRpcMock.mockResolvedValue({
-      data: [{ submitted_status: 'pending', submitted_version_id: 'version-1' }],
+      data: [
+        { article_id: 'article-1', submitted_status: 'pending', submitted_version_id: 'version-1' },
+      ],
       error: null,
     } as never);
 
@@ -172,7 +181,13 @@ describe('article edit route', () => {
 
   it('does not fan out pending notifications for auto-approved edits', async () => {
     adminRpcMock.mockResolvedValue({
-      data: [{ submitted_status: 'approved', submitted_version_id: 'version-1' }],
+      data: [
+        {
+          article_id: 'article-1',
+          submitted_status: 'approved',
+          submitted_version_id: 'version-1',
+        },
+      ],
       error: null,
     } as never);
 
@@ -238,7 +253,7 @@ describe('article edit route', () => {
     }
   );
 
-  it('does not invent a status or invite retry when a committed edit omits its result', async () => {
+  it('keeps a missing receipt retryable without pretending a result is known', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
     adminRpcMock.mockResolvedValue({ data: [], error: null } as never);
     const response = await POST(
@@ -250,16 +265,8 @@ describe('article edit route', () => {
       }),
       { params: Promise.resolve({ id: 'article-1' }) }
     );
-    expect(response.status).toBe(200);
-    expect(await response.json()).toMatchObject({
-      article_id: 'article-1',
-      version_id: null,
-      status: null,
-    });
-    expect(publishNotificationMock).not.toHaveBeenCalled();
+    expect(response.status).toBe(500);
     expect(notifyArticleVersionSubscribersMock).not.toHaveBeenCalled();
-    expect(revalidateTag).toHaveBeenCalledWith('article:article-1', { expire: 0 });
-    expect(adminRpcMock).toHaveBeenCalledTimes(1);
   });
 
   it('returns 429 before authenticating', async () => {

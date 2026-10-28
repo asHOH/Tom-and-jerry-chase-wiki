@@ -8,6 +8,15 @@ import type ArticleForm from '@/components/articles/ArticleForm';
 import EditArticleClient from '../[id]/edit/EditArticleClient';
 import NewArticleClient from './NewArticleClient';
 
+jest.mock('@/lib/supabase/browserClient', () => ({
+  getOptionalSupabaseBrowserClient: () => ({
+    auth: { getSession: async () => ({ data: { session: { user: { id: 'author' } } } }) },
+  }),
+  requireSupabaseBrowserClient: () => ({
+    auth: { getSession: async () => ({ data: { session: { user: { id: 'author' } } } }) },
+  }),
+}));
+
 const mockPush = jest.fn();
 const mockFeedback = jest.fn();
 const mockError = jest.fn();
@@ -54,7 +63,7 @@ jest.mock('@/lib/auth/PermissionProvider', () => ({
   usePermissions: () => ({ has: () => true, can: () => true }),
 }));
 jest.mock('@/hooks/useUser', () => ({
-  useUser: () => ({ isLoading: false, isValidating: false }),
+  useUser: () => ({ nickname: 'Author', isLoading: false, isValidating: false }),
 }));
 jest.mock('@/hooks/useContributionSubmissionFeedback', () => ({
   useContributionSubmissionFeedback: () => mockFeedback,
@@ -100,6 +109,7 @@ jest.mock('@/components/articles/ArticleForm', () => ({
 
 const originalFetch = global.fetch;
 beforeEach(() => {
+  sessionStorage.clear();
   mockRequiresCharacter = false;
   mockInfo = defaultInfo;
   global.fetch = jest.fn();
@@ -161,9 +171,10 @@ describe.each([
   );
 
   it('does not describe failed success feedback as a failed write', async () => {
-    jest
-      .mocked(fetch)
-      .mockResolvedValue({ ok: true, json: async () => ({ status: 'pending' }) } as Response);
+    jest.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+    } as Response);
     mockFeedback.mockImplementationOnce(() => {
       throw new Error('feedback failed');
     });
@@ -174,6 +185,54 @@ describe.each([
     expect(mockError).not.toHaveBeenCalled();
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(mockClearCache).toHaveBeenCalledTimes(1);
+  });
+
+  it('releases a lost validation failure so a corrected draft can be submitted', async () => {
+    jest
+      .mocked(fetch)
+      .mockRejectedValueOnce(new TypeError('Response lost'))
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({ error: 'Invalid request body', code: 'invalid_article_body' }),
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+      } as Response);
+    submit();
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: '重试原始提交' })).toBeInTheDocument()
+    );
+    fireEvent.change(screen.getByLabelText('标题'), { target: { value: 'Corrected title' } });
+    fireEvent.click(screen.getByRole('button', { name: '重试原始提交' }));
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: '重试原始提交' })).not.toBeInTheDocument()
+    );
+    fireEvent.click(screen.getByText('提交'));
+    await waitFor(() => expect(mockPush).toHaveBeenCalled());
+    const calls = jest.mocked(fetch).mock.calls;
+    expect(calls[1]![1]).toEqual(calls[0]![1]);
+    expect(calls[2]![1]!.headers).not.toEqual(calls[0]![1]!.headers);
+    expect(JSON.parse(calls[2]![1]!.body as string).title).toBe('Corrected title');
+  });
+
+  it('preserves the draft when the author explicitly releases a checked failed submission', async () => {
+    jest.mocked(fetch).mockRejectedValueOnce(new TypeError('Lost'));
+    submit();
+    await waitFor(() => expect(screen.getByText('核对后解除重试')).toBeInTheDocument());
+    expect(screen.getByText('查看贡献记录')).toHaveAttribute(
+      'href',
+      '/users/Author?tab=submissions'
+    );
+    fireEvent.click(screen.getByText('核对后解除重试'));
+    fireEvent.click(screen.getByText('继续核对'));
+    expect(sessionStorage.length).toBe(1);
+    fireEvent.click(screen.getByText('核对后解除重试'));
+    fireEvent.click(screen.getByText('已确认原提交失败'));
+    expect(screen.getByLabelText('标题')).toHaveValue(' 新标题 ');
+    expect(sessionStorage.length).toBe(0);
+    expect(screen.queryByText('重试原始提交')).not.toBeInTheDocument();
   });
 
   it('shows the API error when the write fails', async () => {
@@ -199,17 +258,18 @@ describe.each([
         '提交已成功，但未能获取审核状态。请在我的贡献中查看，请勿重复提交。'
       )
     );
-    const cacheKeyMatches = mockClearCache.mock.calls[0][0];
-    expect(cacheKeyMatches('/api/articles/a/info')).toBe(mode === 'edit');
-    expect(mockPush).toHaveBeenCalledWith('/articles');
+    expect(mockClearCache).not.toHaveBeenCalled();
+    expect(mockPush).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: '重试原始提交' })).toBeInTheDocument();
     expect(mockError).not.toHaveBeenCalled();
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 
   it('includes a browser cache failure warning and continues after saving', async () => {
-    jest
-      .mocked(fetch)
-      .mockResolvedValue({ ok: true, json: async () => ({ status: 'pending' }) } as Response);
+    jest.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+    } as Response);
     mockClearCache.mockRejectedValueOnce(new Error('cache unavailable'));
     submit();
     await waitFor(() =>
@@ -226,16 +286,17 @@ describe.each([
     'preserves the payload when character is required: %s',
     async (required) => {
       mockRequiresCharacter = required;
-      jest
-        .mocked(fetch)
-        .mockResolvedValue({ ok: true, json: async () => ({ status: 'pending' }) } as Response);
+      jest.mocked(fetch).mockResolvedValue({
+        ok: true,
+        json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+      } as Response);
       submit();
       await waitFor(() => expect(mockFeedback).toHaveBeenCalled());
       expect(fetch).toHaveBeenCalledWith(
         mode === 'create' ? '/api/articles/submit' : '/api/articles/a/edit',
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Idempotency-Key': expect.any(String) },
           body: JSON.stringify({
             title: '新标题',
             category: 'c',
@@ -260,16 +321,129 @@ describe.each([
     act(() => mockFormProps.onContentChange('<p>请求期间新增内容</p>'));
     expect(mockFormProps.content).toBe('<p>请求期间新增内容</p>');
     await act(async () => {
-      finish({ ok: false, json: async () => ({ error: '写入失败' }) } as Response);
+      finish({ ok: false, status: 400, json: async () => ({ error: '写入失败' }) } as Response);
     });
-    jest
-      .mocked(fetch)
-      .mockResolvedValueOnce({ ok: true, json: async () => ({ status: 'pending' }) } as Response);
+    jest.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+    } as Response);
     fireEvent.click(screen.getByText('提交'));
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
     expect(JSON.parse(jest.mocked(fetch).mock.calls[1]![1]!.body as string).content).toBe(
       '<p>请求期间新增内容</p>'
     );
+  });
+
+  it('reuses the request key after a lost response', async () => {
+    jest
+      .mocked(fetch)
+      .mockRejectedValueOnce(new TypeError('Response lost'))
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+      } as Response);
+    fillForm();
+    fireEvent.click(screen.getByText('提交'));
+    await waitFor(() => expect(mockError).toHaveBeenCalled());
+    fireEvent.click(screen.getByText('提交'));
+    await waitFor(() => expect(mockFeedback).toHaveBeenCalled());
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(jest.mocked(fetch).mock.calls[1]![1]).toEqual(jest.mocked(fetch).mock.calls[0]![1]);
+  });
+
+  it('keeps uncertain content changes from starting a second write', async () => {
+    jest.mocked(fetch).mockRejectedValueOnce(new TypeError('Response lost'));
+    fillForm();
+    fireEvent.click(screen.getByText('提交'));
+    await waitFor(() => expect(mockError).toHaveBeenCalled());
+    fireEvent.change(screen.getByLabelText('标题'), { target: { value: 'Changed after timeout' } });
+    fireEvent.click(screen.getByText('提交'));
+    await waitFor(() =>
+      expect(mockError).toHaveBeenLastCalledWith(expect.stringContaining('上次提交结果尚未确认'))
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(screen.getByLabelText('标题')).toHaveValue('Changed after timeout');
+  });
+
+  it('recovers the frozen request while preserving newer draft text', async () => {
+    jest
+      .mocked(fetch)
+      .mockRejectedValueOnce(new TypeError('Response lost'))
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+      } as Response);
+    fillForm();
+    fireEvent.click(screen.getByText('提交'));
+    await waitFor(() => expect(mockError).toHaveBeenCalled());
+    fireEvent.change(screen.getByLabelText('标题'), { target: { value: 'Keep this newer draft' } });
+    fireEvent.click(screen.getByRole('button', { name: '重试原始提交' }));
+    await waitFor(() =>
+      expect(screen.getByRole('link', { name: '打开已提交文章继续编辑' })).toBeInTheDocument()
+    );
+    expect(screen.getByLabelText('标题')).toHaveValue('Keep this newer draft');
+    expect(jest.mocked(fetch).mock.calls[1]![1]).toEqual(jest.mocked(fetch).mock.calls[0]![1]);
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it.each(['lost', 'malformed'] as const)(
+    'recovers a saved %s response after reopening the editor',
+    async (failure) => {
+      if (failure === 'lost') jest.mocked(fetch).mockRejectedValueOnce(new TypeError('Lost'));
+      else
+        jest.mocked(fetch).mockResolvedValueOnce({
+          ok: true,
+          json: async () => {
+            throw new SyntaxError('Bad body');
+          },
+        } as unknown as Response);
+      const view = render(<Client characterOptions={[]} />);
+      fireEvent.change(screen.getByLabelText('标题'), { target: { value: 'Original' } });
+      fireEvent.click(screen.getByText('选择分类'));
+      fireEvent.click(screen.getByText('填写内容'));
+      if (mode === 'edit')
+        fireEvent.change(screen.getByLabelText('提交说明'), { target: { value: 'Edit' } });
+      fireEvent.click(screen.getByText('提交'));
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: '重试原始提交' })).toBeInTheDocument()
+      );
+      view.unmount();
+      render(<Client characterOptions={[]} />);
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: '重试原始提交' })).toBeInTheDocument()
+      );
+      fireEvent.change(screen.getByLabelText('标题'), { target: { value: 'New work' } });
+      jest.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+      } as Response);
+      fireEvent.click(screen.getByRole('button', { name: '重试原始提交' }));
+      await waitFor(() =>
+        expect(screen.getByRole('link', { name: '打开已提交文章继续编辑' })).toBeInTheDocument()
+      );
+      expect(screen.getByLabelText('标题')).toHaveValue('New work');
+      expect(jest.mocked(fetch).mock.calls[1]![1]).toEqual(jest.mocked(fetch).mock.calls[0]![1]);
+      expect(sessionStorage.length).toBe(0);
+    }
+  );
+
+  it('retains its in-memory request key when session storage is unavailable', async () => {
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('Storage disabled');
+    });
+    jest
+      .mocked(fetch)
+      .mockRejectedValueOnce(new TypeError('Response lost'))
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+      } as Response);
+    fillForm();
+    fireEvent.click(screen.getByText('提交'));
+    await waitFor(() => expect(mockError).toHaveBeenCalled());
+    fireEvent.click(screen.getByText('提交'));
+    await waitFor(() => expect(mockFeedback).toHaveBeenCalled());
+    expect(jest.mocked(fetch).mock.calls[1]![1]).toEqual(jest.mocked(fetch).mock.calls[0]![1]);
   });
 
   it('sends one write for repeat submissions before the pending state renders', async () => {
@@ -284,11 +458,14 @@ describe.each([
       void mockSave();
       void mockSave();
     });
-    expect(fetch).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
     expect(screen.getByText('提交')).toBeDisabled();
 
     await act(async () => {
-      resolveResponse({ ok: true, json: async () => ({ status: 'pending' }) } as Response);
+      resolveResponse({
+        ok: true,
+        json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+      } as Response);
     });
     expect(mockFeedback).toHaveBeenCalledTimes(1);
     expect(screen.getByText('提交')).toBeEnabled();
@@ -378,7 +555,10 @@ describe('edit source safety', () => {
     fireEvent.click(screen.getByRole('button', { name: /公开版本/ }));
     expect(screen.getByLabelText('标题')).toHaveValue('待审核标题');
     await act(async () => {
-      finish({ ok: true, json: async () => ({ status: 'pending' }) } as Response);
+      finish({
+        ok: true,
+        json: async () => ({ article_id: 'a', version_id: 'v', status: 'pending' }),
+      } as Response);
     });
   });
 });
