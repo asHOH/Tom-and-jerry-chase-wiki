@@ -12,6 +12,8 @@
 
 维护者 checkout 可能仍链接到生产项目。每次操作前都必须独立核对 Supabase project ref；测试项目应通过 `STAGING_DATABASE_URL` 和 `--db-url` 明确指定，不要依赖当前 CLI link 或历史终端上下文猜测目标。
 
+维护者的 `develop` / `dev.tjwiki.com` 使用 `tjwiki-test`。Vercel 的 Preview 环境为 `develop` 单独设置 `NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`、`SUPABASE_SECRET_KEY` 和 `SUPABASE_DATABASE_PASSWORD`；新建预览分支时也应显式确认目标，避免继承生产数据库凭据。测试环境账号、文章和待审核数据独立于生产站点。
+
 ## Supabase CLI 升级
 
 Dependabot 为 npm 包 `supabase` 的版本升级创建独立 PR。即使 migration 没有变化，新版生成器也可能改变类型结构、生成列的写入类型或输出格式，因此升级后必须重新生成并检查数据库类型。
@@ -76,7 +78,9 @@ Supabase 自 2026 年 10 月 30 日起停止为现有项目的 `public` 新表�
 
 ## 文章草稿安全迁移（2026-10-28）
 
-`20261028000000_article_submission_idempotency.sql` 和 `20261028000001_article_version_conflicts.sql` 应与对应应用版本一起发布。写入 RPC 的参数和权限会变化；安排短暂的文章提交、编辑及审核维护窗口，先按上述流程应用迁移，再切换应用并验证创建、重试、编辑和审核。旧应用直接写入的入口会失败，已经打开的旧编辑页面需先复制保存草稿，再刷新。
+`20261028000000_article_submission_idempotency.sql`、`20261028000001_article_version_conflicts.sql` 和 `20261028000002_retire_pending_article_edits.sql` 应与对应应用版本一起发布。写入 RPC 的参数和权限会变化；安排短暂的文章提交、编辑及审核维护窗口，先按上述流程应用迁移，再切换应用并验证创建、重试、编辑和审核。旧应用直接写入的入口会失败，已经打开的旧编辑页面需先复制保存草稿，再刷新。
+
+旧的 `/api/articles/edit-pending/[versionId]` 入口及对应数据库函数已移除。所有内容修改通过现有编辑页创建新版本；被替换的待审核版本会保留历史记录并撤销，审核操作始终针对固定的内容。
 
 提交请求记录与文章版本在同一事务中保存。已完成请求的重试返回原始结果；清理这些记录会丢失对应请求的去重能力。新应用仍能恢复旧格式请求的已有回执，尚未完成且缺少版本信息的旧请求会要求刷新。
 

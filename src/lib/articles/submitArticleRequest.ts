@@ -19,7 +19,6 @@ type ArticleWrite = {
   commit_message?: string;
   base_version_id?: string | null | undefined;
   pending_version_id?: string | null | undefined;
-  pending_revision?: string | null | undefined;
   source_pending_version_id?: string | null | undefined;
 };
 
@@ -78,7 +77,6 @@ export async function submitArticleRequest({
     articleId &&
     (draft.base_version_id === undefined ||
       draft.pending_version_id === undefined ||
-      draft.pending_revision === undefined ||
       draft.source_pending_version_id === undefined)
   )
     throw new ArticleRefreshRequiredError();
@@ -100,7 +98,6 @@ export async function submitArticleRequest({
     p_commit_message: draft.commit_message ?? null,
     p_expected_base_version_id: draft.base_version_id ?? null,
     p_expected_pending_version_id: draft.pending_version_id ?? null,
-    p_expected_pending_revision: draft.pending_revision ?? null,
     p_source_pending_version_id: draft.source_pending_version_id ?? null,
   });
   if (error?.message.includes('article_edit_conflict')) throw new ArticleVersionConflictError();

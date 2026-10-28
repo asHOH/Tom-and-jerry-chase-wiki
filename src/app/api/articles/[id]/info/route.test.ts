@@ -63,7 +63,6 @@ beforeEach(() => {
       metadata_snapshot_complete: true,
       base_version_id: 'older-publication',
       base_version_known: true,
-      draft_revision: 'revision',
     },
     error: null,
   });
@@ -87,7 +86,6 @@ it('returns one published snapshot and retains pending origin and explicit null 
         character_id: null,
         base_version_id: 'older-publication',
         base_version_known: true,
-        draft_revision: 'revision',
       },
     },
   });

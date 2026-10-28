@@ -42,7 +42,6 @@ type FunctionOverrides = {
       p_commit_message: string | null;
       p_expected_base_version_id: string | null;
       p_expected_pending_version_id: string | null;
-      p_expected_pending_revision: string | null;
       p_source_pending_version_id: string | null;
     }
   >;
@@ -91,10 +90,6 @@ type FunctionOverrides = {
   prepared_submit_article: OverrideFunctionArgs<
     PublicFunctions['prepared_submit_article'],
     { p_character_id?: string | null; p_commit_message?: string | null }
-  >;
-  prepared_update_pending_article: OverrideFunctionArgs<
-    PublicFunctions['prepared_update_pending_article'],
-    { p_character_id: string | null; p_expected_base_version_id: string | null }
   >;
   save_permission_group_v2: OverrideFunctionArgs<
     PublicFunctions['save_permission_group_v2'],

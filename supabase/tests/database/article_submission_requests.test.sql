@@ -26,7 +26,7 @@ LANGUAGE sql AS $$
     'a3000000-0000-4000-8000-000000000001', NULL, 'Edit',
     (SELECT current_version_id FROM public.articles WHERE id = article),
     (SELECT id FROM public.article_versions WHERE article_id = article AND editor_id = actor AND status = 'pending' LIMIT 1),
-    (SELECT draft_revision FROM public.article_versions WHERE article_id = article AND editor_id = actor AND status = 'pending' LIMIT 1), NULL
+    NULL
   );
 $$;
 

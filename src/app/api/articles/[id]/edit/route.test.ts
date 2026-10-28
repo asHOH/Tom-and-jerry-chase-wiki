@@ -92,7 +92,6 @@ const createRequest = (body: unknown) =>
         ? {
             base_version_id: null,
             pending_version_id: null,
-            pending_revision: null,
             source_pending_version_id: null,
             ...body,
           }

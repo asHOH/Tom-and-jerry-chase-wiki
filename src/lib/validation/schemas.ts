@@ -35,13 +35,7 @@ export const articleEditSchema = articleWriteSchema.extend({
   // Optional here so an older saved request can recover its receipt before requiring a refresh.
   base_version_id: z.uuid().nullable().optional(),
   pending_version_id: z.uuid().nullable().optional(),
-  pending_revision: z.uuid().nullable().optional(),
   source_pending_version_id: z.uuid().nullable().optional(),
-});
-
-export const articleEditPendingSchema = articleWriteSchema.extend({
-  base_version_id: z.uuid().nullable(),
-  pending_revision: z.uuid(),
 });
 
 const COMMENT_SCOPES = [

@@ -51,7 +51,6 @@ const emptyDraft: ArticleDraft = {
   baseVersionId: null,
   baseVersionKnown: true,
   pendingVersionId: null,
-  pendingRevision: null,
   sourcePendingVersionId: null,
 };
 
@@ -230,7 +229,6 @@ export function useArticleAuthoring(options: AuthoringOptions) {
           commit_message: draft.commitMessage.trim(),
           base_version_id: draft.baseVersionId,
           pending_version_id: draft.pendingVersionId,
-          pending_revision: draft.pendingRevision,
           source_pending_version_id: draft.sourcePendingVersionId,
         }),
       });
@@ -389,7 +387,6 @@ export function useArticleAuthoring(options: AuthoringOptions) {
         baseVersionId: reconciliation.edit_sources.approved?.version_id ?? null,
         baseVersionKnown: true,
         pendingVersionId: reconciliation.edit_sources.pending_mine?.version_id ?? null,
-        pendingRevision: reconciliation.edit_sources.pending_mine?.draft_revision ?? null,
         sourcePendingVersionId: null,
       }));
       setHasConflict(false);

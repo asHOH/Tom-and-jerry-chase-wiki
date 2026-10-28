@@ -81,7 +81,6 @@ describe('resolveEditFormState', () => {
       baseVersionId: null,
       baseVersionKnown: false,
       pendingVersionId: 'pending-v1',
-      pendingRevision: null,
       sourcePendingVersionId: 'pending-v1',
     });
   });
@@ -97,7 +96,6 @@ describe('resolveEditFormState', () => {
       baseVersionId: 'approved-v1',
       baseVersionKnown: true,
       pendingVersionId: null,
-      pendingRevision: null,
       sourcePendingVersionId: null,
     });
   });

@@ -77,7 +77,6 @@ export type Database = {
           commit_message: string | null;
           content: string;
           created_at: string;
-          draft_revision: string;
           editor_id: string;
           id: string;
           metadata_snapshot_complete: boolean | null;
@@ -99,7 +98,6 @@ export type Database = {
           commit_message?: string | null;
           content: string;
           created_at?: string;
-          draft_revision?: string;
           editor_id: string;
           id?: string;
           metadata_snapshot_complete?: never;
@@ -120,7 +118,6 @@ export type Database = {
           commit_message?: string | null;
           content?: string;
           created_at?: string;
-          draft_revision?: string;
           editor_id?: string;
           id?: string;
           metadata_snapshot_complete?: never;
@@ -1405,7 +1402,6 @@ export type Database = {
           commit_message: string | null;
           content: string;
           created_at: string;
-          draft_revision: string;
           editor_id: string;
           id: string;
           metadata_snapshot_complete: boolean | null;
@@ -1579,7 +1575,6 @@ export type Database = {
           p_commit_message: string;
           p_content: string;
           p_expected_base_version_id: string;
-          p_expected_pending_revision: string;
           p_expected_pending_version_id: string;
           p_ip: unknown;
           p_operation_id: string;
@@ -1818,22 +1813,6 @@ export type Database = {
         };
         Returns: undefined;
       };
-      prepared_update_pending_article: {
-        Args: {
-          p_actor_id: string;
-          p_article_id: string;
-          p_category_id: string;
-          p_character_id: string;
-          p_content: string;
-          p_expected_base_version_id: string;
-          p_expected_revision: string;
-          p_ip: unknown;
-          p_title: string;
-          p_update_character: boolean;
-          p_version_id: string;
-        };
-        Returns: undefined;
-      };
       prune_redundant_group_grants: { Args: { p_group_id: string }; Returns: undefined };
       publish_game_data_actions: {
         Args: { p_entity_type: string; p_entries: Json; p_message?: string };
@@ -1916,20 +1895,6 @@ export type Database = {
           _id: string;
           _name: string;
           _parent_category_id?: string;
-        };
-        Returns: undefined;
-      };
-      update_pending_article: {
-        Args: {
-          p_article_id: string;
-          p_category_id: string;
-          p_character_id: string;
-          p_content: string;
-          p_expected_base_version_id: string;
-          p_expected_revision: string;
-          p_title: string;
-          p_update_character: boolean;
-          p_version_id: string;
         };
         Returns: undefined;
       };

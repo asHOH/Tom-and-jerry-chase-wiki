@@ -57,7 +57,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const { data: ownPendingVersion, error: pendingError } = await requireSupabaseAdminClient()
       .from('article_versions')
       .select(
-        'id, content, created_at, commit_message, proposed_title, proposed_category_id, proposed_character_id, metadata_snapshot_complete, base_version_id, base_version_known, draft_revision'
+        'id, content, created_at, commit_message, proposed_title, proposed_category_id, proposed_character_id, metadata_snapshot_complete, base_version_id, base_version_known'
       )
       .eq('article_id', id)
       .eq('editor_id', userId)
@@ -96,7 +96,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           commit_message: ownPendingVersion.commit_message,
           base_version_id: ownPendingVersion.base_version_id,
           base_version_known: ownPendingVersion.base_version_known,
-          draft_revision: ownPendingVersion.draft_revision,
         }
       : null;
 

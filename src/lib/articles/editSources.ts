@@ -10,7 +10,6 @@ export interface EditSourceSnapshot {
   commit_message?: string | null;
   base_version_id?: string | null;
   base_version_known?: boolean;
-  draft_revision?: string;
 }
 
 export interface ArticleEditInfoResponse {
@@ -40,7 +39,6 @@ export interface EditFormState {
   baseVersionId: string | null;
   baseVersionKnown: boolean;
   pendingVersionId: string | null;
-  pendingRevision: string | null;
   sourcePendingVersionId: string | null;
 }
 
@@ -93,7 +91,6 @@ export function resolveEditFormState(
     baseVersionId: fromPending ? (snapshot.base_version_id ?? null) : snapshot.version_id,
     baseVersionKnown: !fromPending || snapshot.base_version_known === true,
     pendingVersionId: payload.edit_sources.pending_mine?.version_id ?? null,
-    pendingRevision: payload.edit_sources.pending_mine?.draft_revision ?? null,
     sourcePendingVersionId: fromPending ? snapshot.version_id : null,
   };
 }
