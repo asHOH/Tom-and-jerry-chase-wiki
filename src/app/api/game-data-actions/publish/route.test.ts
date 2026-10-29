@@ -467,4 +467,20 @@ describe('publish route', () => {
         '改动中的字段「鲍姆.skillAllocations.0.description」缺失或类型不正确，请修正后重新提交。',
     });
   });
+
+  it('explains duplicate tags while retaining the draft for correction', async () => {
+    publishPreparedMock.mockRejectedValueOnce(
+      new TrustedGameDataMutationError('invalid_game_data', {
+        detail: { path: '斯飞.catPositioningTags', reason: 'duplicate_tag' },
+      })
+    );
+    const { POST } = await import('./route');
+    const response = await POST(createRequest(validBody));
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toEqual({
+      error: 'invalid_game_data',
+      message:
+        '字段「斯飞.catPositioningTags」存在重复标签，请移除同一武器的重复项后重新提交。定位标签可分别用于不同武器。',
+    });
+  });
 });

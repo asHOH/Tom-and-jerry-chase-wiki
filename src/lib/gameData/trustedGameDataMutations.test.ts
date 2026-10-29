@@ -6,6 +6,7 @@ import { validateApprovedCandidateReplay } from '@/lib/gameData/approvedCandidat
 import { readApprovedReplaySnapshot } from '@/lib/gameData/approvedReplaySnapshotReader';
 import { InvalidGameDataValueError } from '@/lib/gameData/characterDataValidation';
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
+import { getCanonicalGameData } from '@/lib/gameData/published/canonicalSources';
 import { getPublishOperationFingerprint } from '@/lib/gameData/publishOperation';
 import { preparePublishActionItems } from '@/lib/gameData/publishPreparation';
 import { supabaseAdmin } from '@/lib/supabase/admin';
@@ -193,6 +194,33 @@ describe('trusted game data mutations', () => {
     await expect(approvePreparedGameDataAction('moderator-1', record())).rejects.toMatchObject({
       code: 'invalid_game_data',
       cause: invalid,
+    });
+    expect(adminRpcMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects a pending duplicate tag using real validation before approving it', async () => {
+    readSnapshotMock.mockResolvedValueOnce(snapshot([]) as never);
+    freshnessMock.mockImplementationOnce(
+      jest.requireActual<typeof import('./actionFreshness')>('./actionFreshness')
+        .validateActionFreshness
+    );
+    const oldValue = getCanonicalGameData('characters').斯飞!.catPositioningTags!;
+    await expect(
+      approvePreparedGameDataAction(
+        'moderator-1',
+        record({
+          entity_type: 'characters',
+          entry: {
+            op: 'set',
+            path: '斯飞.catPositioningTags',
+            oldValue: [...oldValue],
+            newValue: [...oldValue, oldValue[0]!],
+          },
+        })
+      )
+    ).rejects.toMatchObject({
+      code: 'invalid_game_data',
+      cause: { detail: { reason: 'duplicate_tag' } },
     });
     expect(adminRpcMock).not.toHaveBeenCalled();
   });

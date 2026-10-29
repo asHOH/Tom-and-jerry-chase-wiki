@@ -98,3 +98,41 @@ it('checks required fields in newly added recommendation records and group sets'
     ).toThrow(InvalidGameDataValueError);
   }
 });
+
+describe.each(['catPositioningTags', 'mousePositioningTags'])('%s uniqueness', (field) => {
+  const tag = { tagName: '进攻', level: 4, description: '', additionalDescription: '' };
+
+  it.each([undefined, 1, 2])('rejects repeated names within weapon scope %s', (weapon) => {
+    const target = {
+      Tom: {
+        ...valid().Tom,
+        [field]: [
+          { ...tag, weapon },
+          { ...tag, weapon, level: 2, description: 'different text' },
+        ],
+      },
+    };
+    for (const path of [`Tom.${field}`, `Tom.${field}.1.tagName`, `Tom.${field}.1.weapon`, 'Tom']) {
+      expect(() => validateCharacterData(target, [path])).toThrow(
+        expect.objectContaining({ detail: { path: `Tom.${field}`, reason: 'duplicate_tag' } })
+      );
+    }
+    expect(() => validateCharacterData(target, ['Tom.description'])).not.toThrow();
+  });
+
+  it('keeps general, weapon 1, and weapon 2 entries separate', () => {
+    const target = {
+      Tom: { ...valid().Tom, [field]: [tag, { ...tag, weapon: 1 }, { ...tag, weapon: 2 }] },
+    };
+    expect(() => validateCharacterData(target, ['Tom'])).not.toThrow();
+  });
+});
+
+it('rejects duplicate counter tags and accepts distinct ones', () => {
+  const target = { Tom: { ...valid().Tom, counterTags: ['怕拉扯', '怕拉扯'] } };
+  expect(() => validateCharacterData(target, ['Tom.counterTags.1'])).toThrow(
+    expect.objectContaining({ detail: { path: 'Tom.counterTags', reason: 'duplicate_tag' } })
+  );
+  target.Tom.counterTags = ['怕拉扯', '怕控制'];
+  expect(() => validateCharacterData(target, ['Tom'])).not.toThrow();
+});

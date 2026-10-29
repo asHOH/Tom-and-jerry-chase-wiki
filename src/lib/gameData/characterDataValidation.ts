@@ -6,6 +6,7 @@ import {
   CHARACTER_RELATION_KINDS,
   isCharacterRelationKind,
 } from '@/lib/edit/characterRelationActions';
+import { getPositioningTagKey } from '@/constants/positioningTagSequences';
 import type { TraitRelationKind } from '@/data/types';
 import {
   CHARACTER_PAIR_RELATION_KINDS,
@@ -35,6 +36,11 @@ const positioningTag = z.strictObject({
   description: text,
   additionalDescription: text,
 });
+const positioningTags = z
+  .array(positioningTag)
+  .refine((tags) => new Set(tags.map(getPositioningTagKey)).size === tags.length, {
+    params: { reason: 'duplicate_tag' },
+  });
 const cancelKeys = z.array(
   z.enum(['道具键', '道具键*', '跳跃键', '移动键', '药水键', '本技能键', '其他技能键'])
 );
@@ -80,7 +86,12 @@ const character = z.strictObject({
   EnglishName: text.optional(),
   specialClawKnifeCdHit: z.number().optional(),
   specialClawKnifeCdUnhit: z.number().optional(),
-  counterTags: z.array(text).optional(),
+  counterTags: z
+    .array(text)
+    .refine((tags) => new Set(tags).size === tags.length, {
+      params: { reason: 'duplicate_tag' },
+    })
+    .optional(),
   characterRelationOverrides: z.record(text, pairRelation.nullable()).optional(),
   ...relationFields,
   skills: z.array(
@@ -141,8 +152,8 @@ const character = z.strictObject({
   recommendedStorePlans: z
     .array(z.strictObject({ items: z.tuple([text, text, text, text]), description: text }))
     .optional(),
-  catPositioningTags: z.array(positioningTag).optional(),
-  mousePositioningTags: z.array(positioningTag).optional(),
+  catPositioningTags: positioningTags.optional(),
+  mousePositioningTags: positioningTags.optional(),
 });
 
 export class InvalidGameDataValueError extends Error {
@@ -154,6 +165,7 @@ export class InvalidGameDataValueError extends Error {
         | 'new_character'
         | 'relation_conflict'
         | 'no_changes'
+        | 'duplicate_tag'
         | 'knowledge_card_cost';
     }
   ) {
@@ -198,11 +210,14 @@ export function validateCharacterData(
           : undefined
     );
     if (!result.success) {
+      const issue = result.error.issues[0]!;
       throw new InvalidGameDataValueError({
-        path: [scope, ...result.error.issues[0]!.path].join('.'),
-        ...(result.error.issues[0]!.code === 'unrecognized_keys'
+        path: [scope, ...issue.path].join('.'),
+        ...(issue.code === 'unrecognized_keys'
           ? { reason: 'unsupported_field' as const }
-          : {}),
+          : issue.code === 'custom' && issue.params?.reason === 'duplicate_tag'
+            ? { reason: 'duplicate_tag' as const }
+            : {}),
       });
     }
   }

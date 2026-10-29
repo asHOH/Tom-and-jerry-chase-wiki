@@ -30,6 +30,13 @@ export function getPositioningTagNames(factionId: FactionId): readonly string[] 
   return factionId === 'cat' ? CAT_POSITIONING_TAG_SEQUENCE : MOUSE_POSITIONING_TAG_SEQUENCE;
 }
 
+export function getPositioningTagKey(tag: {
+  readonly tagName: string;
+  readonly weapon?: 1 | 2 | undefined;
+}): string {
+  return JSON.stringify([tag.tagName, tag.weapon ?? null]);
+}
+
 type PositioningTagLevelSource = {
   readonly level?: unknown;
   readonly isMinor?: unknown;

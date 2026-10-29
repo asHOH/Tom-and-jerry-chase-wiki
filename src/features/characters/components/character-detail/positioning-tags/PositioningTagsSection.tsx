@@ -9,6 +9,7 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import {
+  getPositioningTagKey,
   getPositioningTagLevel,
   getPositioningTagNames,
   isPositioningTagMinor,
@@ -41,10 +42,12 @@ function getAvailableTagNames(factionId: FactionId): readonly string[] {
 function TagNameDropdown({
   currentValue,
   factionId,
+  isUnavailable,
   onSelect,
 }: {
   currentValue: string;
   factionId: FactionId;
+  isUnavailable: (tagName: string) => boolean;
   onSelect: (value: string) => void;
 }) {
   const availableTags = getAvailableTagNames(factionId);
@@ -57,7 +60,7 @@ function TagNameDropdown({
       aria-label='选择标签名称'
     >
       {availableTags.map((tagName) => (
-        <option key={tagName} value={tagName}>
+        <option key={tagName} value={tagName} disabled={isUnavailable(tagName)}>
           {tagName}
         </option>
       ))}
@@ -100,10 +103,12 @@ function TagLevelDropdown({
 function WeaponDropdown({
   currentValue,
   characterId,
+  isUnavailable,
   onSelect,
 }: {
   currentValue: 1 | 2 | null | undefined;
   characterId: string;
+  isUnavailable: (weapon: 1 | 2 | undefined) => boolean;
   onSelect: (value: 1 | 2 | null) => void;
 }) {
   const publishedCharacter = usePublishedCharacter(characterId);
@@ -142,9 +147,15 @@ function WeaponDropdown({
       className='font-inherit cursor-pointer border-none bg-transparent text-xs text-inherit outline-none'
       aria-label='选择武器'
     >
-      <option value=''>无武器</option>
-      <option value='1'>{weapon1Name}</option>
-      <option value='2'>{weapon2Name}</option>
+      <option value='' disabled={isUnavailable(undefined)}>
+        无武器
+      </option>
+      <option value='1' disabled={isUnavailable(1)}>
+        {weapon1Name}
+      </option>
+      <option value='2' disabled={isUnavailable(2)}>
+        {weapon2Name}
+      </option>
     </select>
   );
 }
@@ -162,9 +173,22 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
     publishedCharacter
   )!;
   const key = factionId == 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
-  function getTags(char: DeepReadonly<CharacterWithFaction>) {
-    return char.mousePositioningTags ?? char.catPositioningTags ?? [];
-  }
+  const tags = localCharacter[key];
+  const isTagUsed = useCallback(
+    (tagName: string, weapon: 1 | 2 | undefined, exceptIndex = -1) =>
+      (tags ?? []).some(
+        (tag, index) =>
+          index !== exceptIndex &&
+          getPositioningTagKey(tag) === getPositioningTagKey({ tagName, weapon })
+      ),
+    [tags]
+  );
+  const weaponScopes: (1 | 2 | undefined)[] = [undefined];
+  if (localCharacter.skills?.some((skill) => skill.type === 'weapon1')) weaponScopes.push(1);
+  if (localCharacter.skills?.some((skill) => skill.type === 'weapon2')) weaponScopes.push(2);
+  const nextTag = weaponScopes
+    .flatMap((weapon) => getPositioningTagNames(factionId).map((tagName) => ({ tagName, weapon })))
+    .find((tag) => !isTagUsed(tag.tagName, tag.weapon));
   const updateTags = useCallback(
     (
       updatedTags: {
@@ -194,16 +218,19 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
       newName: string,
       propName: 'tagName' | 'description' | 'additionalDescription'
     ) => {
-      const updatedTags = getTags(localCharacter).map((tag, index) =>
+      if (propName === 'tagName' && isTagUsed(newName, tags?.[tagIndex]?.weapon, tagIndex)) return;
+      const updatedTags = (tags ?? []).map((tag, index) =>
         index == tagIndex ? { ...tag, [propName]: newName } : tag
       );
       updateTags(updatedTags);
     },
-    [localCharacter, updateTags]
+    [tags, updateTags, isTagUsed]
   );
   const handleWeaponUpdate = useCallback(
     (tagIndex: number, newWeapon: 1 | 2 | null) => {
-      const updatedTags = getTags(localCharacter).map((tag, index) => {
+      const tag = tags?.[tagIndex];
+      if (!tag || isTagUsed(tag.tagName, newWeapon ?? undefined, tagIndex)) return;
+      const updatedTags = (tags ?? []).map((tag, index) => {
         if (index == tagIndex) {
           const updatedTag = { ...tag };
           if (newWeapon === null) {
@@ -217,34 +244,38 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
       });
       updateTags(updatedTags);
     },
-    [localCharacter, updateTags]
+    [tags, updateTags, isTagUsed]
   );
   const handleLevelUpdate = useCallback(
     (tagIndex: number, level: PositioningTagLevel) => {
-      const updatedTags = getTags(localCharacter).map((tag, index) =>
+      const updatedTags = (tags ?? []).map((tag, index) =>
         index === tagIndex ? { ...tag, level } : tag
       );
       updateTags(updatedTags);
     },
-    [localCharacter, updateTags]
+    [tags, updateTags]
   );
   const handleAddPositioningTags = useCallback(() => {
-    const updatedTags = getTags(localCharacter).concat({
-      tagName: factionId == 'mouse' ? '奶酪' : ('进攻' as const),
+    if (!nextTag) return;
+    const updatedTags = (tags ?? []).concat({
+      tagName: nextTag.tagName as PositioningTag['tagName'],
+      ...(nextTag.weapon === undefined ? {} : { weapon: nextTag.weapon }),
       level: 4,
       description: '新增标签介绍',
       additionalDescription: '新增标签介绍',
     });
     updateTags(updatedTags);
-  }, [factionId, localCharacter, updateTags]);
+  }, [nextTag, tags, updateTags]);
   const handleRemovePositioningTags = useCallback(
     (tagIndex: number) => {
-      const updatedTags = getTags(localCharacter).filter((_, index) => index != tagIndex);
+      const updatedTags = (tags ?? []).filter((_, index) => index != tagIndex);
       updateTags(updatedTags);
     },
-    [localCharacter, updateTags]
+    [tags, updateTags]
   );
   return {
+    isTagUsed,
+    canAddPositioningTag: nextTag !== undefined,
     handleUpdate,
     handleWeaponUpdate,
     handleLevelUpdate,
@@ -266,6 +297,8 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   const tagsKey = factionId === 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
 
   const {
+    isTagUsed,
+    canAddPositioningTag,
     handleUpdate,
     handleWeaponUpdate,
     handleLevelUpdate,
@@ -299,12 +332,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
         {viewMode === 'text' ? (
           sortedTags.map((tag, index) => {
             // Find the original index in the unsorted array for edit operations
-            const originalIndex = tags.findIndex(
-              (t) =>
-                t.tagName === tag.tagName &&
-                getPositioningTagLevel(t) === getPositioningTagLevel(tag) &&
-                t.description === tag.description
-            );
+            const originalIndex = tags.indexOf(tag);
             const hasWeapon = 'weapon' in tag && !!tag.weapon;
 
             return (
@@ -334,6 +362,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                         <TagNameDropdown
                           currentValue={tag.tagName}
                           factionId={factionId}
+                          isUnavailable={(tagName) => isTagUsed(tagName, tag.weapon, originalIndex)}
                           onSelect={(newValue) => handleUpdate(originalIndex, newValue, 'tagName')}
                         />
                       ) : (
@@ -381,6 +410,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                         <WeaponDropdown
                           currentValue={tag.weapon}
                           characterId={characterId}
+                          isUnavailable={(weapon) => isTagUsed(tag.tagName, weapon, originalIndex)}
                           onSelect={(newWeapon) => handleWeaponUpdate(originalIndex, newWeapon)}
                         />
                       </div>
@@ -446,6 +476,8 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
               type='button'
               aria-label='添加定位标签'
               onClick={handleAddPositioningTags}
+              disabled={!canAddPositioningTag}
+              title={canAddPositioningTag ? '添加定位标签' : '所有武器范围的定位标签均已添加'}
               variant='add'
               size='md'
             >

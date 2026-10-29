@@ -34,6 +34,60 @@ const set = (path: string, oldValue: unknown, newValue: unknown) => ({
   newValue,
 });
 
+it.each([
+  ['斯飞', 'catPositioningTags'],
+  ['杰瑞', 'mousePositioningTags'],
+  ['剑客汤姆', 'counterTags'],
+] as const)('rejects duplicate %s %s through real submission preparation', (id, field) => {
+  const oldValue = getCanonicalGameData('characters')[id]![field]!;
+  expect(() => validate([set(`${id}.${field}`, oldValue, [...oldValue, oldValue[0]])])).toThrow(
+    expect.objectContaining({ detail: { path: `${id}.${field}`, reason: 'duplicate_tag' } })
+  );
+});
+
+it('validates final tag state after nested renames and weapon-scope changes', () => {
+  const oldValue = getCanonicalGameData('characters').斯飞!.catPositioningTags!;
+  for (const [field, before, after] of [
+    ['tagName', [{ ...oldValue[0] }, { ...oldValue[1] }], oldValue[0]!.tagName],
+    [
+      'weapon',
+      [
+        { ...oldValue[0], weapon: 1 },
+        { ...oldValue[0], weapon: 2 },
+      ],
+      1,
+    ],
+  ] as const) {
+    expect(() =>
+      validate([
+        set('斯飞.catPositioningTags', oldValue, before),
+        set(`斯飞.catPositioningTags.1.${field}`, before[1]![field], after),
+      ])
+    ).toThrow(
+      expect.objectContaining({ detail: expect.objectContaining({ reason: 'duplicate_tag' }) })
+    );
+  }
+});
+
+it('preserves historical duplicate replay and allows its repair or unrelated edits', () => {
+  const character = getCanonicalGameData('characters').斯飞!;
+  const tags = character.catPositioningTags!;
+  const duplicate = [...tags, tags[0]];
+  const historical = [
+    {
+      rowId: 'historical-duplicate',
+      entityType: 'characters',
+      actions: [set('斯飞.catPositioningTags', tags, duplicate)],
+    },
+  ];
+  expect(() =>
+    validate([set('斯飞.description', character.description, 'updated')], historical)
+  ).not.toThrow();
+  expect(() =>
+    validate([set('斯飞.catPositioningTags', duplicate, tags)], historical)
+  ).not.toThrow();
+});
+
 it('rejects the unsupported field and nested relation wrapper found in the review', () => {
   for (const entry of [
     add('汤姆.notAWikiField', 'unrendered'),
