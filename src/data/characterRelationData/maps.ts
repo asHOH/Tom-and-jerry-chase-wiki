@@ -1078,4 +1078,36 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
       isMinor: true,
     },
   },
+
+  {
+    description: '巴特在大图机动性高。',
+    relation: {
+      kind: 'advantageMaps',
+      subject: {
+        name: '巴特',
+        type: 'character',
+      },
+      target: {
+        name: '游乐场',
+        type: 'map',
+      },
+      isMinor: false,
+    },
+  },
+
+  {
+    description: '巴特在大图机动性高。',
+    relation: {
+      kind: 'advantageMaps',
+      subject: {
+        name: '巴特',
+        type: 'character',
+      },
+      target: {
+        name: '森林牧场',
+        type: 'map',
+      },
+      isMinor: false,
+    },
+  },
 ];

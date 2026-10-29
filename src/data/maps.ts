@@ -413,6 +413,31 @@ const mapDefinitions: Record<string, MapDefinition> = {
     supportedModes: ['经典奶酪赛', '天梯', '黄金钥匙赛', '特工行动', '克隆大作战', '房间'],
     description:
       '$特殊机制$text-indigo-700 dark:text-indigo-400#：熊猫谷区域的老鼠洞初始被大熊猫堵住，需要向他投喂4个食物后才会起身，随后才可推入该位置的奶酪。作为交换，该位置的奶酪推入所需进度较低。',
+
+    sceneAnnotations: {
+      points: [
+        {
+          id: '48c914f2-c1eb-4d5b-9263-50f50af93348',
+          anchor: {
+            slot: '$root',
+            variant: '$root',
+            position: {
+              x: 522.0111009785409,
+              y: 32.57976341249043,
+            },
+          },
+          category: 'idleFruitPlate',
+          description: '',
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+        },
+      ],
+      version: 1,
+    },
   },
   御门酒店: {
     type: '常规地图',

@@ -678,4 +678,21 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
       isMinor: false,
     },
   },
+
+  {
+    description:
+      '二者后期自保都极强，魔术师能帮助罗宾汉升级解锁高等级技能，而罗宾汉能给魔术师二段跳增强其机动性。更甚，二人墙还能让一者遛猫，而另一者快速破墙。',
+    relation: {
+      kind: 'collaborators',
+      subject: {
+        name: '魔术师',
+        type: 'character',
+      },
+      target: {
+        name: '罗宾汉杰瑞',
+        type: 'character',
+      },
+      isMinor: false,
+    },
+  },
 ];

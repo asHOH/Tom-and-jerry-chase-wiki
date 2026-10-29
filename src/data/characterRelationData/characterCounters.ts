@@ -2,13 +2,14 @@ import type { CharacterRelationTrait } from '@/data/types';
 
 export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] = [
   {
-    description: '魔术师的“拉扯”特性克制汤姆。',
+    description:
+      '魔术师的“拉扯”特性克制汤姆。但汤姆的无敌能抵挡魔术师的卡牌，二级锅+爪刀也能抓住机会秒杀魔术师。',
     relation: {
       kind: 'counters',
       subject: { name: '魔术师', type: 'character' },
       target: { name: '汤姆', type: 'character' },
       tags: [{ counters: '拉扯', counteredBy: '怕拉扯' }],
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -70,7 +71,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '魔术师可以指挥兔子大表哥来处理奶酪洞口和火箭上的汽水罐。',
+    description: '魔术师可以指挥兔子大表哥来处理奶酪洞口和火箭上的汽水罐。红牌打断吼叫。',
     relation: {
       kind: 'counteredBy',
       subject: { name: '图茨', type: 'character' },
@@ -1256,6 +1257,13 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '航海士杰瑞', type: 'character' },
       target: { name: '剑客汤姆', type: 'character' },
       isMinor: false,
+
+      tags: [
+        {
+          counters: '机制',
+          counteredBy: '怕机制',
+        },
+      ],
     },
   },
   {
@@ -2155,16 +2163,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       isMinor: false,
     },
   },
-  {
-    description:
-      '仙女鼠武器技能无视霸体，后期拥有高强度干扰能力。但是图多盖洛点出1被后会无视仙女鼠3被，并会收到加速，所以相当于直接废仙女鼠一个被动。',
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '仙女鼠', type: 'character' },
-      target: { name: '图多盖洛', type: 'character' },
-      isMinor: true,
-    },
-  },
+
   {
     description: '侦探杰瑞的烟雾弹克制一切防守猫。',
     relation: {
@@ -2191,7 +2190,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '兔子大表哥的体型较大可以挡住胡萝卜飞镖并且也能被宣战，挡住大部分火力。另外红牌的沉默效果使兔八哥的防守和进攻能力都大打折扣。',
+      '兔子大表哥的体型较大可以挡住胡萝卜飞镖并且也能被宣战，挡住大部分火力。另外红牌的沉默效果使兔八哥的防守和进攻能力都大打折扣。但需注意，在道具缺乏的情况下，兔八哥的二被能躲掉卡牌。',
     relation: {
       kind: 'counters',
       subject: { name: '魔术师', type: 'character' },
@@ -2201,7 +2200,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
         { counters: '干扰', counteredBy: '怕干扰' },
         { counters: '破冰', counteredBy: '怕破冰' },
       ],
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -3320,7 +3319,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '魔术师可以指挥兔子大表哥阻挡飞来的炮弹，并且能利用红牌来封锁侍卫汤姆的技能，导致无法开炮。',
+      '魔术师可以指挥兔子大表哥阻挡飞来的炮弹，并且能利用红牌来封锁侍卫汤姆的技能，导致无法开炮。但魔术师的所有技能均无法对盔甲进行有效破除。',
     relation: {
       kind: 'counters',
       subject: { name: '魔术师', type: 'character' },
@@ -3780,9 +3779,22 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       target: { name: '剑客汤姆', type: 'character' },
       isMinor: false,
       tags: [
-        { counters: '免疫', counteredBy: '怕免疫' },
-        { counters: '无视', counteredBy: '怕无视' },
-        { counters: '干扰', counteredBy: '怕干扰' },
+        {
+          counters: '干扰',
+          counteredBy: '怕干扰',
+        },
+        {
+          counters: '免疫',
+          counteredBy: '怕免疫',
+        },
+        {
+          counters: '无视',
+          counteredBy: '怕无视',
+        },
+        {
+          counters: '自保',
+          counteredBy: '怕自保',
+        },
       ],
     },
   },
@@ -4377,6 +4389,133 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       },
       target: {
         name: '剑客莉莉',
+        type: 'character',
+      },
+      isMinor: true,
+    },
+  },
+
+  {
+    description: '追风汤姆的飞行能力克制巴特的立体机动。',
+    relation: {
+      kind: 'counteredBy',
+      subject: {
+        name: '巴特',
+        type: 'character',
+      },
+      target: {
+        name: '追风汤姆',
+        type: 'character',
+      },
+      isMinor: false,
+    },
+  },
+
+  {
+    description: '天使汤姆的飞行能力克制巴特的立体机动。',
+    relation: {
+      kind: 'counteredBy',
+      subject: {
+        name: '巴特',
+        type: 'character',
+      },
+      target: {
+        name: '天使汤姆',
+        type: 'character',
+      },
+      isMinor: false,
+    },
+  },
+
+  {
+    description: '三级指甲油能无视卡牌效果，但不好处理兔子。',
+    relation: {
+      kind: 'counteredBy',
+      subject: {
+        name: '魔术师',
+        type: 'character',
+      },
+      target: {
+        name: '图多盖洛',
+        type: 'character',
+      },
+      isMinor: true,
+      tags: [
+        {
+          counters: '无视',
+          counteredBy: '怕无视',
+        },
+      ],
+    },
+  },
+
+  {
+    description:
+      '布奇的伤害较高，能较好地处理魔术师和兔子，且黄牌能给布奇冲刺加速。但红牌和蓝牌能一定程度上阻遏布奇的防守。',
+    relation: {
+      kind: 'counteredBy',
+      subject: {
+        name: '魔术师',
+        type: 'character',
+      },
+      target: {
+        name: '布奇',
+        type: 'character',
+      },
+      isMinor: true,
+      tags: [
+        {
+          counters: '（带控）高伤',
+          counteredBy: '怕高伤',
+        },
+      ],
+    },
+  },
+
+  {
+    description:
+      '罗宾汉泰菲藤蔓的高回复与高机动让指甲油图多盖洛不携带击晕知识卡的情况下防守奶酪的时候几乎无法击倒老鼠，藤蔓纸盒中的道具也可以用来解除吻。但是指甲油的长霸体让罗宾汉泰菲难以进行有效干扰。',
+    relation: {
+      kind: 'counters',
+      subject: {
+        name: '罗宾汉泰菲',
+        type: 'character',
+      },
+      target: {
+        name: '图多盖洛',
+        type: 'character',
+      },
+      isMinor: true,
+    },
+  },
+
+  {
+    description:
+      '兔八哥萝卜会被米雪儿二武完全挡住，但被米雪二武挂住时可以钻洞反制，大萝卜可以打断米雪儿的哭，但比较卡时机',
+    relation: {
+      kind: 'counterEachOther',
+      subject: {
+        name: '兔八哥',
+        type: 'character',
+      },
+      target: {
+        name: '米雪儿',
+        type: 'character',
+      },
+      isMinor: false,
+    },
+  },
+
+  {
+    description: '仙女鼠武器技能无视霸体，后期拥有高强度干扰能力。',
+    relation: {
+      kind: 'counters',
+      subject: {
+        name: '仙女鼠',
+        type: 'character',
+      },
+      target: {
+        name: '图多盖洛',
         type: 'character',
       },
       isMinor: true,

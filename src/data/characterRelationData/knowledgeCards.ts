@@ -168,7 +168,7 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '猛攻能让乘坐战车的蒙金奇无法脱离，失去干扰能力的同时还可能被战车炸死。',
+    description: '猛攻能让乘坐战车的蒙金奇无法脱离，失去干扰能力。',
     relation: {
       kind: 'counteredByKnowledgeCards',
       subject: { name: '蒙金奇', type: 'character' },

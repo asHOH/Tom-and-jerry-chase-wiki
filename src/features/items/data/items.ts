@@ -380,7 +380,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     storeCD: 180,
     unlocktime: '墙缝期 03:30',
     move: true,
-    gravity: true,
+    gravity: false,
     collision: ['墙壁', '平台', '地面'],
   },
   果盘: {

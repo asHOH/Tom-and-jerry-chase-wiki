@@ -220,7 +220,8 @@ export const characterRelationSpecialSkillTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '泰菲可以用{圆滚滚}解控避免被猫控制接{蓄力重击}秒杀；圆滚滚很难被蓄力重击卡真空期',
+    description:
+      '泰菲可以用{圆滚滚}解控避免被猫控制接{蓄力重击}秒杀；圆滚滚很难被蓄力重击卡真空期；感应雷爆炸可强制击飞使用蓄势重击的猫，使技能落空',
     relation: {
       kind: 'countersSpecialSkills',
       subject: { name: '泰菲', type: 'character' },
