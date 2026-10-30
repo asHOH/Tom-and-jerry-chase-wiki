@@ -109,6 +109,10 @@
       "type": "entity"
     },
     {
+      "name": "斧头",
+      "type": "entity"
+    },
+    {
       "name": "斯派克",
       "type": "entity"
     },
@@ -178,6 +182,10 @@
     },
     {
       "name": "皇家火炮",
+      "type": "entity"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "entity"
     },
     {
@@ -614,6 +622,10 @@
     },
     {
       "name": "皇家火炮",
+      "type": "skill"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "skill"
     },
     {
@@ -1089,11 +1101,19 @@
       "type": "entity"
     },
     {
+      "name": "皇家盔甲",
+      "type": "entity"
+    },
+    {
       "name": "花束",
       "type": "entity"
     },
     {
       "name": "花枪",
+      "type": "entity"
+    },
+    {
+      "name": "蛛丝茧",
       "type": "entity"
     },
     {
@@ -1177,11 +1197,19 @@
       "type": "skill"
     },
     {
+      "name": "皇家盔甲",
+      "type": "skill"
+    },
+    {
       "name": "老牛仔",
       "type": "skill"
     },
     {
       "name": "舞花枪",
+      "type": "skill"
+    },
+    {
+      "name": "蝙蝠与蛛丝",
       "type": "skill"
     },
     {
@@ -1564,6 +1592,10 @@
     },
     {
       "name": "皇家火炮",
+      "type": "entity"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "entity"
     },
     {
@@ -2119,6 +2151,10 @@
       "type": "skill"
     },
     {
+      "name": "掷花枪",
+      "type": "skill"
+    },
+    {
       "name": "旋刃剑舞",
       "type": "skill"
     },
@@ -2224,6 +2260,10 @@
     },
     {
       "name": "皇家火炮",
+      "type": "skill"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "skill"
     },
     {
@@ -2433,6 +2473,10 @@
       "type": "skill"
     },
     {
+      "name": "低段位全局状态",
+      "type": "skill"
+    },
+    {
       "name": "明察秋毫",
       "type": "skill"
     },
@@ -2512,6 +2556,10 @@
     },
     {
       "name": "爱心之吻",
+      "type": "entity"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "entity"
     },
     {
@@ -2795,6 +2843,10 @@
       "type": "skill"
     },
     {
+      "name": "皇家盔甲",
+      "type": "skill"
+    },
+    {
       "name": "瞬移闪击",
       "type": "skill"
     },
@@ -2881,11 +2933,19 @@
   ],
   "跳跃能力加成值": [
     {
+      "name": "皇家盔甲",
+      "type": "entity"
+    },
+    {
       "name": "飞吻",
       "type": "entity"
     },
     {
       "name": "二段跳",
+      "type": "skill"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "skill"
     },
     {
@@ -3065,6 +3125,10 @@
       "type": "entity"
     },
     {
+      "name": "蛛丝茧",
+      "type": "entity"
+    },
+    {
       "name": "小推车",
       "type": "fixture"
     },
@@ -3122,6 +3186,10 @@
     },
     {
       "name": "舞花枪",
+      "type": "skill"
+    },
+    {
+      "name": "蝙蝠与蛛丝",
       "type": "skill"
     }
   ],
@@ -3563,7 +3631,15 @@
   ],
   "攻击增伤固定值": [
     {
+      "name": "皇家盔甲",
+      "type": "entity"
+    },
+    {
       "name": "狂欢时刻",
+      "type": "skill"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "skill"
     },
     {
@@ -3841,6 +3917,10 @@
       "type": "entity"
     },
     {
+      "name": "皇家盔甲",
+      "type": "entity"
+    },
+    {
       "name": "饮料分身",
       "type": "entity"
     },
@@ -3910,6 +3990,10 @@
     },
     {
       "name": "爱心之吻",
+      "type": "skill"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "skill"
     },
     {
@@ -4113,6 +4197,10 @@
       "type": "skill"
     },
     {
+      "name": "动静结合",
+      "type": "skill"
+    },
+    {
       "name": "咸鱼",
       "type": "skill"
     },
@@ -4265,6 +4353,10 @@
     {
       "name": "低段位全局状态",
       "type": "buff"
+    },
+    {
+      "name": "低段位全局状态",
+      "type": "skill"
     }
   ],
   "推速倍率": [
@@ -4310,6 +4402,10 @@
     },
     {
       "name": "爱心之吻",
+      "type": "entity"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "entity"
     },
     {
@@ -4433,6 +4529,10 @@
       "type": "skill"
     },
     {
+      "name": "皇家盔甲",
+      "type": "skill"
+    },
+    {
       "name": "老牛仔",
       "type": "skill"
     },
@@ -4553,6 +4653,10 @@
       "type": "mode"
     },
     {
+      "name": "低段位全局状态",
+      "type": "skill"
+    },
+    {
       "name": "侦探放大镜",
       "type": "skill"
     },
@@ -4574,10 +4678,6 @@
     },
     {
       "name": "愤怒的少女",
-      "type": "skill"
-    },
-    {
-      "name": "明察秋毫",
       "type": "skill"
     },
     {
@@ -4881,6 +4981,10 @@
       "type": "skill"
     },
     {
+      "name": "动静结合",
+      "type": "skill"
+    },
+    {
       "name": "双重猫格",
       "type": "skill"
     },
@@ -4981,6 +5085,10 @@
       "type": "skill"
     },
     {
+      "name": "越战越勇",
+      "type": "skill"
+    },
+    {
       "name": "身体素质",
       "type": "skill"
     },
@@ -5064,6 +5172,10 @@
     },
     {
       "name": "泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "entity"
     },
     {
@@ -5164,6 +5276,14 @@
     },
     {
       "name": "漂浮气球",
+      "type": "skill"
+    },
+    {
+      "name": "皇家盔甲",
+      "type": "skill"
+    },
+    {
+      "name": "立体机动",
       "type": "skill"
     },
     {
@@ -5293,6 +5413,10 @@
       "type": "entity"
     },
     {
+      "name": "皇家盔甲",
+      "type": "entity"
+    },
+    {
       "name": "线条猫",
       "type": "entity"
     },
@@ -5393,6 +5517,10 @@
       "type": "skill"
     },
     {
+      "name": "皇家盔甲",
+      "type": "skill"
+    },
+    {
       "name": "胡椒粉罐头",
       "type": "skill"
     },
@@ -5450,6 +5578,10 @@
     },
     {
       "name": "蓝色小淘气",
+      "type": "entity"
+    },
+    {
+      "name": "蛛丝茧",
       "type": "entity"
     },
     {
@@ -5561,6 +5693,10 @@
       "type": "skill"
     },
     {
+      "name": "蝙蝠与蛛丝",
+      "type": "skill"
+    },
+    {
       "name": "贵族礼仪",
       "type": "skill"
     },
@@ -5611,6 +5747,10 @@
       "type": "entity"
     },
     {
+      "name": "皇家盔甲",
+      "type": "entity"
+    },
+    {
       "name": "管道猫",
       "type": "entity"
     },
@@ -5656,6 +5796,14 @@
     },
     {
       "name": "小情绪",
+      "type": "skill"
+    },
+    {
+      "name": "皇家盔甲",
+      "type": "skill"
+    },
+    {
+      "name": "立体机动",
       "type": "skill"
     },
     {
@@ -5839,6 +5987,10 @@
       "type": "buff"
     },
     {
+      "name": "小蜘蛛",
+      "type": "entity"
+    },
+    {
       "name": "恶魔之门",
       "type": "entity"
     },
@@ -5927,6 +6079,10 @@
       "type": "skill"
     },
     {
+      "name": "蝙蝠与蛛丝",
+      "type": "skill"
+    },
+    {
       "name": "警戒",
       "type": "skill"
     },
@@ -5999,6 +6155,10 @@
       "type": "entity"
     },
     {
+      "name": "皇家盔甲",
+      "type": "entity"
+    },
+    {
       "name": "饭盒",
       "type": "entity"
     },
@@ -6032,6 +6192,10 @@
     },
     {
       "name": "仙人掌弹弓",
+      "type": "skill"
+    },
+    {
+      "name": "低段位全局状态",
       "type": "skill"
     },
     {
@@ -6091,6 +6255,10 @@
       "type": "skill"
     },
     {
+      "name": "皇家盔甲",
+      "type": "skill"
+    },
+    {
       "name": "胆小如鼠",
       "type": "skill"
     },
@@ -6117,6 +6285,10 @@
       "type": "entity"
     },
     {
+      "name": "蛛丝茧",
+      "type": "entity"
+    },
+    {
       "name": "七色花",
       "type": "fixture"
     },
@@ -6130,6 +6302,10 @@
     },
     {
       "name": "国王战旗",
+      "type": "skill"
+    },
+    {
+      "name": "蝙蝠与蛛丝",
       "type": "skill"
     },
     {
@@ -6229,6 +6405,10 @@
       "type": "entity"
     },
     {
+      "name": "皇家盔甲",
+      "type": "entity"
+    },
+    {
       "name": "喷洒间",
       "type": "fixture"
     },
@@ -6238,6 +6418,10 @@
     },
     {
       "name": "仙女棒",
+      "type": "skill"
+    },
+    {
+      "name": "低段位全局状态",
       "type": "skill"
     },
     {
@@ -6266,6 +6450,10 @@
     },
     {
       "name": "灵活跳跃",
+      "type": "skill"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "skill"
     },
     {
@@ -6431,6 +6619,10 @@
       "type": "entity"
     },
     {
+      "name": "蛛丝茧",
+      "type": "entity"
+    },
+    {
       "name": "老鼠夹",
       "type": "item"
     },
@@ -6440,6 +6632,10 @@
     },
     {
       "name": "知识即力量",
+      "type": "skill"
+    },
+    {
+      "name": "蝙蝠与蛛丝",
       "type": "skill"
     }
   ],
@@ -6487,6 +6683,10 @@
       "type": "entity"
     },
     {
+      "name": "皇家盔甲",
+      "type": "entity"
+    },
+    {
       "name": "老鼠洞",
       "type": "fixture"
     },
@@ -6524,6 +6724,10 @@
     },
     {
       "name": "机械身躯",
+      "type": "skill"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "skill"
     },
     {
@@ -6639,10 +6843,6 @@
       "type": "entity"
     },
     {
-      "name": "战车-分离态",
-      "type": "entity"
-    },
-    {
       "name": "手型枪",
       "type": "entity"
     },
@@ -6744,6 +6944,10 @@
     },
     {
       "name": "皇家火炮",
+      "type": "entity"
+    },
+    {
+      "name": "皇家盔甲",
       "type": "entity"
     },
     {
@@ -7211,6 +7415,10 @@
       "type": "skill"
     },
     {
+      "name": "皇家盔甲",
+      "type": "skill"
+    },
+    {
       "name": "知识即力量",
       "type": "skill"
     },
@@ -7457,6 +7665,10 @@
       "type": "entity"
     },
     {
+      "name": "蛛丝茧",
+      "type": "entity"
+    },
+    {
       "name": "铁砧",
       "type": "entity"
     },
@@ -7650,6 +7862,10 @@
     },
     {
       "name": "藤蔓",
+      "type": "skill"
+    },
+    {
+      "name": "蝙蝠与蛛丝",
       "type": "skill"
     },
     {
@@ -7911,6 +8127,10 @@
     },
     {
       "name": "蓄力箭",
+      "type": "entity"
+    },
+    {
+      "name": "蛛丝茧",
       "type": "entity"
     },
     {
@@ -8279,6 +8499,10 @@
     },
     {
       "name": "蘸水笔",
+      "type": "skill"
+    },
+    {
+      "name": "蝙蝠与蛛丝",
       "type": "skill"
     },
     {
