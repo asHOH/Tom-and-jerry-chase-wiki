@@ -503,6 +503,27 @@ export const entityDefinitions = {
     specialImageUrl: '/images/catSkills/侍卫汤姆3-皇家盔甲.png',
     actorProfileName: '皇家盔甲',
   },
+  斧头: {
+    entitytag: ['触发', '群体', '复用', '硬控'],
+    owner: { name: '皇家盔甲', type: 'skill' },
+    move: true,
+    gravity: true,
+    collision: ['墙壁', '平台', '地面'],
+    description:
+      '触碰到斧头的敌方会受到金丝雀的攻击，眩晕1.5秒，每次触发后5秒内不会重复受到该效果。',
+    create: '由{皇家盔甲(衍生物)}使用技能召唤。',
+    specialImageUrl: '/images/catSkills/侍卫汤姆3-皇家盔甲.png',
+  },
+  盾牌: {
+    entitytag: ['阻挡'],
+    owner: { name: '皇家盔甲', type: 'skill' },
+    move: true,
+    gravity: true,
+    collision: ['墙壁', '平台', '地面'],
+    description: '阻挡角色，可通过交互拆除，但老鼠交互拆除后会受到20%的减速效果，持续3秒。',
+    create: '由{皇家盔甲(衍生物)}使用技能召唤。',
+    specialImageUrl: '/images/catSkills/侍卫汤姆3-皇家盔甲.png',
+  },
   汽水罐: {
     entitytag: ['平射', '触发', '伤害', '硬控', '衍生'],
     owner: { name: '汽水罐', type: 'skill' },
@@ -2424,6 +2445,20 @@ export const entityDefinitions = {
       },
     ],
   },
+  狗窝: {
+    entitytag: ['变身', '特殊'],
+    owner: [
+      { name: '多元乱斗', type: 'mode' },
+      { name: '斯派克', type: 'entity' },
+    ],
+    aliases: ['斯派克之家'],
+    move: false,
+    gravity: false,
+    description: '拥有独立Hp，需挣扎以解除变身，所有人都可以攻击狗窝获得大量星星积分。',
+    create: '角色被{“正气守护”斯派克}抓住并丢出后，在落地时会被装入狗窝。',
+    specialImageUrl: '/images/entities/斯派克.png',
+    actorProfileName: '斯派克之家',
+  },
   柠檬杰瑞: {
     entitytag: ['变身', '星元'],
     owner: { name: '多元乱斗', type: 'mode' },
@@ -2468,6 +2503,48 @@ export const entityDefinitions = {
     collision: ['墙壁', '平台', '地面'],
     description: '生成时向随机方向弹飞，落地并停止移动后可被拾取，立即使拾取者获得一定星星积分。',
     create: '在{多元乱斗}中，{兔八哥}或{兔霸哥}的部分攻击命中敌方时，自动生成数个大大胡萝卜。',
+  },
+  运动员汤姆: {
+    entitytag: ['NPC', '交互', '变身'],
+    owner: { name: '沙滩排球', type: 'mode' },
+    move: true,
+    gravity: true,
+    description:
+      '猫玩家兴奋度积累满后，可与运动员汤姆交互以交接入场（在一段时间内变身为运动员汤姆，同时原角色换位至运动员汤姆原位置观战）。\n运动员汤姆持有无敌，且受到的重力降低（跳得更高且滞空时间更长），但无法拾取道具。\n暴力扣球：只能在空中使用，可大力扣球，命中时将提升排球的速度。\n空中冲撞：可在空中横向冲撞来阻挡排球。',
+    create: '只在{沙滩排球}中，作为猫玩家的游戏助力出现。',
+    specialImageUrl: '/images/modes/%E6%B2%99%E6%BB%A9%E6%8E%92%E7%90%83.png',
+  },
+  运动员杰瑞: {
+    entitytag: ['NPC', '交互', '变身'],
+    owner: { name: '沙滩排球', type: 'mode' },
+    move: true,
+    gravity: true,
+    description:
+      '鼠玩家兴奋度积累满后，可与运动员杰瑞交互以交接入场（在一段时间内变身为运动员杰瑞，同时原角色换位至运动员杰瑞原位置观战）。\n运动员杰瑞持有无敌，移动速度大幅提高，但无法拾取道具。\n球衣接球：撑开球衣，增加接球的面积，并使接到的球运动减缓。\n向上推球：向上推开排球，使排球必定飞到对方场地。',
+    create: '只在{沙滩排球}中，作为鼠玩家的游戏助力出现。',
+    specialImageUrl: '/images/modes/%E6%B2%99%E6%BB%A9%E6%8E%92%E7%90%83.png',
+  },
+  变身星: {
+    entitytag: ['交互', '触发', '增益'],
+    owner: [{ name: '多元乱斗', type: 'mode' }],
+    move: true,
+    gravity: true,
+    collision: ['墙壁', '平台', '地面'],
+    description:
+      '生成时向随机方向弹飞，落地并停止移动后可被非星元变身状态下的角色拾取，使对方随机变身。',
+    create: '在{多元乱斗}中，{仙女星星}被击败后，自动生成3个变身星。',
+    specialImageUrl: '/images/modes/%E5%A4%9A%E5%85%83%E4%B9%B1%E6%96%97.png',
+  },
+  超级变身星: {
+    entitytag: ['交互', '触发', '增益'],
+    owner: [{ name: '多元乱斗', type: 'mode' }],
+    move: true,
+    gravity: true,
+    collision: ['墙壁', '平台', '地面'],
+    description:
+      '生成时向随机方向弹飞，落地并停止移动后可被非星元变身状态下的角色拾取，使对方必定变身为星元角色（有[特殊局外增益](指多元乱斗玩法中的特殊局外增益：“猫角色”“鼠角色”“隐藏角色”。它们会使角色必然变成对应（类型的）角色)时除外）。',
+    create: '在{多元乱斗}中，{超级仙女星}被击败后，自动生成6个超级变身星。',
+    specialImageUrl: '/images/modes/%E5%A4%9A%E5%85%83%E4%B9%B1%E6%96%97.png',
   },
   '轨道-旧版': {
     entitytag: ['指示', '衍生'],

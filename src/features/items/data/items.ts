@@ -855,6 +855,19 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     gravity: true,
     collision: ['墙壁', '平台', '地面'],
   },
+  礼物: {
+    itemtype: '物件类' as const,
+    itemsource: '地图道具' as const,
+    aliases: ['装饰品', '装饰物'],
+    description:
+      '所有角色均可拾取礼物，最多携带5个礼物；鼠方携带礼物时会减速及降低跳跃高度，携带的礼物越多，该效果越强；与己方圣诞树交互可将携带的礼物装饰到树上；与敌方圣诞树交互数秒后可摘下对方的1个礼物；每棵圣诞树最多同时被1名角色交互；角色虚弱时，会原地掉落所有携带的礼物。\n由{圣诞老人}直接投放的礼物存在以1/2/3个为一组的变体，拾取时会同时拾取，但若超过携带上限则无法拾取（不会出现对应交互）。',
+    create:
+      '在{圣诞大作战}中，作为争夺目标，由{圣诞老人}周期性在地图中心投放。角色被击倒时，携带的礼物会掉落。',
+    move: true,
+    gravity: true,
+    collision: ['墙壁', '平台', '地面'],
+    specialImageUrl: '/images/modes/%E8%A3%85%E9%A5%B0%E6%A0%91%E5%A4%A7%E4%BD%9C%E6%88%98.png',
+  },
 };
 
 const itemsWithImages: Record<string, Item> = Object.fromEntries(
