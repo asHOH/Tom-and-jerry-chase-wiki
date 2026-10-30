@@ -20,7 +20,7 @@ type Props = {
   publishedRevision?: `v1:${string}`;
 };
 
-const MODE_TYPE_OPTIONS: ModeTypeList[] = ['经典模式', '休闲模式', '特殊模式'];
+const MODE_TYPE_OPTIONS: ModeTypeList[] = ['经典模式', '休闲模式', '特殊模式', '限时模式'];
 
 export default function ModeClient({ description, data = modes, publishedRevision }: Props) {
   usePublishedRevision(publishedRevision);

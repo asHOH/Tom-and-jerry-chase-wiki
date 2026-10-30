@@ -603,7 +603,7 @@ export interface ArticleListPageData extends ArticlesData {
   has_prev: boolean;
 }
 
-export type ModeTypeList = '经典模式' | '休闲模式' | '特殊模式';
+export type ModeTypeList = '经典模式' | '休闲模式' | '特殊模式' | '限时模式';
 
 export type ModeDefinition = {
   type: ModeTypeList;

@@ -17,7 +17,7 @@ import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 
-const MODE_TYPES: readonly ModeTypeList[] = ['经典模式', '休闲模式', '特殊模式'];
+const MODE_TYPES: readonly ModeTypeList[] = ['经典模式', '休闲模式', '特殊模式', '限时模式'];
 
 export default function ModeAttributesCard({
   mode,

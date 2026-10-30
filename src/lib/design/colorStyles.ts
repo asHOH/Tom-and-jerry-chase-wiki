@@ -447,6 +447,7 @@ export const getModeTypeColors = (modeType: string) => {
     经典模式: 'emerald',
     休闲模式: 'violet',
     特殊模式: 'azure',
+    限时模式: 'rose',
   };
 
   const paletteKey = modeTypePaletteMap[modeType] || 'deepGray';
