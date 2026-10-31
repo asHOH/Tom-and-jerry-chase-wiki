@@ -6,9 +6,11 @@ import {
   Hp,
   Item,
   Map,
+  Mode,
   Move,
   Object,
   Prepare,
+  Skill,
 } from './ArticlesIndex';
 import TraitCollection from './TraitCollection';
 
@@ -35,7 +37,9 @@ export const mechanicsSections = {
   item: Item,
   prepare: Prepare,
   map: Map,
+  mode: Mode,
   buff: Buff,
+  skill: Skill,
   // 在此处添加新的模块
   // newSection: NewSectionComponent,
 } as const;
@@ -56,22 +60,16 @@ export const NAV_ITEM_CONFIGS: readonly NavItemConfig[] = [
     iconAlt: '物体图标',
   },
   {
+    id: 'move',
+    label: '物理',
+    iconSrc: '/images/fixtures/侦查金丝雀.png',
+    iconAlt: '物理图标',
+  },
+  {
     id: 'character',
     label: '角色',
     iconSrc: '/images/icons/mouse-faction.png',
     iconAlt: '角色图标',
-  },
-  {
-    id: 'move',
-    label: '移动',
-    iconSrc: '/images/fixtures/侦查金丝雀.png',
-    iconAlt: '移动图标',
-  },
-  {
-    id: 'exp',
-    label: '经验',
-    iconSrc: '/images/items/经验蛋糕.png',
-    iconAlt: '经验图标',
   },
   {
     id: 'hp',
@@ -86,6 +84,24 @@ export const NAV_ITEM_CONFIGS: readonly NavItemConfig[] = [
     iconAlt: '伤害图标',
   },
   {
+    id: 'exp',
+    label: '经验',
+    iconSrc: '/images/items/经验蛋糕.png',
+    iconAlt: '经验图标',
+  },
+  {
+    id: 'skill',
+    label: '技能',
+    iconSrc: '/images/mouseSkills/杰瑞2-大铁锤.png',
+    iconAlt: '技能图标',
+  },
+  {
+    id: 'buff',
+    label: '状态',
+    iconSrc: '/images/icons/buff.png',
+    iconAlt: '状态图标',
+  },
+  {
     id: 'item',
     label: '道具',
     iconSrc: '/images/icons/item.png',
@@ -98,16 +114,16 @@ export const NAV_ITEM_CONFIGS: readonly NavItemConfig[] = [
     iconAlt: '地图图标',
   },
   {
+    id: 'mode',
+    label: '模式',
+    iconSrc: '/images/icons/mode.png',
+    iconAlt: '模式图标',
+  },
+  {
     id: 'prepare',
     label: '备战',
     iconSrc: '/images/icons/prepare.png',
     iconAlt: '备战图标',
-  },
-  {
-    id: 'buff',
-    label: '状态',
-    iconSrc: '/images/icons/buff.png',
-    iconAlt: '状态图标',
   },
   {
     id: 'traitCollection',

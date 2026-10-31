@@ -9,9 +9,11 @@ import ExpMDX from '../articles/Exp.mdx';
 import HpMDX from '../articles/Hp.mdx';
 import ItemMDX from '../articles/Item.mdx';
 import MapMDX from '../articles/Map.mdx';
+import ModeMDX from '../articles/Mode.mdx';
 import MoveMDX from '../articles/Move.mdx';
 import ObjectMDX from '../articles/Object.mdx';
 import PrepareMDX from '../articles/Prepare.mdx';
+import SkillMDX from '../articles/Skill.mdx';
 
 export function Object() {
   return (
@@ -69,6 +71,13 @@ export function Map() {
     </StyledMDX>
   );
 }
+export function Mode() {
+  return (
+    <StyledMDX className='article-content'>
+      <ModeMDX />
+    </StyledMDX>
+  );
+}
 export function Prepare() {
   return (
     <StyledMDX className='article-content'>
@@ -76,6 +85,15 @@ export function Prepare() {
     </StyledMDX>
   );
 }
+
+export function Skill() {
+  return (
+    <StyledMDX className='article-content'>
+      <SkillMDX />
+    </StyledMDX>
+  );
+}
+
 export function Buff() {
   return (
     <StyledMDX className='article-content'>
