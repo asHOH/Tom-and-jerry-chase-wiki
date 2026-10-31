@@ -52,7 +52,7 @@ CREATE TEMP TABLE editor_two AS SELECT * FROM pg_temp.submit_version(3,2,
 SELECT lives_ok($$SELECT pg_temp.approve((SELECT submitted_version_id FROM editor_one))$$,
   'first editor can publish from the current base');
 SELECT throws_ok($$SELECT pg_temp.approve((SELECT submitted_version_id FROM editor_two))$$,
-  'P0001', 'article_edit_conflict', 'publication after submission blocks stale approval');
+  'P0001', 'article_edit_conflict_outdated_base', 'publication after submission reports an outdated approval base');
 SELECT is((SELECT status::text FROM public.article_versions WHERE id=(SELECT submitted_version_id FROM editor_two)),
   'pending', 'failed approval preserves the pending version');
 SELECT is((SELECT current_version_id FROM public.articles WHERE id=(SELECT article_id FROM first_version)),
@@ -90,7 +90,11 @@ SELECT throws_ok($$SELECT * FROM pg_temp.submit_version(6,2,
 CREATE TEMP TABLE unpublished AS SELECT * FROM pg_temp.submit_version(7,1,NULL,NULL);
 UPDATE public.article_versions SET base_version_known=false WHERE id=(SELECT submitted_version_id FROM unpublished);
 SELECT throws_ok($$SELECT pg_temp.approve((SELECT submitted_version_id FROM unpublished))$$,
-  'P0001', 'article_edit_conflict', 'historical pending versions with unknown bases require reconciliation');
+  'P0001', 'article_edit_conflict_unknown_base', 'historical pending versions report an unknown approval base');
+SELECT is((SELECT status::text FROM public.article_versions WHERE id=(SELECT submitted_version_id FROM unpublished)),
+  'pending', 'unknown-base approval failure preserves the pending version');
+SELECT is((SELECT current_version_id FROM public.articles WHERE id=(SELECT article_id FROM unpublished)),
+  NULL::uuid, 'unknown-base approval failure leaves the article unpublished');
 SELECT throws_ok($$SELECT * FROM pg_temp.submit_version(9,1,
   (SELECT article_id FROM unpublished), NULL, (SELECT submitted_version_id FROM unpublished),
   (SELECT submitted_version_id FROM unpublished))$$,

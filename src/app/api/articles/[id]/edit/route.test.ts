@@ -138,10 +138,14 @@ describe('article edit route', () => {
     expect(notifyArticleVersionSubscribersMock).not.toHaveBeenCalled();
   });
 
-  it('returns a recoverable conflict without invalidating or notifying a rejected write', async () => {
+  it.each([
+    'article_edit_conflict',
+    'article_edit_conflict_unknown_base',
+    'article_edit_conflict_outdated_base',
+  ])('keeps %s recoverable without invalidating or notifying a rejected write', async (message) => {
     adminRpcMock.mockResolvedValue({
       data: null,
-      error: { message: 'article_edit_conflict' },
+      error: { message },
     } as never);
     const response = await POST(
       createRequest({

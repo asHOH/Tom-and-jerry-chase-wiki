@@ -86,6 +86,10 @@ Supabase 自 2026 年 10 月 30 日起停止为现有项目的 `public` 新表�
 
 历史待审核版本的编辑起点保留为“未知”，内容和贡献者信息保持原样。作者在编辑页获取最新公开及待审核快照，手动合并草稿后确认更新编辑起点，再提交新版本。审核会拒绝起点未知或已经过期的版本。撤销已公开版本继续沿用原有回退行为。
 
+`20261031000000_article_approval_conflict_reasons.sql` 将批准失败细分为 `article_edit_conflict_unknown_base`（编辑起点未知）和 `article_edit_conflict_outdated_base`（编辑起点与当前公开版本不一致），保留原有校验和事务行为。审核提示统一定义在 `src/lib/articles/versionConflict.ts`：起点未知时提示联系管理员核验历史，起点过期时提示核对、合并最新内容后重新提交。两种情况都会保留原提交。
+
+该迁移与应用可先后发布：旧应用仍按 `article_edit_conflict` 前缀识别错误，新应用也保留旧数据库通用错误的提示。完成双方发布后，审核接口才会返回细分错误码和对应提示；作者编辑页继续使用原有的草稿核对流程。
+
 ## 历史不一致和非 CLI 应用
 
 `--include-all` 只用于经过审计的 migration ledger 修复，不是常规部署选项。

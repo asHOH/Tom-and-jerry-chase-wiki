@@ -1,6 +1,11 @@
 import { revalidateTag } from 'next/cache';
 import type { NextRequest } from 'next/server';
 
+import {
+  ARTICLE_MODERATION_CONFLICT_MESSAGE,
+  ARTICLE_MODERATION_OUTDATED_BASE_MESSAGE,
+  ARTICLE_MODERATION_UNKNOWN_BASE_MESSAGE,
+} from '@/lib/articles/versionConflict';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { publishNotification } from '@/lib/notificationUtils';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
@@ -91,14 +96,21 @@ it('preserves RPC state-transition failures without publishing or invalidating',
   expect(publishNotification).not.toHaveBeenCalled();
 });
 
-it('returns a structured conflict for stale approval without publishing or notifying', async () => {
-  rpc.mockResolvedValue({ error: { message: 'article_edit_conflict' } });
-  const response = await moderate();
-  expect(response.status).toBe(409);
-  expect(await response.json()).toMatchObject({ code: 'article_edit_conflict' });
-  expect(revalidateTag).not.toHaveBeenCalled();
-  expect(publishNotification).not.toHaveBeenCalled();
-});
+it.each([
+  ['article_edit_conflict_unknown_base', ARTICLE_MODERATION_UNKNOWN_BASE_MESSAGE],
+  ['article_edit_conflict_outdated_base', ARTICLE_MODERATION_OUTDATED_BASE_MESSAGE],
+  ['article_edit_conflict', ARTICLE_MODERATION_CONFLICT_MESSAGE],
+])(
+  'returns the specific approval conflict for %s without publishing or notifying',
+  async (code, error) => {
+    rpc.mockResolvedValue({ error: { message: code } });
+    const response = await moderate();
+    expect(response.status).toBe(409);
+    expect(await response.json()).toEqual({ error, code });
+    expect(revalidateTag).not.toHaveBeenCalled();
+    expect(publishNotification).not.toHaveBeenCalled();
+  }
+);
 
 it.each(['approve', 'reject', 'revoke'])(
   'refreshes after %s even if notification lookup fails',

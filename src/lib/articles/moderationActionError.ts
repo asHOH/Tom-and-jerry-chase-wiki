@@ -1,4 +1,8 @@
-import { ARTICLE_VERSION_CONFLICT_MESSAGE } from './versionConflict';
+import {
+  ARTICLE_MODERATION_CONFLICT_MESSAGE,
+  ARTICLE_MODERATION_OUTDATED_BASE_MESSAGE,
+  ARTICLE_MODERATION_UNKNOWN_BASE_MESSAGE,
+} from './versionConflict';
 
 export type ModerationAction = 'approve' | 'reject' | 'revoke';
 
@@ -13,8 +17,28 @@ export function mapModerationActionError(
   message: string
 ): ModerationErrorResponse | null {
   const normalizedMessage = message.toLowerCase();
+  if (normalizedMessage.includes('article_edit_conflict_unknown_base')) {
+    return {
+      error: ARTICLE_MODERATION_UNKNOWN_BASE_MESSAGE,
+      code: 'article_edit_conflict_unknown_base',
+      status: 409,
+    };
+  }
+
+  if (normalizedMessage.includes('article_edit_conflict_outdated_base')) {
+    return {
+      error: ARTICLE_MODERATION_OUTDATED_BASE_MESSAGE,
+      code: 'article_edit_conflict_outdated_base',
+      status: 409,
+    };
+  }
+
   if (normalizedMessage.includes('article_edit_conflict')) {
-    return { error: ARTICLE_VERSION_CONFLICT_MESSAGE, code: 'article_edit_conflict', status: 409 };
+    return {
+      error: ARTICLE_MODERATION_CONFLICT_MESSAGE,
+      code: 'article_edit_conflict',
+      status: 409,
+    };
   }
 
   if (normalizedMessage.includes('insufficient permissions')) {
