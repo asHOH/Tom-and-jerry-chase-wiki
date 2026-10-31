@@ -4,10 +4,14 @@ import { snapshot, subscribe as subscribeValtio } from 'valtio/vanilla';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { GameDataManager } from '@/lib/dataManager';
-import { splitCharacterRelationActionHistory } from '@/lib/edit/characterRelationActions';
+import {
+  isUnchangedCharacterRelationInitialization,
+  splitCharacterRelationActionHistory,
+} from '@/lib/edit/characterRelationActions';
 import {
   applyActionEntry,
   invertActionEntry,
+  normalizeActionHistory,
   squashActions,
   type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
@@ -38,6 +42,7 @@ import {
   getOrCreatePublishOperationId,
   getPublishOperationFingerprint,
   PublishOperationConflictError,
+  readPublishOperation,
 } from '@/lib/gameData/publishOperation';
 import type { FactionScopedGameDataEntityType } from '@/lib/gameData/scopedEntityPaths';
 import {
@@ -283,13 +288,23 @@ export function createEditSession(
     if (disposed) throw new Error('The edit session has been disposed.');
   };
 
+  const squashDraft = (entityType: PublishableEntityType, entries: ActionHistoryEntry[]) => {
+    const squashed = squashActions(entries, { currentRoot: mutableDomain(stores, entityType) });
+    if (entityType !== 'characters') return squashed;
+    return normalizeActionHistory(
+      squashed.map((entry) =>
+        (Array.isArray(entry) ? entry : [entry]).filter(
+          (action) => !isUnchangedCharacterRelationInitialization(action, baseline.characters)
+        )
+      )
+    );
+  };
+
   const readDraft = (scope: EditDraftScope): EditDraftState => {
     assertActive();
     const entityType = scopeEntityType(scope);
     const { matching } = selectHistory(scope, history.read(entityType));
-    const publishEntries = squashActions(matching, {
-      currentRoot: mutableDomain(stores, entityType),
-    });
+    const publishEntries = squashDraft(entityType, matching);
     return Object.freeze({ actionCount: publishEntries.length, publishEntries });
   };
 
@@ -377,9 +392,7 @@ export function createEditSession(
     readDraftOverview: () => {
       assertActive();
       return PUBLISHABLE_ENTITY_TYPES.flatMap((entityType) => {
-        const publishEntries = squashActions(history.read(entityType), {
-          currentRoot: mutableDomain(stores, entityType),
-        });
+        const publishEntries = squashDraft(entityType, history.read(entityType));
         return buildDraftSummaryItemsForType(entityType, publishEntries, () => undefined).map(
           ({ entityId, factionId, count }) => ({
             entityType,
@@ -395,10 +408,15 @@ export function createEditSession(
       const entityType = scopeEntityType(scope);
       const source = history.read(entityType);
       const { matching, remaining } = selectHistory(scope, source);
-      const entries = squashActions(matching, {
+      const entries = squashDraft(entityType, matching);
+      const discardScope = operationScope(scope, entries.length > 0 ? entries : matching);
+      const originalEntries = squashActions(matching, {
         currentRoot: mutableDomain(stores, entityType),
       });
-      const discardScope = operationScope(scope, entries.length > 0 ? entries : matching);
+      const originalScope = operationScope(
+        scope,
+        originalEntries.length > 0 ? originalEntries : matching
+      );
       if (matching.length > 0) {
         registry.withRecordingSuppressed(entityType, () => {
           const root = mutableDomain(stores, entityType);
@@ -420,7 +438,10 @@ export function createEditSession(
           matching.forEach((entry) => applyActionEntry(root, entry));
         });
       }
-      if (cleanupSucceeded) clearPublishOperation(discardScope);
+      if (cleanupSucceeded) {
+        clearPublishOperation(discardScope);
+        clearPublishOperation(originalScope);
+      }
       invalidate();
       notifyDrafts();
       return cleanupSucceeded
@@ -435,10 +456,40 @@ export function createEditSession(
       const entityType = scopeEntityType(scope);
       const source = history.read(entityType);
       const { matching, remaining } = selectHistory(scope, source);
-      const entries = squashActions(matching, {
-        currentRoot: mutableDomain(stores, entityType),
-      });
-      const publishScope = operationScope(scope, entries.length > 0 ? entries : matching);
+      const squashed = squashActions(matching, { currentRoot: mutableDomain(stores, entityType) });
+      const originalScope = operationScope(scope, squashed);
+      const existingOperation = readPublishOperation(originalScope);
+      const requestFingerprint = (entries: readonly ActionHistoryEntry[]) =>
+        getPublishOperationFingerprint({
+          endpoint:
+            scope.kind === 'character-relations'
+              ? '/api/game-data-actions/publish-relations'
+              : '/api/game-data-actions/publish',
+          entries,
+          message: options.message?.trim() || null,
+          submitMode: options.submitMode ?? 'default',
+        });
+      // An uncertain request must retain its exact payload for an idempotent retry.
+      const retrying = existingOperation?.fingerprint === requestFingerprint(squashed);
+      const entries = retrying ? squashed : squashDraft(entityType, matching);
+      const publishScope = existingOperation
+        ? originalScope
+        : operationScope(scope, entries.length > 0 ? entries : matching);
+
+      if (
+        entityType === 'characters' &&
+        !retrying &&
+        (!existingOperation || existingOperation.fingerprint === requestFingerprint(entries))
+      ) {
+        registry.withRecordingSuppressed(entityType, () => {
+          for (const action of squashed.flat()) {
+            if (isUnchangedCharacterRelationInitialization(action, baseline.characters)) {
+              // Restore absence so the next edit records the correct before-value.
+              applyActionEntry(mutableDomain(stores, entityType), invertActionEntry(action));
+            }
+          }
+        });
+      }
 
       if (entries.length === 0) {
         if (!history.replace(entityType, remaining)) {

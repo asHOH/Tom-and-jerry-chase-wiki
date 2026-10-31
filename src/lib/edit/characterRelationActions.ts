@@ -1,12 +1,15 @@
 import isEqual from 'lodash-es/isEqual';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { parseActionPath } from '@/lib/gameData/actionPath';
 import { cloneGameDataValue } from '@/lib/gameData/cloneGameDataValue';
+import type { CharacterWithFaction } from '@/lib/types';
 import type { TraitRelationKind } from '@/data/types';
 import {
   CHARACTER_RELATION_PAIR_FIELD,
   parseCharacterRelationPairPath,
 } from '@/features/characters/utils/characterRelationPairs';
+import { getExplicitCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
 import { normalizeActionHistory, type Action, type ActionHistoryEntry } from './diffUtils';
 
@@ -60,6 +63,24 @@ export const isCharacterRelationAction = (action: Action): boolean =>
 
 const isRelationMap = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
+
+export function isUnchangedCharacterRelationInitialization(
+  action: Action,
+  characters: DeepReadonly<Record<string, CharacterWithFaction>>
+): boolean {
+  if (action.op !== 'set' || action.oldValue !== undefined || !Array.isArray(action.newValue))
+    return false;
+  const relation = parseCharacterRelationActionPath(action.path);
+  return !!(
+    relation &&
+    relation.rest.length === 0 &&
+    characters[relation.characterId] &&
+    isEqual(
+      getExplicitCharacterRelation(characters, relation.characterId)[relation.relationKind],
+      action.newValue
+    )
+  );
+}
 
 function clonePairAction(action: Action): Action {
   const oldValue = cloneGameDataValue(action.oldValue);

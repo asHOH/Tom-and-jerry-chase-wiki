@@ -3,8 +3,20 @@ import { waitFor } from '@testing-library/react';
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import type { EditHistoryStore } from '@/lib/edit/editModeRegistry';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import {
+  getOrCreatePublishOperationId,
+  getPublishOperationFingerprint,
+  readPublishOperation,
+} from '@/lib/gameData/publishOperation';
 import { getEditModeActionsStorageKey } from '@/lib/localStorage';
+import { characters } from '@/data/static';
 import type { CharacterPairRelation } from '@/data/types';
+import {
+  addCharacterRelationItem,
+  removeCharacterRelationItem,
+  updateCharacterRelationDescription,
+} from '@/features/characters/utils/characterRelationOverlay';
+import { getExplicitCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
 import { createEditSession, type EditSession, type EditSessionDependencies } from './editSession';
 
@@ -176,6 +188,193 @@ describe('createEditSession', () => {
       await expect(session.publishDraft(scope)).resolves.toEqual({ status: 'empty' });
       expect(publish).not.toHaveBeenCalled();
       expect(history.read('characters')).toEqual([]);
+    }
+  );
+
+  it.each([false, true])('discards an empty relation edit with another edit: %s', async (mixed) => {
+    const history = memoryHistory({});
+    const publish = jest.fn().mockResolvedValue({ status: 'published', outcome: 'pending' });
+    session = createEditSession({ ...baseline, characters }, 'v1:test', {
+      history: history.store,
+      publish,
+    });
+    const scope = { kind: 'domain', entityType: 'characters' } as const;
+    expect(getExplicitCharacterRelation(characters, '巴特').disadvantageModes).toEqual([]);
+    session.updateDomain('characters', (draft) => {
+      addCharacterRelationItem(draft, '巴特', 'disadvantageModes', {
+        id: '经典模式',
+        description: '',
+        isMinor: false,
+      });
+    });
+    await Promise.resolve();
+    session.updateDomain('characters', (draft) => {
+      removeCharacterRelationItem(draft, '巴特', 'disadvantageModes', '经典模式');
+      if (mixed) draft.巴特!.description = 'changed';
+    });
+    await Promise.resolve();
+    expect(session.readDraft(scope).actionCount).toBe(mixed ? 1 : 0);
+    expect(session.readDraft({ kind: 'character-relations' }).publishEntries).toEqual([]);
+    expect(session.readDraftOverview()).toHaveLength(mixed ? 1 : 0);
+    await expect(session.publishDraft(scope)).resolves.toMatchObject({
+      status: mixed ? 'published' : 'empty',
+    });
+    if (mixed) {
+      expect(publish.mock.calls[0]![0].body.entries).toEqual([
+        expect.objectContaining({ path: '巴特.description', newValue: 'changed' }),
+      ]);
+    } else expect(publish).not.toHaveBeenCalled();
+    expect(history.read('characters')).toEqual([]);
+    expect(session.readDomain('characters').巴特!).not.toHaveProperty('disadvantageModes');
+    session.updateDomain('characters', (draft) => {
+      addCharacterRelationItem(draft, '巴特', 'disadvantageModes', {
+        id: '经典模式',
+        description: '',
+        isMinor: false,
+      });
+    });
+    await Promise.resolve();
+    expect(session.readDraft({ kind: 'character-relations' }).publishEntries).toEqual([
+      expect.objectContaining({ path: '巴特.disadvantageModes', oldValue: undefined }),
+    ]);
+  });
+
+  it.each(['shared', 'stored'] as const)(
+    'preserves empty lists clearing %s relations',
+    async (source) => {
+      const characterId = source === 'shared' ? '剑客莉莉' : '巴特';
+      const kind = 'advantageMaps';
+      const stored = [{ id: '经典之家I', description: '', isMinor: false }];
+      const data = structuredClone(characters);
+      if (source === 'stored') Object.assign(data[characterId]!, { [kind]: stored });
+      expect(getExplicitCharacterRelation(data, characterId)[kind].length).toBeGreaterThan(0);
+      const action = {
+        op: 'set' as const,
+        path: `${characterId}.${kind}`,
+        oldValue: source === 'stored' ? stored : undefined,
+        newValue: [],
+      };
+      const history = memoryHistory({ characters: [action] });
+      const publish = jest.fn().mockResolvedValue({ status: 'published', outcome: 'pending' });
+      session = createEditSession({ ...baseline, characters: data }, 'v1:test', {
+        history: history.store,
+        publish,
+      });
+      const scope = { kind: 'character-relations' } as const;
+      expect(session.readDraft(scope).publishEntries).toEqual([action]);
+      await session.publishDraft(scope);
+      expect(publish.mock.calls[0]![0].body.entries).toEqual([action]);
+    }
+  );
+
+  it('retries a mixed submission with the same filtered payload after a network failure', async () => {
+    const history = memoryHistory({
+      characters: [
+        { op: 'set', path: '巴特.disadvantageModes', oldValue: undefined, newValue: [] },
+        {
+          op: 'set',
+          path: '巴特.description',
+          oldValue: characters.巴特!.description,
+          newValue: 'changed',
+        },
+      ],
+    });
+    const publish = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('Network failure'))
+      .mockResolvedValue({ status: 'published', outcome: 'pending' });
+    session = createEditSession({ ...baseline, characters }, 'v1:test', {
+      history: history.store,
+      publish,
+    });
+    const scope = { kind: 'domain', entityType: 'characters' } as const;
+    expect((await session.publishDraft(scope)).status).toBe('failed');
+    session.dispose();
+    session = createEditSession({ ...baseline, characters }, 'v1:test', {
+      history: history.store,
+      publish,
+    });
+    expect((await session.publishDraft(scope)).status).toBe('published');
+    expect(publish.mock.calls[1]![0]).toEqual(publish.mock.calls[0]![0]);
+    expect(publish.mock.calls[0]![0].body.entries).toHaveLength(1);
+    expect(session.readDomain('characters').巴特!).not.toHaveProperty('disadvantageModes');
+    session.updateDomain('characters', (draft) => {
+      addCharacterRelationItem(draft, '巴特', 'disadvantageModes', {
+        id: '经典模式',
+        description: '',
+        isMinor: false,
+      });
+    });
+    await Promise.resolve();
+    expect(session.readDraft({ kind: 'character-relations' }).publishEntries).toEqual([
+      expect.objectContaining({ path: '巴特.disadvantageModes', oldValue: undefined }),
+    ]);
+  });
+
+  it('discards a description edit restored to the inherited nonempty relation list', async () => {
+    const history = memoryHistory({});
+    session = createEditSession({ ...baseline, characters }, 'v1:test', { history: history.store });
+    const original = getExplicitCharacterRelation(characters, '剑客莉莉').advantageMaps[0]!;
+    for (const description of ['temporary', original.description ?? '']) {
+      session.updateDomain('characters', (draft) => {
+        updateCharacterRelationDescription(
+          draft,
+          '剑客莉莉',
+          'advantageMaps',
+          original.id,
+          description
+        );
+      });
+      await Promise.resolve();
+    }
+    expect(session.readDraft({ kind: 'character-relations' }).publishEntries).toEqual([]);
+  });
+
+  it.each(['original', 'filtered'] as const)(
+    'clears the %s retry scope when discarding a mixed pair draft',
+    async (payload) => {
+      const pair = {
+        op: 'set' as const,
+        path: '巴特.characterRelationOverrides.雪梨',
+        oldValue: undefined,
+        newValue: { kind: 'collaborators', description: 'test', isMinor: true },
+      };
+      const empty = {
+        op: 'set' as const,
+        path: '巴特.disadvantageModes',
+        oldValue: undefined,
+        newValue: [],
+      };
+      const operationScope =
+        payload === 'original' ? 'page:characters:' : `relations:pair:${pair.path}`;
+      getOrCreatePublishOperationId(
+        operationScope,
+        getPublishOperationFingerprint({
+          endpoint: '/api/game-data-actions/publish',
+          entries: payload === 'original' ? [pair, empty] : [pair],
+          message: null,
+          submitMode: 'default',
+        })
+      );
+      const history = memoryHistory({ characters: [pair, empty] });
+      const publish = jest.fn().mockResolvedValue({ status: 'published', outcome: 'pending' });
+      session = createEditSession({ ...baseline, characters }, 'v1:test', {
+        history: history.store,
+        publish,
+      });
+      const scope = { kind: 'domain', entityType: 'characters' } as const;
+      await expect(session.publishDraft(scope, { message: 'changed' })).resolves.toMatchObject({
+        status: 'failed',
+        error: { message: 'publish_operation_conflict' },
+      });
+      expect(publish).not.toHaveBeenCalled();
+      expect(session.discardDraft(scope)).toEqual({ status: 'discarded' });
+      expect(readPublishOperation(operationScope)).toBeNull();
+      session.updateEntity({ entityType: 'characters', entityId: '巴特' }, (character) => {
+        character.description = 'changed';
+      });
+      await Promise.resolve();
+      expect((await session.publishDraft(scope)).status).toBe('published');
     }
   );
 

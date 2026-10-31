@@ -247,3 +247,46 @@ it('keeps unchanged array context when a later indexed edit in the same row has 
     ])
   ).not.toThrow();
 });
+
+it('rejects empty relation initialization while preserving clears of existing relations', () => {
+  const characters = getCanonicalGameData('characters');
+  expect(characters.巴特!).not.toHaveProperty('disadvantageModes');
+  expect(getExplicitCharacterRelation(characters, '巴特').disadvantageModes).toEqual([]);
+  const path = '巴特.disadvantageModes';
+  const item = { id: '经典模式', description: '', isMinor: false };
+  for (const entries of [
+    [set(path, undefined, [])],
+    [[set(path, undefined, [item]), set(path, [item], [])]],
+  ]) {
+    expect(() => validate(entries)).toThrow(
+      expect.objectContaining({ detail: { path, reason: 'no_changes' } })
+    );
+  }
+  expect(getExplicitCharacterRelation(characters, '剑客莉莉').advantageMaps.length).toBeGreaterThan(
+    0
+  );
+  expect(() => validate([set('剑客莉莉.advantageMaps', undefined, [])])).not.toThrow();
+  expect(() =>
+    validate([
+      set(
+        '剑客莉莉.advantageMaps',
+        undefined,
+        getExplicitCharacterRelation(characters, '剑客莉莉').advantageMaps
+      ),
+    ])
+  ).toThrow(
+    expect.objectContaining({ detail: { path: '剑客莉莉.advantageMaps', reason: 'no_changes' } })
+  );
+  expect(() =>
+    validate(
+      [set(path, [item], [])],
+      [
+        {
+          rowId: 'published',
+          entityType: 'characters',
+          actions: [set(path, undefined, [item])],
+        },
+      ]
+    )
+  ).not.toThrow();
+});

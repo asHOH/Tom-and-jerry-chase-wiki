@@ -4,6 +4,10 @@ import isEqual from 'lodash-es/isEqual';
 
 import type { CharacterGameData } from '@/lib/dataManager';
 import {
+  CHARACTER_RELATION_KINDS,
+  isUnchangedCharacterRelationInitialization,
+} from '@/lib/edit/characterRelationActions';
+import {
   CHARACTER_RELATION_PAIR_FIELD,
   parseCharacterRelationPairPath,
 } from '@/features/characters/utils/characterRelationPairs';
@@ -180,12 +184,32 @@ export function validateActionFreshness(
     }
     // Keep unchanged container checks inside a meaningful atomic row, but never store
     // rows whose complete effect is empty (including edits that cancel each other).
-    if (
-      isEqual(
-        before,
-        roots.value.map((root) => target[root])
-      )
-    ) {
+    const after = roots.value.map((root) => target[root]);
+    if (row.entityType === 'characters') {
+      const previous = {
+        ...target,
+        ...Object.fromEntries(roots.value.map((root, index) => [root, before[index]])),
+      } as CharacterGameData;
+      roots.value.forEach((root, index) => {
+        const character = { ...(target[root] as Record<string, unknown>) };
+        for (const kind of CHARACTER_RELATION_KINDS) {
+          if (
+            isUnchangedCharacterRelationInitialization(
+              {
+                op: 'set',
+                path: `${root}.${kind}`,
+                oldValue: (before[index] as Record<string, unknown> | undefined)?.[kind],
+                newValue: character[kind],
+              },
+              previous
+            )
+          )
+            delete character[kind];
+        }
+        after[index] = character;
+      });
+    }
+    if (isEqual(before, after)) {
       throw new InvalidGameDataValueError({ path: row.actions[0]!.path, reason: 'no_changes' });
     }
   }
