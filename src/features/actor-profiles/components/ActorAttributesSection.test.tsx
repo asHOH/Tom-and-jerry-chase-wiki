@@ -1,11 +1,22 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import type { FactionId } from '@/data/types';
+import { createActorProfileFixture } from '@/testUtils/actorProfiles';
 
 import { ACTOR_ATTRIBUTE_KEYS, ACTOR_ATTRIBUTE_PRESENTATION } from '../attributePresentation';
+import { actorProfilesByName } from '../data';
 import ActorAttributesSection from './ActorAttributesSection';
 
 let mockIsDetailedView = false;
+
+jest.mock('../pendingProfiles', () => ({
+  PENDING_ACTOR_PROFILE_NAMES: new Set(['待补充角色']),
+}));
+
+jest.mock('../data', () => ({ actorProfilesByName: { get: jest.fn() } }));
+jest.mock('@/features/characters/data/characterMetadata', () => ({
+  characterFactionById: { 测试猫: 'cat', 测试鼠: 'mouse' },
+}));
 
 jest.mock('@/context/AppContext', () => ({
   useAppContext: () => ({ isDetailedView: mockIsDetailedView }),
@@ -42,7 +53,7 @@ const getDisplayedAttributeLabels = (container: HTMLElement): string[] =>
 describe('ActorAttributesSection', () => {
   it('shows a pending message without fabricated statistics', () => {
     const { container } = render(
-      <ActorAttributesSection name='巴特' context='character' factionId='mouse' />
+      <ActorAttributesSection name='待补充角色' context='character' factionId='mouse' />
     );
     expect(screen.getByText('属性待补充')).toBeInTheDocument();
     expect(container.querySelector('a')).toBeNull();
@@ -51,12 +62,41 @@ describe('ActorAttributesSection', () => {
 
   beforeEach(() => {
     mockIsDetailedView = false;
+    const profiles = [
+      createActorProfileFixture({
+        name: '测试猫',
+        actorType: 'cat',
+        physicsType: 'cat',
+        physicsBodyName: 'tom',
+        attackRange: 250,
+        shoppingDelay: 2.5,
+      }),
+      createActorProfileFixture({
+        name: '测试鼠',
+        attack: 15,
+        initialItem: '老鼠夹',
+        shoppingDelay: 2.5,
+      }),
+      createActorProfileFixture({ name: '零增伤鼠' }),
+      createActorProfileFixture({ name: '测试对象' }),
+      createActorProfileFixture({ name: '无未命中冷却对象', attackCooldown: { hit: 2 } }),
+      createActorProfileFixture({ name: '增伤猫', attack: 15, attackRange: 250 }),
+      createActorProfileFixture({
+        name: '道具猫',
+        initialItem: '鞭炮束',
+        attackRange: 250,
+        attackCooldown: { hit: 7, miss: 4.9 },
+      }),
+    ];
+    jest
+      .mocked(actorProfilesByName.get)
+      .mockImplementation((name) => profiles.find((profile) => profile.name === name));
   });
 
   it('should use detailed attribute tooltips in detailed mode', () => {
     mockIsDetailedView = true;
 
-    render(<ActorAttributesSection name='汤姆' context='character' factionId='cat' />);
+    render(<ActorAttributesSection name='测试猫' context='character' factionId='cat' />);
 
     expect(screen.getByText('Hp上限')).toHaveAttribute(
       'data-tooltip',
@@ -64,9 +104,9 @@ describe('ActorAttributesSection', () => {
     );
   });
 
-  it('should use the explicit character summary and show only applicable cat fields for Tom', () => {
+  it('should use the explicit character summary and show only applicable cat fields', () => {
     const { container } = render(
-      <ActorAttributesSection name='汤姆' EnglishName='Tom' context='character' factionId='cat' />
+      <ActorAttributesSection name='测试猫' EnglishName='Tom' context='character' factionId='cat' />
     );
 
     expect(screen.queryByText('性别')).not.toBeInTheDocument();
@@ -76,7 +116,7 @@ describe('ActorAttributesSection', () => {
     expect(screen.queryByText('物理特质')).not.toBeInTheDocument();
     expect(screen.queryByText('重力参数')).not.toBeInTheDocument();
     expect(screen.queryByText('攻击力')).not.toBeInTheDocument();
-    expect(screen.getByText('跳跃速度').closest('p')).toHaveTextContent('跳跃速度: 1850/s');
+    expect(screen.getByText('跳跃速度').closest('p')).toHaveTextContent('跳跃速度: 20/s');
     expect(getDisplayedAttributeLabels(container)).toEqual([
       'Hp上限',
       'Hp恢复',
@@ -85,16 +125,16 @@ describe('ActorAttributesSection', () => {
       '爪刀CD',
       '爪刀范围',
     ]);
-    expect(getRankingLink(container, 'maxHp', 'cat')).toHaveTextContent('255');
+    expect(getRankingLink(container, 'maxHp', 'cat')).toHaveTextContent('120');
     expect(getRankingLink(container, 'jumpHeight', 'cat')).toBeUndefined();
-    expect(getRankingLink(container, 'jumpSpeed', 'cat')).toHaveTextContent('1850');
+    expect(getRankingLink(container, 'jumpSpeed', 'cat')).toHaveTextContent('20');
 
     fireEvent.click(screen.getByRole('button', { name: '展开' }));
 
     expect(screen.getByText('性别')).toBeInTheDocument();
     expect(screen.getByText('英文名')).toBeInTheDocument();
     expect(screen.getByText('体型').closest('p')).toHaveTextContent('体型: “汤姆”');
-    expect(screen.getByText('爪刀CD').closest('p')).toHaveTextContent('爪刀CD: 2.25 / 4.5 s');
+    expect(screen.getByText('爪刀CD').closest('p')).toHaveTextContent('爪刀CD: 2 / 4 s');
     expect(screen.getByText('购物到货时间').closest('p')).toHaveTextContent('购物到货时间: 2.5s');
     expect(getRankingLink(container, 'climbSpeed', 'cat')).toBeDefined();
     expect(getRankingLink(container, 'visionScale', 'cat')).toBeDefined();
@@ -107,7 +147,7 @@ describe('ActorAttributesSection', () => {
   });
 
   it('should expose folding state, focus visibility, and reduced-motion styling', () => {
-    render(<ActorAttributesSection name='兔子大表哥' context='object' />);
+    render(<ActorAttributesSection name='测试对象' context='object' />);
 
     const button = screen.getByRole('button', { name: '展开' });
     expect(button).toHaveAttribute('aria-expanded', 'false');
@@ -117,7 +157,7 @@ describe('ActorAttributesSection', () => {
 
     fireEvent.click(button);
     expect(screen.getByRole('button', { name: '收起' })).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByText('重力参数').closest('p')).toHaveTextContent('重力参数: -3203');
+    expect(screen.getByText('重力参数').closest('p')).toHaveTextContent('重力参数: -2');
     expect(ACTOR_ATTRIBUTE_KEYS).toContain('gravity');
     expect(ACTOR_ATTRIBUTE_KEYS).not.toContain('jumpHeight');
     expect(ACTOR_ATTRIBUTE_KEYS).not.toContain('baseHp');
@@ -125,7 +165,7 @@ describe('ActorAttributesSection', () => {
   });
 
   it('should omit non-applicable summary mechanics without substitution', () => {
-    render(<ActorAttributesSection name='盔甲人' context='object' />);
+    render(<ActorAttributesSection name='无未命中冷却对象' context='object' />);
 
     expect(screen.getByText('爪刀CD').closest('p')).toHaveTextContent('爪刀CD: 命中 2 s');
     expect(screen.queryByText(/未命中/)).not.toBeInTheDocument();
@@ -134,7 +174,7 @@ describe('ActorAttributesSection', () => {
 
   it('should emphasize a nonzero cat attack while preserving its ranking link', () => {
     const { container } = render(
-      <ActorAttributesSection name='布奇' context='character' factionId='cat' />
+      <ActorAttributesSection name='增伤猫' context='character' factionId='cat' />
     );
 
     const attackRow = screen.getByText('攻击力').closest('p');
@@ -155,7 +195,7 @@ describe('ActorAttributesSection', () => {
   it('should link ordinary cooldowns independently and keep special cooldowns unlinked', () => {
     const { container } = render(
       <ActorAttributesSection
-        name='苏蕊'
+        name='道具猫'
         context='character'
         factionId='cat'
         specialClawKnifeCdHit={8}
@@ -181,7 +221,7 @@ describe('ActorAttributesSection', () => {
 
   it('should apply mouse ranking links only to compatible displayed mechanics', () => {
     const { container } = render(
-      <ActorAttributesSection name='杰瑞' context='character' factionId='mouse' />
+      <ActorAttributesSection name='测试鼠' context='character' factionId='mouse' />
     );
 
     expect(getDisplayedAttributeLabels(container)).toEqual([
@@ -198,9 +238,11 @@ describe('ActorAttributesSection', () => {
     expect(screen.queryByText('跳跃高度')).not.toBeInTheDocument();
     expect(screen.getByText('攻击力').closest('p')).toHaveTextContent('攻击力: 15');
     expect(screen.getByText('破坏力').closest('p')).toHaveTextContent('破坏力: 1');
-    expect(screen.getByText('推速').closest('p')).toHaveTextContent('推速: 5%/s');
+    expect(screen.getByText('推速').closest('p')).toHaveTextContent('推速: 3.5%/s');
+    expect(getRankingLink(container, 'maxHp', 'mouse')).toHaveTextContent('120');
+    expect(getRankingLink(container, 'moveSpeed', 'mouse')).toHaveTextContent('700');
     expect(getRankingLink(container, 'attackBoost', 'mouse')).toHaveTextContent('15');
-    expect(getRankingLink(container, 'cheesePushSpeed', 'mouse')).toHaveTextContent('5');
+    expect(getRankingLink(container, 'cheesePushSpeed', 'mouse')).toHaveTextContent('3.5');
     expect(getRankingLink(container, 'wallCrackDamageBoost', 'mouse')).toHaveTextContent('1');
     expect(getRankingLink(container, 'jumpSpeed', 'mouse')).toBeDefined();
     expect(getRankingLink(container, 'climbSpeed', 'mouse')).toBeDefined();
@@ -214,7 +256,7 @@ describe('ActorAttributesSection', () => {
 
   it('should keep a legitimate zero mouse attack visible', () => {
     const { container } = render(
-      <ActorAttributesSection name='雪梨' context='character' factionId='mouse' />
+      <ActorAttributesSection name='零增伤鼠' context='character' factionId='mouse' />
     );
 
     expect(screen.getByText('攻击力').closest('p')).toHaveTextContent('攻击力: 0');

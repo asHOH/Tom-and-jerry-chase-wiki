@@ -1,7 +1,17 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 
+import { characters } from '@/data/static';
+import { actorProfilesByName } from '@/features/actor-profiles/data';
+import { PublishedCharacterProvider } from '@/features/characters/components/character-detail/PublishedCharacterContext';
+import { createActorProfileFixture } from '@/testUtils/actorProfiles';
+
 import TextWithHoverTooltips from './TextWithHoverTooltips';
+
+jest.mock('@/features/actor-profiles/data', () => ({ actorProfilesByName: { get: jest.fn() } }));
+jest.mock('@/features/actor-profiles/pendingProfiles', () => ({
+  PENDING_ACTOR_PROFILE_NAMES: new Set(['待补充角色']),
+}));
 
 let mockCharacterId = '汤姆';
 
@@ -53,13 +63,22 @@ jest.mock('@/components/GotoLink', () => ({
 
 describe('TextWithHoverTooltips', () => {
   it('renders descriptions while a character profile is pending', () => {
-    mockCharacterId = '巴特';
-    render(<TextWithHoverTooltips text='[小蜘蛛](救援队友)' />);
+    mockCharacterId = '待补充角色';
+    render(
+      <PublishedCharacterProvider character={{ ...characters['巴特']!, id: mockCharacterId }}>
+        <TextWithHoverTooltips text='[小蜘蛛](救援队友)' />
+      </PublishedCharacterProvider>
+    );
     expect(screen.getByText('小蜘蛛')).toHaveAttribute('data-tooltip', '救援队友');
   });
 
   beforeEach(() => {
     mockCharacterId = '汤姆';
+    jest
+      .mocked(actorProfilesByName.get)
+      .mockImplementation((name) =>
+        name === '待补充角色' ? undefined : createActorProfileFixture({ name })
+      );
   });
 
   it('renders plain text unchanged', () => {
@@ -244,7 +263,7 @@ describe('TextWithHoverTooltips', () => {
   it('resolves current character expressions', () => {
     render(<TextWithHoverTooltips text='命中CD为{:clawKnifeCdHit}秒' />);
 
-    expect(screen.getByText('4.5')).toHaveClass('text-blue-500');
+    expect(screen.getByText('4')).toHaveClass('text-blue-500');
   });
 
   it('auto-wraps other character names but not the current character', () => {
@@ -273,13 +292,14 @@ describe('TextWithHoverTooltips', () => {
 
   it('renders base-only damage with character attack boost in the tooltip', () => {
     mockCharacterId = '布奇';
+    jest.mocked(actorProfilesByName.get).mockReturnValue(createActorProfileFixture({ attack: 12 }));
 
     render(<TextWithHoverTooltips text='造成{5*}伤害' />);
 
-    expect(screen.getByText('20')).toHaveClass('text-red-500');
-    expect(screen.getByText('20').closest('[data-tooltip]')).toHaveAttribute(
+    expect(screen.getByText('17')).toHaveClass('text-red-500');
+    expect(screen.getByText('17').closest('[data-tooltip]')).toHaveAttribute(
       'data-tooltip',
-      expect.stringContaining('基础伤害5+角色增伤15')
+      expect.stringContaining('基础伤害5+角色增伤12')
     );
   });
 

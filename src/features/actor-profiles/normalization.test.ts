@@ -9,6 +9,10 @@ import {
   type RawActorProfile,
 } from './schema';
 
+jest.mock('./pendingProfiles', () => ({
+  PENDING_ACTOR_PROFILE_NAMES: new Set(['待补充角色']),
+}));
+
 const createRawProfile = (overrides: Partial<RawActorProfile> = {}): RawActorProfile => ({
   name: '测试角色',
   actorType: 0,
@@ -219,9 +223,9 @@ describe('actor profile normalization', () => {
 
 describe('actor profile validation', () => {
   it('allows pending playable profiles while keeping other missing profiles and references invalid', () => {
-    const context = { ...createContext('巴特'), excludedNames: new Set<string>() };
+    const context = { ...createContext('待补充角色'), excludedNames: new Set<string>() };
     expect(assertValidActorProfiles([], context)).toEqual([]);
-    expect(normalizeActorProfiles([], createContext('巴特'))).toEqual([]);
+    expect(normalizeActorProfiles([], createContext('待补充角色'))).toEqual([]);
     expect(() =>
       assertValidActorProfiles([], { ...context, ...createContext('未知角色') })
     ).toThrow('missing canonical profile');
@@ -231,7 +235,7 @@ describe('actor profile validation', () => {
     expect(() =>
       assertValidActorProfiles([], {
         ...context,
-        references: [{ source: 'entity 测试', name: '巴特', hasLegacyRepresentation: false }],
+        references: [{ source: 'entity 测试', name: '待补充角色', hasLegacyRepresentation: false }],
       })
     ).toThrow('references missing canonical profile');
   });

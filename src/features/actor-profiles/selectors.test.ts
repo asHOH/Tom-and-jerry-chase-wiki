@@ -1,3 +1,5 @@
+import { createActorProfileFixture } from '@/testUtils/actorProfiles';
+
 import {
   ACTOR_ATTRIBUTE_KEYS,
   ACTOR_ATTRIBUTE_PRESENTATION,
@@ -13,28 +15,52 @@ import {
   haveUniformDisplayedGravity,
   isFactionDisplayedGravityUniform,
 } from '.';
+import { actorProfilesByName } from './data';
 import { getOptionalActorProfile } from './selectors';
+
+jest.mock('./pendingProfiles', () => ({
+  PENDING_ACTOR_PROFILE_NAMES: new Set(['待补充角色']),
+}));
+
+jest.mock('./data', () => ({ actorProfilesByName: { get: jest.fn() } }));
+jest.mock('@/features/characters/data/characterMetadata', () => ({
+  characterFactionById: { 测试猫: 'cat', 测试鼠: 'mouse', 第二只测试鼠: 'mouse' },
+}));
+
+let profiles: ReturnType<typeof createActorProfileFixture>[];
+
+beforeEach(() => {
+  profiles = [
+    createActorProfileFixture({ name: '测试猫', actorType: 'cat', physicsType: 'cat' }),
+    createActorProfileFixture({ name: '测试鼠' }),
+    createActorProfileFixture({ name: '第二只测试鼠', actorType: 'special', physicsType: 'cat' }),
+    createActorProfileFixture({ name: '非玩家对象', gravity: -100 }),
+  ];
+  jest
+    .mocked(actorProfilesByName.get)
+    .mockImplementation((name) => profiles.find((profile) => profile.name === name));
+});
 
 describe('actor profile domain', () => {
   it('should strictly resolve canonical profiles', () => {
-    expect(getActorProfile('汤姆').name).toBe('汤姆');
+    expect(getActorProfile('测试猫')).toBe(profiles[0]);
     expect(() => getActorProfile('不存在的角色')).toThrow('Missing canonical actor profile');
   });
 
   it('allows only explicitly pending profiles to be unavailable', () => {
-    expect(getOptionalActorProfile('巴特')).toBeUndefined();
-    expect(getOptionalActorProfile('杰瑞')).toBe(getActorProfile('杰瑞'));
+    expect(getOptionalActorProfile('待补充角色')).toBeUndefined();
+    expect(getOptionalActorProfile('测试鼠')).toBe(getActorProfile('测试鼠'));
     expect(() => getOptionalActorProfile('不存在的角色')).toThrow(
       'Missing canonical actor profile'
     );
   });
 
-  it('should calculate one integer jump height selector', () => {
-    const profile = getActorProfile('汤姆');
-    expect(getActorJumpHeight(profile)).toBe(
-      Math.round(profile.jumpSpeed ** 2 / (2 * Math.abs(profile.gravity)))
-    );
-    expect(Number.isInteger(getActorJumpHeight(profile))).toBe(true);
+  it.each([
+    [20.04, 100],
+    [20.06, 101],
+  ])('rounds jump speed %s to integer height %s', (jumpSpeed, expectedHeight) => {
+    const profile = createActorProfileFixture({ jumpSpeed });
+    expect(getActorJumpHeight(profile)).toBe(expectedHeight);
   });
 
   it('should format canonical values without unknown fallbacks', () => {
@@ -50,19 +76,34 @@ describe('actor profile domain', () => {
 
   it('should determine gravity uniformity from playable faction membership', () => {
     expect(isFactionDisplayedGravityUniform('cat')).toBe(true);
-    expect(isFactionDisplayedGravityUniform('mouse')).toBe(false);
+    expect(isFactionDisplayedGravityUniform('mouse')).toBe(true);
 
-    const baseProfile = getActorProfile('汤姆');
+    const baseProfile = getActorProfile('测试猫');
     expect(
       haveUniformDisplayedGravity([
         baseProfile,
         { ...baseProfile, name: '未来角色', gravity: baseProfile.gravity - 100 },
       ])
     ).toBe(false);
+    profiles[1]!.gravity = -3;
+    expect(isFactionDisplayedGravityUniform('mouse')).toBe(false);
+  });
+
+  it('keeps faction gravity non-uniform while a playable profile is pending', () => {
+    const { characterFactionById } = jest.requireMock(
+      '@/features/characters/data/characterMetadata'
+    );
+    characterFactionById['待补充角色'] = 'mouse';
+    try {
+      expect(isFactionDisplayedGravityUniform('mouse')).toBe(false);
+      expect(isFactionDisplayedGravityUniform('cat')).toBe(true);
+    } finally {
+      delete characterFactionById['待补充角色'];
+    }
   });
 
   it('should join by character id without inferring faction from profile fields', () => {
-    const profile = getActorProfileForCharacter({ id: '兔子大表哥', factionId: 'mouse' });
+    const profile = getActorProfileForCharacter({ id: '第二只测试鼠', factionId: 'mouse' });
 
     expect(profile.actorType).toBe('special');
     expect(profile.physicsType).toBe('cat');

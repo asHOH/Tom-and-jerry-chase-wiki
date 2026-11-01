@@ -1,10 +1,40 @@
 import { characters } from '@/data/static';
+import { actorProfilesByName } from '@/features/actor-profiles/data';
+import { createActorProfileFixture } from '@/testUtils/actorProfiles';
 
 import { preprocessText, resolveCharacterExpression, wrapAutoNamesInText } from './characterText';
 
-it('leaves pending character attribute expressions unresolved', () => {
-  expect(resolveCharacterExpression('maxHp', characters['巴特'])).toBeUndefined();
-  expect(resolveCharacterExpression('skills[0].name', characters['巴特'])).toBe('立体机动');
+jest.mock('@/features/actor-profiles/pendingProfiles', () => ({
+  PENDING_ACTOR_PROFILE_NAMES: new Set(['待补充角色']),
+}));
+
+jest.mock('@/features/actor-profiles/data', () => ({ actorProfilesByName: { get: jest.fn() } }));
+
+const character = {
+  ...characters['巴特']!,
+  id: '测试角色',
+  specialClawKnifeCdHit: 8,
+  specialClawKnifeCdUnhit: 4,
+};
+beforeEach(() => {
+  jest
+    .mocked(actorProfilesByName.get)
+    .mockImplementation((name) =>
+      name === character.id ? createActorProfileFixture({ name }) : undefined
+    );
+});
+
+it('leaves pending character attribute expressions unresolved while preserving skills', () => {
+  const pendingCharacter = { ...character, id: '待补充角色' };
+  expect(resolveCharacterExpression('maxHp', pendingCharacter)).toBeUndefined();
+  expect(resolveCharacterExpression('skills[0].name', pendingCharacter)).toBe(
+    character.skills[0]!.name
+  );
+});
+
+it('resolves attributes alongside character skill expressions', () => {
+  expect(resolveCharacterExpression('maxHp', character)).toBe(120);
+  expect(resolveCharacterExpression('skills[0].name', character)).toBe(character.skills[0]!.name);
 });
 
 describe('wrapAutoNamesInText', () => {
@@ -55,13 +85,13 @@ describe('preprocessText', () => {
 
 describe('resolveCharacterExpression', () => {
   it('resolves covered placeholders from canonical actor profile data', () => {
-    expect(resolveCharacterExpression(':maxHp', characters['侦探汤姆'])).toBe(225);
-    expect(resolveCharacterExpression(':jumpHeight', characters['汤姆'])).toBe(483);
-    expect(resolveCharacterExpression(':clawKnifeCdUnhit', characters['如玉'])).toBe(0.8);
+    expect(resolveCharacterExpression(':maxHp', character)).toBe(120);
+    expect(resolveCharacterExpression(':jumpHeight', character)).toBe(100);
+    expect(resolveCharacterExpression(':clawKnifeCdUnhit', character)).toBe(2);
   });
 
   it('keeps skill-specific cooldown placeholders on the character definition', () => {
-    expect(resolveCharacterExpression(':specialClawKnifeCdHit', characters['苏蕊'])).toBe(8);
-    expect(resolveCharacterExpression(':specialClawKnifeCdUnhit', characters['苏蕊'])).toBe(4);
+    expect(resolveCharacterExpression(':specialClawKnifeCdHit', character)).toBe(8);
+    expect(resolveCharacterExpression(':specialClawKnifeCdUnhit', character)).toBe(4);
   });
 });

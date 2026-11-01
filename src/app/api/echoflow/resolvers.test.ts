@@ -1,7 +1,20 @@
 import { GameDataManager } from '@/lib/dataManager';
+import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
+import { getActorProfile } from '@/features/actor-profiles/selectors';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 
 import { getAvailablePaths, getResolvers, type ResolverResult } from './resolvers';
+
+jest.mock('@/features/actor-profiles/pendingProfiles', () => ({
+  PENDING_ACTOR_PROFILE_NAMES: new Set([
+    ...jest.requireActual('@/features/actor-profiles/pendingProfiles').PENDING_ACTOR_PROFILE_NAMES,
+    '待补充角色',
+  ]),
+}));
+jest.mock('@/lib/gameData/published/publishedSnapshot', () => {
+  const actual = jest.requireActual('@/lib/gameData/published/publishedSnapshot');
+  return { ...actual, getPublishedGameDataSnapshot: jest.fn(actual.getPublishedGameDataSnapshot) };
+});
 
 jest.mock('server-only', () => ({}), { virtual: true });
 jest.mock('next/cache', () => ({
@@ -72,23 +85,44 @@ describe('echoflow resolvers', () => {
 
     const result = await characterResolver.list();
     if (!Array.isArray(result.data)) throw new Error('Expected character list data.');
-    const detectiveTom = result.data.find(
-      (character: { id?: string }) => character.id === '侦探汤姆'
-    );
-    expect(detectiveTom).toMatchObject({
-      id: '侦探汤姆',
-      actorProfile: { name: '侦探汤姆', maxHp: 225, runSpeed: 780 },
-      role: { name: '侦探汤姆', maxHp: 225, runSpeed: 780 },
+    for (const id of ['侦探汤姆', '巴特']) {
+      const profile = getActorProfile(id);
+      const character = result.data.find((character: { id?: string }) => character.id === id);
+      expect(character).toMatchObject({ id, actorProfile: profile, role: profile });
+      expect(character.actorProfile).toBe(character.role);
+      const detail = (await characterResolver.detail!(id))?.data;
+      expect(detail).toMatchObject({ id, actorProfile: profile, role: profile });
+    }
+  });
+
+  it('returns null profile fields in lists and details for a pending character', async () => {
+    const snapshot = await getPublishedGameDataSnapshot();
+    const pendingCharacter = {
+      id: '待补充角色',
+      factionId: 'mouse' as const,
+      faction: snapshot.data.characters['巴特']!.faction,
+      imageUrl: '',
+      createDate: null,
+      description: '',
+      skills: [],
+      knowledgeCardGroups: [],
+    };
+    jest.mocked(getPublishedGameDataSnapshot).mockResolvedValueOnce({
+      ...snapshot,
+      data: {
+        ...snapshot.data,
+        characters: { ...snapshot.data.characters, [pendingCharacter.id]: pendingCharacter },
+      },
     });
-    expect(detectiveTom.actorProfile).toBe(detectiveTom.role);
-    expect(result.data.find((character: { id?: string }) => character.id === '巴特')).toMatchObject(
-      {
-        id: '巴特',
-        actorProfile: null,
-        role: null,
-      }
+    const resolver = (await getResolvers()).characters!;
+    const result = await resolver.list();
+    expect(result.data).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: pendingCharacter.id, actorProfile: null, role: null }),
+      ])
     );
-    expect((await characterResolver.detail!('巴特'))?.data).toMatchObject({
+    expect((await resolver.detail!(pendingCharacter.id))?.data).toMatchObject({
+      id: pendingCharacter.id,
       actorProfile: null,
       role: null,
     });
