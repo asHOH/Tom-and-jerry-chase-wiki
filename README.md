@@ -1,7 +1,7 @@
 # 猫和老鼠手游百科
 
 [![CI](https://github.com/asHOH/Tom-and-jerry-chase-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/asHOH/Tom-and-jerry-chase-wiki/actions/workflows/ci.yml)
-[猫鼠百科](https://www.tjwiki.com)
+[![猫鼠百科](https://img.shields.io/badge/网站-猫鼠百科-blue)](https://www.tjwiki.com)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![QQ群](https://img.shields.io/badge/QQ群-615882730-brightgreen?logo=tencentqq&logoColor=white)](https://qun.qq.com/universal-share/share?ac=1&authKey=%2BgPPblp3JfnQP2o3BI5PO1NmwvsNciCCaVCtSI9T6RAbv6yV2QHzzjz6gwY%2Bva9U&busi_data=eyJncm91cENvZGUiOiI2MTU4ODI3MzAiLCJ0b2tlbiI6Ijg3Ym9kMk9HTUVFTnJSU25GU2JCdWJoNEwxNGNOUlhWMGgvK3lMTWRGdy80Z0FnaUd4Yy9LYkZsYUJ5ZStTbUgiLCJ1aW4iOiIyOTAxODMzMjI1In0%3D&data=0yzCZAnaW0ZOxf01YibLkPBLkN17DRX2fS1NGi5Nndx2Qq2DMFDdWr1pxH3J8F9RefUGjWh_Zel5Rfjy-dPZ2A&svctype=4&tempid=h5_group_info)
@@ -14,15 +14,15 @@
 ## 📱 功能简介
 
 - **角色查询**: 查看角色属性、技能、推荐加点和知识卡等
-- **知识卡/道具/衍生物/特技/状态查询**: 查看其准确的具体效果
+- **知识卡/道具/衍生物/特技/状态查询**: 查看其准确效果
 - **文章分享**: 浏览其他爱好者的记录、思考和发现
 - **筛选与搜索**: 快速找到目标条目
 
 ## 🌟 亮点
 
-- 数值精确、机制详细
+- 数值精确、机制详尽
+- 极为直观的数据展示
 - 描述详略可自由切换
-- 极为直观的技能加点
 
 ## 🚀 快速访问
 
@@ -37,14 +37,11 @@
 
 - **统一用词** - 技能描述中的“硬直/眩晕”等（定义待统一）
 - **画廊** - 各种猫鼠二创（缺素材）
-- **地图NPC** - 斯派克、女主人等
-- **地图** - 展示地图资料，支持的场景链接到 [猫鼠地图百科](https://maps.tjwiki.com/)
+- **地图** - 展示地图资料，见 [猫鼠地图百科](https://maps.tjwiki.com/)
 
 ## ❤️ 支持本项目
 
-如果你喜欢本项目，欢迎通过 Patreon [赞助](https://patreon.com/asHOH)。
-
-特别感谢所有[赞助者](SPONSORS.md)！
+欢迎通过 Patreon [赞助](https://patreon.com/asHOH)。特别感谢所有[赞助者](SPONSORS.md)！
 
 ## 🛠️ 技术栈
 
@@ -59,23 +56,10 @@
 
 ## 💻 本地开发
 
-## 🚢 部署
-
-部署教程（含 Docker / Vercel / Cloudflare Tunnel / 公网 IP + 80/443）见 [DEPLOY.md](DEPLOY.md)。
-
 ### 环境要求
 
-| 配置文件 / 依赖 | 变量名 / 版本要求                             | 说明                                                                              |
-| :-------------- | :-------------------------------------------- | :-------------------------------------------------------------------------------- |
-| **Node.js**     | 以 `package.json` 的 `engines.node` 为准      | 运行环境版本要求                                                                  |
-| **npm**         | `11.20.0`                                     | 包管理器版本要求                                                                  |
-| **.env.local**  | `NEXT_PUBLIC_SUPABASE_URL`                    | Supabase 项目 URL                                                                 |
-|                 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`        | Supabase Publishable key                                                          |
-|                 | `SUPABASE_SECRET_KEY`                         | Supabase Secret key                                                               |
-|                 | `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN` | -                                                                                 |
-|                 | `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS`         | 默认情况下仅在 Vercel 生产环境启用，设为 0 强制禁用或 1 强制启用 Vercel Analytics |
-|                 | `NEXT_PUBLIC_ICP_RECORD_NUMBER`               | 可选，设置后在网站页脚显示ICP备案号并链接至工信部备案管理系统                     |
-|                 | `FLOWKEY`                                     | 可选，为TJWiki MCP Server提供数据流转支持，默认情况下不填写此项则不开启它         |
+- **Node.js**：版本以 [package.json](package.json) 的 `engines.node` 为准。
+- **npm**：使用 `packageManager` 声明的版本（当前为 `11.20.0`），并满足 `devEngines` 要求。
 
 ### 开发步骤
 
@@ -94,7 +78,11 @@
 
     只有在需要变更依赖版本并更新 `package-lock.json` 时，才使用 `npm install`。
 
-3.  **启动开发服务器**:
+3.  **配置环境变量**:
+
+    将 [`.env.example`](.env.example) 复制为 `.env.local`，并按文件内注释配置。
+
+4.  **启动开发服务器**:
     ```bash
     npm run dev
     ```
@@ -108,40 +96,25 @@ npm run dev             # 启动开发服务器
 npm run build           # 构建生产版本
 npm run start           # 启动生产服务器
 
-# 代码质量
+# 验证
 npm run lint            # 运行 Oxlint
-npm run lint:fix        # 修复 Oxlint 问题
-npm run format          # 格式化代码 (Prettier + Oxlint)
+npm run prettier:check  # 检查格式
 npm run type-check      # TypeScript 类型检查
-
-# 测试
-npm test                # 运行测试
-npm run test:watch      # 监视模式
-npm run test:coverage   # 生成覆盖率报告
-npm run test:ci         # CI 优化测试
-
-# 工具
-npm run clean           # 清理构建产物
-npm run analyze         # Turbopack 包分析（默认端口 4000）
-npm run analyze -- --output # 仅保存分析结果到 .next/diagnostics/analyze
+npm test                # 应用测试
+npm run test:scripts    # 脚本测试
 ```
+
+其他命令见 [package.json](package.json) 的 `scripts`。
+
+## 🚢 部署
+
+部署教程（含 Docker / Vercel / Cloudflare Tunnel / 公网 IP + 80/443）见 [DEPLOY.md](DEPLOY.md)。
 
 ## 🤝 一起完善这个项目吧
 
 **方法一** - 加入[QQ交流群](#-社区交流)
 
-**方法二** - 直接贡献代码
-
-1. **Fork** 本仓库。
-2. 基于 `develop` 分支创建新的 feature 分支，并进行开发:
-
-   ```bash
-   git checkout develop
-   git checkout -b feature/your-feature-name
-   ```
-
-3. 提交 Pull Request 到 `develop` 分支。提交前，建议运行 `npm run lint`、
-   `npm run type-check` 和 `npm test`。
+**方法二** - 直接提交PR
 
 ## 📁 项目结构
 
@@ -153,14 +126,15 @@ npm run analyze -- --output # 仅保存分析结果到 .next/diagnostics/analyze
 ├── src/
 │   ├── app/            # Next.js App Router 页面与 API 路由
 │   ├── components/     # React 组件
-│   │   ├── ui/         # 基础 UI 组件
-│   │   └── displays/   # 复杂展示组件
+│   │   └── ui/         # 基础 UI 组件
 │   ├── constants/      # 全局常量
 │   ├── context/        # React Context 提供者
 │   ├── data/           # 核心数据与类型定义
-│   ├── lib/            # 工具函数与业务逻辑
-│   └── supabase/       # Supabase 客户端（browser/server/admin）
+│   ├── features/       # 按业务领域组织的功能模块
+│   └── lib/            # 工具函数与业务逻辑
+│       └── supabase/   # Supabase 客户端（browser/server/public/admin）
 ├── scripts/            # 工具脚本
+├── supabase/migrations/ # 数据库迁移
 ├── README.md           # 项目说明
 └── package.json        # 项目依赖与脚本
 ```

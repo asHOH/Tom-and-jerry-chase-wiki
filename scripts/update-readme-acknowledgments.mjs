@@ -106,15 +106,14 @@ async function updateReadmeAcknowledgments() {
     let readmeContent = readFileSync(readmePath, 'utf-8');
 
     // Find and replace the acknowledgments section
-    const startMarker = '**特别鸣谢:**';
-    const endMarker = '\n---';
+    const startMarker = '## 🙏 特别鸣谢';
+    const endMarker = '\n**再次感谢所有为项目作出贡献的玩家和开发者！**';
 
     const startIndex = readmeContent.indexOf(startMarker);
     const endIndex = readmeContent.indexOf(endMarker, startIndex);
 
     if (startIndex === -1 || endIndex === -1) {
-      console.error('Could not find acknowledgments section markers in README.md');
-      return;
+      throw new Error('Could not find acknowledgments section markers in README.md');
     }
 
     const beforeSection = readmeContent.substring(0, startIndex + startMarker.length);
