@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
 import type { EditSession } from '@/lib/edit/editSession';
 import { EditModeContext } from '@/context/EditModeContext';
@@ -154,4 +154,119 @@ it('reflects draft changes made outside the text fields', async () => {
   expect(screen.getByLabelText('描述')).toHaveValue('updated description');
   expect(screen.getByLabelText('成员名称')).toHaveValue('Jerry');
   expect(screen.getByLabelText('特殊情况 1 描述')).toHaveValue('updated special case');
+});
+
+it('keeps a new trait open and focused when renaming updates its creation filter', async () => {
+  renderEditor();
+  fireEvent.click(screen.getByRole('button', { name: '新建特性' }));
+  const search = screen.getByPlaceholderText('搜索编号、描述或成员') as HTMLInputElement;
+  const generatedId = search.value;
+  await waitFor(() => expect(screen.getByLabelText('特性编号')).toHaveValue(generatedId));
+  const { input, details } = openCard();
+  const description = screen.getByLabelText('描述');
+  act(() => input.focus());
+  fireEvent.change(input, { target: { value: '新的特性' } });
+  await act(async () => description.focus());
+
+  expect(screen.getByLabelText('特性编号')).toBe(input);
+  expect(input).toHaveValue('新的特性');
+  expect(details.open).toBe(true);
+  expect(description).toHaveFocus();
+  expect(search).toHaveValue('新的特性');
+  fireEvent.change(description, { target: { value: '重命名后继续编辑' } });
+  await act(async () => {});
+  expect(session.readDomain('traits')['新的特性']?.description).toBe('重命名后继续编辑');
+  expect(session.readDomain('traits')[generatedId]).toBeUndefined();
+});
+
+it.each(['', 'orig', ' ORIGINAL '])(
+  'preserves an existing card across repeated renames with filter %j',
+  async (query) => {
+    renderEditor();
+    const search = screen.getByPlaceholderText('搜索编号、描述或成员');
+    fireEvent.change(search, { target: { value: query } });
+    const { input, details } = openCard();
+    const description = screen.getByLabelText('描述');
+    for (const nextId of ['renamed-trait', 'renamed-again', 'original']) {
+      act(() => input.focus());
+      fireEvent.change(input, { target: { value: nextId } });
+      await act(async () => description.focus());
+      expect(screen.getByLabelText('特性编号')).toBe(input);
+      expect(input).toHaveValue(nextId);
+      expect(details.open).toBe(true);
+      expect(description).toHaveFocus();
+      expect(session.readDomain('traits')[nextId]).toEqual(baseline.original);
+      expect(Object.keys(session.readDomain('traits'))).toEqual([nextId]);
+    }
+    expect(search).toHaveValue(query === ' ORIGINAL ' ? 'original' : query);
+  }
+);
+
+it.each([' ', 'taken'])(
+  'preserves the editor and data when rename %j is invalid',
+  async (value) => {
+    session.updateDomain('traits', (traits) => {
+      traits.taken = { description: 'existing trait', group: [] };
+    });
+    renderEditor();
+    const search = screen.getByPlaceholderText('搜索编号、描述或成员');
+    fireEvent.change(search, { target: { value: 'original' } });
+    const { input, details } = openCard();
+    const description = screen.getByLabelText('描述');
+    act(() => input.focus());
+    fireEvent.change(input, { target: { value } });
+    await act(async () => description.focus());
+    expect(input).toHaveValue('original');
+    expect(details.open).toBe(true);
+    expect(description).toHaveFocus();
+    expect(search).toHaveValue('original');
+    expect(session.readDomain('traits').original).toEqual(baseline.original);
+    expect(session.readDomain('traits').taken).toEqual({
+      description: 'existing trait',
+      group: [],
+    });
+  }
+);
+
+it('preserves focus when renaming reorders a card among visible siblings', async () => {
+  session.updateDomain('traits', (traits) => {
+    traits.sibling = { description: 'sibling description', group: [] };
+  });
+  renderEditor();
+  const input = screen.getByDisplayValue('original');
+  const details = input.closest('details')!;
+  details.open = true;
+  const description = within(details).getByLabelText('描述');
+  act(() => input.focus());
+  fireEvent.change(input, { target: { value: 'renamed-trait' } });
+  await act(async () => description.focus());
+  expect(screen.getByDisplayValue('renamed-trait')).toBe(input);
+  expect(details.open).toBe(true);
+  expect(description).toHaveFocus();
+  expect(screen.getByDisplayValue('sibling description')).toBeInTheDocument();
+});
+
+it('keeps distinct cards when a new trait reuses a renamed trait ID', async () => {
+  renderEditor();
+  const search = screen.getByPlaceholderText('搜索编号、描述或成员') as HTMLInputElement;
+  fireEvent.click(screen.getByRole('button', { name: '新建特性' }));
+  const generatedId = search.value;
+  await waitFor(() => expect(screen.getByLabelText('特性编号')).toHaveValue(generatedId));
+  const { input } = openCard();
+  act(() => input.focus());
+  fireEvent.change(input, { target: { value: 'renamed-trait' } });
+  await act(async () => input.blur());
+  fireEvent.click(screen.getByRole('button', { name: '新建特性' }));
+  await waitFor(() => expect(screen.getByLabelText('特性编号')).toHaveValue(generatedId));
+  fireEvent.change(search, { target: { value: '' } });
+  expect(screen.getAllByLabelText('特性编号')).toHaveLength(3);
+
+  for (const id of ['renamed-trait', generatedId]) {
+    const details = screen.getByDisplayValue(id).closest('details')!;
+    details.open = true;
+    fireEvent.change(within(details).getByLabelText('描述'), { target: { value: id } });
+    await act(async () => {});
+  }
+  expect(session.readDomain('traits')['renamed-trait']?.description).toBe('renamed-trait');
+  expect(session.readDomain('traits')[generatedId]?.description).toBe(generatedId);
 });

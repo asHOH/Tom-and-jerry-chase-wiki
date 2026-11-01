@@ -231,12 +231,14 @@ function TraitCard({
   traits,
   updateTraits,
   onFocus,
+  onRename,
 }: {
   traitId: string;
   trait: DeepReadonly<Trait>;
   traits: DeepReadonly<Record<string, Trait>>;
   updateTraits: EditableUpdate<Record<string, Trait>>;
   onFocus: () => void;
+  onRename: (nextId: string) => void;
 }) {
   const { error, info } = useToast();
   const [draftId, setDraftId] = useState(traitId);
@@ -271,6 +273,7 @@ function TraitCard({
       draft[nextId] = current;
       delete draft[traitId];
     });
+    onRename(nextId);
     info(`已将特性重命名为 ${nextId}`);
   };
 
@@ -444,6 +447,7 @@ export default function TraitEditor({
   const [traits, updateTraits] = useEditableDomain('traits', traitsSnapshot);
   const [query, setQuery] = useState('');
   const [activeTraitId, setActiveTraitId] = useState<string | null>(null);
+  const [cardKeys, setCardKeys] = useState(() => new Map<string, string>());
 
   const filteredEntries = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase('zh-CN');
@@ -497,12 +501,27 @@ export default function TraitEditor({
       <div className='space-y-3'>
         {filteredEntries.map(([traitId, trait]) => (
           <TraitCard
-            key={traitId}
+            key={cardKeys.get(traitId) ?? `trait:${traitId}`}
             traitId={traitId}
             trait={trait}
             traits={traits}
             updateTraits={updateTraits}
             onFocus={() => setActiveTraitId(traitId)}
+            onRename={(nextId) => {
+              // Preserve this card and reserve a fresh key if its old ID is reused.
+              const replacementKey = crypto.randomUUID();
+              setCardKeys((keys) =>
+                new Map(keys)
+                  .set(nextId, keys.get(traitId) ?? `trait:${traitId}`)
+                  .set(traitId, replacementKey)
+              );
+              setActiveTraitId(nextId);
+              setQuery((current) =>
+                current.trim().toLocaleLowerCase('zh-CN') === traitId.toLocaleLowerCase('zh-CN')
+                  ? nextId
+                  : current
+              );
+            }}
           />
         ))}
       </div>
