@@ -48,6 +48,7 @@
     "lint:fix": "oxlint --fix",
     "lint:staged": "oxlint --fix --max-warnings=0",
     "check:database-types": "node scripts/generate-database-types.mjs --check",
+    "check:tailwind": "node scripts/check-tailwind.mjs",
     "prettier:check": "prettier --check . --cache",
     "prettier:fix": "prettier --write . --cache",
     "prettier:staged": "prettier --write --ignore-unknown --cache",

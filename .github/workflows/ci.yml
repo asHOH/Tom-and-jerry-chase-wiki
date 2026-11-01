@@ -68,6 +68,9 @@ jobs:
       - name: Run Oxlint
         run: npm run lint
 
+      - name: Check Tailwind utility classes
+        run: npm run check:tailwind
+
       - name: Run TypeScript check
         run: npm run type-check
 

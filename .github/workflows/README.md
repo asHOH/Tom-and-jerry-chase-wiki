@@ -10,7 +10,7 @@ This directory contains automated workflows for the project.
 - **Purpose**: Code quality checks and testing
 - **Jobs**:
   - Database Types: Replay migrations and verify generated Supabase types
-  - Code Quality: Prettier formatting, Oxlint, TypeScript compilation
+  - Code Quality: Actor profiles, Prettier formatting, Oxlint, Tailwind class simplifications, TypeScript compilation
   - Tests & Coverage: Run tests and generate coverage reports
 
 ### 2. **Security Audit (dependency-check.yml)**
@@ -22,9 +22,10 @@ This directory contains automated workflows for the project.
 
 All workflows ensure:
 
-- ✅ Code formatting (Prettier) - _Handled by Husky pre-commit hooks_
+- ✅ Code formatting (Prettier) - _CI and Husky pre-commit hooks_
 - ✅ Supabase database type generation remains synchronized with migrations
-- ✅ Linting (Oxlint) - _Handled by Husky pre-commit hooks_
+- ✅ Linting (Oxlint) - _CI and Husky pre-commit hooks_
+- ✅ Tailwind class simplifications (`npm run check:tailwind`) - _CI only; Git hooks unchanged_
 - ✅ Type checking (TypeScript)
 - ✅ Test execution and coverage
 - ✅ Security compliance
@@ -42,8 +43,8 @@ Security Audit ── Dependency vulnerability checks
 - **Node.js Version**: 24
 - **Package Manager**: npm
 - **Build Tool**: Next.js
-- **Deployment**: Vercel (auto-deployment)
-- **Code Quality**: Husky + lint-staged (pre-commit hooks)
+- **Deployment**: VPS + Cloudflare Tunnel (production), Vercel (development preview)
+- **Code Quality**: CI checks, plus Husky + lint-staged for existing pre-commit checks
 - **Dependency Management**: Dependabot (automated PRs)
 
 ## 📊 Status Badges
