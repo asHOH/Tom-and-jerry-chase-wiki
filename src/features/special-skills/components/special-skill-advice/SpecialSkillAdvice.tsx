@@ -96,7 +96,7 @@ export default function SpecialSkillAdviceClient({
   specialSkillsData = specialSkills,
   publishedRevision,
 }: SpecialSkillAdviceProps) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('characters', publishedRevision);
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
 
   const [specialSkillsSnapshot] = useEditableDomain('specialSkills', specialSkillsData);

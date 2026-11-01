@@ -86,7 +86,7 @@ type Props = {
 };
 
 export default function BuffClient({ description, data = buffs, publishedRevision }: Props) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('buffs', publishedRevision);
   const [selectedTypes, setSelectedTypes] = useState<('状态' | '瞬时效果' | '持续效果' | '属性')[]>(
     []
   );

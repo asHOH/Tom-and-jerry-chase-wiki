@@ -26,7 +26,7 @@ export default function SpecialSkillClient({
   data = specialSkills,
   publishedRevision,
 }: Props) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('specialSkills', publishedRevision);
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
 
   const [specialSkillsSnapshot] = useEditableDomain('specialSkills', data);

@@ -28,7 +28,7 @@ type Props = {
 };
 
 export default function KnowledgeCardGrid({ description, data = cards, publishedRevision }: Props) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('cards', publishedRevision);
   const { isEditMode } = useEditMode();
   const [cardsEditSnapshot] = useEditableDomain('cards', data);
   const {

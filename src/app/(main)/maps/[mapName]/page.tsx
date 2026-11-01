@@ -74,7 +74,13 @@ export default async function MapDetailPage({ params }: { params: Promise<{ mapN
   const modeNames = Object.keys(modes.data);
 
   return (
-    <PublishedRevisionBoundary revisions={[fixtures.revision, modes.revision, characters.revision]}>
+    <PublishedRevisionBoundary
+      revisions={{
+        fixtures: fixtures.revision,
+        modes: modes.revision,
+        characters: characters.revision,
+      }}
+    >
       <StructuredData data={generateStructuredData(mapName, map)} />
       <MapDetailClient
         map={map}

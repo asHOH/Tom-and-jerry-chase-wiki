@@ -23,7 +23,7 @@ type Props = {
 const MODE_TYPE_OPTIONS: ModeTypeList[] = ['经典模式', '休闲模式', '特殊模式', '限时模式'];
 
 export default function ModeClient({ description, data = modes, publishedRevision }: Props) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('modes', publishedRevision);
   const [selectedTypes, setSelectedTypes] = useState<ModeTypeList[]>([]);
 
   const [modesSnapshot] = useEditableDomain('modes', data);

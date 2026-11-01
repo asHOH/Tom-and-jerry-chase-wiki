@@ -36,7 +36,7 @@ const FIXTURE_TYPE_OPTIONS: FixtureTypeList[] = [
 const FIXTURE_SOURCE_OPTIONS: FixtureSourceList[] = ['通用组件', '地图组件', '模式组件'];
 
 export default function FixtureClient({ description, data = fixtures, publishedRevision }: Props) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('fixtures', publishedRevision);
   const [selectedTypes, setSelectedTypes] = useState<FixtureTypeList[]>([]);
   const [selectedSources, setSelectedSources] = useState<FixtureSourceList[]>([]);
   const isMobile = useMobile();

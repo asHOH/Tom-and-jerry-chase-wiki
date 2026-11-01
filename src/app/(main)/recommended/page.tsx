@@ -19,7 +19,9 @@ export const metadata: Metadata = generatePageMetadata({
 export default async function RecommendedPage() {
   const { data, revisions } = await getPublishedDomainsReadModel(['characters', 'maps']);
   return (
-    <PublishedRevisionBoundary revisions={[revisions.characters, revisions.maps]}>
+    <PublishedRevisionBoundary
+      revisions={{ characters: revisions.characters, maps: revisions.maps }}
+    >
       <RecommendedPageClient characters={data.characters} maps={data.maps} />
     </PublishedRevisionBoundary>
   );

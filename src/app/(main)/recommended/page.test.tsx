@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import { getPublishedDomainsReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { EditModeContext } from '@/context/EditModeContext';
 import { characters, maps } from '@/data/static';
@@ -51,7 +52,9 @@ describe('recommended page published-data projection', () => {
         },
       },
     } as never);
-    const registerPublishedRevision = jest.fn((_revision: `v1:${string}`) => jest.fn());
+    const registerPublishedRevision = jest.fn(
+      (_entityType: PublishableEntityType, _revision: `v1:${string}`) => jest.fn()
+    );
 
     render(
       <EditModeContext.Provider
@@ -72,9 +75,9 @@ describe('recommended page published-data projection', () => {
     );
     expect(screen.getByTestId('published-map')).toHaveTextContent(publishedMapDescription);
     expect(getPublishedDomainsReadModel).toHaveBeenCalledWith(['characters', 'maps']);
-    expect(registerPublishedRevision.mock.calls.map(([revision]) => revision)).toEqual([
-      'v1:characters',
-      'v1:maps',
+    expect(registerPublishedRevision.mock.calls).toEqual([
+      ['characters', 'v1:characters'],
+      ['maps', 'v1:maps'],
     ]);
   });
 });

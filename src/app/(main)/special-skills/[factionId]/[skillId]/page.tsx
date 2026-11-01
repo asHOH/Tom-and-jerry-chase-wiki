@@ -93,7 +93,7 @@ export default async function SpecialSkillDetailPage({
   }
 
   return (
-    <PublishedRevisionBoundary revisions={[characters.revision]}>
+    <PublishedRevisionBoundary revisions={{ characters: characters.revision }}>
       <StructuredData data={generateStructuredData(factionId, skillId, skill)} />
       <SpecialSkillDetailClient
         skill={skill}

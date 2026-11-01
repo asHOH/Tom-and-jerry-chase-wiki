@@ -21,7 +21,7 @@ export const metadata: Metadata = generatePageMetadata({
 export default async function PlaystyleQuizPage() {
   const characters = await getPublishedDomainReadModel('characters');
   return (
-    <PublishedRevisionBoundary revisions={[characters.revision]}>
+    <PublishedRevisionBoundary revisions={{ characters: characters.revision }}>
       <GameClient description={DESCRIPTION} characters={characters.data} />
     </PublishedRevisionBoundary>
   );

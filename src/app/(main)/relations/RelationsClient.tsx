@@ -211,7 +211,7 @@ export default function RelationsClient({
 
   useEffect(() => {
     if (!publishedRevision) return undefined;
-    return registerPublishedRevision(publishedRevision);
+    return registerPublishedRevision('characters', publishedRevision);
   }, [publishedRevision, registerPublishedRevision]);
 
   useEffect(() => {

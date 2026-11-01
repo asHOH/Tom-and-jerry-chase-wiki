@@ -2,13 +2,17 @@
 
 import { useEffect } from 'react';
 
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import { useEditMode } from '@/context/EditModeContext';
 
-export function usePublishedRevision(revision?: `v1:${string}`): void {
+export function usePublishedRevision(
+  entityType: PublishableEntityType,
+  revision?: `v1:${string}`
+): void {
   const { registerPublishedRevision } = useEditMode();
 
   useEffect(() => {
     if (!revision) return undefined;
-    return registerPublishedRevision(revision);
-  }, [registerPublishedRevision, revision]);
+    return registerPublishedRevision(entityType, revision);
+  }, [entityType, registerPublishedRevision, revision]);
 }

@@ -63,7 +63,7 @@ export default async function StatShowdownModePage({ params }: Props) {
   const characters = await getPublishedDomainReadModel('characters');
 
   return (
-    <PublishedRevisionBoundary revisions={[characters.revision]}>
+    <PublishedRevisionBoundary revisions={{ characters: characters.revision }}>
       <GameClient
         mode={gameMode}
         description={meta.description}

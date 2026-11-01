@@ -75,7 +75,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
 
   useEffect(() => {
     if (!props.publishedRevision) return undefined;
-    return registerPublishedRevision(props.publishedRevision);
+    return registerPublishedRevision('characters', props.publishedRevision);
   }, [props.publishedRevision, registerPublishedRevision]);
 
   const handlePublish = useCallback(

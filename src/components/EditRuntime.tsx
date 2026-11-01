@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { clearActiveEditSession, installActiveEditSession } from '@/lib/edit/activeEditSession';
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
@@ -10,7 +10,10 @@ import {
   PUBLISHABLE_ENTITY_TYPES,
   type PublishableEntityType,
 } from '@/lib/gameData/publishableEntityTypes';
-import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import type {
+  PublishedDomainRevision,
+  PublishedGameDataByType,
+} from '@/lib/gameData/published/types';
 import Button from '@/components/ui/Button';
 
 type EditBaselineResponse = {
@@ -24,7 +27,7 @@ type EditBaselineErrorResponse = {
 };
 
 type EditRuntimeProps = {
-  visibleRevisions: readonly `v1:${string}`[];
+  visibleRevisions: readonly PublishedDomainRevision[];
   onStatusChange: (status: EditRuntimeStatus, error?: string) => void;
   onRetry: () => void;
 };
@@ -49,24 +52,61 @@ function isEditBaselineResponse(value: unknown): value is EditBaselineResponse {
   );
 }
 
+async function fetchEditBaseline(
+  signal: AbortSignal,
+  visibleRevisions?: readonly PublishedDomainRevision[]
+): Promise<EditBaselineResponse> {
+  const response = await fetch('/api/game-data-actions/edit-baseline', {
+    method: 'POST',
+    cache: 'no-store',
+    signal,
+    ...(visibleRevisions
+      ? {
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ visibleRevisions }),
+        }
+      : {}),
+  });
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as EditBaselineErrorResponse | null;
+    const fallbackMessages: Record<number, string> = {
+      403: '编辑数据刷新请求来源无效',
+      429: '编辑数据刷新过于频繁，请稍后重试',
+    };
+    throw new Error(
+      body?.error ?? fallbackMessages[response.status] ?? `加载编辑数据失败 (${response.status})`
+    );
+  }
+  const body: unknown = await response.json();
+  if (!isEditBaselineResponse(body)) throw new Error('编辑数据响应格式无效');
+  return body;
+}
+
 export default function EditRuntime({
   visibleRevisions,
   onStatusChange,
   onRetry,
 }: EditRuntimeProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [baseline, setBaseline] = useState<EditBaselineResponse | null>(null);
   const [status, setStatus] = useState<EditRuntimeStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isRefreshing, startRefreshTransition] = useTransition();
-  const refreshAttemptedForRevisionRef = useRef<string | null>(null);
-  const visibleRevisionKey = [...new Set(visibleRevisions)].sort().join(',');
+  const refreshAttemptedForPathRef = useRef<string | null>(null);
+  const [recoveryStatus, setRecoveryStatus] = useState<'idle' | 'pending' | 'complete' | 'failed'>(
+    'idle'
+  );
+  const recoveryControllerRef = useRef<AbortController | null>(null);
+  const visibleRevisionKey = visibleRevisions
+    .map(({ entityType, revision }) => `${entityType}:${revision}`)
+    .sort()
+    .join(',');
   const baselineMatches =
     !!baseline &&
     visibleRevisions.length > 0 &&
     visibleRevisions.every(
-      (revision) =>
-        revision === baseline.revision || Object.values(baseline.domainRevisions).includes(revision)
+      ({ entityType, revision }) => revision === baseline.domainRevisions[entityType]
     );
   const sawRefreshPendingRef = useRef(false);
   const activeRuntimeRef = useRef<EditSession | null>(null);
@@ -83,31 +123,9 @@ export default function EditRuntime({
     const controller = new AbortController();
 
     reportStatus('loading');
-    void fetch('/api/game-data-actions/edit-baseline', {
-      method: 'POST',
-      cache: 'no-store',
-      signal: controller.signal,
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const body = (await response
-            .json()
-            .catch(() => null)) as EditBaselineErrorResponse | null;
-          const fallbackMessages: Record<number, string> = {
-            403: '编辑数据刷新请求来源无效',
-            429: '编辑数据刷新过于频繁，请稍后重试',
-          };
-          throw new Error(
-            body?.error ??
-              fallbackMessages[response.status] ??
-              `加载编辑数据失败 (${response.status})`
-          );
-        }
-        const body: unknown = await response.json();
-        if (!isEditBaselineResponse(body)) {
-          throw new Error('编辑数据响应格式无效');
-        }
-        setBaseline(body);
+    void fetchEditBaseline(controller.signal)
+      .then((body) => {
+        if (!controller.signal.aborted) setBaseline(body);
       })
       .catch((error: unknown) => {
         if (controller.signal.aborted) return;
@@ -127,11 +145,35 @@ export default function EditRuntime({
   }, [baseline, reportStatus, visibleRevisionKey]);
 
   useEffect(() => {
-    if (!baseline || !visibleRevisionKey) return;
+    if (
+      !baseline ||
+      !visibleRevisionKey ||
+      recoveryStatus === 'pending' ||
+      recoveryStatus === 'failed'
+    )
+      return;
 
     if (!baselineMatches) {
-      if (refreshAttemptedForRevisionRef.current !== visibleRevisionKey) {
-        refreshAttemptedForRevisionRef.current = visibleRevisionKey;
+      if (!activeRuntimeRef.current && recoveryStatus === 'idle') {
+        const controller = new AbortController();
+        recoveryControllerRef.current = controller;
+        setRecoveryStatus('pending');
+        reportStatus('refreshing');
+        void fetchEditBaseline(controller.signal, visibleRevisions)
+          .then((body) => {
+            if (controller.signal.aborted) return;
+            setBaseline(body);
+            setRecoveryStatus('complete');
+          })
+          .catch((error: unknown) => {
+            if (controller.signal.aborted) return;
+            setRecoveryStatus('failed');
+            reportStatus('error', error instanceof Error ? error.message : '刷新编辑数据失败');
+          });
+        return;
+      }
+      if (refreshAttemptedForPathRef.current !== pathname) {
+        refreshAttemptedForPathRef.current = pathname;
         sawRefreshPendingRef.current = false;
         reportStatus('refreshing');
         startRefreshTransition(() => router.refresh());
@@ -139,7 +181,7 @@ export default function EditRuntime({
       return;
     }
 
-    refreshAttemptedForRevisionRef.current = null;
+    refreshAttemptedForPathRef.current = null;
     sawRefreshPendingRef.current = false;
     if (activeRuntimeRef.current) {
       reportStatus('ready');
@@ -155,14 +197,25 @@ export default function EditRuntime({
     } catch (error) {
       reportStatus('error', error instanceof Error ? error.message : '恢复本地编辑草稿失败');
     }
-  }, [baseline, baselineMatches, reportStatus, router, visibleRevisionKey]);
+  }, [
+    baseline,
+    baselineMatches,
+    pathname,
+    recoveryStatus,
+    reportStatus,
+    router,
+    visibleRevisionKey,
+    visibleRevisions,
+  ]);
 
   useEffect(() => {
     if (
       !baseline ||
       !visibleRevisionKey ||
       baselineMatches ||
-      refreshAttemptedForRevisionRef.current !== visibleRevisionKey
+      recoveryStatus === 'pending' ||
+      recoveryStatus === 'failed' ||
+      refreshAttemptedForPathRef.current !== pathname
     ) {
       return undefined;
     }
@@ -171,20 +224,28 @@ export default function EditRuntime({
       reportStatus('error', '页面数据版本与编辑基线仍不一致，请重试');
     }, 5000);
     return () => window.clearTimeout(timeout);
-  }, [baseline, baselineMatches, reportStatus, visibleRevisionKey]);
+  }, [baseline, baselineMatches, pathname, recoveryStatus, reportStatus, visibleRevisionKey]);
 
   useEffect(() => {
     if (isRefreshing) {
       sawRefreshPendingRef.current = true;
       return;
     }
-    if (sawRefreshPendingRef.current && baseline && visibleRevisionKey && !baselineMatches) {
+    if (
+      sawRefreshPendingRef.current &&
+      baseline &&
+      visibleRevisionKey &&
+      !baselineMatches &&
+      recoveryStatus !== 'pending' &&
+      recoveryStatus !== 'failed'
+    ) {
       reportStatus('error', '页面数据版本与编辑基线仍不一致，请重试');
     }
-  }, [baseline, baselineMatches, isRefreshing, reportStatus, visibleRevisionKey]);
+  }, [baseline, baselineMatches, isRefreshing, recoveryStatus, reportStatus, visibleRevisionKey]);
 
   useEffect(
     () => () => {
+      recoveryControllerRef.current?.abort();
       const runtime = activeRuntimeRef.current;
       if (!runtime) return;
       clearActiveEditSession(runtime);

@@ -14,6 +14,9 @@ import dynamic from 'next/dynamic';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
+import type { PublishedRevision } from '@/lib/gameData/published/revision';
+import type { PublishedDomainRevision } from '@/lib/gameData/published/types';
 import { storage, StorageKey } from '@/lib/localStorage';
 import { isEditModeSearchParamEnabled } from '@/hooks/useSearchParamEditMode';
 import { editRuntimeModule } from '@/components/panelModules';
@@ -38,9 +41,12 @@ type EditModeContextType = {
   /** Set preview mode. */
   setIsPreviewMode: (value: boolean) => void;
   /** Revisions of all published domains used by the visible route and its layouts. */
-  publishedRevisions?: readonly `v1:${string}`[];
+  publishedRevisions?: readonly PublishedDomainRevision[];
   /** Register the revision carried by an edit-capable route shell. */
-  registerPublishedRevision: (revision: `v1:${string}`) => () => void;
+  registerPublishedRevision: (
+    entityType: PublishableEntityType,
+    revision: PublishedRevision
+  ) => () => void;
   /** Retry lazy runtime initialization after a recoverable failure. */
   retryEditRuntime: () => void;
 };
@@ -68,10 +74,18 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   const searchParams = useSearchParams();
   const [runtimeStatus, setRuntimeStatus] = useState<EditRuntimeStatus>('idle');
   const [runtimeError, setRuntimeError] = useState<string | undefined>();
-  const [revisionCounts, setRevisionCounts] = useState<ReadonlyMap<`v1:${string}`, number>>(
-    () => new Map()
+  const [revisionCounts, setRevisionCounts] = useState<
+    ReadonlyMap<PublishableEntityType, ReadonlyMap<PublishedRevision, number>>
+  >(() => new Map());
+  const visibleRevisions = useMemo(
+    () =>
+      [...revisionCounts.entries()]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .flatMap(([entityType, revisions]) =>
+          [...revisions.keys()].sort().map((revision) => ({ entityType, revision }))
+        ),
+    [revisionCounts]
   );
-  const visibleRevisions = useMemo(() => [...revisionCounts.keys()].sort(), [revisionCounts]);
   const [retryKey, setRetryKey] = useState(0);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const previousPathnameRef = useRef(pathname);
@@ -122,22 +136,30 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isEditModeRequested]);
 
-  const registerPublishedRevision = useCallback((revision: `v1:${string}`) => {
-    setRevisionCounts((current) => {
-      const next = new Map(current);
-      next.set(revision, (next.get(revision) ?? 0) + 1);
-      return next;
-    });
-    return () => {
+  const registerPublishedRevision = useCallback(
+    (entityType: PublishableEntityType, revision: PublishedRevision) => {
       setRevisionCounts((current) => {
         const next = new Map(current);
-        const count = next.get(revision) ?? 0;
-        if (count <= 1) next.delete(revision);
-        else next.set(revision, count - 1);
+        const revisions = new Map(next.get(entityType));
+        revisions.set(revision, (revisions.get(revision) ?? 0) + 1);
+        next.set(entityType, revisions);
         return next;
       });
-    };
-  }, []);
+      return () => {
+        setRevisionCounts((current) => {
+          const next = new Map(current);
+          const revisions = new Map(next.get(entityType));
+          const count = revisions.get(revision) ?? 0;
+          if (count <= 1) revisions.delete(revision);
+          else revisions.set(revision, count - 1);
+          if (revisions.size === 0) next.delete(entityType);
+          else next.set(entityType, revisions);
+          return next;
+        });
+      };
+    },
+    []
+  );
 
   const handleRuntimeStatusChange = useCallback((status: EditRuntimeStatus, error?: string) => {
     if (status === 'ready') {

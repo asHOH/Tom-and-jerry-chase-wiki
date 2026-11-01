@@ -72,7 +72,7 @@ export default async function ModeDetailPage({
   }
 
   return (
-    <PublishedRevisionBoundary revisions={[maps.revision, characters.revision]}>
+    <PublishedRevisionBoundary revisions={{ maps: maps.revision, characters: characters.revision }}>
       <StructuredData data={generateStructuredData(modeName, mode)} />
       <ModeDetailClient
         mode={mode}

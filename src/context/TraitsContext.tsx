@@ -22,7 +22,7 @@ export function TraitsProvider({
   revision: `v1:${string}`;
   children: ReactNode;
 }) {
-  usePublishedRevision(revision);
+  usePublishedRevision('traits', revision);
   return <TraitsContext value={data}>{children}</TraitsContext>;
 }
 

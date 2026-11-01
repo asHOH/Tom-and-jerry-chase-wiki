@@ -2,6 +2,7 @@ import { useSearchParams } from 'next/navigation';
 import { render, screen, waitFor } from '@testing-library/react';
 
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import { StorageKey } from '@/lib/localStorage';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
@@ -38,13 +39,21 @@ function EditModeProbe() {
       data-testid='edit-mode-state-probe'
       data-edit-mode={String(isEditMode)}
       data-loading={String(isLoading)}
-      data-revisions={publishedRevisions?.join(',')}
+      data-revisions={publishedRevisions
+        ?.map(({ entityType, revision }) => `${entityType}:${revision}`)
+        .join(',')}
     />
   );
 }
 
-function PageRevision({ revision }: { revision: `v1:${string}` }) {
-  usePublishedRevision(revision);
+function PageRevision({
+  entityType,
+  revision,
+}: {
+  entityType: PublishableEntityType;
+  revision: `v1:${string}`;
+}) {
+  usePublishedRevision(entityType, revision);
   return null;
 }
 
@@ -79,9 +88,9 @@ describe('EditModeContext', () => {
   it('tracks layout and page dependencies, preserving duplicate registrations on unmount', async () => {
     const page = (showDuplicate: boolean, revision: `v1:${string}`) => (
       <EditModeProvider>
-        <PublishedRevisionBoundary revisions={['v1:traits', 'v1:maps']}>
-          <PageRevision revision={revision} />
-          {showDuplicate ? <PageRevision revision='v1:maps' /> : null}
+        <PublishedRevisionBoundary revisions={{ traits: 'v1:traits', maps: 'v1:maps' }}>
+          <PageRevision entityType='items' revision={revision} />
+          {showDuplicate ? <PageRevision entityType='maps' revision='v1:maps' /> : null}
           <EditModeProbe />
         </PublishedRevisionBoundary>
       </EditModeProvider>
@@ -90,14 +99,38 @@ describe('EditModeContext', () => {
     await waitFor(() =>
       expect(screen.getByTestId('edit-mode-state-probe')).toHaveAttribute(
         'data-revisions',
-        'v1:items,v1:maps,v1:traits'
+        'items:v1:items,maps:v1:maps,traits:v1:traits'
       )
     );
-    view.rerender(page(false, 'v1:characters'));
+    view.rerender(page(false, 'v1:new-items'));
     await waitFor(() =>
       expect(screen.getByTestId('edit-mode-state-probe')).toHaveAttribute(
         'data-revisions',
-        'v1:characters,v1:maps,v1:traits'
+        'items:v1:new-items,maps:v1:maps,traits:v1:traits'
+      )
+    );
+  });
+
+  it('keeps conflicting versions of the same domain visible until the stale boundary leaves', async () => {
+    const page = (showStale: boolean) => (
+      <EditModeProvider>
+        <PageRevision entityType='traits' revision='v1:current' />
+        {showStale ? <PageRevision entityType='traits' revision='v1:stale' /> : null}
+        <EditModeProbe />
+      </EditModeProvider>
+    );
+    const view = render(page(true));
+    await waitFor(() =>
+      expect(screen.getByTestId('edit-mode-state-probe')).toHaveAttribute(
+        'data-revisions',
+        'traits:v1:current,traits:v1:stale'
+      )
+    );
+    view.rerender(page(false));
+    await waitFor(() =>
+      expect(screen.getByTestId('edit-mode-state-probe')).toHaveAttribute(
+        'data-revisions',
+        'traits:v1:current'
       )
     );
   });

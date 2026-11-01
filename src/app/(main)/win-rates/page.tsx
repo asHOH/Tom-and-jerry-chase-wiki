@@ -25,7 +25,7 @@ export default async function WinRatesPage() {
   const characters = await getPublishedDomainReadModel('characters');
   const characterLookup = buildWinRateCharacterLookup(Object.values(characters.data));
   return (
-    <PublishedRevisionBoundary revisions={[characters.revision]}>
+    <PublishedRevisionBoundary revisions={{ characters: characters.revision }}>
       <WinRatesClient description={DESCRIPTION} characterLookup={characterLookup} />
     </PublishedRevisionBoundary>
   );

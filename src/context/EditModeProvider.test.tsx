@@ -3,6 +3,7 @@ import { useSearchParams } from 'next/navigation';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
+import type { PublishedDomainRevision } from '@/lib/gameData/published/types';
 import { StorageKey } from '@/lib/localStorage';
 
 import { EditModeProvider, useEditMode } from './EditModeContext';
@@ -24,7 +25,7 @@ jest.mock('@/components/EditRuntime', () => ({
     onStatusChange,
     onRetry,
   }: {
-    visibleRevisions: readonly `v1:${string}`[];
+    visibleRevisions: readonly PublishedDomainRevision[];
     onStatusChange: (status: EditRuntimeStatus) => void;
     onRetry: () => void;
   }) {
@@ -54,7 +55,7 @@ function EditModeProbe({ revision }: { revision?: `v1:${string}` }) {
 
   useEffect(() => {
     if (!revision) return undefined;
-    return registerPublishedRevision(revision);
+    return registerPublishedRevision('characters', revision);
   }, [registerPublishedRevision, revision]);
 
   return (
@@ -115,7 +116,9 @@ describe('EditModeProvider', () => {
       expect(screen.getByTestId('edit-mode-probe')).toHaveAttribute('data-edit-mode', 'true');
     });
     expect(screen.getByTestId('edit-runtime')).toBeInTheDocument();
-    expect(mockRuntimeRender).toHaveBeenLastCalledWith(['v1:visible']);
+    expect(mockRuntimeRender).toHaveBeenLastCalledWith([
+      { entityType: 'characters', revision: 'v1:visible' },
+    ]);
     expect(window.localStorage.getItem(StorageKey.EditMode)).toBe('true');
     expect(Number(window.localStorage.getItem(StorageKey.EditModeEnabledAt))).toBeGreaterThan(0);
   });

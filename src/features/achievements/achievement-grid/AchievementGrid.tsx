@@ -24,7 +24,7 @@ export default function AchievementGridClient({
   data = achievements,
   publishedRevision,
 }: AchievementGridProps) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('achievements', publishedRevision);
   const [selectedFactions, setSelectedFactions] = useState<FactionId[]>([]);
 
   const [achievementsSnapshot] = useEditableDomain('achievements', data);

@@ -87,8 +87,8 @@ export default function EditModePageShell({
 
   useEffect(() => {
     if (!publishedRevision) return undefined;
-    return registerPublishedRevision(publishedRevision);
-  }, [publishedRevision, registerPublishedRevision]);
+    return registerPublishedRevision(entityType, publishedRevision);
+  }, [entityType, publishedRevision, registerPublishedRevision]);
 
   const editModeContextValue = useMemo(
     () => ({

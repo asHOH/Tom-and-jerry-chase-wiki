@@ -1,3 +1,4 @@
+/** @jest-environment node */
 import type { NextRequest } from 'next/server';
 
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
@@ -46,22 +47,23 @@ const freshSnapshot = {
   actionRevision: 'v1:fresh-actions' as const,
   rows: [],
 };
+const revision = (digit: string): `v1:${string}` => `v1:${digit.repeat(64)}`;
 const publishedSnapshot = {
   revision: 'v1:published' as const,
   actionRevision: 'v1:fresh-actions' as const,
   buildIdentity: 'build',
   domainRevisions: {
-    achievements: 'v1:achievements',
-    buffs: 'v1:buffs',
-    cards: 'v1:cards',
-    characters: 'v1:characters',
-    entities: 'v1:entities',
-    fixtures: 'v1:fixtures',
-    items: 'v1:items',
-    maps: 'v1:maps',
-    modes: 'v1:modes',
-    specialSkills: 'v1:specialSkills',
-    traits: 'v1:traits',
+    achievements: revision('7'),
+    buffs: revision('1'),
+    cards: revision('0'),
+    characters: revision('9'),
+    entities: revision('a'),
+    fixtures: revision('3'),
+    items: revision('2'),
+    maps: revision('4'),
+    modes: revision('5'),
+    specialSkills: revision('6'),
+    traits: revision('8'),
   } as const,
   data: {
     achievements: { cat: {}, mouse: {} },
@@ -78,11 +80,23 @@ const publishedSnapshot = {
   },
 };
 
-function createRequest(origin?: string, requestOrigin = 'https://dev.tjwiki.com'): NextRequest {
-  return {
-    headers: new Headers(origin === undefined ? {} : { Origin: origin }),
-    nextUrl: new URL(`${requestOrigin}/api/game-data-actions/edit-baseline`),
-  } as NextRequest;
+function createRequest(
+  origin?: string,
+  requestOrigin = 'https://dev.tjwiki.com',
+  body?: unknown
+): NextRequest {
+  const url = new URL(`${requestOrigin}/api/game-data-actions/edit-baseline`);
+  return Object.assign(
+    new Request(url, {
+      method: 'POST',
+      headers: {
+        ...(origin === undefined ? {} : { Origin: origin }),
+        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+      },
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    }),
+    { nextUrl: url }
+  ) as NextRequest;
 }
 
 describe('/api/game-data-actions/edit-baseline', () => {
@@ -174,12 +188,120 @@ describe('/api/game-data-actions/edit-baseline', () => {
     expect(mockInvalidatePublicCache).not.toHaveBeenCalled();
   });
 
+  it('accepts an ordinary empty POST represented as a stream by the Node adapter', async () => {
+    const url = new URL('https://www.tjwiki.com/api/game-data-actions/edit-baseline/');
+    const request = Object.assign(
+      new Request(url, {
+        method: 'POST',
+        headers: { Origin: url.origin },
+        body: '',
+      }),
+      { nextUrl: url }
+    ) as NextRequest;
+    request.headers.delete('content-type');
+    expect(request.body).not.toBeNull();
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+    expect(mockInvalidatePublicCache).not.toHaveBeenCalled();
+  });
+
+  it('rejects recovery bodies with an unsupported content type', async () => {
+    const request = createRequest('https://www.tjwiki.com', undefined, { visibleRevisions: [] });
+    request.headers.set('content-type', 'text/plain');
+    expect((await POST(request)).status).toBe(415);
+    expect(mockGetFreshSnapshot).not.toHaveBeenCalled();
+    expect(mockInvalidatePublicCache).not.toHaveBeenCalled();
+  });
+
+  it('rejects malformed JSON without expiring any cache', async () => {
+    const request = Object.assign(
+      new Request('https://www.tjwiki.com/api/game-data-actions/edit-baseline/', {
+        method: 'POST',
+        headers: { Origin: 'https://www.tjwiki.com', 'Content-Type': 'application/json' },
+        body: '{',
+      }),
+      { nextUrl: new URL('https://www.tjwiki.com/api/game-data-actions/edit-baseline/') }
+    ) as NextRequest;
+    expect((await POST(request)).status).toBe(400);
+    expect(mockGetFreshSnapshot).not.toHaveBeenCalled();
+    expect(mockInvalidatePublicCache).not.toHaveBeenCalled();
+  });
+
   it('allows the configured public origin behind a reverse proxy', async () => {
     const response = await POST(createRequest('https://www.tjwiki.com', 'https://localhost:3000'));
 
     expect(response.status).toBe(200);
     expect(mockGetFreshSnapshot).toHaveBeenCalledTimes(1);
     expect(mockGetPublishedSnapshot).toHaveBeenCalledWith(freshSnapshot);
+  });
+
+  it('expires only mismatched domains, deduplicating repeated registrations', async () => {
+    const response = await POST(
+      createRequest('https://www.tjwiki.com', undefined, {
+        visibleRevisions: [
+          { entityType: 'characters', revision: revision('f') },
+          { entityType: 'traits', revision: publishedSnapshot.domainRevisions.traits },
+          { entityType: 'characters', revision: revision('e') },
+        ],
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(mockInvalidatePublicCache).toHaveBeenCalledTimes(1);
+    expect(mockInvalidatePublicCache).toHaveBeenCalledWith(['characters']);
+    expect(mockGetPublishedSnapshot).toHaveBeenCalledWith(freshSnapshot);
+  });
+
+  it('preserves caches when the submitted domains already match the fresh baseline', async () => {
+    const response = await POST(
+      createRequest('https://www.tjwiki.com', undefined, {
+        visibleRevisions: [
+          { entityType: 'characters', revision: publishedSnapshot.domainRevisions.characters },
+          { entityType: 'traits', revision: publishedSnapshot.domainRevisions.traits },
+        ],
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(mockInvalidatePublicCache).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    {},
+    { visibleRevisions: [] },
+    { visibleRevisions: [{ entityType: 'users', revision: revision('a') }] },
+    { visibleRevisions: [{ entityType: 'traits', revision: 'v1:invalid' }] },
+    {
+      visibleRevisions: Array.from({ length: 23 }, () => ({
+        entityType: 'traits',
+        revision: revision('a'),
+      })),
+    },
+    { visibleRevisions: [{ entityType: 'traits', revision: revision('a'), tag: 'arbitrary-tag' }] },
+  ])('rejects invalid recovery input without reading or expiring data: %j', async (body) => {
+    const response = await POST(createRequest('https://www.tjwiki.com', undefined, body));
+    expect(response.status).toBe(400);
+    expect(response.headers.get('Cache-Control')).toBe('private, no-store');
+    expect(mockGetFreshSnapshot).not.toHaveBeenCalled();
+    expect(mockInvalidatePublicCache).not.toHaveBeenCalled();
+  });
+
+  it('rejects an oversized recovery body before acquiring the baseline', async () => {
+    const request = createRequest('https://www.tjwiki.com', undefined, { visibleRevisions: [] });
+    request.headers.set('content-length', String(2 ** 30));
+    expect((await POST(request)).status).toBe(413);
+    expect(mockGetFreshSnapshot).not.toHaveBeenCalled();
+    expect(mockInvalidatePublicCache).not.toHaveBeenCalled();
+  });
+
+  it('preserves caches if fresh baseline acquisition fails during recovery', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockGetFreshSnapshot.mockRejectedValue(new Error('source unavailable'));
+    const response = await POST(
+      createRequest('https://www.tjwiki.com', undefined, {
+        visibleRevisions: [{ entityType: 'characters', revision: revision('f') }],
+      })
+    );
+    expect(response.status).toBe(500);
+    expect(mockInvalidatePublicCache).not.toHaveBeenCalled();
   });
 
   it('returns a structured failure when fresh acquisition fails', async () => {

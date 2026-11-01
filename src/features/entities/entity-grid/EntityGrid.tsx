@@ -65,7 +65,7 @@ type Props = {
 };
 
 export default function EntityClient({ description, data = entities, publishedRevision }: Props) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('entities', publishedRevision);
   // 基础筛选状态
   const [selectedTypes, setSelectedTypes] = useState<Entitytypelist[]>([]);
   const [selectedFactions, setSelectedFactions] = useState<(FactionId | 'other')[]>([]);

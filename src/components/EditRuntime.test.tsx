@@ -22,8 +22,10 @@ import { getTestEditHistoryKey } from '@/testUtils/editRuntime';
 import EditRuntime from './EditRuntime';
 
 const mockRefresh = jest.fn();
+let mockPathname = '/characters/test';
 
 jest.mock('next/navigation', () => ({
+  usePathname: () => mockPathname,
   useRouter: () => ({ refresh: mockRefresh }),
 }));
 
@@ -46,9 +48,12 @@ const createFetchResponse = (revision: `v1:${string}`) => ({
   status: 200,
   json: jest.fn(async () => ({
     revision,
-    domainRevisions: Object.fromEntries(
-      PUBLISHABLE_ENTITY_TYPES.map((entityType) => [entityType, `v1:${entityType}`])
-    ),
+    domainRevisions: {
+      ...Object.fromEntries(
+        PUBLISHABLE_ENTITY_TYPES.map((entityType) => [entityType, `v1:${entityType}`])
+      ),
+      characters: revision,
+    },
     data: baselineData,
   })),
 });
@@ -56,6 +61,7 @@ const createFetchResponse = (revision: `v1:${string}`) => ({
 describe('EditRuntime', () => {
   beforeEach(() => {
     mockRefresh.mockClear();
+    mockPathname = '/characters/test';
     window.localStorage.clear();
     clearActiveEditSession();
   });
@@ -87,7 +93,7 @@ describe('EditRuntime', () => {
 
     const view = render(
       <EditRuntime
-        visibleRevisions={['v1:matching']}
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:matching' }]}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -111,13 +117,13 @@ describe('EditRuntime', () => {
     expect(getActiveEditSession()).toBeNull();
   });
 
-  it('refreshes once on a revision mismatch and constructs stores only after revisions match', async () => {
+  it('repairs a startup mismatch once and constructs stores only after refreshed revisions match', async () => {
     global.fetch = jest.fn().mockResolvedValue(createFetchResponse('v1:baseline'));
     const onStatusChange = jest.fn();
 
     const view = render(
       <EditRuntime
-        visibleRevisions={['v1:stale']}
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:stale' }]}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -130,7 +136,7 @@ describe('EditRuntime', () => {
 
     view.rerender(
       <EditRuntime
-        visibleRevisions={['v1:baseline']}
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:baseline' }]}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -140,7 +146,15 @@ describe('EditRuntime', () => {
       expect(onStatusChange).toHaveBeenLastCalledWith('ready', undefined);
     });
     expect(mockRefresh).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(global.fetch).toHaveBeenLastCalledWith(
+      '/api/game-data-actions/edit-baseline',
+      expect.objectContaining({
+        body: JSON.stringify({
+          visibleRevisions: [{ entityType: 'characters', revision: 'v1:stale' }],
+        }),
+      })
+    );
     expect(getActiveEditSession()?.revision).toBe('v1:baseline');
   });
 
@@ -149,7 +163,10 @@ describe('EditRuntime', () => {
     const onStatusChange = jest.fn();
     render(
       <EditRuntime
-        visibleRevisions={['v1:traits', 'v1:items']}
+        visibleRevisions={[
+          { entityType: 'traits', revision: 'v1:traits' },
+          { entityType: 'items', revision: 'v1:items' },
+        ]}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -157,6 +174,126 @@ describe('EditRuntime', () => {
     await waitFor(() => expect(onStatusChange).toHaveBeenLastCalledWith('ready', undefined));
     expect(mockRefresh).not.toHaveBeenCalled();
     expect(getActiveEditSession()?.revision).toBe('v1:new-global-revision');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('waits for scoped repair, then restores drafts against the repaired baseline after page refresh', async () => {
+    let finishRepair!: (response: ReturnType<typeof createFetchResponse>) => void;
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce(createFetchResponse('v1:initial'))
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            finishRepair = resolve;
+          })
+      );
+    window.localStorage.setItem(
+      getTestEditHistoryKey('characters'),
+      JSON.stringify([
+        {
+          op: 'set',
+          path: '汤姆.description',
+          oldValue: characters['汤姆']!.description,
+          newValue: '恢复后的草稿',
+        },
+      ])
+    );
+    const onStatusChange = jest.fn();
+    const view = render(
+      <EditRuntime
+        visibleRevisions={[
+          { entityType: 'characters', revision: 'v1:stale' },
+          { entityType: 'traits', revision: 'v1:traits' },
+        ]}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
+    expect(mockRefresh).not.toHaveBeenCalled();
+    expect(getActiveEditSession()).toBeNull();
+    await act(async () => {
+      finishRepair(createFetchResponse('v1:repaired'));
+    });
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalledTimes(1));
+    expect(getActiveEditSession()).toBeNull();
+    view.rerender(
+      <EditRuntime
+        visibleRevisions={[
+          { entityType: 'characters', revision: 'v1:repaired' },
+          { entityType: 'traits', revision: 'v1:traits' },
+        ]}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+    await waitFor(() => expect(onStatusChange).toHaveBeenLastCalledWith('ready', undefined));
+    expect(getActiveEditSession()?.revision).toBe('v1:repaired');
+    expect(
+      getActiveEditSession()?.readEntity({ entityType: 'characters', entityId: '汤姆' })
+        ?.description
+    ).toBe('恢复后的草稿');
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps editing disabled and offers retry when scoped recovery fails', async () => {
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce(createFetchResponse('v1:baseline'))
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 429,
+        json: async () => ({ error: '请求过于频繁，请稍后重试' }),
+      });
+    const onStatusChange = jest.fn();
+    render(
+      <EditRuntime
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:stale' }]}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+    await waitFor(() =>
+      expect(onStatusChange).toHaveBeenLastCalledWith('error', '请求过于频繁，请稍后重试')
+    );
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(mockRefresh).not.toHaveBeenCalled();
+    expect(getActiveEditSession()).toBeNull();
+    expect(screen.getByRole('button', { name: '重试' })).toBeInTheDocument();
+  });
+
+  it('aborts a pending repair on exit and ignores its late response', async () => {
+    let finishRepair!: (response: ReturnType<typeof createFetchResponse>) => void;
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValueOnce(createFetchResponse('v1:initial'))
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            finishRepair = resolve;
+          })
+      );
+    global.fetch = fetchMock;
+    const onStatusChange = jest.fn();
+    const view = render(
+      <EditRuntime
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:stale' }]}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    const signal = (fetchMock.mock.calls[1]![1] as RequestInit).signal;
+    view.unmount();
+    expect(signal?.aborted).toBe(true);
+    await act(async () => {
+      finishRepair(createFetchResponse('v1:repaired'));
+    });
+    expect(onStatusChange).not.toHaveBeenCalledWith('ready', undefined);
+    expect(getActiveEditSession()).toBeNull();
+    expect(mockRefresh).not.toHaveBeenCalled();
   });
 
   it('blocks a stale page domain even when its parent layout matches, then accepts a refreshed page', async () => {
@@ -164,7 +301,10 @@ describe('EditRuntime', () => {
     const onStatusChange = jest.fn();
     const view = render(
       <EditRuntime
-        visibleRevisions={['v1:traits', 'v1:stale-items']}
+        visibleRevisions={[
+          { entityType: 'traits', revision: 'v1:traits' },
+          { entityType: 'items', revision: 'v1:stale-items' },
+        ]}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -173,13 +313,16 @@ describe('EditRuntime', () => {
     expect(getActiveEditSession()).toBeNull();
     view.rerender(
       <EditRuntime
-        visibleRevisions={['v1:traits', 'v1:items']}
+        visibleRevisions={[
+          { entityType: 'traits', revision: 'v1:traits' },
+          { entityType: 'items', revision: 'v1:items' },
+        ]}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
     );
     await waitFor(() => expect(onStatusChange).toHaveBeenLastCalledWith('ready', undefined));
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
   });
 
   it('also checks a secondary domain on pages that combine several domains', async () => {
@@ -187,7 +330,11 @@ describe('EditRuntime', () => {
     const onStatusChange = jest.fn();
     render(
       <EditRuntime
-        visibleRevisions={['v1:traits', 'v1:maps', 'v1:stale-fixtures']}
+        visibleRevisions={[
+          { entityType: 'traits', revision: 'v1:traits' },
+          { entityType: 'maps', revision: 'v1:maps' },
+          { entityType: 'fixtures', revision: 'v1:stale-fixtures' },
+        ]}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -204,7 +351,7 @@ describe('EditRuntime', () => {
 
     render(
       <EditRuntime
-        visibleRevisions={['v1:stale']}
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:stale' }]}
         onStatusChange={(status, error) => statuses.push([status, error])}
         onRetry={jest.fn()}
       />
@@ -223,6 +370,8 @@ describe('EditRuntime', () => {
     });
 
     expect(statuses.at(-1)).toEqual(['error', '页面数据版本与编辑基线仍不一致，请重试']);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
   });
 
   it('does not construct a partial runtime when the initial baseline request fails', async () => {
@@ -236,7 +385,7 @@ describe('EditRuntime', () => {
 
     render(
       <EditRuntime
-        visibleRevisions={['v1:matching']}
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:matching' }]}
         onStatusChange={onStatusChange}
         onRetry={onRetry}
       />
@@ -250,7 +399,7 @@ describe('EditRuntime', () => {
     expect(screen.getByRole('button', { name: '重试' })).toBeInTheDocument();
   });
 
-  it('keeps the installed runtime and baseline fixed across navigation and mismatch handling', async () => {
+  it('preserves the session and drafts while allowing a fresh recovery attempt on another route', async () => {
     jest.useFakeTimers();
     global.fetch = jest.fn().mockResolvedValue(createFetchResponse('v1:baseline'));
     const statuses: Array<[EditRuntimeStatus, string | undefined]> = [];
@@ -259,7 +408,7 @@ describe('EditRuntime', () => {
 
     const view = render(
       <EditRuntime
-        visibleRevisions={['v1:baseline']}
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:baseline' }]}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -281,9 +430,10 @@ describe('EditRuntime', () => {
       item.description = '跨域道具草稿';
     });
 
+    mockPathname = '/characters/other';
     view.rerender(
       <EditRuntime
-        visibleRevisions={['v1:newer-route']}
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:newer-route' }]}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -308,6 +458,49 @@ describe('EditRuntime', () => {
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(screen.queryByRole('button', { name: '重试' })).not.toBeInTheDocument();
     expect(screen.getByText(/请退出编辑模式后重新进入/)).toBeInTheDocument();
+
+    mockPathname = '/items/test';
+    view.rerender(
+      <EditRuntime
+        visibleRevisions={[{ entityType: 'items', revision: 'v1:stale-items' }]}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(mockRefresh).toHaveBeenCalledTimes(2);
+
+    // A changing response on the same route must not start a refresh loop.
+    view.rerender(
+      <EditRuntime
+        visibleRevisions={[{ entityType: 'items', revision: 'v1:still-stale-items' }]}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+    act(() => jest.advanceTimersByTime(5000));
+    expect(mockRefresh).toHaveBeenCalledTimes(2);
+
+    view.rerender(
+      <EditRuntime
+        visibleRevisions={[{ entityType: 'items', revision: 'v1:items' }]}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+    expect(statuses.at(-1)).toEqual(['ready', undefined]);
+    expect(getActiveEditSession()).toBe(session);
+    expect(session!.revision).toBe('v1:baseline');
+    expect(
+      session!.readEntity({ entityType: 'characters', entityId: characterId })?.description
+    ).toBe('跨域角色草稿');
+    expect(session!.readEntity({ entityType: 'items', entityId: itemId })?.description).toBe(
+      '跨域道具草稿'
+    );
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(mockRefresh).toHaveBeenCalledTimes(2);
   });
 
   it('creates one fresh baseline and runtime after an explicit exit and re-entry', async () => {
@@ -317,7 +510,11 @@ describe('EditRuntime', () => {
       .mockResolvedValueOnce(createFetchResponse('v1:second'));
 
     const firstView = render(
-      <EditRuntime visibleRevisions={['v1:first']} onStatusChange={jest.fn()} onRetry={jest.fn()} />
+      <EditRuntime
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:first' }]}
+        onStatusChange={jest.fn()}
+        onRetry={jest.fn()}
+      />
     );
 
     await waitFor(() => {
@@ -329,7 +526,7 @@ describe('EditRuntime', () => {
 
     const secondView = render(
       <EditRuntime
-        visibleRevisions={['v1:second']}
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:second' }]}
         onStatusChange={jest.fn()}
         onRetry={jest.fn()}
       />

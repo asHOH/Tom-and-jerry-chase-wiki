@@ -73,6 +73,11 @@ export type PublishedGameDataSnapshot = DeepReadonly<{
   data: PublishedGameDataByType;
 }>;
 
+export type PublishedDomainRevision = {
+  readonly entityType: PublishableEntityType;
+  readonly revision: PublishedRevision;
+};
+
 export type PublishedDomainReadModel<EntityType extends PublishableEntityType> = {
   readonly revision: PublishedRevision;
   readonly entityType: EntityType;

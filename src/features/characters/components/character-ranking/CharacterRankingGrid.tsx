@@ -35,7 +35,7 @@ export default function CharacterRankingGrid({
   data = characters,
   publishedRevision,
 }: CharacterRankingGridProps) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('characters', publishedRevision);
   const [selectedProperty, setSelectedProperty] = useState<RankableProperty | undefined>(
     initialProperty
   );

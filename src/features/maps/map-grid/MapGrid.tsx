@@ -33,7 +33,7 @@ type Props = {
 };
 
 export default function MapClient({ description, data = maps, publishedRevision }: Props) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('maps', publishedRevision);
   const [selectedTypes, setSelectedTypes] = useState<mapTypes[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<MapSize[]>([]);
   const [selectedLevels, setSelectedLevels] = useState<(studyLevel | '其它')[]>([]);

@@ -19,7 +19,7 @@ export default function UserCharacterPageClient({
 }: {
   publishedRevision: `v1:${string}`;
 }) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('characters', publishedRevision);
   const { isLoading, isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
   const [character] = useEditableEntity({ entityType: 'characters', entityId: characterId }, null);

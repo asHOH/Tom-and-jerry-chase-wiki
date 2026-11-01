@@ -35,7 +35,7 @@ const ITEM_TYPE_OPTIONS: Itemtypelist[] = [
 const ITEM_SOURCE_OPTIONS: Itemsourcelist[] = ['常规道具', '地图道具'];
 
 export default function ItemClient({ description, data = items, publishedRevision }: Props) {
-  usePublishedRevision(publishedRevision);
+  usePublishedRevision('items', publishedRevision);
   const [selectedTypes, setSelectedTypes] = useState<Itemtypelist[]>([]);
   const [selectedSources, setSelectedSources] = useState<Itemsourcelist[]>([]);
   const [selectedFactions, setSelectedFactions] = useState<(FactionId | 'none')[]>([]);

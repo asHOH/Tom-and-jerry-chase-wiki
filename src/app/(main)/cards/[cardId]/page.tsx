@@ -71,7 +71,7 @@ export default async function CardPage({ params }: { params: Promise<{ cardId: s
   }
 
   return (
-    <PublishedRevisionBoundary revisions={[characters.revision]}>
+    <PublishedRevisionBoundary revisions={{ characters: characters.revision }}>
       <StructuredData data={generateStructuredData(cardId, card)} />
       <KnowledgeCardDetailsClient
         card={card}

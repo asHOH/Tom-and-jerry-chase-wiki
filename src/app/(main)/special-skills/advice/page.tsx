@@ -20,7 +20,7 @@ export default async function SpecialSkillsPage() {
   const { data, revisions } = await getPublishedDomainsReadModel(['characters', 'specialSkills']);
 
   return (
-    <PublishedRevisionBoundary revisions={[revisions.specialSkills]}>
+    <PublishedRevisionBoundary revisions={{ specialSkills: revisions.specialSkills }}>
       <SpecialSkillAdviceClient
         charactersData={data.characters}
         specialSkillsData={data.specialSkills}

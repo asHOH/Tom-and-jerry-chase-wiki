@@ -29,7 +29,12 @@ export default async function RelationsPage() {
 
   return (
     <PublishedRevisionBoundary
-      revisions={[revisions.cards, revisions.specialSkills, revisions.maps, revisions.modes]}
+      revisions={{
+        cards: revisions.cards,
+        specialSkills: revisions.specialSkills,
+        maps: revisions.maps,
+        modes: revisions.modes,
+      }}
     >
       <RelationsClient
         description={DESCRIPTION}
