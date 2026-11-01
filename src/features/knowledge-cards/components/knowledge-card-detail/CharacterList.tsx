@@ -21,7 +21,7 @@ export default function CharacterList({ characters, showList }: CharacterListPro
 
   return (
     <Card className='px-2 py-3'>
-      <ul className='grid [grid-template-columns:repeat(auto-fit,minmax(175px,1fr))] gap-1'>
+      <ul className='grid grid-cols-[repeat(auto-fit,minmax(175px,1fr))] gap-1'>
         {characters.map((character) => (
           <li
             key={character.id ?? ''}

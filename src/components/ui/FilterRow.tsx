@@ -81,7 +81,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                 ? { '--filter-button-hover-color': colors.color }
                 : undefined;
             const inactiveHoverTextClassName = colors?.color
-              ? 'hover:text-[var(--filter-button-hover-color)]'
+              ? 'hover:text-(--filter-button-hover-color)'
               : 'hover:text-gray-900 dark:hover:text-gray-100';
             const labelNode = getOptionLabel ? getOptionLabel(opt, active) : String(opt);
             const button = (

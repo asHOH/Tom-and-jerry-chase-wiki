@@ -28,7 +28,7 @@ export default function TableOfContents({
       <ul
         className={
           layout === 'inline'
-            ? 'flex [scrollbar-width:none] gap-1 overflow-x-auto whitespace-nowrap'
+            ? 'flex scrollbar-none gap-1 overflow-x-auto whitespace-nowrap'
             : layout === 'wrap'
               ? 'flex flex-wrap gap-x-2'
               : 'space-y-1'

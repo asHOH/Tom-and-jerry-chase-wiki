@@ -251,7 +251,7 @@ const MatrixCell = ({
           clickToToggle
           disabled={!cell}
           content={cell?.tooltipContent}
-          contentClassName='[@media(pointer:coarse)]:pointer-events-none'
+          contentClassName='pointer-coarse:pointer-events-none'
         >
           <Button
             variant='unstyled'

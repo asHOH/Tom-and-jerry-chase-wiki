@@ -313,7 +313,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
                 <Img
                   src={item.publicUrl}
                   alt={item.name}
-                  className='h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]'
+                  className='h-full w-full object-cover transition-transform duration-200 group-hover:scale-102'
                   loading='lazy'
                   referrerPolicy='no-referrer'
                 />

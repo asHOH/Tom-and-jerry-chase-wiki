@@ -175,7 +175,7 @@ describe('TabNavigation', () => {
     for (const label of ['文章', '机制']) {
       const icon = screen.getByRole('link', { name: label }).querySelector('img');
 
-      expect(icon).toHaveClass('!h-6', '!w-6');
+      expect(icon).toHaveClass('h-6!', 'w-6!');
     }
   });
 });

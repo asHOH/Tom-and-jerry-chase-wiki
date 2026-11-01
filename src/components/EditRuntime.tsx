@@ -260,7 +260,7 @@ export default function EditRuntime({
   const requiresFreshEditSession = status === 'error' && activeRuntimeRef.current !== null;
 
   return (
-    <div className='pointer-events-none fixed inset-x-0 bottom-3 z-[10060] flex justify-center px-3'>
+    <div className='pointer-events-none fixed inset-x-0 bottom-3 z-10060 flex justify-center px-3'>
       <div className='bg-surface-raised/95 text-foreground pointer-events-auto rounded-lg border border-blue-200 px-3 py-2 text-sm shadow-lg backdrop-blur dark:border-blue-900'>
         {status === 'error'
           ? requiresFreshEditSession

@@ -251,7 +251,7 @@ function Conversation({ userId, onUnauthorized }: { userId: string; onUnauthoriz
                   element.scrollHeight - element.scrollTop - element.clientHeight < 80;
                 setShowJump(!followLatest.current);
               }}
-              className='flex min-h-0 flex-1 [scrollbar-gutter:stable] flex-col overflow-y-auto overscroll-contain px-4 py-6 sm:px-8 sm:py-10'
+              className='flex min-h-0 flex-1 scrollbar-gutter-stable flex-col overflow-y-auto overscroll-contain px-4 py-6 sm:px-8 sm:py-10'
             >
               {help}
               <section

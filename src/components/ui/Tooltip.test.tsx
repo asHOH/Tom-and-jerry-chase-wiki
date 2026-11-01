@@ -46,7 +46,7 @@ describe('Tooltip touch interactions', () => {
         asChild
         clickToToggle
         content='Details'
-        contentClassName='[@media(pointer:coarse)]:pointer-events-none'
+        contentClassName='pointer-coarse:pointer-events-none'
       >
         <button onClick={onClick}>Trigger</button>
       </Tooltip>
@@ -54,7 +54,7 @@ describe('Tooltip touch interactions', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Trigger' }));
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
-    expect(screen.getByRole('tooltip')).toHaveClass('[@media(pointer:coarse)]:pointer-events-none');
+    expect(screen.getByRole('tooltip')).toHaveClass('pointer-coarse:pointer-events-none');
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });

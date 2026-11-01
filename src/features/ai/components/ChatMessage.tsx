@@ -84,7 +84,7 @@ export default function ChatMessage({
       <div
         className={cn(
           'min-w-0',
-          isUser ? 'max-w-[90%] rounded-2xl bg-black/5 px-4 py-3 dark:bg-white/5' : 'py-1'
+          isUser ? 'max-w-9/10 rounded-2xl bg-black/5 px-4 py-3 dark:bg-white/5' : 'py-1'
         )}
       >
         <h2 className='sr-only'>{isUser ? '你' : '助手'}</h2>

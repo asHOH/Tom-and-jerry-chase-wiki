@@ -77,7 +77,7 @@ export default function RecommendedStorePlansSection() {
                         <Img
                           src={item?.imageUrl ?? '/images/misc/%E7%A6%81%E6%AD%A2.png'}
                           alt={itemLabel}
-                          className='h-auto w-auto scale-[0.55] object-contain transition-transform group-hover:scale-[0.6]'
+                          className='h-auto w-auto scale-55 object-contain transition-transform group-hover:scale-60'
                         />
                       </span>
                       <span className='bg-surface-raised text-muted-foreground absolute bottom-0 left-1/2 min-w-7 -translate-x-1/2 translate-y-1/2 rounded-full px-1.5 py-px text-center text-[10px] leading-4 font-medium shadow-sm'>

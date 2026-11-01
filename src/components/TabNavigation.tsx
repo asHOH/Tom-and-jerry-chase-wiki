@@ -42,7 +42,7 @@ const MOBILE_STACK_COLLAPSE_WIDTHS = [420, 376, 332] as const;
 const DETAIL_TOGGLE_WIDTH = 56;
 const DARK_MODE_TOGGLE_WIDTH = 44;
 const USER_BUTTON_WIDTH = 44;
-const dropdownMenuIconClassName = '!h-6 !w-6 shrink-0 object-contain';
+const dropdownMenuIconClassName = 'h-6! w-6! shrink-0 object-contain';
 const dropdownMenuLinkBaseClassName =
   'flex min-h-10 items-center gap-2 py-2 text-sm text-gray-800 hover:bg-control dark:text-gray-200';
 

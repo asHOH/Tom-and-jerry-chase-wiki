@@ -187,7 +187,7 @@ export default function ChatComposer({
           event.preventDefault();
           onSubmit();
         }}
-        className='relative mx-auto max-w-2xl rounded-2xl border border-black/10 bg-black/[0.02] shadow-sm focus-within:border-black/25 dark:border-white/10 dark:bg-white/[0.03] dark:focus-within:border-white/25'
+        className='relative mx-auto max-w-2xl rounded-2xl border border-black/10 bg-black/2 shadow-sm focus-within:border-black/25 dark:border-white/10 dark:bg-white/3 dark:focus-within:border-white/25'
       >
         {menuOpen ? (
           <div
