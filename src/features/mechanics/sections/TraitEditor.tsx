@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type ComponentProps } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { isReadonlyArray } from '@/lib/isReadonlyArray';
@@ -29,6 +29,35 @@ const ITEM_TYPE_OPTIONS = [
 ] as const;
 
 type MutableTraitGroupItem = TraitGroup[number];
+
+type TraitTextFieldProps = Pick<
+  ComponentProps<typeof FormTextarea>,
+  'rows' | 'aria-label' | 'placeholder'
+> & {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+function TraitTextField({ value, onChange, rows, ...props }: TraitTextFieldProps) {
+  const [text, setText] = useState(value);
+  useEffect(() => setText(value), [value]);
+
+  const controlProps = {
+    ...props,
+    value: text,
+    invalid: !text.trim(),
+    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      // Keep the DOM value current while the draft subscription batches its notifications.
+      setText(event.target.value);
+      onChange(event.target.value);
+    },
+  };
+  return rows ? (
+    <FormTextarea {...controlProps} rows={rows} />
+  ) : (
+    <FormInput {...controlProps} size='sm' />
+  );
+}
 
 function createEmptyItem(): SingleItemOrGroup {
   return { name: '', type: 'character' };
@@ -62,15 +91,13 @@ function TraitItemEditor({
 }) {
   return (
     <div className='border-border bg-surface-raised grid gap-2 rounded-lg border p-2 sm:grid-cols-[minmax(0,1fr)_10rem_7rem_auto]'>
-      <FormInput
-        size='sm'
+      <TraitTextField
         aria-label='成员名称'
         placeholder='成员名称'
         value={item.name}
-        invalid={!item.name.trim()}
-        onChange={(event) => {
+        onChange={(value) => {
           updateItem((draft) => {
-            draft.name = event.target.value;
+            draft.name = value;
           });
         }}
       />
@@ -203,14 +230,17 @@ function TraitCard({
   trait,
   traits,
   updateTraits,
+  onFocus,
 }: {
   traitId: string;
   trait: DeepReadonly<Trait>;
   traits: DeepReadonly<Record<string, Trait>>;
   updateTraits: EditableUpdate<Record<string, Trait>>;
+  onFocus: () => void;
 }) {
   const { error, info } = useToast();
   const [draftId, setDraftId] = useState(traitId);
+  const isComposing = useRef(false);
 
   useEffect(() => setDraftId(traitId), [traitId]);
 
@@ -246,7 +276,10 @@ function TraitCard({
 
   return (
     <PendingActionWarningBoundary descriptors={[{ op: 'set', path: traitId, hasNewValue: true }]}>
-      <details className='border-border bg-surface-raised group rounded-xl border shadow-sm'>
+      <details
+        className='border-border bg-surface-raised group rounded-xl border shadow-sm'
+        onFocus={onFocus}
+      >
         <summary className='flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 select-none'>
           <span className='min-w-0 truncate font-semibold'>{traitId}</span>
           <span className='text-muted-foreground line-clamp-1 min-w-0 flex-1 text-right text-sm'>
@@ -262,8 +295,21 @@ function TraitCard({
                 invalid={!draftId.trim()}
                 onChange={(event) => setDraftId(event.target.value)}
                 onBlur={commitRename}
+                onCompositionStart={() => {
+                  isComposing.current = true;
+                }}
+                onCompositionEnd={() => {
+                  isComposing.current = false;
+                }}
                 onKeyDown={(event) => {
-                  if (event.key === 'Enter') event.currentTarget.blur();
+                  if (
+                    event.key === 'Enter' &&
+                    !isComposing.current &&
+                    !event.nativeEvent.isComposing &&
+                    event.keyCode !== 229
+                  ) {
+                    event.currentTarget.blur();
+                  }
                 }}
               />
             </label>
@@ -301,13 +347,12 @@ function TraitCard({
 
           <label className='block space-y-1 text-sm font-medium'>
             <span>描述</span>
-            <FormTextarea
+            <TraitTextField
               rows={4}
               value={trait.description}
-              invalid={!trait.description.trim()}
-              onChange={(event) => {
+              onChange={(value) => {
                 updateTrait((draft) => {
-                  draft.description = event.target.value;
+                  draft.description = value;
                 });
               }}
             />
@@ -358,16 +403,15 @@ function TraitCard({
                     删除
                   </Button>
                 </div>
-                <FormTextarea
+                <TraitTextField
                   rows={3}
                   aria-label={`特殊情况 ${specialCaseIndex + 1} 描述`}
                   placeholder='特殊情况描述'
                   value={specialCase.description}
-                  invalid={!specialCase.description.trim()}
-                  onChange={(event) => {
+                  onChange={(value) => {
                     updateTrait((draft) => {
                       const current = draft.spacialCase?.[specialCaseIndex];
-                      if (current) current.description = event.target.value;
+                      if (current) current.description = value;
                     });
                   }}
                 />
@@ -399,11 +443,12 @@ export default function TraitEditor({
 }) {
   const [traits, updateTraits] = useEditableDomain('traits', traitsSnapshot);
   const [query, setQuery] = useState('');
+  const [activeTraitId, setActiveTraitId] = useState<string | null>(null);
 
   const filteredEntries = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase('zh-CN');
     return Object.entries(traits).filter(([id, trait]) => {
-      if (!normalizedQuery) return true;
+      if (!normalizedQuery || id === activeTraitId) return true;
       const memberNames = [
         ...trait.group.flatMap((item) => (isReadonlyArray(item) ? item : [item])),
         ...(trait.spacialCase ?? []).flatMap((specialCase) =>
@@ -416,7 +461,7 @@ export default function TraitEditor({
         .toLocaleLowerCase('zh-CN')
         .includes(normalizedQuery);
     });
-  }, [query, traits]);
+  }, [activeTraitId, query, traits]);
 
   return (
     <div className='mx-auto max-w-5xl space-y-4 px-2 py-4 sm:px-4'>
@@ -425,7 +470,10 @@ export default function TraitEditor({
           type='search'
           placeholder='搜索编号、描述或成员'
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setActiveTraitId(null);
+          }}
         />
         <Button
           className='shrink-0'
@@ -436,6 +484,7 @@ export default function TraitEditor({
               draft[id] = { description: '', group: [] };
             });
             setQuery(id);
+            setActiveTraitId(id);
           }}
         >
           新建特性
@@ -453,6 +502,7 @@ export default function TraitEditor({
             trait={trait}
             traits={traits}
             updateTraits={updateTraits}
+            onFocus={() => setActiveTraitId(traitId)}
           />
         ))}
       </div>
