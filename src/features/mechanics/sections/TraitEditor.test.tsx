@@ -54,6 +54,36 @@ function openCard() {
   return { input, details };
 }
 
+it('keeps one pending creation through OR removal and cancels it when deleted', async () => {
+  jest.spyOn(window, 'confirm').mockReturnValue(true);
+  renderEditor();
+  fireEvent.click(screen.getByRole('button', { name: '新建特性' }));
+  await act(async () => {});
+  const { input } = openCard();
+  const id = input.value;
+  const scope = { kind: 'domain', entityType: 'traits' } as const;
+  fireEvent.click(screen.getByRole('button', { name: '添加关联组' }));
+  await act(async () => {});
+  fireEvent.change(screen.getByLabelText('成员名称'), { target: { value: 'Tom' } });
+  await act(async () => {});
+  fireEvent.click(screen.getByRole('button', { name: '添加或选项' }));
+  await act(async () => {});
+  fireEvent.change(screen.getAllByLabelText('成员名称')[1]!, { target: { value: 'Jerry' } });
+  await act(async () => {});
+  fireEvent.click(screen.getAllByRole('button', { name: '删除成员' })[0]!);
+  await act(async () => {});
+  expect(session.readDomain('traits')[id]?.group).toEqual([{ name: 'Jerry', type: 'character' }]);
+  expect(session.readDraft(scope).actionCount).toBe(1);
+  fireEvent.click(screen.getByRole('button', { name: '删除成员' }));
+  await act(async () => {});
+  expect(session.readDomain('traits')[id]?.group).toEqual([]);
+  expect(session.readDraft(scope).actionCount).toBe(1);
+  fireEvent.click(screen.getByRole('button', { name: '删除特性' }));
+  await act(async () => {});
+  expect(session.readDraft(scope)).toEqual({ actionCount: 0, publishEntries: [] });
+  expect(session.readDomain('traits')).toEqual(baseline);
+});
+
 it.each([
   { label: '描述', expected: { description: '中文' } },
   { label: '成员名称', expected: { group: [{ name: '中文' }] } },

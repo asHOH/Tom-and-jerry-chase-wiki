@@ -30,6 +30,38 @@ const marySpecialSkillsOriginal = [
 const marySpecialSkillsFinal = [{ name: '魔术漂浮', description: '通用特技。' }];
 
 describe('squashActions', () => {
+  it.each(['newItem', 'cat.newSkill', 'Tom.settings'])(
+    'normalizes a created object and its list edits at %s without changing history',
+    (path) => {
+      const original = { aliases: ['A', 'B', 'C'] };
+      const final = { aliases: ['A', 'C'] };
+      const actions = [
+        setAction(path, undefined, original),
+        setAction(`${path}.aliases.1`, 'B', 'C'),
+        deleteAction(`${path}.aliases.2`, 'C'),
+        setAction(`${path}.aliases.length`, 3, 2),
+      ];
+      const historyCopy = structuredClone(actions);
+      const parts = path.split('.');
+      const currentRoot =
+        parts.length === 1 ? { [path]: final } : { [parts[0]!]: { [parts[1]!]: final } };
+      expect(squashActions(actions, { currentRoot })).toEqual([setAction(path, undefined, final)]);
+      expect(actions).toEqual(historyCopy);
+      expect(squashActions(actions)).toEqual(actions);
+    }
+  );
+
+  it('preserves structural history when replay cannot prove the current created object', () => {
+    const actions = [
+      setAction('newItem', undefined, { aliases: ['A', 'B'] }),
+      deleteAction('newItem.aliases.1', 'B'),
+      setAction('newItem.aliases.length', 2, 1),
+    ];
+    expect(
+      squashActions(actions, { currentRoot: { newItem: { aliases: ['unrecorded'] } } })
+    ).toEqual(actions);
+  });
+
   it('should only protect the parent subtree of nested structural edits', () => {
     const deleteSkill = deleteAction('Tom.skills.1', { name: 'old skill' });
     const oldSkillName = setAction('Tom.skills.0.name', 'Skill A', 'Skill B');

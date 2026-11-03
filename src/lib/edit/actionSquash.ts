@@ -13,6 +13,8 @@ type Container = Record<string, unknown> | unknown[];
 
 export type SquashActionsOptions = {
   currentRoot?: Record<string, unknown>;
+  /** Only for matching an unresolved request submitted before creation consolidation. */
+  preserveLegacyCreations?: boolean;
 };
 
 function parsePath(path: string): string[] {
@@ -429,7 +431,7 @@ function isDenseArray(value: unknown): value is unknown[] {
   return true;
 }
 
-type ArrayParentNormalization = {
+type ContainerParentNormalization = {
   action: Action | null;
   coveredFlatIndexes: Set<number>;
   firstEntryIndex: number;
@@ -458,22 +460,40 @@ function canNormalizeWithParentSet(
   return isEqual(getAtPath(candidateRoot, parentPath), newArray);
 }
 
-function getArrayParentNormalization(
+function getContainerParentNormalization(
   parentPath: string,
   flat: FlatItem[],
   beforeRoot: Record<string, unknown>,
-  finalRoot: Record<string, unknown>
-): ArrayParentNormalization | null {
+  finalRoot: Record<string, unknown>,
+  normalizeCreations: boolean
+): ContainerParentNormalization | null {
   const coveredItems = flat.filter((item) => isAtOrUnderPath(item.action.path, parentPath));
   if (coveredItems.length === 0) return null;
 
-  if (coveredItems.some((item) => !isArrayNormalizationAction(parentPath, item.action))) {
-    return null;
+  const oldValue = getAtPath(beforeRoot, parentPath);
+  const newValue = getAtPath(finalRoot, parentPath);
+  const firstAction = coveredItems[0]!.action;
+  const parent = getAtPath(beforeRoot, getStructuralParent(parentPath));
+  // A newly created object property owns its entire subtree, including later array edits.
+  const isCreation =
+    normalizeCreations &&
+    oldValue === undefined &&
+    firstAction.path === parentPath &&
+    (firstAction.op === 'set' || firstAction.op === 'add') &&
+    firstAction.oldValue === undefined &&
+    isContainer(firstAction.newValue) &&
+    isContainer(parent) &&
+    !Array.isArray(parent) &&
+    !flat.some(
+      ({ action }) => action.path !== parentPath && isAtOrUnderPath(parentPath, action.path)
+    );
+  if (!isCreation) {
+    if (coveredItems.some((item) => !isArrayNormalizationAction(parentPath, item.action))) {
+      return null;
+    }
+    if (!isDenseArray(oldValue) || !isDenseArray(newValue)) return null;
+    if (!canNormalizeWithParentSet(parentPath, beforeRoot, oldValue, newValue)) return null;
   }
-
-  const oldArray = getAtPath(beforeRoot, parentPath);
-  const newArray = getAtPath(finalRoot, parentPath);
-  if (!isDenseArray(oldArray) || !isDenseArray(newArray)) return null;
 
   const replayedRoot = cloneValue(beforeRoot);
   if (!replayedRoot) return null;
@@ -482,26 +502,23 @@ function getArrayParentNormalization(
     if (!applyForwardAction(replayedRoot, item.action)) return null;
   }
 
-  const replayedArray = getAtPath(replayedRoot, parentPath);
-  if (!isDenseArray(replayedArray) || !isEqual(replayedArray, newArray)) return null;
-  if (!canNormalizeWithParentSet(parentPath, beforeRoot, oldArray, newArray)) {
-    return null;
-  }
+  const replayedValue = getAtPath(replayedRoot, parentPath);
+  if (!isEqual(replayedValue, newValue)) return null;
 
   const coveredFlatIndexes = new Set(coveredItems.map((item) => item.flatIndex));
   const firstItem = coveredItems[0]!;
-  const oldArrayClone = cloneValue(oldArray);
-  const newArrayClone = cloneValue(newArray);
-  if (oldArrayClone === null || newArrayClone === null) return null;
+  const oldClone = cloneReplayValue(oldValue);
+  const newClone = cloneReplayValue(newValue);
+  if (!oldClone.success || !newClone.success) return null;
 
   return {
-    action: isEqual(oldArray, newArray)
+    action: isEqual(oldValue, newValue)
       ? null
       : {
           op: 'set',
           path: parentPath,
-          oldValue: oldArrayClone,
-          newValue: newArrayClone,
+          oldValue: oldClone.value,
+          newValue: newClone.value,
         },
     coveredFlatIndexes,
     firstEntryIndex: firstItem.entryIndex,
@@ -512,7 +529,7 @@ function getArrayParentNormalization(
 
 function hasOverlappingNormalization(
   parentPath: string,
-  normalizations: ArrayParentNormalization[]
+  normalizations: ContainerParentNormalization[]
 ): boolean {
   return normalizations.some(
     (normalization) =>
@@ -521,9 +538,10 @@ function hasOverlappingNormalization(
   );
 }
 
-function normalizeStructuralArrayActions(
+function normalizeContainerActions(
   entries: ActionHistoryEntry[],
-  currentRoot?: Record<string, unknown>
+  currentRoot: Record<string, unknown> | undefined,
+  normalizeCreations: boolean
 ): ActionHistoryEntry[] {
   if (!currentRoot) return entries;
 
@@ -540,24 +558,38 @@ function normalizeStructuralArrayActions(
   flat.forEach((item) => {
     const parentPath = getStructuralArrayCandidateParent(item.action, finalRoot);
     if (parentPath) candidateParents.add(parentPath);
+    if (
+      normalizeCreations &&
+      (item.action.op === 'set' || item.action.op === 'add') &&
+      item.action.oldValue === undefined &&
+      isContainer(item.action.newValue)
+    ) {
+      candidateParents.add(item.action.path);
+    }
   });
 
   if (candidateParents.size === 0) return entries;
 
-  const normalizations: ArrayParentNormalization[] = [];
+  const normalizations: ContainerParentNormalization[] = [];
   Array.from(candidateParents)
     .sort((a, b) => parsePath(a).length - parsePath(b).length)
     .forEach((parentPath) => {
       if (hasOverlappingNormalization(parentPath, normalizations)) return;
 
-      const normalization = getArrayParentNormalization(parentPath, flat, beforeRoot, finalRoot);
+      const normalization = getContainerParentNormalization(
+        parentPath,
+        flat,
+        beforeRoot,
+        finalRoot,
+        normalizeCreations
+      );
       if (normalization) normalizations.push(normalization);
     });
 
   if (normalizations.length === 0) return entries;
 
   const coveredFlatIndexes = new Set<number>();
-  const normalizationByFirstFlatIndex = new Map<number, ArrayParentNormalization>();
+  const normalizationByFirstFlatIndex = new Map<number, ContainerParentNormalization>();
 
   normalizations.forEach((normalization) => {
     normalization.coveredFlatIndexes.forEach((flatIndex) => coveredFlatIndexes.add(flatIndex));
@@ -596,6 +628,7 @@ function normalizeStructuralArrayActions(
  * Squash an action history so that only the last safe `set` per path remains.
  *
  * Safety rules:
+ * - Normalize newly created object properties with their subtree edits only when replay matches.
  * - Normalize proven array edits (including indexed fields) to a parent set; otherwise preserve them.
  * - Fold object-property adds/deletes with later mutations on the same path when the current
  *   root proves that the parent is not an array. Container values also require no ancestor
@@ -609,7 +642,11 @@ export function squashActions(
   entries: ActionHistoryEntry[],
   options?: SquashActionsOptions
 ): ActionHistoryEntry[] {
-  const normalizedEntries = normalizeStructuralArrayActions(entries, options?.currentRoot);
+  const normalizedEntries = normalizeContainerActions(
+    entries,
+    options?.currentRoot,
+    !options?.preserveLegacyCreations
+  );
   if (normalizedEntries.length === 0) return [];
 
   const flat = buildFlatEntries(normalizedEntries);

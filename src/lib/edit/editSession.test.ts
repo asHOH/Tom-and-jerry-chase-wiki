@@ -8,9 +8,10 @@ import {
   getPublishOperationFingerprint,
   readPublishOperation,
 } from '@/lib/gameData/publishOperation';
+import { preparePublishActionItems } from '@/lib/gameData/publishPreparation';
 import { getEditModeActionsStorageKey } from '@/lib/localStorage';
 import { characters } from '@/data/static';
-import type { CharacterPairRelation } from '@/data/types';
+import type { CharacterPairRelation, Trait } from '@/data/types';
 import {
   addCharacterRelationItem,
   removeCharacterRelationItem,
@@ -88,6 +89,249 @@ describe('createEditSession', () => {
     window.localStorage.clear();
     window.sessionStorage.clear();
     Reflect.deleteProperty(global, 'fetch');
+  });
+
+  it.each([false, true])('keeps OR edits compact (existing trait: %s)', async (existing) => {
+    const trait: Trait = {
+      description: 'trait',
+      group: [
+        { name: 'Tom', type: 'character' },
+        { name: 'Jerry', type: 'character' },
+        Array.from({ length: 7 }, (_, index) => ({ name: `item${index}`, type: 'item' })),
+      ],
+    };
+    const data = { ...baseline, traits: existing ? { newTrait: trait } : {} };
+    session = createEditSession(data, 'v1:test');
+    const scope = { kind: 'domain', entityType: 'traits' } as const;
+    if (!existing) {
+      session.updateDomain('traits', (draft) => {
+        draft.newTrait = { description: trait.description, group: [] };
+      });
+      await Promise.resolve();
+      session.updateDomain('traits', (draft) => {
+        draft.newTrait!.group = structuredClone(trait.group);
+      });
+      await Promise.resolve();
+    }
+    for (let index = 0; index < 170; index += 1) {
+      session.updateDomain('traits', (draft) => {
+        const alternatives = draft.newTrait!.group[2];
+        if (Array.isArray(alternatives)) alternatives[0]!.name += 'a';
+      });
+      await Promise.resolve();
+    }
+    expect(session.readDraft(scope).actionCount).toBe(1);
+    session.updateDomain('traits', (draft) => {
+      const alternatives = draft.newTrait!.group[2];
+      if (Array.isArray(alternatives)) alternatives.splice(2, 1);
+    });
+    await Promise.resolve();
+    const recordedEntries: unknown = JSON.parse(
+      window.localStorage.getItem(getEditModeActionsStorageKey('traits')) ?? '[]'
+    );
+    expect(() =>
+      preparePublishActionItems([{ entityType: 'traits', entries: recordedEntries }])
+    ).toThrow('too_many_actions_per_row');
+    expect(session.readDraft(scope)).toEqual({
+      actionCount: 1,
+      publishEntries: [
+        {
+          op: 'set',
+          path: existing ? 'newTrait.group' : 'newTrait',
+          oldValue: existing ? trait.group : undefined,
+          newValue: existing
+            ? session.readDomain('traits').newTrait!.group
+            : session.readDomain('traits').newTrait,
+        },
+      ],
+    });
+    session.updateDomain('traits', (draft) => {
+      draft.newTrait!.group.splice(0, 1);
+      draft.newTrait!.group.push({ name: 'new item', type: 'item' });
+    });
+    await Promise.resolve();
+    expect(session.readDraft(scope).actionCount).toBe(1);
+    const draft = session.readDomain('traits');
+    const entries = session.readDraft(scope).publishEntries;
+    expect(() => preparePublishActionItems([{ entityType: 'traits', entries }])).not.toThrow();
+    session.dispose();
+    session = createEditSession(data, 'v1:test');
+    expect(session.readDomain('traits')).toEqual(draft);
+    expect(session.readDraft(scope).publishEntries).toEqual(entries);
+    expect(session.discardDraft(scope)).toEqual({ status: 'discarded' });
+    expect(session.readDomain('traits')).toEqual(data.traits);
+  });
+
+  it.each([false, true])('cancels a created then deleted trait (edited: %s)', async (edited) => {
+    const publish = jest.fn();
+    session = createEditSession(baseline, 'v1:test', { publish });
+    const scope = { kind: 'domain', entityType: 'traits' } as const;
+    session.updateDomain('traits', (draft) => {
+      draft.newTrait = { description: '', group: [] };
+    });
+    await Promise.resolve();
+    if (edited) {
+      session.updateDomain('traits', (draft) => {
+        draft.newTrait!.description = 'draft';
+        draft.newTrait!.group.push({ name: 'Tom', type: 'character' });
+      });
+      await Promise.resolve();
+    }
+    session.updateDomain('traits', (draft) => {
+      delete draft.newTrait;
+    });
+    await Promise.resolve();
+    expect(session.readDraft(scope)).toEqual({ actionCount: 0, publishEntries: [] });
+    expect(session.readDraftOverview()).toEqual([]);
+    await expect(session.publishDraft(scope)).resolves.toEqual({ status: 'empty' });
+    expect(publish).not.toHaveBeenCalled();
+  });
+
+  it('compacts list edits and cancellation in a new optional character field', async () => {
+    session = createEditSession(baseline, 'v1:test');
+    const entity = { entityType: 'characters', entityId: '杰瑞' } as const;
+    const scope = { kind: 'entity', entity } as const;
+    session.updateEntity(entity, (draft) => {
+      draft.aliases = ['A', 'B', 'C'];
+    });
+    await Promise.resolve();
+    session.updateEntity(entity, (draft) => {
+      draft.aliases!.splice(1, 1);
+    });
+    await Promise.resolve();
+    expect(session.readDraft(scope)).toEqual({
+      actionCount: 1,
+      publishEntries: [
+        { op: 'set', path: '杰瑞.aliases', oldValue: undefined, newValue: ['A', 'C'] },
+      ],
+    });
+    session.updateEntity(entity, (draft) => {
+      delete draft.aliases;
+    });
+    await Promise.resolve();
+    expect(session.readDraft(scope)).toEqual({ actionCount: 0, publishEntries: [] });
+  });
+
+  it.each(['unchanged', 'draft', 'delete', 'message', 'submitMode'] as const)(
+    'preserves an unresolved pre-upgrade trait submission: %s',
+    async (change) => {
+      const trait: Trait = {
+        description: 'trait',
+        group: [
+          { name: 'Tom', type: 'character' },
+          { name: 'Jerry', type: 'character' },
+        ],
+      };
+      const legacyEntries: ActionHistoryEntry[] = [
+        { op: 'set', path: 'newTrait', oldValue: undefined, newValue: trait },
+        [
+          { op: 'delete', path: 'newTrait.group.1', oldValue: trait.group[1], newValue: undefined },
+          { op: 'set', path: 'newTrait.group.length', oldValue: 2, newValue: 1 },
+        ],
+      ];
+      const options = { message: 'Trait update', submitMode: 'force_pending' as const };
+      const operationId = getOrCreatePublishOperationId(
+        'page:traits:',
+        getPublishOperationFingerprint({
+          endpoint: '/api/game-data-actions/publish',
+          entries: legacyEntries,
+          ...options,
+        })
+      );
+      const history = memoryHistory({ traits: legacyEntries });
+      const publish = jest.fn(async () => ({
+        status: 'published' as const,
+        outcome: 'pending' as const,
+      }));
+      session = createEditSession(baseline, 'v1:test', { history: history.store, publish });
+      const scope = { kind: 'domain', entityType: 'traits' } as const;
+      expect(session.readDraft(scope).actionCount).toBe(1);
+      if (change === 'draft' || change === 'delete') {
+        session.updateDomain('traits', (draft) => {
+          if (change === 'delete') delete draft.newTrait;
+          else draft.newTrait!.description = 'changed';
+        });
+        await Promise.resolve();
+      }
+      const result = await session.publishDraft(scope, {
+        message: change === 'message' ? 'changed' : options.message,
+        submitMode: change === 'submitMode' ? 'default' : options.submitMode,
+      });
+      if (change === 'unchanged') {
+        expect(result).toEqual({ status: 'published', outcome: 'pending' });
+        expect(publish).toHaveBeenCalledWith({
+          endpoint: '/api/game-data-actions/publish',
+          operationId,
+          body: { entityType: 'traits', entries: legacyEntries, ...options },
+        });
+        expect(history.read('traits')).toEqual([]);
+        expect(readPublishOperation('page:traits:')).toBeNull();
+      } else {
+        expect(result).toEqual({
+          status: 'failed',
+          error: new Error('publish_operation_conflict'),
+        });
+        expect(publish).not.toHaveBeenCalled();
+        expect(history.read('traits').length).toBeGreaterThan(0);
+        expect(readPublishOperation('page:traits:')?.operationId).toBe(operationId);
+      }
+    }
+  );
+
+  it('retries an unchanged pre-upgrade zero-net submission with its original payload', async () => {
+    const created: Trait = { description: 'trait', group: [] };
+    const final: Trait = { ...created, group: [{ name: 'Tom', type: 'character' }] };
+    const creation = {
+      op: 'set' as const,
+      path: 'newTrait',
+      oldValue: undefined,
+      newValue: created,
+    };
+    const deletion = {
+      op: 'delete' as const,
+      path: 'newTrait',
+      oldValue: final,
+      newValue: undefined,
+    };
+    const legacyEntries = [{ ...creation, newValue: final }, deletion];
+    const history = memoryHistory({
+      traits: [
+        creation,
+        {
+          op: 'set',
+          path: 'newTrait.group',
+          oldValue: [],
+          newValue: final.group,
+        },
+        deletion,
+      ],
+    });
+    const operationId = getOrCreatePublishOperationId(
+      'page:traits:',
+      getPublishOperationFingerprint({
+        endpoint: '/api/game-data-actions/publish',
+        entries: legacyEntries,
+        message: null,
+        submitMode: 'default',
+      })
+    );
+    const publish = jest.fn(async () => ({
+      status: 'published' as const,
+      outcome: 'pending' as const,
+    }));
+    session = createEditSession(baseline, 'v1:test', { history: history.store, publish });
+    const scope = { kind: 'domain', entityType: 'traits' } as const;
+    expect(session.readDraft(scope).actionCount).toBe(0);
+    await expect(session.publishDraft(scope)).resolves.toEqual({
+      status: 'published',
+      outcome: 'pending',
+    });
+    expect(publish).toHaveBeenCalledWith({
+      endpoint: '/api/game-data-actions/publish',
+      operationId,
+      body: { entityType: 'traits', entries: legacyEntries },
+    });
+    expect(readPublishOperation('page:traits:')).toBeNull();
   });
 
   it('restores and records browser drafts through the session boundary', async () => {

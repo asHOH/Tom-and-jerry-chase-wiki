@@ -457,21 +457,44 @@ export function createEditSession(
       const source = history.read(entityType);
       const { matching, remaining } = selectHistory(scope, source);
       const squashed = squashActions(matching, { currentRoot: mutableDomain(stores, entityType) });
-      const originalScope = operationScope(scope, squashed);
+      const legacySquashed = squashActions(matching, {
+        currentRoot: mutableDomain(stores, entityType),
+        preserveLegacyCreations: true,
+      });
+      const legacyScope = operationScope(scope, legacySquashed);
+      const originalScope = readPublishOperation(legacyScope)
+        ? legacyScope
+        : operationScope(scope, squashed);
       const existingOperation = readPublishOperation(originalScope);
-      const requestFingerprint = (entries: readonly ActionHistoryEntry[]) =>
+      const requestFingerprint = (
+        entries: readonly ActionHistoryEntry[],
+        endpoint = scope.kind === 'character-relations'
+          ? '/api/game-data-actions/publish-relations'
+          : '/api/game-data-actions/publish'
+      ) =>
         getPublishOperationFingerprint({
-          endpoint:
-            scope.kind === 'character-relations'
-              ? '/api/game-data-actions/publish-relations'
-              : '/api/game-data-actions/publish',
+          endpoint,
           entries,
           message: options.message?.trim() || null,
           submitMode: options.submitMode ?? 'default',
         });
       // An uncertain request must retain its exact payload for an idempotent retry.
-      const retrying = existingOperation?.fingerprint === requestFingerprint(squashed);
-      const entries = retrying ? squashed : squashDraft(entityType, matching);
+      const retryEntries = existingOperation
+        ? [squashed, legacySquashed].find(
+            (entries) =>
+              existingOperation.fingerprint === requestFingerprint(entries) ||
+              (originalScope.startsWith('relations:pair:') &&
+                existingOperation.fingerprint ===
+                  requestFingerprint(
+                    entries,
+                    scope.kind === 'character-relations'
+                      ? '/api/game-data-actions/publish'
+                      : '/api/game-data-actions/publish-relations'
+                  ))
+          )
+        : undefined;
+      const retrying = retryEntries !== undefined;
+      const entries = retryEntries ?? squashDraft(entityType, matching);
       const publishScope = existingOperation
         ? originalScope
         : operationScope(scope, entries.length > 0 ? entries : matching);
@@ -492,6 +515,9 @@ export function createEditSession(
       }
 
       if (entries.length === 0) {
+        if (existingOperation) {
+          return { status: 'failed', error: new PublishOperationConflictError() };
+        }
         if (!history.replace(entityType, remaining)) {
           notifyDrafts();
           return { status: 'failed', error: new EditDraftCleanupError() };
