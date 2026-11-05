@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/react';
 
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
-import type { EditHistoryStore } from '@/lib/edit/editModeRegistry';
+import type { EditHistoryStore } from '@/lib/edit/draftPersistence';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import {
   getOrCreatePublishOperationId,
@@ -123,6 +123,20 @@ describe('createEditSession', () => {
       expect(window.localStorage.getItem(skillsKey)).toBe(skillHistory);
       session.dispose();
     }
+  });
+
+  it('keeps a renewed draft listener when its previous cleanup runs again', () => {
+    session = createEditSession(baseline, 'v1:test');
+    const listener = jest.fn();
+    const previousCleanup = session.subscribe({ kind: 'draft-overview' }, listener);
+    previousCleanup();
+    const cleanup = session.subscribe({ kind: 'draft-overview' }, listener);
+    previousCleanup();
+
+    session.discardDraft({ kind: 'domain', entityType: 'traits' });
+    expect(listener).toHaveBeenCalledTimes(1);
+    cleanup();
+    cleanup();
   });
 
   it('retries a stored legacy request after reload with the same endpoint, body, and UUID', async () => {

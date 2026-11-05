@@ -29,7 +29,7 @@ const broadEditModeContextImportPattern =
   /import\s+\{[^}]*\b(?:useLocal[A-Z]\w*|usePageEditMode|PUBLISHABLE_ENTITY_TYPES|clearAllEditModeData|entityRegistry|getEntityRegistry)\b[^}]*\}\s+from ['"]@\/context\/EditModeContext['"]/;
 
 const rawEditRuntimeImportPattern =
-  /from ['"]@\/(?:lib\/edit\/(?:activeEditRuntime|editStores|editModeRegistry)|hooks\/useDraftDataRuntime)['"]/;
+  /from ['"]@\/(?:lib\/edit\/(?:activeEditRuntime|editStores|editModeRegistry|draftJournal|draftPersistence)|hooks\/useDraftDataRuntime)['"]/;
 
 const rawEditInternalsPattern =
   /import\s+\{[^}]*(?:getActionsStorageKey|readActionHistory|writeActionHistory|replaceActionHistory|appendActionHistoryEntry|subscribers|withRecordingSuppressed)[^}]*\}\s+from ['"]@\/lib\/edit\/diffUtils['"]/s;
