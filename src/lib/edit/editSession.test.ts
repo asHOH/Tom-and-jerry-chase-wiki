@@ -91,6 +91,93 @@ describe('createEditSession', () => {
     Reflect.deleteProperty(global, 'fetch');
   });
 
+  it('restores stored grouped actions, absent fields, null pairs, and faction scopes across reload', () => {
+    const charactersKey = getEditModeActionsStorageKey('characters');
+    const skillsKey = getEditModeActionsStorageKey('specialSkills');
+    const characterHistory =
+      '[[{"op":"set","path":"杰瑞.description","oldValue":"原描述","newValue":"草稿"},{"op":"set","path":"杰瑞.aliases","newValue":["小鼠"]}],{"op":"set","path":"杰瑞.characterRelationOverrides.汤姆","newValue":null}]';
+    const skillHistory =
+      '[{"op":"set","path":"cat.冲刺.description","oldValue":"原特技","newValue":"猫草稿"}]';
+    const data = {
+      ...baseline,
+      specialSkills: {
+        cat: { 冲刺: { name: '冲刺', description: '原特技' } },
+        mouse: { 冲刺: { name: '冲刺', description: '鼠特技' } },
+      },
+    } as unknown as PublishedGameDataByType;
+    window.localStorage.setItem(charactersKey, characterHistory);
+    window.localStorage.setItem(skillsKey, skillHistory);
+
+    for (let reload = 0; reload < 2; reload += 1) {
+      session = createEditSession(data, 'v1:test');
+      expect(session.readDomain('characters').杰瑞).toMatchObject({
+        description: '草稿',
+        aliases: ['小鼠'],
+        characterRelationOverrides: { 汤姆: null },
+      });
+      expect(session.readDomain('specialSkills').cat.冲刺?.description).toBe('猫草稿');
+      expect(session.readDomain('specialSkills').mouse.冲刺?.description).toBe('鼠特技');
+      expect(JSON.parse(window.localStorage.getItem(charactersKey)!)).toEqual(
+        JSON.parse(characterHistory)
+      );
+      expect(window.localStorage.getItem(skillsKey)).toBe(skillHistory);
+      session.dispose();
+    }
+  });
+
+  it('retries a stored legacy request after reload with the same endpoint, body, and UUID', async () => {
+    const historyKey = getEditModeActionsStorageKey('characters');
+    const operationKey = 'game-data-publish-operation:v1:page%3Acharacters%3A%E6%9D%B0%E7%91%9E';
+    const operationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
+    const entries = [{ op: 'set', path: '杰瑞.description', oldValue: '原描述', newValue: '草稿' }];
+    const unrelated = { op: 'set', path: '汤姆.description', oldValue: '原描述', newValue: '保留' };
+    const options = { message: 'Existing request', submitMode: 'force_pending' as const };
+    const operation = JSON.stringify({
+      fingerprint: JSON.stringify({
+        endpoint: '/api/game-data-actions/publish',
+        entries,
+        ...options,
+      }),
+      operationId,
+    });
+    window.localStorage.setItem(historyKey, JSON.stringify([...entries, unrelated]));
+    window.sessionStorage.setItem(operationKey, operation);
+    const fetchMock = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('Unknown network outcome'))
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ result: [{ id: 'receipt', status: 'pending', is_public: false }] }),
+      });
+    global.fetch = fetchMock;
+    const scope = {
+      kind: 'entity',
+      entity: { entityType: 'characters', entityId: '杰瑞' },
+    } as const;
+
+    session = createEditSession(baseline, 'v1:test');
+    expect((await session.publishDraft(scope, options)).status).toBe('failed');
+    expect(window.sessionStorage.getItem(operationKey)).toBe(operation);
+    session.dispose();
+    session = createEditSession(baseline, 'v1:test');
+    expect(await session.publishDraft(scope, options)).toEqual({
+      status: 'published',
+      outcome: 'pending',
+    });
+
+    const request = [
+      '/api/game-data-actions/publish',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Idempotency-Key': operationId },
+        body: JSON.stringify({ entityType: 'characters', entries, ...options }),
+      },
+    ];
+    expect(fetchMock.mock.calls).toEqual([request, request]);
+    expect(JSON.parse(window.localStorage.getItem(historyKey)!)).toEqual([unrelated]);
+    expect(window.sessionStorage.getItem(operationKey)).toBeNull();
+  });
+
   it.each([false, true])('keeps OR edits compact (existing trait: %s)', async (existing) => {
     const trait: Trait = {
       description: 'trait',
