@@ -54,6 +54,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchIdRef = useRef(0); // To keep track of the latest search request
   const resultsListRef = useRef<HTMLUListElement>(null);
+  const resultsScrollRef = useRef<HTMLDivElement>(null);
+  const scrollTopRef = useRef(0);
   const { navigate } = useNavigation();
   const gameData = useSearchGameData(open);
   const shownCount = Math.min(visibleCount, searchResults.length);
@@ -62,17 +64,11 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     if (!open) return;
     // A loading dialog may restore trigger focus during this dialog's mount.
     // Focus after that handoff, once BaseDialog has completed its own focus setup.
-    const frame = window.requestAnimationFrame(() => searchInputRef.current?.focus());
+    const frame = window.requestAnimationFrame(() => {
+      searchInputRef.current?.focus();
+      if (resultsScrollRef.current) resultsScrollRef.current.scrollTop = scrollTopRef.current;
+    });
     return () => window.cancelAnimationFrame(frame);
-  }, [open]);
-
-  useEffect(() => {
-    if (open) return;
-
-    searchIdRef.current += 1;
-    setSearchQuery('');
-    setSearchResults([]);
-    setHighlightedIndex(-1);
   }, [open]);
 
   const getResultLabel = (result: SearchResult): string => {
@@ -116,8 +112,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
   const handleResultClick = useCallback(
     (result: SearchResult) => {
       navigate(result.href);
-      setSearchQuery(''); // Clear search query
-      setSearchResults([]); // Clear search results
       onClose(); // Close dialog after selection
     },
     [navigate, onClose]
@@ -177,7 +171,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
 
   // Scroll highlighted item into view
   useEffect(() => {
-    if (open && highlightedIndex >= 0 && resultsListRef.current) {
+    if (highlightedIndex >= 0 && resultsListRef.current) {
       const highlightedElement = resultsListRef.current.children[highlightedIndex] as HTMLElement;
       if (highlightedElement) {
         highlightedElement.scrollIntoView({
@@ -186,17 +180,16 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
         });
       }
     }
-  }, [open, highlightedIndex]);
+  }, [highlightedIndex]);
 
   useEffect(() => {
-    if (!open) return;
-
     searchIdRef.current += 1;
     const currentId = searchIdRef.current;
 
     setSearchResults([]);
     setVisibleCount(RESULTS_PER_PAGE);
     setHighlightedIndex(-1);
+    scrollTopRef.current = 0;
     setSearchError(null);
     setIsSearching(Boolean(searchQuery.trim()));
 
@@ -221,7 +214,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
       clearTimeout(handler);
       searchIdRef.current += 1;
     };
-  }, [gameData, open, searchQuery]);
+  }, [gameData, searchQuery]);
 
   return (
     <BaseDialog
@@ -277,7 +270,13 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
 
       {searchQuery.length > 0 && (
         <div className={cn('flex min-h-0 flex-col gap-3', isMobile ? 'flex-1' : 'h-100')}>
-          <div className='border-border min-h-0 flex-1 overflow-y-auto rounded-md border [overflow-anchor:none]'>
+          <div
+            ref={resultsScrollRef}
+            onScroll={(event) => {
+              scrollTopRef.current = event.currentTarget.scrollTop;
+            }}
+            className='border-border min-h-0 flex-1 overflow-y-auto rounded-md border [overflow-anchor:none]'
+          >
             <m.ul ref={resultsListRef} initial='hidden' animate='visible'>
               {/* Regular search results */}
               {searchResults.slice(0, shownCount).map((result, index) => (
@@ -315,7 +314,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
                         {result.title}
                       </span>
                       {result.matchContext && (
-                        <span className='mt-0.5 hidden truncate text-sm text-gray-500 md:block dark:text-gray-400'>
+                        <span className='mt-0.5 line-clamp-2 text-sm wrap-anywhere text-gray-500 md:line-clamp-none md:block md:truncate dark:text-gray-400'>
                           {renderMatchContext(result)}
                         </span>
                       )}

@@ -178,7 +178,7 @@ describe('SearchDialog', () => {
         isPinyinMatch: false,
       },
     ]);
-    render(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
+    render(<SearchDialog open onClose={jest.fn()} isMobile />);
     fireEvent.change(screen.getByRole('textbox'), { target: { value: '  TaRgEt  ' } });
     const result = await screen.findByRole('button', { name: /片段条目/ });
     expect(result).toHaveTextContent('lead, TARGET / target');
@@ -279,45 +279,36 @@ describe('SearchDialog', () => {
     expect(consoleError).not.toHaveBeenCalled();
   });
 
-  it.each(['query', 'snapshot', 'reopen'])(
-    'resets expanded results after a %s change',
-    async (change) => {
-      jest.mocked(performSearch).mockResolvedValue(
-        Array.from({ length: 21 }, (_, index) => ({
-          type: 'item',
-          key: `item:${index + 1}`,
-          title: `道具${index + 1}`,
-          imageUrl: '',
-          href: `/items/${index + 1}`,
-          matchContext: '',
-          highlightRanges: [],
-          priority: 1,
-          isPinyinMatch: false,
-        }))
-      );
-      const { rerender } = render(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
-      fireEvent.change(screen.getByRole('textbox'), { target: { value: '道具' } });
-      fireEvent.click(await screen.findByRole('button', { name: '加载更多' }));
-      await waitFor(() =>
-        expect(screen.getByRole('button', { name: '道具21 道具' })).toHaveFocus()
-      );
+  it.each(['query', 'snapshot'])('resets expanded results after a %s change', async (change) => {
+    jest.mocked(performSearch).mockResolvedValue(
+      Array.from({ length: 21 }, (_, index) => ({
+        type: 'item',
+        key: `item:${index + 1}`,
+        title: `道具${index + 1}`,
+        imageUrl: '',
+        href: `/items/${index + 1}`,
+        matchContext: '',
+        highlightRanges: [],
+        priority: 1,
+        isPinyinMatch: false,
+      }))
+    );
+    const { rerender } = render(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '道具' } });
+    fireEvent.click(await screen.findByRole('button', { name: '加载更多' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: '道具21 道具' })).toHaveFocus());
 
-      if (change === 'query') {
-        fireEvent.change(screen.getByRole('textbox'), { target: { value: '新查询' } });
-      } else if (change === 'snapshot') {
-        jest.mocked(useSearchGameData).mockReturnValue({ ...mockGameData, characters: {} });
-        rerender(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
-      } else {
-        rerender(<SearchDialog open={false} onClose={jest.fn()} isMobile={false} />);
-        rerender(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
-        fireEvent.change(screen.getByRole('textbox'), { target: { value: '道具' } });
-      }
-
-      await screen.findByRole('button', { name: '加载更多' });
-      expect(screen.getAllByRole('listitem')).toHaveLength(20);
-      expect(screen.getByRole('status')).toHaveTextContent('已显示 20 / 共 21 条');
+    if (change === 'query') {
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: '新查询' } });
+    } else {
+      jest.mocked(useSearchGameData).mockReturnValue({ ...mockGameData, characters: {} });
+      rerender(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
     }
-  );
+
+    await screen.findByRole('button', { name: '加载更多' });
+    expect(screen.getAllByRole('listitem')).toHaveLength(20);
+    expect(screen.getByRole('status')).toHaveTextContent('已显示 20 / 共 21 条');
+  });
 
   it('shows local search failures and recovers on a new query', async () => {
     jest.mocked(performSearch).mockRejectedValueOnce(new Error('search failed'));
@@ -354,27 +345,76 @@ describe('SearchDialog', () => {
     expect(screen.queryByRole('img', { name: '搜索图标' })).not.toBeInTheDocument();
   });
 
-  it('uses controlled dismissal and clears the query before reopening', () => {
+  it.each(['close', 'result'])('preserves the search after %s and reopening', async (action) => {
     const onClose = jest.fn();
-    const { rerender } = render(<SearchDialog open onClose={onClose} isMobile={false} />);
-
-    const searchInput = screen.getByRole('textbox');
-    fireEvent.change(searchInput, { target: { value: '汤姆' } });
-    expect(searchInput).toHaveValue('汤姆');
-
-    fireEvent.keyDown(document, { key: 'Escape' });
+    jest.mocked(performSearch).mockResolvedValue(
+      Array.from({ length: 25 }, (_, index) => ({
+        type: 'item',
+        key: `item:${index + 1}`,
+        title: `道具${index + 1}`,
+        href: `/items/${index + 1}`,
+        matchContext: '匹配说明',
+        highlightRanges: [],
+        priority: 1,
+        isPinyinMatch: false,
+      }))
+    );
+    const { rerender } = render(<SearchDialog open onClose={onClose} isMobile />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '道具' } });
+    fireEvent.click(await screen.findByRole('button', { name: '加载更多' }));
+    const selectedResult = screen.getByRole('button', { name: '道具21 匹配说明 道具' });
+    await waitFor(() => expect(selectedResult).toHaveFocus());
+    const scrollContainer = screen.getByRole('list').parentElement!;
+    fireEvent.scroll(scrollContainer, { target: { scrollTop: 600 } });
+    const searchCalls = jest.mocked(performSearch).mock.calls.length;
+    if (action === 'result') {
+      fireEvent.click(selectedResult);
+      expect(mockNavigate).toHaveBeenCalledWith('/items/21');
+    } else {
+      fireEvent.keyDown(document, { key: 'Escape' });
+    }
     expect(onClose).toHaveBeenCalledTimes(1);
 
-    rerender(<SearchDialog open={false} onClose={onClose} isMobile={false} />);
+    rerender(<SearchDialog open={false} onClose={onClose} isMobile />);
     expect(screen.queryByRole('dialog', { name: '搜索' })).not.toBeInTheDocument();
 
     rerender(<SearchDialog open onClose={onClose} isMobile />);
-    expect(screen.getByRole('textbox')).toHaveValue('');
-    expect(screen.getByRole('dialog', { name: '搜索' })).toHaveClass(
-      'inset-0',
-      'h-dvh',
-      'w-full',
-      'rounded-none'
+    expect(screen.getByRole('textbox')).toHaveValue('道具');
+    expect(screen.getByRole('status')).toHaveTextContent('已显示 25 / 共 25 条');
+    expect(screen.getByRole('button', { name: '道具21 匹配说明 道具' })).toHaveClass('bg-control');
+    await waitFor(() => expect(screen.getByRole('list').parentElement?.scrollTop).toBe(600));
+    expect(performSearch).toHaveBeenCalledTimes(searchCalls);
+  });
+
+  it('finishes an in-flight search while closed and shows it on reopening', async () => {
+    let resolveSearch!: (results: SearchResult[]) => void;
+    jest.mocked(performSearch).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveSearch = resolve;
+        })
     );
+    const { rerender } = render(<SearchDialog open onClose={jest.fn()} isMobile />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '汤姆' } });
+    await waitFor(() => expect(resolveSearch).toBeDefined());
+    rerender(<SearchDialog open={false} onClose={jest.fn()} isMobile />);
+    await act(async () =>
+      resolveSearch([
+        {
+          type: 'character',
+          key: 'character:tom',
+          title: '汤姆',
+          href: '/characters/tom',
+          matchContext: '',
+          highlightRanges: [],
+          priority: 1,
+          isPinyinMatch: false,
+        },
+      ])
+    );
+    rerender(<SearchDialog open onClose={jest.fn()} isMobile />);
+    expect(screen.getByRole('textbox')).toHaveValue('汤姆');
+    expect(screen.getByRole('button', { name: '汤姆 角色' })).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('已显示 1 / 共 1 条');
   });
 });
