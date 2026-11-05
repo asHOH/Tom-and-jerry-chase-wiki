@@ -87,7 +87,11 @@ it('keeps an unchanged tag-derived matrix save out of the draft', async () => {
   await act(async () => fireEvent.click(screen.getByRole('button', { name: '保存' })));
 
   expect(onOpenChange).toHaveBeenCalledWith(false);
-  expect(session.readDraft(scope)).toEqual({ actionCount: 0, publishEntries: [] });
+  expect(session.readDraft(scope)).toEqual({
+    actionCount: 0,
+    publishEntries: [],
+    persistence: 'saved',
+  });
   expect(session.readDomain('characters')).toEqual(characters);
 });
 
@@ -108,7 +112,11 @@ it('preserves different inverse metadata when the selected relation is unchanged
 
   await act(async () => fireEvent.click(screen.getByRole('button', { name: '保存' })));
 
-  expect(session.readDraft(scope)).toEqual({ actionCount: 0, publishEntries: [] });
+  expect(session.readDraft(scope)).toEqual({
+    actionCount: 0,
+    publishEntries: [],
+    persistence: 'saved',
+  });
   expect(session.readDomain('characters')).toEqual(characters);
 });
 

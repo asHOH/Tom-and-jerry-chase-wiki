@@ -42,7 +42,7 @@ export interface EditModeToolbarProps {
   /** Whether publish is in progress */
   isPublishing: boolean;
   /** Called when user clicks discard */
-  onDiscard: () => void;
+  onDiscard: () => boolean;
   /** Called when user clicks publish */
   onPublish: (
     message?: string,
@@ -140,7 +140,7 @@ export default function EditModeToolbar({
   const handleDiscard = () => {
     if (isDirty) {
       if (isConfirmingDiscard) {
-        onDiscard();
+        if (!onDiscard()) return;
         setIsConfirmingDiscard(false);
         onExitEditMode();
       } else {

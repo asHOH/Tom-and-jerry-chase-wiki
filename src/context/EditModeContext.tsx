@@ -72,6 +72,7 @@ export const EditModeContext = createContext<EditModeContextInput | undefined>(u
 export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [hasUnsavedDrafts, setHasUnsavedDrafts] = useState(false);
   const [runtimeStatus, setRuntimeStatus] = useState<EditRuntimeStatus>('idle');
   const [runtimeError, setRuntimeError] = useState<string | undefined>();
   const [revisionCounts, setRevisionCounts] = useState<
@@ -129,12 +130,12 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
       })
     );
 
-    if (!isEditModeRequested) {
+    if (!isEditModeRequested && !hasUnsavedDrafts) {
       hasReadyRuntimeRef.current = false;
       setRuntimeStatus('idle');
       setRuntimeError(undefined);
     }
-  }, [isEditModeRequested]);
+  }, [hasUnsavedDrafts, isEditModeRequested]);
 
   const registerPublishedRevision = useCallback(
     (entityType: PublishableEntityType, revision: PublishedRevision) => {
@@ -207,12 +208,13 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   return (
     <EditModeContext.Provider value={contextValue}>
       {children}
-      {isEditModeRequested ? (
+      {isEditModeRequested || hasUnsavedDrafts ? (
         <EditRuntime
           key={retryKey}
           visibleRevisions={visibleRevisions}
           onStatusChange={handleRuntimeStatusChange}
           onRetry={retryEditRuntime}
+          onUnsavedDraftsChange={setHasUnsavedDrafts}
         />
       ) : null}
     </EditModeContext.Provider>

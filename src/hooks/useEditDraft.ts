@@ -13,7 +13,11 @@ import type {
   EditPublishResult,
 } from '@/lib/edit/editSession';
 
-const EMPTY_DRAFT: EditDraftState = Object.freeze({ actionCount: 0, publishEntries: [] });
+const EMPTY_DRAFT: EditDraftState = Object.freeze({
+  actionCount: 0,
+  publishEntries: [],
+  persistence: 'saved',
+});
 
 type EditDraftOverviewView = EditDraftOverviewItem & Readonly<{ itemLabel: string }>;
 
@@ -73,6 +77,10 @@ export function useEditDraft(scope: EditDraftScope) {
     () => (session ? session.readDraft(scope).actionCount : 0),
     [scope, session]
   );
+  const retryPersistence = useCallback(
+    () => session?.retryDraftPersistence(scope),
+    [scope, session]
+  );
 
   return {
     isReady: session !== null,
@@ -81,5 +89,6 @@ export function useEditDraft(scope: EditDraftScope) {
     discardDraft,
     publishDraft,
     getActionCount,
+    retryPersistence,
   } as const;
 }

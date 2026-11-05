@@ -5,6 +5,7 @@ import type { EditSession } from '@/lib/edit/editSession';
 import type { PendingActionAwarenessSource } from '@/context/PendingActionAwarenessContext';
 import { characters } from '@/data/static';
 import {
+  applyTestEditActions,
   clearTestEditSession,
   getTestEditHistoryKey,
   installTestEditSession,
@@ -62,6 +63,9 @@ function deferred<T>() {
 }
 
 let session: EditSession;
+const seedCharacters = (entries: Parameters<typeof applyTestEditActions>[2]) => {
+  act(() => applyTestEditActions(session, 'characters', entries));
+};
 
 function RelationEditModeProbe() {
   const [publishResult, setPublishResult] = useState<string | null>(null);
@@ -127,7 +131,10 @@ const renderProbe = () => render(<RelationEditModeProbe />);
 describe('useRelationMatrixEditMode', () => {
   beforeEach(() => {
     session = installTestEditSession({
-      characters: { 杰瑞: characters.杰瑞!, 汤姆: characters.汤姆! },
+      characters: {
+        杰瑞: { ...characters.杰瑞!, name: '杰瑞', description: 'old', counters: [] },
+        汤姆: { ...characters.汤姆!, description: 'old', counteredBy: [] },
+      } as typeof characters,
     });
     mockPermissionProfile = 'contributor';
     mockPendingAwareness = undefined;
@@ -148,7 +155,7 @@ describe('useRelationMatrixEditMode', () => {
   });
 
   it('counts relation actions and excludes unrelated character drafts', () => {
-    writeTestEditHistory(storageKey, [
+    seedCharacters([
       { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
       { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
       [
@@ -174,7 +181,7 @@ describe('useRelationMatrixEditMode', () => {
       }),
     });
     global.fetch = fetchMock;
-    writeTestEditHistory(storageKey, [
+    seedCharacters([
       { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
       { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
     ]);
@@ -212,7 +219,7 @@ describe('useRelationMatrixEditMode', () => {
       }),
     });
     global.fetch = fetchMock;
-    writeTestEditHistory(storageKey, [
+    seedCharacters([
       { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
     ]);
     renderProbe();
@@ -252,13 +259,13 @@ describe('useRelationMatrixEditMode', () => {
       }),
     });
     global.fetch = fetchMock;
-    await act(async () => {
-      session.updateEntity({ entityType: 'characters', entityId: '杰瑞' }, (character) => {
-        (character as unknown as { counters?: unknown }).counters = relationCountersFinal;
-      });
-      await Promise.resolve();
+    clearTestEditSession(session);
+    session = installTestEditSession({
+      characters: {
+        杰瑞: { ...characters.杰瑞!, counters: relationCountersOriginal },
+      } as typeof characters,
     });
-    writeTestEditHistory(storageKey, [
+    seedCharacters([
       {
         op: 'delete',
         path: '杰瑞.counters.1',
@@ -320,7 +327,7 @@ describe('useRelationMatrixEditMode', () => {
         json: jest.fn().mockResolvedValue({ result: [{ id: 'action-1', ...result }] }),
       });
       global.fetch = fetchMock;
-      writeTestEditHistory(storageKey, [
+      seedCharacters([
         { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
       ]);
       renderProbe();
@@ -363,7 +370,7 @@ describe('useRelationMatrixEditMode', () => {
       oldValue: [],
       newValue: [{ id: '汤姆' }],
     };
-    writeTestEditHistory(storageKey, [draft]);
+    seedCharacters([draft]);
     renderProbe();
 
     await act(async () => {
@@ -382,13 +389,7 @@ describe('useRelationMatrixEditMode', () => {
   });
 
   it('discards relation actions with suppressed inverse replay and preserves unrelated drafts', async () => {
-    await act(async () => {
-      session.updateEntity({ entityType: 'characters', entityId: '杰瑞' }, (character) => {
-        (character as unknown as { counters?: unknown }).counters = [{ id: '汤姆' }];
-      });
-      await Promise.resolve();
-    });
-    writeTestEditHistory(storageKey, [
+    seedCharacters([
       { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
       { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
     ]);
@@ -417,10 +418,6 @@ describe('useRelationMatrixEditMode', () => {
   it('updates dirty state and draft info after relation overlay writes touch the characters store', async () => {
     renderProbe();
     expect(screen.getByTestId('dirty')).toHaveTextContent('false');
-
-    writeTestEditHistory(storageKey, [
-      { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
-    ]);
 
     await act(async () => {
       session.updateEntity({ entityType: 'characters', entityId: '杰瑞' }, (character) => {
@@ -455,7 +452,7 @@ describe('useRelationMatrixEditMode', () => {
       { op: 'set' as const, path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
       { op: 'set' as const, path: '杰瑞.name', oldValue: '杰瑞', newValue: '杰瑞（新）' },
     ];
-    writeTestEditHistory(storageKey, [submitted]);
+    seedCharacters([submitted]);
     renderProbe();
 
     await act(async () => {
@@ -464,7 +461,7 @@ describe('useRelationMatrixEditMode', () => {
     });
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
 
-    writeTestEditHistory(storageKey, [submitted, sameScopeAppend, unrelatedAppend]);
+    seedCharacters([sameScopeAppend, unrelatedAppend]);
     await act(async () => {
       response.resolve({
         ok: true,
@@ -495,7 +492,7 @@ describe('useRelationMatrixEditMode', () => {
       oldValue: [{ id: '布奇' }],
       newValue: [{ id: '汤姆' }, { id: '布奇' }],
     };
-    writeTestEditHistory(storageKey, [submitted]);
+    seedCharacters([submitted]);
     renderProbe();
 
     await act(async () => {
@@ -542,7 +539,7 @@ describe('useRelationMatrixEditMode', () => {
     };
     const fetchMock = jest.fn().mockResolvedValueOnce(overlap).mockResolvedValueOnce(success);
     global.fetch = fetchMock;
-    writeTestEditHistory(storageKey, [
+    seedCharacters([
       { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
     ]);
     renderProbe();
@@ -588,7 +585,7 @@ describe('useRelationMatrixEditMode', () => {
       oldValue: [],
       newValue: [{ id: '汤姆' }],
     };
-    writeTestEditHistory(storageKey, [submitted]);
+    seedCharacters([submitted]);
     const originalRemoveItem = Storage.prototype.removeItem;
     const removeItem = jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(function (
       this: Storage,

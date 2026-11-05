@@ -36,6 +36,7 @@ export type EditDraftScope =
 export type EditDraftState = Readonly<{
   actionCount: number;
   publishEntries: readonly ActionHistoryEntry[];
+  persistence: 'saved' | 'unsaved' | 'conflict';
 }>;
 
 export type EditDraftOverviewItem = Readonly<{
@@ -66,6 +67,7 @@ export type EditDiscardResult =
   { status: 'discarded' } | { status: 'storage-failed'; error: Error };
 
 export { EditDraftCleanupError } from './draftJournal';
+export { EditDraftPersistenceError } from './draftPersistence';
 
 type EditSubscriptionTarget =
   | { kind: 'domain'; entityType: PublishableEntityType }
@@ -96,6 +98,10 @@ export type EditSession = Readonly<{
   readDraftOverview: () => readonly EditDraftOverviewItem[];
   discardDraft: (scope: EditDraftScope) => EditDiscardResult;
   publishDraft: (scope: EditDraftScope, options?: EditPublishOptions) => Promise<EditPublishResult>;
+  hasUnsavedDrafts: () => boolean;
+  retryDraftPersistence: (
+    scope?: EditDraftScope
+  ) => { status: 'saved' } | { status: 'storage-failed'; error: Error };
   dispose: () => void;
 }>;
 
@@ -157,7 +163,7 @@ export function createEditSession(
     mutate: (value: EditDomainDraft<EntityType>) => void
   ) => {
     assertActive();
-    mutate(stores[entityType]);
+    journal.mutate(entityType, () => mutate(stores[entityType]));
   };
   const updateEntity: EditSession['updateEntity'] = <EntityType extends PublishableEntityType>(
     ref: EditEntityRef<EntityType>,
@@ -168,7 +174,9 @@ export function createEditSession(
     if (!entity) {
       throw new Error(`Cannot edit ${ref.entityType}.${ref.entityId} because it is not loaded.`);
     }
-    mutate(entity as PublishedGameDataEntityByType[EntityType]);
+    journal.mutate(ref.entityType, () =>
+      mutate(entity as PublishedGameDataEntityByType[EntityType])
+    );
   };
 
   return Object.freeze({
@@ -181,6 +189,8 @@ export function createEditSession(
     readDraftOverview: journal.readDraftOverview,
     discardDraft: journal.discardDraft,
     publishDraft: journal.publishDraft,
+    hasUnsavedDrafts: journal.hasUnsavedDrafts,
+    retryDraftPersistence: journal.retryDraftPersistence,
     subscribe: (target, listener) => {
       assertActive();
       if (target.kind === 'draft' || target.kind === 'draft-overview') {

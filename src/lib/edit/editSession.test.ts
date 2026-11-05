@@ -91,6 +91,68 @@ describe('createEditSession', () => {
     Reflect.deleteProperty(global, 'fetch');
   });
 
+  it('records a complete mutation synchronously and notifies after saving', () => {
+    const history = memoryHistory({});
+    session = createEditSession(baseline, 'v1:test', { history: history.store });
+    const scope = { kind: 'domain', entityType: 'characters' } as const;
+    const seen: number[] = [];
+    session.subscribe({ kind: 'draft', scope }, () => {
+      expect(history.read('characters')).toHaveLength(1);
+      seen.push(session!.readDraft(scope).actionCount);
+    });
+    session.updateEntity({ entityType: 'characters', entityId: '杰瑞' }, (character) => {
+      character.aliases = ['新名字'];
+      character.description = '新描述';
+    });
+    expect(session.readDraft(scope).actionCount).toBe(1);
+    expect(seen).toEqual([1]);
+    expect(history.read('characters')[0]).toHaveLength(2);
+  });
+
+  it('retains unsaved edits and prevents publication until persistence recovers', async () => {
+    const history = memoryHistory({});
+    const publish = jest.fn().mockResolvedValue({ status: 'published', outcome: 'pending' });
+    session = createEditSession(baseline, 'v1:test', { history: history.store, publish });
+    const save = jest.spyOn(history.store, 'replace').mockReturnValue(false);
+    const scope = { kind: 'domain', entityType: 'characters' } as const;
+    session.updateEntity({ entityType: 'characters', entityId: '杰瑞' }, (character) => {
+      character.description = '未保存';
+    });
+    expect(session.readDraft(scope)).toMatchObject({ actionCount: 1, persistence: 'unsaved' });
+    expect(session.hasUnsavedDrafts()).toBe(true);
+    expect((await session.publishDraft(scope)).status).toBe('failed');
+    expect(publish).not.toHaveBeenCalled();
+    expect(session.discardDraft(scope).status).toBe('storage-failed');
+    expect(session.readDomain('characters').杰瑞?.description).toBe('未保存');
+    save.mockRestore();
+    expect(session.retryDraftPersistence(scope)).toEqual({ status: 'saved' });
+    expect(session.hasUnsavedDrafts()).toBe(false);
+    expect(history.read('characters')).toHaveLength(1);
+  });
+
+  it('preserves external storage and its live buffer when history changes elsewhere', () => {
+    session = createEditSession(baseline, 'v1:test');
+    const key = getEditModeActionsStorageKey('characters');
+    const external =
+      '[{"op":"set","path":"杰瑞.description","oldValue":"原描述","newValue":"其他页面"}]';
+    window.localStorage.setItem(key, external);
+    session.updateEntity({ entityType: 'characters', entityId: '杰瑞' }, (character) => {
+      character.description = '本页';
+    });
+    const scope = { kind: 'domain', entityType: 'characters' } as const;
+    expect(session.readDraft(scope).persistence).toBe('conflict');
+    expect(session.readDomain('characters').杰瑞?.description).toBe('本页');
+    expect(session.retryDraftPersistence(scope).status).toBe('storage-failed');
+    expect(window.localStorage.getItem(key)).toBe(external);
+  });
+
+  it.each(['{broken', '{"unexpected":true}'])('preserves malformed history: %s', (raw) => {
+    const key = getEditModeActionsStorageKey('characters');
+    window.localStorage.setItem(key, raw);
+    expect(() => createEditSession(baseline, 'v1:test')).toThrow('Failed to restore');
+    expect(window.localStorage.getItem(key)).toBe(raw);
+  });
+
   it('restores stored grouped actions, absent fields, null pairs, and faction scopes across reload', () => {
     const charactersKey = getEditModeActionsStorageKey('characters');
     const skillsKey = getEditModeActionsStorageKey('specialSkills');
@@ -234,6 +296,7 @@ describe('createEditSession', () => {
       preparePublishActionItems([{ entityType: 'traits', entries: recordedEntries }])
     ).toThrow('too_many_actions_per_row');
     expect(session.readDraft(scope)).toEqual({
+      persistence: 'saved',
       actionCount: 1,
       publishEntries: [
         {
@@ -282,7 +345,11 @@ describe('createEditSession', () => {
       delete draft.newTrait;
     });
     await Promise.resolve();
-    expect(session.readDraft(scope)).toEqual({ actionCount: 0, publishEntries: [] });
+    expect(session.readDraft(scope)).toEqual({
+      actionCount: 0,
+      publishEntries: [],
+      persistence: 'saved',
+    });
     expect(session.readDraftOverview()).toEqual([]);
     await expect(session.publishDraft(scope)).resolves.toEqual({ status: 'empty' });
     expect(publish).not.toHaveBeenCalled();
@@ -301,6 +368,7 @@ describe('createEditSession', () => {
     });
     await Promise.resolve();
     expect(session.readDraft(scope)).toEqual({
+      persistence: 'saved',
       actionCount: 1,
       publishEntries: [
         { op: 'set', path: '杰瑞.aliases', oldValue: undefined, newValue: ['A', 'C'] },
@@ -310,7 +378,11 @@ describe('createEditSession', () => {
       delete draft.aliases;
     });
     await Promise.resolve();
-    expect(session.readDraft(scope)).toEqual({ actionCount: 0, publishEntries: [] });
+    expect(session.readDraft(scope)).toEqual({
+      actionCount: 0,
+      publishEntries: [],
+      persistence: 'saved',
+    });
   });
 
   it.each(['unchanged', 'draft', 'delete', 'message', 'submitMode'] as const)(
@@ -527,7 +599,11 @@ describe('createEditSession', () => {
         else delete character.aliases;
       });
       await Promise.resolve();
-      expect(session.readDraft(scope)).toEqual({ actionCount: 0, publishEntries: [] });
+      expect(session.readDraft(scope)).toEqual({
+        actionCount: 0,
+        publishEntries: [],
+        persistence: 'saved',
+      });
       expect(session.readDraftOverview()).toEqual([]);
       expect(history.read('characters')).toHaveLength(2);
       await expect(session.publishDraft(scope)).resolves.toEqual({ status: 'empty' });
@@ -808,9 +884,9 @@ describe('createEditSession', () => {
     };
     const appended = {
       op: 'set' as const,
-      path: '汤姆.counteredBy',
-      oldValue: [],
-      newValue: [{ id: '杰瑞' }],
+      path: '汤姆.description',
+      oldValue: '原描述',
+      newValue: '追加草稿',
     };
     const history = memoryHistory({ characters: [submitted, unrelated] });
     let finish!: () => void;
@@ -827,7 +903,9 @@ describe('createEditSession', () => {
       { kind: 'character-relations' },
       { message: '关系更新', submitMode: 'force_pending' }
     );
-    history.store.append('characters', appended);
+    session.updateEntity({ entityType: 'characters', entityId: '汤姆' }, (draft) => {
+      draft.description = '追加草稿';
+    });
     finish();
 
     await expect(resultPromise).resolves.toEqual({ status: 'published', outcome: 'pending' });
@@ -884,6 +962,7 @@ describe('createEditSession', () => {
           .every((action) => action.path.split('.').length === 3)
       ).toBe(true);
       expect(session.readDraft(targetScope)).toEqual({
+        persistence: 'saved',
         actionCount: 1,
         publishEntries: [{ op: 'set', path: pairPath, oldValue: undefined, newValue: relation }],
       });

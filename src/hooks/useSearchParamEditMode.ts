@@ -2,6 +2,9 @@
 
 import { useCallback, useMemo } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
+
+import { getActiveEditSession } from '@/lib/edit/activeEditSession';
 
 const EDIT_MODE_SEARCH_PARAM = 'edit';
 const EDIT_MODE_SEARCH_VALUE = '1';
@@ -41,6 +44,10 @@ export function useSearchParamEditMode(): UseSearchParamEditModeResult {
   }, [router, pathname, searchParams]);
 
   const exitEditMode = useCallback(() => {
+    if (getActiveEditSession()?.hasUnsavedDrafts()) {
+      toast.error('草稿暂未保存，请重试保存后再退出编辑。');
+      return;
+    }
     const params = new URLSearchParams(searchParams.toString());
     params.delete(EDIT_MODE_SEARCH_PARAM);
     const queryString = params.toString();

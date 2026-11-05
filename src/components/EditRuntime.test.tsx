@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { clearActiveEditSession, getActiveEditSession } from '@/lib/edit/activeEditSession';
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
@@ -22,11 +22,12 @@ import { getTestEditHistoryKey } from '@/testUtils/editRuntime';
 import EditRuntime from './EditRuntime';
 
 const mockRefresh = jest.fn();
+const mockReplace = jest.fn();
 let mockPathname = '/characters/test';
 
 jest.mock('next/navigation', () => ({
   usePathname: () => mockPathname,
-  useRouter: () => ({ refresh: mockRefresh }),
+  useRouter: () => ({ refresh: mockRefresh, replace: mockReplace }),
 }));
 
 const baselineData = {
@@ -61,6 +62,7 @@ const createFetchResponse = (revision: `v1:${string}`) => ({
 describe('EditRuntime', () => {
   beforeEach(() => {
     mockRefresh.mockClear();
+    mockReplace.mockClear();
     mockPathname = '/characters/test';
     window.localStorage.clear();
     clearActiveEditSession();
@@ -72,6 +74,45 @@ describe('EditRuntime', () => {
     clearActiveEditSession();
     jest.useRealTimers();
     jest.restoreAllMocks();
+  });
+
+  it('retains an unsaved buffer, warns before unload, and requires confirmation to leave a conflict', async () => {
+    global.fetch = jest.fn().mockResolvedValue(createFetchResponse('v1:matching'));
+    const onUnsavedDraftsChange = jest.fn();
+    render(
+      <EditRuntime
+        visibleRevisions={[{ entityType: 'characters', revision: 'v1:matching' }]}
+        onStatusChange={jest.fn()}
+        onRetry={jest.fn()}
+        onUnsavedDraftsChange={onUnsavedDraftsChange}
+      />
+    );
+    await waitFor(() => expect(getActiveEditSession()).not.toBeNull());
+    const session = getActiveEditSession()!;
+    const key = getTestEditHistoryKey('characters');
+    const external = '[{"op":"set","path":"汤姆.description","newValue":"另一页"}]';
+    window.localStorage.setItem(key, external);
+    act(() =>
+      session.updateEntity({ entityType: 'characters', entityId: '汤姆' }, (draft) => {
+        draft.description = '本页未保存';
+      })
+    );
+    expect(onUnsavedDraftsChange).toHaveBeenLastCalledWith(true);
+    const unload = new Event('beforeunload', { cancelable: true });
+    window.dispatchEvent(unload);
+    expect(unload.defaultPrevented).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '重试保存' }));
+    expect(session.hasUnsavedDrafts()).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '退出并保留已存草稿' }));
+    fireEvent.click(screen.getByRole('button', { name: '继续编辑' }));
+    expect(getActiveEditSession()).toBe(session);
+    expect(session.readDomain('characters').汤姆?.description).toBe('本页未保存');
+    fireEvent.click(screen.getByRole('button', { name: '退出并保留已存草稿' }));
+    fireEvent.click(screen.getByRole('button', { name: '确认退出' }));
+    expect(getActiveEditSession()).toBeNull();
+    expect(onUnsavedDraftsChange).toHaveBeenLastCalledWith(false);
+    expect(window.localStorage.getItem(key)).toBe(external);
+    expect(mockReplace).toHaveBeenCalled();
   });
 
   it('fetches one baseline and restores drafts before reporting ready', async () => {

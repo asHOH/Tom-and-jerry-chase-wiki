@@ -1,5 +1,5 @@
 import { clearActiveEditSession, installActiveEditSession } from '@/lib/edit/activeEditSession';
-import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
+import { applyActionEntry, type ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { createEditSession, type EditSession } from '@/lib/edit/editSession';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getEditModeActionsStorageKey, storage } from '@/lib/localStorage';
@@ -69,4 +69,16 @@ export function readTestEditHistory(storageKey: string): ActionHistoryEntry[] {
 
 export function writeTestEditHistory(storageKey: string, history: ActionHistoryEntry[]): boolean {
   return storage.setJson(storageKey, history);
+}
+
+export function applyTestEditActions(
+  session: EditSession,
+  entityType: keyof PublishedGameDataByType,
+  entries: ActionHistoryEntry[]
+): void {
+  for (const entry of entries) {
+    session.updateDomain(entityType, (domain) => {
+      applyActionEntry(domain as unknown as Record<string, unknown>, structuredClone(entry));
+    });
+  }
 }

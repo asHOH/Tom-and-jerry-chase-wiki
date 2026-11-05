@@ -80,7 +80,11 @@ it('keeps one pending creation through OR removal and cancels it when deleted', 
   expect(session.readDraft(scope).actionCount).toBe(1);
   fireEvent.click(screen.getByRole('button', { name: '删除特性' }));
   await act(async () => {});
-  expect(session.readDraft(scope)).toEqual({ actionCount: 0, publishEntries: [] });
+  expect(session.readDraft(scope)).toEqual({
+    actionCount: 0,
+    publishEntries: [],
+    persistence: 'saved',
+  });
   expect(session.readDomain('traits')).toEqual(baseline);
 });
 

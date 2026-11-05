@@ -35,7 +35,7 @@ type RelationMatrixEditModeResult = {
   pendingAwarenessUnavailable: boolean;
   pendingDraftSummary: PendingActionOverlapSummary | null;
   pendingOverlap: PendingActionOverlapResponse | null;
-  discardChanges: () => void;
+  discardChanges: () => boolean;
   publishChanges: (
     message?: string,
     options?: {
@@ -95,6 +95,7 @@ export const useRelationMatrixEditMode = (
     const result = discardDraft();
     if (result.status === 'discarded') info('已放弃关系修改');
     else error('放弃关系修改后本地草稿清理失败，请重试');
+    return result.status === 'discarded';
   }, [discardDraft, error, info]);
 
   const refreshAwareness = useCallback(async () => {

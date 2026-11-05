@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import type { EditSession } from '@/lib/edit/editSession';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { EditModeContext } from '@/context/EditModeContext';
 import type { PendingActionAwarenessSource } from '@/context/PendingActionAwarenessContext';
 import {
+  applyTestEditActions,
   clearTestEditSession,
   getTestEditHistoryKey,
   installTestEditSession,
@@ -53,6 +55,9 @@ function deferred<T>() {
 }
 
 let session: EditSession;
+const seedCharacters = (entries: Parameters<typeof applyTestEditActions>[2]) => {
+  act(() => applyTestEditActions(session, 'characters', entries));
+};
 
 function PageEditModeProbe() {
   const [refreshCount, setRefreshCount] = useState(0);
@@ -138,7 +143,23 @@ function renderInEditMode() {
 
 describe('usePageEditMode', () => {
   beforeEach(() => {
-    session = installTestEditSession({});
+    session = installTestEditSession({
+      characters: {
+        [TEST_CHARACTER_ID]: {
+          id: TEST_CHARACTER_ID,
+          name: '玛丽',
+          description: 'canonical description',
+          skills: [{ description: 'canonical description' }],
+          specialSkills: marySpecialSkillsOriginal,
+        },
+        __other_character__: {
+          id: '__other_character__',
+          name: '旧名字',
+          description: 'other canonical description',
+        },
+      },
+      items: { __cross_domain_item__: { description: 'canonical item description' } },
+    } as unknown as Partial<PublishedGameDataByType>);
     mockPermissionProfile = 'contributor';
     mockShowToast.mockClear();
     mockSetCookie.mockClear();
@@ -160,9 +181,9 @@ describe('usePageEditMode', () => {
   it('does not report a new edit as a restored draft', async () => {
     renderInEditMode();
 
-    writeTestEditHistory(getTestEditHistoryKey('characters'), [
+    seedCharacters([
       {
-        op: 'set',
+        op: 'set' as const,
         path: `${TEST_CHARACTER_ID}.description`,
         oldValue: 'canonical description',
         newValue: 'new edit',
@@ -179,17 +200,16 @@ describe('usePageEditMode', () => {
   it('should discard only the current entity draft and preserve remaining drafts', async () => {
     renderInEditMode();
 
-    window.localStorage.setItem(
-      getTestEditHistoryKey('characters'),
-      JSON.stringify([
+    act(() =>
+      applyTestEditActions(session, 'characters', [
         {
-          op: 'set',
+          op: 'set' as const,
           path: `${TEST_CHARACTER_ID}.description`,
           oldValue: 'canonical description',
           newValue: 'draft description',
         },
         {
-          op: 'set',
+          op: 'set' as const,
           path: '__other_character__.description',
           oldValue: 'other canonical description',
           newValue: 'other draft description',
@@ -212,7 +232,7 @@ describe('usePageEditMode', () => {
       expect(screen.getByTestId('page-dirty')).toHaveTextContent('false');
       expect(readTestEditHistory(getTestEditHistoryKey('characters'))).toEqual([
         expect.objectContaining({
-          op: 'set',
+          op: 'set' as const,
           path: '__other_character__.description',
           newValue: 'other draft description',
         }),
@@ -223,17 +243,16 @@ describe('usePageEditMode', () => {
   it('should count repeated same-path edits as one publishable change', async () => {
     renderInEditMode();
 
-    window.localStorage.setItem(
-      getTestEditHistoryKey('characters'),
-      JSON.stringify([
+    act(() =>
+      applyTestEditActions(session, 'characters', [
         {
-          op: 'set',
+          op: 'set' as const,
           path: `${TEST_CHARACTER_ID}.skills.0.description`,
           oldValue: 'canonical description',
           newValue: 'draft description',
         },
         {
-          op: 'set',
+          op: 'set' as const,
           path: `${TEST_CHARACTER_ID}.skills.0.description`,
           oldValue: 'draft description',
           newValue: 'final description',
@@ -258,17 +277,16 @@ describe('usePageEditMode', () => {
     global.fetch = fetchMock;
     renderInEditMode();
 
-    window.localStorage.setItem(
-      getTestEditHistoryKey('characters'),
-      JSON.stringify([
+    act(() =>
+      applyTestEditActions(session, 'characters', [
         {
-          op: 'set',
+          op: 'set' as const,
           path: `${TEST_CHARACTER_ID}.description`,
           oldValue: 'canonical description',
           newValue: 'draft description',
         },
         {
-          op: 'set',
+          op: 'set' as const,
           path: '__other_character__.description',
           oldValue: 'other canonical description',
           newValue: 'other draft description',
@@ -298,7 +316,7 @@ describe('usePageEditMode', () => {
           entityType: 'characters',
           entries: [
             {
-              op: 'set',
+              op: 'set' as const,
               path: `${TEST_CHARACTER_ID}.description`,
               oldValue: 'canonical description',
               newValue: 'draft description',
@@ -309,7 +327,7 @@ describe('usePageEditMode', () => {
       });
       expect(readTestEditHistory(getTestEditHistoryKey('characters'))).toEqual([
         expect.objectContaining({
-          op: 'set',
+          op: 'set' as const,
           path: '__other_character__.description',
           newValue: 'other draft description',
         }),
@@ -326,11 +344,10 @@ describe('usePageEditMode', () => {
       }),
     });
     global.fetch = fetchMock;
-    window.localStorage.setItem(
-      getTestEditHistoryKey('characters'),
-      JSON.stringify([
+    act(() =>
+      applyTestEditActions(session, 'characters', [
         {
-          op: 'set',
+          op: 'set' as const,
           path: `${TEST_CHARACTER_ID}.description`,
           oldValue: 'canonical description',
           newValue: 'draft description',
@@ -365,7 +382,7 @@ describe('usePageEditMode', () => {
           entityType: 'characters',
           entries: [
             {
-              op: 'set',
+              op: 'set' as const,
               path: `${TEST_CHARACTER_ID}.description`,
               oldValue: 'canonical description',
               newValue: 'draft description',
@@ -379,22 +396,20 @@ describe('usePageEditMode', () => {
   });
 
   it('should summarize drafts across entity domains while editing one route', async () => {
-    window.localStorage.setItem(
-      getTestEditHistoryKey('characters'),
-      JSON.stringify([
+    act(() =>
+      applyTestEditActions(session, 'characters', [
         {
-          op: 'set',
+          op: 'set' as const,
           path: `${TEST_CHARACTER_ID}.description`,
           oldValue: 'canonical description',
           newValue: 'draft description',
         },
       ])
     );
-    window.localStorage.setItem(
-      getTestEditHistoryKey('items'),
-      JSON.stringify([
+    act(() =>
+      applyTestEditActions(session, 'items', [
         {
-          op: 'set',
+          op: 'set' as const,
           path: '__cross_domain_item__.description',
           oldValue: 'canonical item description',
           newValue: 'draft item description',
@@ -436,12 +451,12 @@ describe('usePageEditMode', () => {
     renderInEditMode();
 
     const draft = {
-      op: 'set',
+      op: 'set' as const,
       path: `${TEST_CHARACTER_ID}.description`,
       oldValue: 'canonical description',
       newValue: 'draft description',
     };
-    window.localStorage.setItem(getTestEditHistoryKey('characters'), JSON.stringify([draft]));
+    act(() => applyTestEditActions(session, 'characters', [draft]));
     fireEvent.click(screen.getByRole('button', { name: 'refresh' }));
 
     await act(async () => {
@@ -468,29 +483,18 @@ describe('usePageEditMode', () => {
       }),
     });
     global.fetch = fetchMock;
-    await act(async () => {
-      session.updateDomain('characters', (characters) => {
-        characters[TEST_CHARACTER_ID] = {
-          id: TEST_CHARACTER_ID,
-          name: '玛丽',
-          specialSkills: marySpecialSkillsFinal,
-        } as unknown as (typeof characters)[string];
-      });
-      await Promise.resolve();
-    });
-
     renderInEditMode();
 
-    window.localStorage.setItem(
-      getTestEditHistoryKey('characters'),
-      JSON.stringify([
+    act(() =>
+      applyTestEditActions(session, 'characters', [
         {
           op: 'delete',
+          newValue: undefined,
           path: `${TEST_CHARACTER_ID}.specialSkills.1`,
           oldValue: marySpecialSkillsOriginal[1],
         },
         {
-          op: 'set',
+          op: 'set' as const,
           path: `${TEST_CHARACTER_ID}.specialSkills.length`,
           oldValue: 2,
           newValue: 1,
@@ -520,7 +524,7 @@ describe('usePageEditMode', () => {
           entityType: 'characters',
           entries: [
             {
-              op: 'set',
+              op: 'set' as const,
               path: `${TEST_CHARACTER_ID}.specialSkills`,
               oldValue: marySpecialSkillsOriginal,
               newValue: marySpecialSkillsFinal,
@@ -550,11 +554,10 @@ describe('usePageEditMode', () => {
       global.fetch = fetchMock;
       renderInEditMode();
 
-      window.localStorage.setItem(
-        getTestEditHistoryKey('characters'),
-        JSON.stringify([
+      act(() =>
+        applyTestEditActions(session, 'characters', [
           {
-            op: 'set',
+            op: 'set' as const,
             path: `${TEST_CHARACTER_ID}.description`,
             oldValue: 'canonical description',
             newValue: 'draft description',
@@ -601,7 +604,7 @@ describe('usePageEditMode', () => {
       {
         op: 'set' as const,
         path: '__other_character__.description',
-        oldValue: 'old',
+        oldValue: 'other canonical description',
         newValue: 'new',
       },
       {
@@ -611,7 +614,7 @@ describe('usePageEditMode', () => {
         newValue: '新名字',
       },
     ];
-    writeTestEditHistory(getTestEditHistoryKey('characters'), [submitted]);
+    seedCharacters([submitted]);
     renderInEditMode();
 
     await act(async () => {
@@ -620,11 +623,7 @@ describe('usePageEditMode', () => {
     });
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
 
-    writeTestEditHistory(getTestEditHistoryKey('characters'), [
-      submitted,
-      sameScopeAppend,
-      unrelatedAppend,
-    ]);
+    seedCharacters([sameScopeAppend, unrelatedAppend]);
     await act(async () => {
       response.resolve({
         ok: true,
@@ -649,7 +648,7 @@ describe('usePageEditMode', () => {
     const submitted = {
       op: 'set' as const,
       path: `${TEST_CHARACTER_ID}.description`,
-      oldValue: 'old',
+      oldValue: 'canonical description',
       newValue: 'published',
     };
     const divergent = {
@@ -658,7 +657,7 @@ describe('usePageEditMode', () => {
       oldValue: 'other old',
       newValue: 'other draft',
     };
-    writeTestEditHistory(getTestEditHistoryKey('characters'), [submitted]);
+    seedCharacters([submitted]);
     renderInEditMode();
 
     await act(async () => {
@@ -688,7 +687,7 @@ describe('usePageEditMode', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(mockShowToast).toHaveBeenCalledWith(
-        '当前发布操作仍待处理，请先完成清理或放弃草稿后再提交不同修改。'
+        '其他页面已修改本地草稿，请保留当前内容后重新进入编辑模式。'
       );
     });
   });
@@ -703,11 +702,11 @@ describe('usePageEditMode', () => {
       .mockRejectedValueOnce(new Error('network failure'))
       .mockResolvedValueOnce(success);
     global.fetch = fetchMock;
-    writeTestEditHistory(getTestEditHistoryKey('characters'), [
+    seedCharacters([
       {
-        op: 'set',
+        op: 'set' as const,
         path: `${TEST_CHARACTER_ID}.description`,
-        oldValue: 'old',
+        oldValue: 'canonical description',
         newValue: 'draft',
       },
     ]);
@@ -748,10 +747,10 @@ describe('usePageEditMode', () => {
     const submitted = {
       op: 'set' as const,
       path: `${TEST_CHARACTER_ID}.description`,
-      oldValue: 'old',
+      oldValue: 'canonical description',
       newValue: 'draft',
     };
-    writeTestEditHistory(getTestEditHistoryKey('characters'), [submitted]);
+    seedCharacters([submitted]);
     const originalRemoveItem = Storage.prototype.removeItem;
     const removeItem = jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(function (
       this: Storage,

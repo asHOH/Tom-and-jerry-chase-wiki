@@ -24,10 +24,12 @@ jest.mock('@/components/EditRuntime', () => ({
     visibleRevisions,
     onStatusChange,
     onRetry,
+    onUnsavedDraftsChange,
   }: {
     visibleRevisions: readonly PublishedDomainRevision[];
     onStatusChange: (status: EditRuntimeStatus) => void;
     onRetry: () => void;
+    onUnsavedDraftsChange: (unsaved: boolean) => void;
   }) {
     const { useEffect } = jest.requireActual<typeof import('react')>('react');
     mockRuntimeRender(visibleRevisions);
@@ -39,6 +41,8 @@ jest.mock('@/components/EditRuntime', () => ({
     }, [onStatusChange, visibleRevisions]);
     return (
       <div data-testid='edit-runtime'>
+        <button onClick={() => onUnsavedDraftsChange(true)}>fail draft save</button>
+        <button onClick={() => onUnsavedDraftsChange(false)}>save draft</button>
         <button type='button' onClick={onRetry}>
           retry runtime
         </button>
@@ -80,6 +84,51 @@ describe('EditModeProvider', () => {
   afterEach(() => {
     cleanup();
     window.localStorage.clear();
+  });
+
+  it('retains the runtime when navigation removes edit mode until its unsaved buffer is saved', async () => {
+    mockUseSearchParams.mockReturnValue(
+      new URLSearchParams('edit=1') as ReturnType<typeof useSearchParams>
+    );
+    const content = (
+      <EditModeProvider>
+        <EditModeProbe revision='v1:visible' />
+      </EditModeProvider>
+    );
+    const view = render(content);
+    await screen.findByTestId('edit-runtime');
+    fireEvent.click(screen.getByRole('button', { name: 'fail draft save' }));
+    mockUseSearchParams.mockReturnValue(
+      new URLSearchParams('') as ReturnType<typeof useSearchParams>
+    );
+
+    view.rerender(
+      <EditModeProvider>
+        <EditModeProbe revision='v1:visible' />
+      </EditModeProvider>
+    );
+    expect(screen.getByTestId('edit-runtime')).toBeInTheDocument();
+    expect(mockRuntimeMount).toHaveBeenCalledTimes(1);
+    mockUseSearchParams.mockReturnValue(
+      new URLSearchParams('edit=1') as ReturnType<typeof useSearchParams>
+    );
+    view.rerender(
+      <EditModeProvider>
+        <EditModeProbe revision='v1:visible' />
+      </EditModeProvider>
+    );
+    expect(screen.getByTestId('edit-mode-probe')).toHaveAttribute('data-edit-mode', 'true');
+    expect(mockRuntimeMount).toHaveBeenCalledTimes(1);
+    mockUseSearchParams.mockReturnValue(
+      new URLSearchParams('') as ReturnType<typeof useSearchParams>
+    );
+    view.rerender(
+      <EditModeProvider>
+        <EditModeProbe revision='v1:visible' />
+      </EditModeProvider>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'save draft' }));
+    expect(screen.queryByTestId('edit-runtime')).not.toBeInTheDocument();
   });
 
   it('does not mount the edit runtime or enable editing on a normal route', async () => {

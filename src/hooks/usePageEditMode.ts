@@ -46,7 +46,7 @@ export type PageEditModeResult = {
   pendingAwarenessUnavailable: boolean;
   pendingDraftSummary: PendingActionOverlapSummary | null;
   pendingOverlap: PendingActionOverlapResponse | null;
-  discardChanges: (options?: { showToast?: boolean }) => void;
+  discardChanges: (options?: { showToast?: boolean }) => boolean;
   publishChanges: (
     message?: string,
     options?: {
@@ -127,10 +127,12 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   const discardChanges = useCallback(
     (discardOptions?: { showToast?: boolean }) => {
       const result = discardDraft();
-      if (discardOptions?.showToast === false) return;
-      showToast?.(
-        result.status === 'discarded' ? '已放弃所有修改' : '放弃修改后本地草稿清理失败，请重试'
-      );
+      if (discardOptions?.showToast !== false) {
+        showToast?.(
+          result.status === 'discarded' ? '已放弃所有修改' : '放弃修改后本地草稿清理失败，请重试'
+        );
+      }
+      return result.status === 'discarded';
     },
     [discardDraft, showToast]
   );

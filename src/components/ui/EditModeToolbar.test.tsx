@@ -77,7 +77,7 @@ describe('EditModeToolbar', () => {
       draftsSummary: [] as NonNullable<EditModeToolbarProps['draftsSummary']>,
       isDirty: true,
       isPublishing: false,
-      onDiscard: jest.fn(),
+      onDiscard: jest.fn().mockReturnValue(true),
       onExitEditMode: jest.fn(),
       onPublish: jest.fn<
         Promise<boolean>,
@@ -103,6 +103,17 @@ describe('EditModeToolbar', () => {
     fireEvent.click(screen.getByRole('button', { name: buttonName }));
 
     expect(mockSetIsPreviewMode).toHaveBeenCalledWith(next);
+  });
+
+  it('keeps editing active when discard fails and exits after a successful retry', () => {
+    const props = createProps();
+    props.onDiscard.mockReturnValueOnce(false).mockReturnValueOnce(true);
+    renderToolbar(props);
+    fireEvent.click(screen.getByRole('button', { name: '放弃' }));
+    fireEvent.click(screen.getByRole('button', { name: '确认放弃？' }));
+    expect(props.onExitEditMode).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '确认放弃？' }));
+    expect(props.onExitEditMode).toHaveBeenCalledTimes(1);
   });
 
   it('does not exit edit mode when publish fails', async () => {

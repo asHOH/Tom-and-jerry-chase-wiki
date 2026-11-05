@@ -2,7 +2,7 @@
 
 import isEqual from 'lodash-es/isEqual';
 import { subscribe, unstable_enableOp } from 'valtio';
-import { snapshot, subscribe as subscribeValtio } from 'valtio/vanilla';
+import { snapshot } from 'valtio/vanilla';
 
 import { GameDataManager } from '@/lib/dataManager';
 import {
@@ -16,15 +16,20 @@ import {
   invertActionEntry,
   normalizeActionHistory,
   squashActions,
+  type Action,
   type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
-import { browserEditHistoryStore, type EditHistoryStore } from '@/lib/edit/draftPersistence';
+import {
+  createBrowserEditHistoryStore,
+  EditDraftPersistenceError,
+} from '@/lib/edit/draftPersistence';
 import {
   buildDraftSummaryItemsForType,
   splitActionHistoryByEntity,
 } from '@/lib/edit/editModeDrafts';
 import { type EditStores } from '@/lib/edit/editStores';
 import { reconcilePublishHistory } from '@/lib/edit/publishHistory';
+import { cloneGameDataValue } from '@/lib/gameData/cloneGameDataValue';
 import type { PendingActionOverlapResponse } from '@/lib/gameData/pendingActionAwarenessTypes';
 import {
   PUBLISHABLE_ENTITY_TYPES,
@@ -80,149 +85,6 @@ class EditDraftRestoreError extends Error {
     this.name = 'EditDraftRestoreError';
     this.causes = causes;
   }
-}
-
-type EditModeRegistry = Readonly<{
-  setupSubscribers: () => void;
-  teardownSubscribers: () => void;
-  loadDrafts: () => void;
-  withRecordingSuppressed: <T>(entityType: PublishableEntityType, fn: () => T) => T;
-}>;
-
-function asRecord(value: object): Record<string, unknown> {
-  return value as Record<string, unknown>;
-}
-
-function createEntityRegistry(
-  stores: EditStores
-): Map<PublishableEntityType, Record<string, unknown>> {
-  return new Map([
-    ['achievements', asRecord(stores.achievements)],
-    ['characters', asRecord(stores.characters)],
-    ['cards', asRecord(stores.cards)],
-    ['entities', asRecord(stores.entities)],
-    ['buffs', asRecord(stores.buffs)],
-    ['items', asRecord(stores.items)],
-    ['fixtures', asRecord(stores.fixtures)],
-    ['maps', asRecord(stores.maps)],
-    ['modes', asRecord(stores.modes)],
-    ['specialSkills', asRecord(stores.specialSkills)],
-    ['traits', asRecord(stores.traits)],
-  ]);
-}
-
-function syncEntityToLocalStorage(
-  entityType: PublishableEntityType,
-  entity: Record<string, unknown>,
-  historyStore: EditHistoryStore
-): () => void {
-  return subscribe(entity, (ops) => {
-    const actions = actionsFromValtioOps(ops);
-    if (actions.length === 0) return;
-    const entries =
-      entityType === 'characters'
-        ? normalizeCharacterRelationPairHistory([actions])
-        : [actions.length === 1 ? actions[0]! : actions];
-    entries.forEach((entry) => historyStore.append(entityType, entry));
-  });
-}
-
-function createDraftRecording(
-  stores: EditStores,
-  historyStore: EditHistoryStore = browserEditHistoryStore
-): EditModeRegistry {
-  const entityRegistry = createEntityRegistry(stores);
-  const subscribers = new Map<PublishableEntityType, () => void>();
-
-  const subscribeEntity = (
-    entityType: PublishableEntityType,
-    entity: Record<string, unknown>
-  ): void => {
-    subscribers.get(entityType)?.();
-    subscribers.set(entityType, syncEntityToLocalStorage(entityType, entity, historyStore));
-  };
-
-  const teardownSubscribers = (): void => {
-    subscribers.forEach((unsubscribe) => unsubscribe());
-    subscribers.clear();
-  };
-
-  const setupSubscribers = (): void => {
-    entityRegistry.forEach((entity, entityType) => {
-      subscribeEntity(entityType, entity);
-    });
-  };
-
-  const withRecordingSuppressed: EditModeRegistry['withRecordingSuppressed'] = (entityType, fn) => {
-    const entity = entityRegistry.get(entityType);
-    const unsubscribe = subscribers.get(entityType);
-    if (!entity || !unsubscribe) return fn();
-
-    unsubscribe();
-    subscribers.delete(entityType);
-    try {
-      return fn();
-    } finally {
-      subscribeEntity(entityType, entity);
-    }
-  };
-
-  const loadDrafts = (): void => {
-    if (typeof window === 'undefined') return;
-
-    const errors: unknown[] = [];
-    entityRegistry.forEach((entity, entityType) => {
-      try {
-        const storedHistory = historyStore.read(entityType);
-        const normalizedHistory =
-          entityType === 'characters'
-            ? normalizeCharacterRelationPairHistory(storedHistory)
-            : storedHistory;
-        // An uncertain legacy submission must keep its original payload for an exact retry.
-        const history =
-          entityType === 'characters' &&
-          ![
-            'relations:characters',
-            'page:characters:',
-            ...Object.keys(entity).map((id) => `page:characters:${id}`),
-          ].some(hasPublishOperation)
-            ? migrateLegacyCharacterRelationDrafts(normalizedHistory, entity)
-            : normalizedHistory;
-        if (!isEqual(history, storedHistory) && !historyStore.replace(entityType, history)) {
-          throw new Error('Failed to persist normalized character relation drafts.');
-        }
-        if (history.length === 0) return;
-
-        if (history.length > DRAFT_HISTORY_WARNING_THRESHOLD) {
-          console.warn('Large edit mode draft history detected', {
-            entityType,
-            entries: history.length,
-            threshold: DRAFT_HISTORY_WARNING_THRESHOLD,
-          });
-        }
-
-        withRecordingSuppressed(entityType, () => {
-          for (const entry of history) {
-            applyActionEntry(entity, entry);
-          }
-        });
-      } catch (error) {
-        console.error(`Failed to load ${entityType} from localStorage:`, error);
-        errors.push(error);
-      }
-    });
-
-    if (errors.length > 0) {
-      throw new EditDraftRestoreError(errors);
-    }
-  };
-
-  return Object.freeze({
-    setupSubscribers,
-    teardownSubscribers,
-    loadDrafts,
-    withRecordingSuppressed,
-  });
 }
 
 export type PublishTransportRequest = Readonly<{
@@ -343,12 +205,48 @@ export function createDraftJournal(
   stores: EditStores,
   dependencies: EditSessionDependencies = {}
 ) {
-  const history = dependencies.history ?? browserEditHistoryStore;
+  const persistence = dependencies.history ?? createBrowserEditHistoryStore();
+  const histories = new Map<PublishableEntityType, ActionHistoryEntry[]>();
+  const persistenceStates = new Map<PublishableEntityType, EditDraftState['persistence']>();
+  const pendingActions = new Map<PublishableEntityType, Action[]>();
+  const recordingSubscriptions: Array<() => void> = [];
+  let recordingSuppressed = 0;
+  let mutationDepth = 0;
+  const withRecordingSuppressed = <T>(_entityType: PublishableEntityType, fn: () => T): T => {
+    recordingSuppressed += 1;
+    try {
+      return fn();
+    } finally {
+      recordingSuppressed -= 1;
+    }
+  };
+  const save = (entityType: PublishableEntityType, entries: ActionHistoryEntry[]): boolean => {
+    try {
+      if (!persistence.replace(entityType, entries))
+        throw new EditDraftPersistenceError('unavailable');
+      persistenceStates.set(entityType, 'saved');
+      return true;
+    } catch (error) {
+      persistenceStates.set(
+        entityType,
+        error instanceof EditDraftPersistenceError && error.kind === 'conflict'
+          ? 'conflict'
+          : 'unsaved'
+      );
+      return false;
+    }
+  };
+  const history = {
+    read: (entityType: PublishableEntityType) => structuredClone(histories.get(entityType) ?? []),
+    replace: (entityType: PublishableEntityType, entries: ActionHistoryEntry[]) => {
+      if (!save(entityType, entries)) return false;
+      histories.set(entityType, structuredClone(entries));
+      return true;
+    },
+  };
   const publish = dependencies.publish ?? publishWithFetch;
   const invalidate = dependencies.invalidate ?? (() => GameDataManager.invalidate());
-  const registry = createDraftRecording(stores, history);
   const manualDraftListeners = new Set<() => void>();
-  const sessionSubscriptions = new Set<() => void>();
   let disposed = false;
 
   const assertActive = (): void => {
@@ -372,33 +270,48 @@ export function createDraftJournal(
     const entityType = scopeEntityType(scope);
     const { matching } = selectHistory(scope, history.read(entityType));
     const publishEntries = squashDraft(entityType, matching);
-    return Object.freeze({ actionCount: publishEntries.length, publishEntries });
+    return Object.freeze({
+      actionCount: publishEntries.length,
+      publishEntries,
+      persistence: persistenceStates.get(entityType) ?? 'saved',
+    });
   };
 
   const notifyDrafts = (): void => manualDraftListeners.forEach((listener) => listener());
   const journal = {
-    subscribe: (scope: EditDraftScope | undefined, listener: () => void) => {
+    subscribe: (_scope: EditDraftScope | undefined, listener: () => void) => {
       assertActive();
       manualDraftListeners.add(listener);
-      const types = scope ? [scopeEntityType(scope)] : PUBLISHABLE_ENTITY_TYPES;
-      const unsubscribes: Array<() => void> = [() => manualDraftListeners.delete(listener)];
-      try {
-        types.forEach((entityType) =>
-          unsubscribes.push(subscribeValtio(stores[entityType], listener))
-        );
-      } catch (error) {
-        unsubscribes.forEach((unsubscribe) => unsubscribe());
-        throw error;
-      }
       let subscribed = true;
-      const unsubscribe = () => {
+      return () => {
         if (!subscribed) return;
         subscribed = false;
-        unsubscribes.forEach((cleanup) => cleanup());
-        sessionSubscriptions.delete(unsubscribe);
+        manualDraftListeners.delete(listener);
       };
-      sessionSubscriptions.add(unsubscribe);
-      return unsubscribe;
+    },
+    mutate: (_entityType: PublishableEntityType, fn: () => void) => {
+      assertActive();
+      mutationDepth += 1;
+      try {
+        fn();
+      } finally {
+        mutationDepth -= 1;
+        if (mutationDepth === 0) flushRecording();
+      }
+    },
+    hasUnsavedDrafts: () => [...persistenceStates.values()].some((state) => state !== 'saved'),
+    retryDraftPersistence: (
+      scope?: EditDraftScope
+    ): ReturnType<EditSession['retryDraftPersistence']> => {
+      assertActive();
+      const types = scope ? [scopeEntityType(scope)] : PUBLISHABLE_ENTITY_TYPES;
+      const saved = types
+        .map((entityType) => save(entityType, history.read(entityType)))
+        .every(Boolean);
+      notifyDrafts();
+      return saved
+        ? { status: 'saved' }
+        : { status: 'storage-failed', error: new EditDraftPersistenceError('unavailable') };
     },
     readDraft,
     readDraftOverview: () => {
@@ -430,7 +343,7 @@ export function createDraftJournal(
         originalEntries.length > 0 ? originalEntries : matching
       );
       if (matching.length > 0) {
-        registry.withRecordingSuppressed(entityType, () => {
+        withRecordingSuppressed(entityType, () => {
           const root = mutableDomain(stores, entityType);
           for (let index = matching.length - 1; index >= 0; index -= 1) {
             applyActionEntry(root, invertActionEntry(matching[index]!));
@@ -445,7 +358,7 @@ export function createDraftJournal(
         cleanupError = error instanceof Error ? error : new Error('Failed to persist draft.');
       }
       if (!cleanupSucceeded && matching.length > 0) {
-        registry.withRecordingSuppressed(entityType, () => {
+        withRecordingSuppressed(entityType, () => {
           const root = mutableDomain(stores, entityType);
           matching.forEach((entry) => applyActionEntry(root, entry));
         });
@@ -470,6 +383,15 @@ export function createDraftJournal(
       assertActive();
       const entityType = scopeEntityType(scope);
       const source = history.read(entityType);
+      if (!save(entityType, source)) {
+        notifyDrafts();
+        return {
+          status: 'failed',
+          error: new EditDraftPersistenceError(
+            persistenceStates.get(entityType) === 'conflict' ? 'conflict' : 'unavailable'
+          ),
+        };
+      }
       const { matching, remaining } = selectHistory(scope, source);
       const squashed = squashActions(matching, { currentRoot: mutableDomain(stores, entityType) });
       const legacySquashed = squashActions(matching, {
@@ -519,7 +441,7 @@ export function createDraftJournal(
         !retrying &&
         (!existingOperation || existingOperation.fingerprint === requestFingerprint(entries))
       ) {
-        registry.withRecordingSuppressed(entityType, () => {
+        withRecordingSuppressed(entityType, () => {
           for (const action of squashed.flat()) {
             if (isUnchangedCharacterRelationInitialization(action, baseline.characters)) {
               // Restore absence so the next edit records the correct before-value.
@@ -620,7 +542,14 @@ export function createDraftJournal(
         }
         if (!history.replace(entityType, reconciled)) {
           notifyDrafts();
-          return { status: 'cleanup-conflict', outcome: result.outcome, reason: 'storage-failed' };
+          return {
+            status: 'cleanup-conflict',
+            outcome: result.outcome,
+            reason:
+              persistenceStates.get(entityType) === 'conflict'
+                ? 'history-diverged'
+                : 'storage-failed',
+          };
         }
         clearPublishOperation(publishScope);
         notifyDrafts();
@@ -636,21 +565,80 @@ export function createDraftJournal(
     dispose: () => {
       if (disposed) return;
       disposed = true;
-      registry.teardownSubscribers();
-      [...sessionSubscriptions].forEach((unsubscribe) => unsubscribe());
-      sessionSubscriptions.clear();
+      recordingSubscriptions.forEach((unsubscribe) => unsubscribe());
       manualDraftListeners.clear();
     },
   };
 
+  const flushRecording = () => {
+    if (pendingActions.size === 0) return;
+    for (const [entityType, actions] of pendingActions) {
+      const entries =
+        entityType === 'characters'
+          ? normalizeCharacterRelationPairHistory([actions])
+          : [actions.length === 1 ? actions[0]! : actions];
+      const updated = normalizeActionHistory([...(histories.get(entityType) ?? []), ...entries]);
+      histories.set(entityType, updated);
+      save(entityType, updated);
+    }
+    pendingActions.clear();
+    notifyDrafts();
+  };
   try {
-    registry.loadDrafts();
-    registry.setupSubscribers();
+    const errors: unknown[] = [];
+    for (const entityType of PUBLISHABLE_ENTITY_TYPES) {
+      try {
+        const entity = mutableDomain(stores, entityType);
+        const stored = persistence.read(entityType);
+        histories.set(entityType, structuredClone(stored));
+        const normalized =
+          entityType === 'characters' ? normalizeCharacterRelationPairHistory(stored) : stored;
+        const restored =
+          entityType === 'characters' &&
+          ![
+            'relations:characters',
+            'page:characters:',
+            ...Object.keys(entity).map((id) => 'page:characters:' + id),
+          ].some(hasPublishOperation)
+            ? migrateLegacyCharacterRelationDrafts(normalized, entity)
+            : normalized;
+        if (!isEqual(restored, stored) && !history.replace(entityType, restored))
+          throw new EditDraftPersistenceError('unavailable');
+        if (restored.length > DRAFT_HISTORY_WARNING_THRESHOLD)
+          console.warn('Large edit mode draft history detected', {
+            entityType,
+            entries: restored.length,
+            threshold: DRAFT_HISTORY_WARNING_THRESHOLD,
+          });
+        restored.forEach((entry) => applyActionEntry(entity, entry));
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+    if (errors.length > 0) throw new EditDraftRestoreError(errors);
+    PUBLISHABLE_ENTITY_TYPES.forEach((entityType) => {
+      recordingSubscriptions.push(
+        subscribe(
+          stores[entityType],
+          (ops) => {
+            if (recordingSuppressed || disposed) return;
+            const actions = actionsFromValtioOps(ops);
+            if (actions.length === 0) return;
+            const cloned = cloneGameDataValue(actions);
+            if (!cloned.success) throw new EditDraftPersistenceError('invalid');
+            pendingActions.set(entityType, [
+              ...(pendingActions.get(entityType) ?? []),
+              ...(cloned.value as Action[]),
+            ]);
+            if (mutationDepth === 0) flushRecording();
+          },
+          true
+        )
+      );
+    });
     return journal;
   } catch (error) {
-    registry.teardownSubscribers();
-    [...sessionSubscriptions].forEach((unsubscribe) => unsubscribe());
-    sessionSubscriptions.clear();
+    recordingSubscriptions.forEach((unsubscribe) => unsubscribe());
     manualDraftListeners.clear();
     disposed = true;
     throw error;

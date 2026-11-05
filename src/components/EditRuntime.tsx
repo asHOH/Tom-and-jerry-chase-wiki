@@ -14,6 +14,8 @@ import type {
   PublishedDomainRevision,
   PublishedGameDataByType,
 } from '@/lib/gameData/published/types';
+import { stripEditParam } from '@/hooks/useSearchParamEditMode';
+import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 
 type EditBaselineResponse = {
@@ -30,6 +32,7 @@ type EditRuntimeProps = {
   visibleRevisions: readonly PublishedDomainRevision[];
   onStatusChange: (status: EditRuntimeStatus, error?: string) => void;
   onRetry: () => void;
+  onUnsavedDraftsChange?: (unsaved: boolean) => void;
 };
 
 function isEditBaselineResponse(value: unknown): value is EditBaselineResponse {
@@ -86,12 +89,16 @@ export default function EditRuntime({
   visibleRevisions,
   onStatusChange,
   onRetry,
+  onUnsavedDraftsChange,
 }: EditRuntimeProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [baseline, setBaseline] = useState<EditBaselineResponse | null>(null);
   const [status, setStatus] = useState<EditRuntimeStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [hasUnsavedDrafts, setHasUnsavedDrafts] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
+  const abandoned = useRef(false);
   const [isRefreshing, startRefreshTransition] = useTransition();
   const refreshAttemptedForPathRef = useRef<string | null>(null);
   const [recoveryStatus, setRecoveryStatus] = useState<'idle' | 'pending' | 'complete' | 'failed'>(
@@ -146,6 +153,7 @@ export default function EditRuntime({
 
   useEffect(() => {
     if (
+      abandoned.current ||
       !baseline ||
       !visibleRevisionKey ||
       recoveryStatus === 'pending' ||
@@ -192,6 +200,11 @@ export default function EditRuntime({
     try {
       const runtime = createEditSession(baseline.data, baseline.revision);
       activeRuntimeRef.current = runtime;
+      setHasUnsavedDrafts(runtime.hasUnsavedDrafts());
+      runtime.subscribe({ kind: 'draft-overview' }, () => {
+        setHasUnsavedDrafts(runtime.hasUnsavedDrafts());
+        onUnsavedDraftsChange?.(runtime.hasUnsavedDrafts());
+      });
       installActiveEditSession(runtime);
       reportStatus('ready');
     } catch (error) {
@@ -200,6 +213,7 @@ export default function EditRuntime({
   }, [
     baseline,
     baselineMatches,
+    onUnsavedDraftsChange,
     pathname,
     recoveryStatus,
     reportStatus,
@@ -255,30 +269,84 @@ export default function EditRuntime({
     []
   );
 
-  if (status === 'ready') return null;
+  useEffect(() => {
+    const warnBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!activeRuntimeRef.current?.hasUnsavedDrafts()) return;
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warnBeforeUnload);
+    return () => window.removeEventListener('beforeunload', warnBeforeUnload);
+  }, []);
 
-  const requiresFreshEditSession = status === 'error' && activeRuntimeRef.current !== null;
+  if (abandoned.current || (status === 'ready' && !hasUnsavedDrafts)) return null;
+
+  const requiresFreshEditSession =
+    !hasUnsavedDrafts && status === 'error' && activeRuntimeRef.current !== null;
 
   return (
     <div className='pointer-events-none fixed inset-x-0 bottom-3 z-10060 flex justify-center px-3'>
       <div className='bg-surface-raised/95 text-foreground pointer-events-auto rounded-lg border border-blue-200 px-3 py-2 text-sm shadow-lg backdrop-blur dark:border-blue-900'>
-        {status === 'error'
-          ? requiresFreshEditSession
-            ? `${errorMessage ?? '编辑环境版本已过期'}，请退出编辑模式后重新进入`
-            : (errorMessage ?? '编辑环境初始化失败')
-          : baselineMatches
-            ? '正在恢复编辑环境…'
-            : '正在加载编辑数据…'}
+        {hasUnsavedDrafts
+          ? '草稿暂未保存，刷新或离开可能丢失修改。'
+          : status === 'error'
+            ? requiresFreshEditSession
+              ? `${errorMessage ?? '编辑环境版本已过期'}，请退出编辑模式后重新进入`
+              : (errorMessage ?? '编辑环境初始化失败')
+            : baselineMatches
+              ? '正在恢复编辑环境…'
+              : '正在加载编辑数据…'}
         {!requiresFreshEditSession ? (
           <Button
             variant='unstyled'
             type='button'
-            onClick={onRetry}
+            onClick={
+              hasUnsavedDrafts ? () => activeRuntimeRef.current?.retryDraftPersistence() : onRetry
+            }
             className='ml-3 text-blue-600 hover:underline dark:text-blue-400'
           >
-            重试
+            {hasUnsavedDrafts ? '重试保存' : '重试'}
           </Button>
         ) : null}
+        {hasUnsavedDrafts ? (
+          <Button variant='unstyled' className='ml-3' onClick={() => setConfirmLeave(true)}>
+            退出并保留已存草稿
+          </Button>
+        ) : null}
+        <BaseDialog
+          open={confirmLeave}
+          onOpenChange={setConfirmLeave}
+          ariaLabel='退出编辑'
+          size='sm'
+        >
+          <div className='p-4'>
+            <p>本次尚未保存的修改将丢失。已保存的草稿和提交记录会保留。确认退出编辑？</p>
+            <div className='mt-4 flex justify-end gap-2'>
+              <Button onClick={() => setConfirmLeave(false)}>继续编辑</Button>
+              <Button
+                variant='danger'
+                onClick={() => {
+                  abandoned.current = true;
+                  const runtime = activeRuntimeRef.current;
+                  if (runtime) {
+                    clearActiveEditSession(runtime);
+                    runtime.dispose();
+                  }
+                  activeRuntimeRef.current = null;
+                  setHasUnsavedDrafts(false);
+                  onUnsavedDraftsChange?.(false);
+                  setConfirmLeave(false);
+                  router.replace(
+                    stripEditParam(window.location.pathname + window.location.search),
+                    { scroll: false }
+                  );
+                }}
+              >
+                确认退出
+              </Button>
+            </div>
+          </div>
+        </BaseDialog>
       </div>
     </div>
   );
