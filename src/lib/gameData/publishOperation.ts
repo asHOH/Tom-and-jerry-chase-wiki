@@ -2,7 +2,7 @@ const PUBLISH_OPERATION_HEADER = 'Idempotency-Key';
 
 const OPERATION_ID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const STORAGE_PREFIX = 'game-data-publish-operation:v1:';
+export const PUBLISH_OPERATION_STORAGE_PREFIX = 'game-data-publish-operation:v1:';
 
 export class InvalidPublishOperationIdError extends Error {
   constructor() {
@@ -47,8 +47,8 @@ function getSessionStorage(): Storage | null {
   }
 }
 
-function storageKey(scope: string): string {
-  return `${STORAGE_PREFIX}${encodeURIComponent(scope)}`;
+export function getPublishOperationStorageKey(scope: string): string {
+  return `${PUBLISH_OPERATION_STORAGE_PREFIX}${encodeURIComponent(scope)}`;
 }
 
 export function readPublishOperation(scope: string): StoredPublishOperation | null {
@@ -56,7 +56,7 @@ export function readPublishOperation(scope: string): StoredPublishOperation | nu
   if (!storage) return null;
 
   try {
-    const raw = storage.getItem(storageKey(scope));
+    const raw = storage.getItem(getPublishOperationStorageKey(scope));
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<StoredPublishOperation>;
     if (
@@ -85,7 +85,10 @@ export function getOrCreatePublishOperationId(scope: string, fingerprint: string
   const storage = getSessionStorage();
   if (storage) {
     try {
-      storage.setItem(storageKey(scope), JSON.stringify({ fingerprint, operationId }));
+      storage.setItem(
+        getPublishOperationStorageKey(scope),
+        JSON.stringify({ fingerprint, operationId })
+      );
     } catch {
       // The request remains valid; persistence is best effort when storage is unavailable.
     }
@@ -97,7 +100,7 @@ export function clearPublishOperation(scope: string): void {
   const storage = getSessionStorage();
   if (!storage) return;
   try {
-    storage.removeItem(storageKey(scope));
+    storage.removeItem(getPublishOperationStorageKey(scope));
   } catch {
     // Storage can be disabled by the browser; there is nothing else to clear.
   }
