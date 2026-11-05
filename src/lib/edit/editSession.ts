@@ -20,7 +20,7 @@ import {
   type PublishTransportRequest,
   type PublishTransportResult,
 } from './draftJournal';
-import type { EditHistoryStore } from './draftPersistence';
+import type { DraftHistoryPersistence } from './draftPersistence';
 import { createEditStores, type EditStores } from './editStores';
 
 export type EditEntityRef<EntityType extends PublishableEntityType = PublishableEntityType> =
@@ -106,7 +106,7 @@ export type EditSession = Readonly<{
 }>;
 
 export type EditSessionDependencies = Readonly<{
-  history?: EditHistoryStore;
+  history?: DraftHistoryPersistence;
   publish?: (request: PublishTransportRequest) => Promise<PublishTransportResult>;
   invalidate?: () => void;
 }>;

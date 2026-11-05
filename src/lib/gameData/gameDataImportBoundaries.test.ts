@@ -28,6 +28,8 @@ const STATIC_ROOT_FORBIDDEN_IMPORTS = [
   '@/data/store',
   '@/lib/edit/editStores',
   '@/lib/edit/editModeRegistry',
+  '@/lib/edit/draftJournal',
+  '@/lib/edit/draftPersistence',
   '@/components/EditRuntime',
   './EditRuntime',
 ] as const;
@@ -94,6 +96,7 @@ describe('game-data import and payload boundaries', () => {
 
   it('keeps the retired global edit-store module deleted', () => {
     expect(existsSync('src/data/store.ts')).toBe(false);
+    expect(existsSync('src/lib/edit/editModeRegistry.ts')).toBe(false);
   });
 
   it('keeps canonical source factories independent from edit and replay code', () => {

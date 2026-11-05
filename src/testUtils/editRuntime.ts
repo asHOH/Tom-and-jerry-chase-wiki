@@ -67,10 +67,6 @@ export function readTestEditHistory(storageKey: string): ActionHistoryEntry[] {
   return storage.getJson<ActionHistoryEntry[]>(storageKey) ?? [];
 }
 
-export function writeTestEditHistory(storageKey: string, history: ActionHistoryEntry[]): boolean {
-  return storage.setJson(storageKey, history);
-}
-
 export function applyTestEditActions(
   session: EditSession,
   entityType: keyof PublishedGameDataByType,

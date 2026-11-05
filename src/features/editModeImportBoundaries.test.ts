@@ -34,6 +34,9 @@ const rawEditRuntimeImportPattern =
 const rawEditInternalsPattern =
   /import\s+\{[^}]*(?:getActionsStorageKey|readActionHistory|writeActionHistory|replaceActionHistory|appendActionHistoryEntry|subscribers|withRecordingSuppressed)[^}]*\}\s+from ['"]@\/lib\/edit\/diffUtils['"]/s;
 
+const operationStorageImportPattern =
+  /import\s+\{[^}]*\b(?:readPublishOperation|getOrCreatePublishOperationId|clearPublishOperation|hasPublishOperation|getPublishOperationStorageKey|PUBLISH_OPERATION_STORAGE_PREFIX)\b[^}]*\}\s+from ['"]@\/lib\/gameData\/publishOperation['"]/s;
+
 function listSourceFiles(root: string): string[] {
   return readdirSync(root).flatMap((entry) => {
     const filePath = join(root, entry);
@@ -78,5 +81,14 @@ describe('feature edit mode import boundaries', () => {
       .sort();
 
     expect(consumers).toEqual([]);
+  });
+
+  it('keeps game-data operation persistence inside the journal while preserving article compatibility', () => {
+    const offenders = productionRoots
+      .flatMap(listSourceFiles)
+      .filter((filePath) => !filePath.replaceAll('\\', '/').startsWith('src/features/articles/'))
+      .filter((filePath) => operationStorageImportPattern.test(readFileSync(filePath, 'utf8')))
+      .map((filePath) => relative(process.cwd(), filePath));
+    expect(offenders).toEqual([]);
   });
 });

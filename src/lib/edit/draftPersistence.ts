@@ -260,15 +260,14 @@ export class EditDraftPersistenceError extends Error {
   }
 }
 
-export type EditHistoryStore = Readonly<{
+export type DraftHistoryPersistence = Readonly<{
   read: (entityType: PublishableEntityType) => ActionHistoryEntry[];
-  append: (entityType: PublishableEntityType, entry: ActionHistoryEntry) => void;
   replace: (entityType: PublishableEntityType, history: ActionHistoryEntry[]) => boolean;
 }>;
 
-export function createBrowserEditHistoryStore(): EditHistoryStore {
+export function createBrowserDraftHistoryPersistence(): DraftHistoryPersistence {
   const durable = new Map<PublishableEntityType, string | null>();
-  const store: EditHistoryStore = {
+  return {
     read: (entityType) => {
       let raw: string | null;
       try {
@@ -286,9 +285,6 @@ export function createBrowserEditHistoryStore(): EditHistoryStore {
       }
       durable.set(entityType, raw);
       return normalizeActionHistory(history);
-    },
-    append: (entityType, entry) => {
-      store.replace(entityType, [...store.read(entityType), entry]);
     },
     replace: (entityType, history) => {
       const key = getEditModeActionsStorageKey(entityType);
@@ -309,5 +305,4 @@ export function createBrowserEditHistoryStore(): EditHistoryStore {
       }
     },
   };
-  return store;
 }

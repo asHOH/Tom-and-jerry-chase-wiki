@@ -1,7 +1,6 @@
 import { waitFor } from '@testing-library/react';
 
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
-import type { EditHistoryStore } from '@/lib/edit/draftPersistence';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import {
   getOrCreatePublishOperationId,
@@ -59,11 +58,8 @@ function memoryHistory(
     keyof PublishedGameDataByType,
     ActionHistoryEntry[]
   >;
-  const store: EditHistoryStore = {
+  const store: NonNullable<EditSessionDependencies['history']> = {
     read: (entityType) => structuredClone(values.get(entityType) ?? []),
-    append: (entityType, entry) => {
-      values.set(entityType, [...(values.get(entityType) ?? []), structuredClone(entry)]);
-    },
     replace: (entityType, history) => {
       values.set(entityType, structuredClone(history));
       return true;
@@ -107,6 +103,20 @@ describe('createEditSession', () => {
     expect(session.readDraft(scope).actionCount).toBe(1);
     expect(seen).toEqual([1]);
     expect(history.read('characters')[0]).toHaveLength(2);
+  });
+
+  it('serves repeated draft reads without rereading browser storage', () => {
+    session = createEditSession(baseline, 'v1:test');
+    session.updateEntity({ entityType: 'characters', entityId: '杰瑞' }, (draft) => {
+      draft.description = 'draft';
+    });
+    const read = jest.spyOn(Storage.prototype, 'getItem');
+    for (let index = 0; index < 5; index += 1) {
+      expect(session.readDraft({ kind: 'domain', entityType: 'characters' }).actionCount).toBe(1);
+      expect(session.readDraftOverview()).toHaveLength(1);
+    }
+    expect(read).not.toHaveBeenCalled();
+    read.mockRestore();
   });
 
   it('retains unsaved edits and prevents publication until persistence recovers', async () => {
@@ -841,7 +851,7 @@ describe('createEditSession', () => {
     };
     const history = memoryHistory({ characters: [draft] });
     let replaceSucceeds = false;
-    const store: EditHistoryStore = {
+    const store: NonNullable<EditSessionDependencies['history']> = {
       ...history.store,
       replace: (entityType, entries) =>
         replaceSucceeds && history.store.replace(entityType, entries),
@@ -1305,7 +1315,6 @@ describe('createEditSession', () => {
         read: () => {
           throw error;
         },
-        append: jest.fn(),
         replace: jest.fn(() => true),
       },
     };

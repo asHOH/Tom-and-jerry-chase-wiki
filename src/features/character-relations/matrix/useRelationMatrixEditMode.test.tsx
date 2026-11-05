@@ -10,7 +10,6 @@ import {
   getTestEditHistoryKey,
   installTestEditSession,
   readTestEditHistory,
-  writeTestEditHistory,
 } from '@/testUtils/editRuntime';
 
 import { useRelationMatrixEditMode } from './useRelationMatrixEditMode';
@@ -501,7 +500,7 @@ describe('useRelationMatrixEditMode', () => {
     });
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
 
-    writeTestEditHistory(storageKey, [divergent]);
+    window.localStorage.setItem(storageKey, JSON.stringify([divergent]));
     await act(async () => {
       response.resolve({
         ok: true,

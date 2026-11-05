@@ -11,7 +11,6 @@ import {
   getTestEditHistoryKey,
   installTestEditSession,
   readTestEditHistory,
-  writeTestEditHistory,
 } from '@/testUtils/editRuntime';
 
 import { applyActionEntry, type Action, type ActionHistoryEntry } from './diffUtils';
@@ -64,9 +63,12 @@ afterEach(() => {
 it.each(['A', 'B'])(
   'restores, edits, and publishes one shared record from %s',
   async (characterId) => {
-    writeTestEditHistory(key, [
-      set('A.counters', undefined, characterId === 'B' ? [item('B'), item('C')] : [item('B')]),
-    ]);
+    window.localStorage.setItem(
+      key,
+      JSON.stringify([
+        set('A.counters', undefined, characterId === 'B' ? [item('B'), item('C')] : [item('B')]),
+      ])
+    );
     session = installTestEditSession({ characters: baseline });
     session.updateDomain('characters', (characters) => {
       updateCharacterRelationDescription(
@@ -124,11 +126,14 @@ it.each(['A', 'B'])(
 );
 
 it('discards one restored target from the opposite endpoint while preserving another target and prose', () => {
-  writeTestEditHistory(key, [
-    set('A.counters', undefined, [item('B'), item('C')]),
-    set('A.description', '', 'unrelated prose'),
-    set('A.advantageMaps', undefined, [item('Map')]),
-  ]);
+  window.localStorage.setItem(
+    key,
+    JSON.stringify([
+      set('A.counters', undefined, [item('B'), item('C')]),
+      set('A.description', '', 'unrelated prose'),
+      set('A.advantageMaps', undefined, [item('Map')]),
+    ])
+  );
   session = installTestEditSession({ characters: baseline });
   expect(session.discardDraft(scope('B'))).toEqual({ status: 'discarded' });
   expect(
@@ -222,7 +227,7 @@ it('preserves a legacy draft when its pair already has a published shared record
 
 it('preserves an unresolved legacy submission and its operation identity during restore', () => {
   const history = [set('A.counters', undefined, [item('B')])];
-  writeTestEditHistory(key, history);
+  window.localStorage.setItem(key, JSON.stringify(history));
   const operationId = getOrCreatePublishOperationId('page:characters:A', 'original request');
   session = installTestEditSession({ characters: baseline });
   expect(readTestEditHistory(key)).toEqual(history);

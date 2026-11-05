@@ -20,8 +20,8 @@ import {
   type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
 import {
+  createBrowserDraftHistoryPersistence,
   createBrowserDraftOperationStore,
-  createBrowserEditHistoryStore,
   EditDraftPersistenceError,
   readDraftRequestBody,
   type DraftOperation,
@@ -217,7 +217,7 @@ export function createDraftJournal(
   stores: EditStores,
   dependencies: EditSessionDependencies = {}
 ) {
-  const persistence = dependencies.history ?? createBrowserEditHistoryStore();
+  const persistence = dependencies.history ?? createBrowserDraftHistoryPersistence();
   const operations = createBrowserDraftOperationStore();
   const operationRecords = new Map<string, DraftOperation>();
   const appliedTargets = new Set<string>();
@@ -233,7 +233,7 @@ export function createDraftJournal(
   const recordingSubscriptions: Array<() => void> = [];
   let recordingSuppressed = 0;
   let mutationDepth = 0;
-  const withRecordingSuppressed = <T>(_entityType: PublishableEntityType, fn: () => T): T => {
+  const withRecordingSuppressed = <T>(fn: () => T): T => {
     recordingSuppressed += 1;
     try {
       return fn();
@@ -387,7 +387,7 @@ export function createDraftJournal(
         if (!history.replace(entityType, target)) return false;
         appliedTargets.add(key);
         if (recovery.phase === 'cancelling' && !restoring) {
-          withRecordingSuppressed(entityType, () => {
+          withRecordingSuppressed(() => {
             const root = mutableDomain(stores, entityType);
             const matching = selectHistory(recovery.scope, latest).matching;
             for (let index = matching.length - 1; index >= 0; index--)
@@ -395,7 +395,7 @@ export function createDraftJournal(
           });
         } else if (recovery.phase === 'acknowledged' && !restoring && entityType === 'characters') {
           const sent = readDraftRequestBody(recovery).entries.flat();
-          withRecordingSuppressed(entityType, () => {
+          withRecordingSuppressed(() => {
             for (const action of selectHistory(recovery.scope, recovery.source).matching.flat()) {
               if (
                 isUnchangedCharacterRelationInitialization(action, baseline.characters) &&
@@ -540,7 +540,7 @@ export function createDraftJournal(
           notifyDrafts();
           return { status: 'storage-failed', error: new EditDraftCleanupError() };
         }
-        withRecordingSuppressed(entityType, () => {
+        withRecordingSuppressed(() => {
           const root = mutableDomain(stores, entityType);
           for (let index = matching.length - 1; index >= 0; index--)
             applyActionEntry(root, invertActionEntry(matching[index]!));
@@ -779,7 +779,7 @@ export function createDraftJournal(
       !retrying &&
       (!existingOperation || existingOperation.fingerprint === requestFingerprint(entries))
     ) {
-      withRecordingSuppressed(entityType, () => {
+      withRecordingSuppressed(() => {
         for (const action of squashed.flat()) {
           if (isUnchangedCharacterRelationInitialization(action, baseline.characters)) {
             // Restore absence so the next edit records the correct before-value.

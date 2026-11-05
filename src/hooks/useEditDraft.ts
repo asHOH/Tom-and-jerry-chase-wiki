@@ -77,10 +77,6 @@ export function useEditDraft(scope: EditDraftScope) {
     () => (session ? session.readDraft(scope).actionCount : 0),
     [scope, session]
   );
-  const retryPersistence = useCallback(
-    () => session?.retryDraftPersistence(scope),
-    [scope, session]
-  );
 
   return {
     isReady: session !== null,
@@ -89,6 +85,5 @@ export function useEditDraft(scope: EditDraftScope) {
     discardDraft,
     publishDraft,
     getActionCount,
-    retryPersistence,
   } as const;
 }

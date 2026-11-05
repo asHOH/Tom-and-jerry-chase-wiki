@@ -11,7 +11,6 @@ import {
   getTestEditHistoryKey,
   installTestEditSession,
   readTestEditHistory,
-  writeTestEditHistory,
 } from '@/testUtils/editRuntime';
 
 import { usePageEditMode } from './usePageEditMode';
@@ -666,7 +665,7 @@ describe('usePageEditMode', () => {
     });
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
 
-    writeTestEditHistory(getTestEditHistoryKey('characters'), [divergent]);
+    window.localStorage.setItem(getTestEditHistoryKey('characters'), JSON.stringify([divergent]));
     await act(async () => {
       response.resolve({
         ok: true,

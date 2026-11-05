@@ -1,7 +1,9 @@
 # Draft History Persistence Rewrite Plan
 
-**Status:** Proposed implementation plan  
-**Date:** 2026-11-06  
+**Status:** Implemented
+
+**Date:** 2026-11-06
+
 **Primary outcome:** Reduce coordination between edit modules while preserving stored drafts and submission retry identity.
 
 **Confirmed recovery scope:** Same-tab reload recovery is sufficient. Operation recovery after closing the tab is outside this rewrite.
@@ -14,7 +16,7 @@ Keep the existing localStorage history keys and action-array format. Keep the ex
 
 The working assumption is that fewer independently coordinated lifecycles matter more than a storage-engine change. Browser storage remains the persistence mechanism. Database schemas, server request semantics, article authoring, and public-data replay retain their existing contracts.
 
-## Evidence and current ownership
+## Evidence and ownership before the rewrite
 
 | Concern                                                       | Current owner                               | Coordination cost                                                                                                                  |
 | ------------------------------------------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
@@ -42,7 +44,7 @@ The journal receives the session's baseline, internal mutable stores, persistenc
 
 `updateEntity` and `updateDomain` keep their public signatures. Their implementation uses a journal-controlled recording transaction so the operation batch is recorded before a draft read, publish, discard, or notification can observe it. Preserve Valtio operation conversion and pair normalization. Characterize the current batching behavior before selecting the synchronous recording mechanism; one logical mutation must retain array and relation operation ordering.
 
-Preserve existing publish/discard result variants and add a `busy` discard result for an in-flight request. Add a persistence field to `EditDraftState` and one session operation to retry failed draft persistence. `useEditDraft` forwards these results. The page and relation hooks present a shared, deduplicated persistence message through existing toast facilities. Persistence failure keeps the session active and the live draft accessible.
+Preserve existing publish/discard result variants and add a `busy` discard result for an in-flight request. Add a persistence field to `EditDraftState` and one session operation to retry failed draft persistence. `useEditDraft` forwards these results. The shared edit runtime presents one persistence banner with retry and a confirmed exit choice. Typed editable hooks show expected cancellation errors through existing toast facilities and preserve the failure signal for field editors. Persistence failure keeps the session active and the live draft accessible.
 
 Change the page and relation hooks' `discardChanges` and the toolbar's `onDiscard` from `void` to a success/failure result. Forward it through page-shell and relation-matrix callers. `EditModeToolbar.handleDiscard` exits only after successful discard; busy or failed persistence keeps the session mounted. An explicit choice to leave with an unsaved buffer is a separate user decision, with a warning about loss. Apply the same exit guard to publication that leaves unsaved later edits or unfinished cleanup.
 
@@ -109,7 +111,7 @@ Legacy records contain a fingerprint rather than a complete transport body. Pres
 | Cleanup storage failure                                          | Return cleanup-conflict and keep sufficient recovery information to finish cleanup. Preserve the server-success outcome.                                                                                                                                           |
 | Explicit discard                                                 | Preserve scope selection and pair behavior. Return busy during transport; otherwise persist a cancellation intent before changing history for an associated attempt. Follow the cancellation sequence below before reporting success.                              |
 
-Use one active transport/cleanup execution per affected domain within a session. Concurrent invocations reuse the same in-flight promise when identical; conflicting invocations return a conflict. Discard on that domain returns `busy` while transport is in flight, including calls from another page or scope. Other domains remain independent. This prevents asynchronous cleanup and discard from racing while keeping edits appendable during a request. After an uncertain result, the unresolved record reserves its submission identity and overlapping scope until retry or deliberate cancellation.
+Use one active transport/cleanup execution per affected domain within a session. Concurrent invocations reuse the same in-flight promise when identical; conflicting invocations return a conflict. Discard on that domain returns `busy` while transport is in flight, including calls from another page or scope. Other domains remain independent. This prevents asynchronous cleanup and discard from racing while keeping edits appendable during a request. After an uncertain result, the unresolved record reserves its submission identity and overlapping scope until retry or deliberate cancellation. A retry must select the same captured work; broader or narrower selections return a conflict. Owner, target, and matrix aliases remain valid when they select the same standalone pair.
 
 ### Cleanup and interruption ordering
 
@@ -128,6 +130,8 @@ After a durable intent, persist the remaining history, then clear associated ope
 Once the history write succeeds, immediately update the in-memory journal and live store to the discard target with recording suppressed. Further edits start from that target and may be saved normally. If operation removal fails, retain only the cancellation intent and its checkpoint; subsequent edits must never restore cancelled entries. Retry finishes operation removal while preserving those later edits. Report successful discard only after all required writes/removals succeed. The cancellation intent fences its associated submission identity until cleanup finishes.
 
 A crash after saving the intent resumes cancellation only, even when history replacement or operation removal was interrupted. Reuse the conservative before/after interpretation rule above; ambiguous history remains a conflict with the cancellation fence intact. A cancellation conflict blocks affected-domain mutation and generic persistence until recovery can establish the current history safely.
+
+A scope can cancel an associated attempt only when it includes every entry in that attempt. Partial discard of a broader unresolved submission returns a conflict and preserves its complete identity and history.
 
 When a scope has no associated attempt, its discard remains a single history replacement. A cancellation records the user's decision to stop retrying; any already-committed server submission retains its existing outcome. The UI must preserve that distinction when explaining an uncertain submission.
 
@@ -192,7 +196,16 @@ Use browser-storage adapters backed by JSDOM and fault-injecting test adapters t
 
 For implementation, run `npm run lint`, `npm run type-check`, and focused session, hook, runtime, relation, retry, article-compatibility, and import-boundary suites, then full `npm test` because this affects the shared edit lifecycle. Run `npm run check:tailwind` if styling changes. Build only if lazy-loading or bundling contracts change, using `npm run build:skip-images`.
 
-For this plan-only change, format and check this Markdown file. Source tests belong to implementation validation.
+Implementation validation covers lint, type-check, the full source suite, and Tailwind checks. Storage and session tests inject failures at request preparation, acknowledgement, cleanup-target persistence, history replacement, and operation removal. UI tests cover retained sessions across navigation, confirmed exit, failed discard, and blocked field saves. Build and deployment checks remain outside this source-only change.
+
+## Implementation record
+
+The plan was committed first, followed by one commit per phase on the existing branch. Three independent agents reviewed each phase for regressions and unnecessary complexity; justified findings were fixed before committing.
+
+- The private journal owns restoration, synchronous recording, in-memory history, subscriptions, persistence status, publication, cancellation, and cleanup.
+- The history adapter exposes only reads and replacements. The old registry, append contract, and raw test-history writer are retired; behavior tests mutate through the session, while storage compatibility fixtures remain explicit.
+- Game-data attempts use the strict adapter. Article callers keep the existing shared best-effort helper. Import tests enforce that separation and keep the journal and adapters out of public feature and root-provider imports.
+- Repeated draft reads use memory without browser-storage reads. Derived-projection caching remains a separate optional optimization.
 
 ## Scope and rollback
 
