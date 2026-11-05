@@ -174,7 +174,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '剑客杰瑞', type: 'character' },
       target: { name: '侍卫汤姆', type: 'character' },
-      tags: [{ counters: '（带控）高伤', counteredBy: '怕高伤' }],
+      tags: [{ counters: '高伤', counteredBy: '怕高伤' }],
       isMinor: false,
     },
   },
@@ -1200,7 +1200,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       target: { name: '恶魔汤姆', type: 'character' },
       tags: [
         { counters: '干扰', counteredBy: '怕干扰' },
-        { counters: '无惧', counteredBy: '怕无惧' },
+        { counters: '不惧', counteredBy: '怕不惧' },
       ],
       isMinor: false,
     },
@@ -2253,7 +2253,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '剑客莉莉', type: 'character' },
       target: { name: '托普斯', type: 'character' },
       tags: [
-        { counters: '无惧', counteredBy: '怕无惧' },
+        { counters: '不惧', counteredBy: '怕不惧' },
         { counters: '高伤', counteredBy: '怕高伤' },
       ],
       isMinor: true,
@@ -2328,7 +2328,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       target: { name: '追风汤姆', type: 'character' },
       tags: [
         { counters: '干扰', counteredBy: '怕干扰' },
-        { counters: '无惧', counteredBy: '怕无惧' },
+        { counters: '不惧', counteredBy: '怕不惧' },
       ],
       isMinor: true,
     },
@@ -2781,7 +2781,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       target: { name: '侦探泰菲', type: 'character' },
       tags: [
         { counters: '高伤', counteredBy: '怕高伤' },
-        { counters: '无惧', counteredBy: '怕无惧' },
+        { counters: '不惧', counteredBy: '怕不惧' },
       ],
       isMinor: false,
     },
@@ -3539,7 +3539,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       target: { name: '如玉', type: 'character' },
       tags: [
         { counters: '奇兵', counteredBy: '怕奇兵' },
-        { counters: '无惧', counteredBy: '怕无惧' },
+        { counters: '不惧', counteredBy: '怕不惧' },
       ],
       isMinor: false,
     },
@@ -3599,7 +3599,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       tags: [
         {
           counters: '机制',
-          counteredBy: '机制',
+          counteredBy: '怕机制',
         },
         {
           counters: '追击',
@@ -4271,7 +4271,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counteredBy',
       subject: { name: '侦探汤姆', type: 'character' },
       target: { name: '天使杰瑞', type: 'character' },
-      tags: [{ counters: '无惧', counteredBy: '怕无惧' }],
+      tags: [{ counters: '不惧', counteredBy: '怕不惧' }],
       isMinor: false,
     },
   },
@@ -4329,7 +4329,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '天使杰瑞', type: 'character' },
       target: { name: '库博', type: 'character' },
       isMinor: true,
-      tags: [{ counters: '无惧', counteredBy: '怕无惧' }],
+      tags: [{ counters: '不惧', counteredBy: '怕不惧' }],
     },
   },
   {
@@ -4465,7 +4465,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       isMinor: true,
       tags: [
         {
-          counters: '（带控）高伤',
+          counters: '高伤',
           counteredBy: '怕高伤',
         },
       ],
