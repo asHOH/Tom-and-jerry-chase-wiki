@@ -129,7 +129,13 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       const result = discardDraft();
       if (discardOptions?.showToast !== false) {
         showToast?.(
-          result.status === 'discarded' ? '已放弃所有修改' : '放弃修改后本地草稿清理失败，请重试'
+          result.status === 'discarded'
+            ? '已放弃所有修改'
+            : result.status === 'busy'
+              ? '正在提交，请稍后再放弃修改。'
+              : result.error instanceof PublishOperationConflictError
+                ? '这些修改属于同一提交，请重试原提交，或一并放弃该提交涉及的全部修改。'
+                : '放弃修改后本地草稿清理失败，请重试'
         );
       }
       return result.status === 'discarded';

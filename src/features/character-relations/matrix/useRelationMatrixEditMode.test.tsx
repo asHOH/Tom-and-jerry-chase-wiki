@@ -109,7 +109,7 @@ function RelationEditModeProbe() {
       </button>
       <button
         type='button'
-        onClick={() => publish('关系更新', { pendingAcknowledgementToken: 'v1:acknowledged' })}
+        onClick={() => publish('关系更新', { pendingAcknowledgementToken: 'v1:server-token' })}
       >
         publish-acknowledged
       </button>
@@ -559,7 +559,7 @@ describe('useRelationMatrixEditMode', () => {
       fetchMock.mock.calls[1]?.[1]?.headers['Idempotency-Key']
     );
     expect(fetchMock.mock.calls[1]?.[1]?.body).toContain(
-      '"pendingAcknowledgementToken":"v1:acknowledged"'
+      '"pendingAcknowledgementToken":"v1:server-token"'
     );
   });
 

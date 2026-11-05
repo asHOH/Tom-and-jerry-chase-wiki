@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useSyncExternalStore } from 'react';
+import { toast } from 'sonner';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { useActiveEditSession } from '@/lib/edit/activeEditSession';
@@ -71,7 +72,13 @@ export function useEditableDomain<EntityType extends PublishableEntityType, View
   const update = useCallback<EditableUpdate<EditDomainDraft<EntityType>>>(
     (mutate) => {
       if (!editRuntime) throw new Error(`Cannot edit ${entityType} because it is not loaded.`);
-      editRuntime.updateDomain(entityType, mutate);
+      try {
+        editRuntime.updateDomain(entityType, mutate);
+      } catch (error) {
+        if (!(error instanceof Error) || error.name !== 'EditDraftPersistenceError') throw error;
+        toast.error(error.message);
+        throw error;
+      }
     },
     [editRuntime, entityType]
   );
@@ -139,7 +146,13 @@ export function useEditableEntity<EntityType extends PublishableEntityType>(
       if (!editRuntime) {
         throw new Error(`Cannot edit ${entityType}.${entityId} because it is not loaded.`);
       }
-      editRuntime.updateEntity(sessionRef, mutate);
+      try {
+        editRuntime.updateEntity(sessionRef, mutate);
+      } catch (error) {
+        if (!(error instanceof Error) || error.name !== 'EditDraftPersistenceError') throw error;
+        toast.error(error.message);
+        throw error;
+      }
     },
     [editRuntime, entityId, entityType, sessionRef]
   );

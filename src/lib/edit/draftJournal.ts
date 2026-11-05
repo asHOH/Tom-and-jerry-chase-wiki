@@ -20,8 +20,13 @@ import {
   type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
 import {
+  createBrowserDraftOperationStore,
   createBrowserEditHistoryStore,
   EditDraftPersistenceError,
+  readDraftRequestBody,
+  type DraftOperation,
+  type DraftRecovery,
+  type DraftRequestBody,
 } from '@/lib/edit/draftPersistence';
 import {
   buildDraftSummaryItemsForType,
@@ -29,6 +34,7 @@ import {
 } from '@/lib/edit/editModeDrafts';
 import { type EditStores } from '@/lib/edit/editStores';
 import { reconcilePublishHistory } from '@/lib/edit/publishHistory';
+import { areActionsOrderDependent } from '@/lib/gameData/actionDependencies';
 import { cloneGameDataValue } from '@/lib/gameData/cloneGameDataValue';
 import type { PendingActionOverlapResponse } from '@/lib/gameData/pendingActionAwarenessTypes';
 import {
@@ -38,18 +44,14 @@ import {
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getPublishErrorMessage } from '@/lib/gameData/publishErrorMessage';
 import {
-  clearPublishOperation,
-  getOrCreatePublishOperationId,
   getPublishOperationFingerprint,
-  hasPublishOperation,
   PublishOperationConflictError,
-  readPublishOperation,
 } from '@/lib/gameData/publishOperation';
 import {
   getGameDataSubmitOutcomeFromResults,
-  type GameDataSubmitMode,
   type GameDataSubmitOutcome,
 } from '@/lib/gameData/submitMode';
+import { actionHistorySchema } from '@/lib/validation/schemas';
 import { parseCharacterRelationPairPath } from '@/features/characters/utils/characterRelationPairs';
 import {
   findInvalidModifiedKnowledgeCardGroup,
@@ -90,13 +92,7 @@ class EditDraftRestoreError extends Error {
 export type PublishTransportRequest = Readonly<{
   endpoint: '/api/game-data-actions/publish' | '/api/game-data-actions/publish-relations';
   operationId: string;
-  body: Readonly<{
-    entityType?: PublishableEntityType;
-    entries: readonly ActionHistoryEntry[];
-    message?: string;
-    pendingAcknowledgementToken?: string;
-    submitMode?: GameDataSubmitMode;
-  }>;
+  body: string;
 }>;
 
 export type PublishTransportResult =
@@ -114,7 +110,7 @@ async function publishWithFetch(request: PublishTransportRequest): Promise<Publi
   const response = await fetch(request.endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Idempotency-Key': request.operationId },
-    body: JSON.stringify(request.body),
+    body: request.body,
   });
   const body = (await response.json().catch(() => null)) as {
     error?: string;
@@ -122,6 +118,7 @@ async function publishWithFetch(request: PublishTransportRequest): Promise<Publi
     requestId?: string;
     pendingAcknowledgementToken?: unknown;
     result?: Array<{
+      id: string;
       is_public: boolean;
       status: 'pending' | 'approved' | 'rejected' | 'synced' | 'revoked';
     }>;
@@ -145,6 +142,21 @@ async function publishWithFetch(request: PublishTransportRequest): Promise<Publi
     throw new Error(message);
   }
 
+  if (
+    !body ||
+    !Array.isArray(body.result) ||
+    body.result.length === 0 ||
+    body.result.some(
+      (row) =>
+        !row ||
+        typeof row.id !== 'string' ||
+        row.id.trim().length === 0 ||
+        typeof row.is_public !== 'boolean' ||
+        !['pending', 'approved', 'rejected', 'synced', 'revoked'].includes(row.status)
+    )
+  ) {
+    throw new Error('提交结果无法确认，请使用原请求重试。');
+  }
   return {
     status: 'published',
     outcome: getGameDataSubmitOutcomeFromResults(body?.result ?? []),
@@ -206,6 +218,15 @@ export function createDraftJournal(
   dependencies: EditSessionDependencies = {}
 ) {
   const persistence = dependencies.history ?? createBrowserEditHistoryStore();
+  const operations = createBrowserDraftOperationStore();
+  const operationRecords = new Map<string, DraftOperation>();
+  const appliedTargets = new Set<string>();
+  const pendingTargetWrites = new Set<string>();
+  const activePublishes = new Map<
+    PublishableEntityType,
+    { signature: string; promise: ReturnType<EditSession['publishDraft']> }
+  >();
+  let restoring = true;
   const histories = new Map<PublishableEntityType, ActionHistoryEntry[]>();
   const persistenceStates = new Map<PublishableEntityType, EditDraftState['persistence']>();
   const pendingActions = new Map<PublishableEntityType, Action[]>();
@@ -278,6 +299,132 @@ export function createDraftJournal(
   };
 
   const notifyDrafts = (): void => manualDraftListeners.forEach((listener) => listener());
+  const writeOperation = (key: string, record: DraftOperation) => {
+    operations.write(key, record);
+    operationRecords.set(key, record);
+  };
+  const removeOperation = (key: string) => {
+    operations.remove(key);
+    operationRecords.delete(key);
+    appliedTargets.delete(key);
+    pendingTargetWrites.delete(key);
+  };
+  const recordDomain = (key: string, record: DraftOperation): PublishableEntityType => {
+    if (record.gameDataRecovery) return scopeEntityType(record.gameDataRecovery.scope);
+    return key.startsWith('relations:')
+      ? 'characters'
+      : (key.split(':')[1] as PublishableEntityType);
+  };
+  const recordEntries = (record: DraftOperation): ActionHistoryEntry[] => {
+    const recovery = record.gameDataRecovery;
+    if (recovery) return selectHistory(recovery.scope, recovery.source).matching;
+    try {
+      const entries = JSON.parse(record.fingerprint).entries;
+      return actionHistorySchema.parse(entries) as ActionHistoryEntry[];
+    } catch {
+      return [];
+    }
+  };
+  const relatedOperations = (scope: EditDraftScope) => {
+    // Read newly created legacy records too; old callers can precede this session's first publish.
+    for (const [key, record] of operations.list()) operationRecords.set(key, record);
+    return [...operationRecords].filter(
+      ([key, record]) =>
+        recordDomain(key, record) === scopeEntityType(scope) &&
+        (key === operationScope(scope, []) ||
+          selectHistory(scope, recordEntries(record)).matching.length > 0 ||
+          (record.gameDataRecovery && isEqual(record.gameDataRecovery.scope, scope)))
+    );
+  };
+  const cancellationBlocks = (entityType: PublishableEntityType) =>
+    [...operationRecords].some(
+      ([key, record]) =>
+        recordDomain(key, record) === entityType &&
+        record.gameDataRecovery?.phase === 'cancelling' &&
+        !appliedTargets.has(key)
+    );
+
+  const finishRecovery = (key: string, record: DraftOperation): boolean => {
+    const recovery = record.gameDataRecovery;
+    if (!recovery || recovery.phase === 'prepared') return true;
+    const entityType = scopeEntityType(recovery.scope);
+    const latest = history.read(entityType);
+    try {
+      let target = latest;
+      if (!appliedTargets.has(key)) {
+        const remaining =
+          recovery.phase === 'cancelling'
+            ? recovery.target
+            : selectHistory(recovery.scope, recovery.source).remaining;
+        // Compare the persisted representation: JSON omits undefined action fields.
+        const before = reconcilePublishHistory(
+          JSON.parse(JSON.stringify(recovery.source)),
+          JSON.parse(JSON.stringify(remaining)),
+          JSON.parse(JSON.stringify(latest))
+        );
+        const after =
+          recovery.target === undefined
+            ? null
+            : reconcilePublishHistory(
+                JSON.parse(JSON.stringify(recovery.target)),
+                JSON.parse(JSON.stringify(recovery.target)),
+                JSON.parse(JSON.stringify(latest))
+              );
+        if (recovery.target === undefined || pendingTargetWrites.has(key)) {
+          if (before === null) throw new EditDraftPersistenceError('conflict');
+          target = before;
+        } else {
+          if (before !== null && after !== null && !isEqual(before, after))
+            throw new EditDraftPersistenceError('conflict');
+          const resolved = before ?? after;
+          if (!resolved) throw new EditDraftPersistenceError('conflict');
+          target = resolved;
+        }
+        if (recovery.phase === 'acknowledged' && recovery.target === undefined) {
+          writeOperation(key, { ...record, gameDataRecovery: { ...recovery, target } });
+          pendingTargetWrites.add(key);
+        }
+        if (!history.replace(entityType, target)) return false;
+        appliedTargets.add(key);
+        if (recovery.phase === 'cancelling' && !restoring) {
+          withRecordingSuppressed(entityType, () => {
+            const root = mutableDomain(stores, entityType);
+            const matching = selectHistory(recovery.scope, latest).matching;
+            for (let index = matching.length - 1; index >= 0; index--)
+              applyActionEntry(root, invertActionEntry(matching[index]!));
+          });
+        } else if (recovery.phase === 'acknowledged' && !restoring && entityType === 'characters') {
+          const sent = readDraftRequestBody(recovery).entries.flat();
+          withRecordingSuppressed(entityType, () => {
+            for (const action of selectHistory(recovery.scope, recovery.source).matching.flat()) {
+              if (
+                isUnchangedCharacterRelationInitialization(action, baseline.characters) &&
+                ![...sent, ...target.flat()].some((other) =>
+                  areActionsOrderDependent(action, other)
+                )
+              ) {
+                applyActionEntry(mutableDomain(stores, entityType), invertActionEntry(action));
+              }
+            }
+          });
+        }
+      } else if (!save(entityType, latest)) return false;
+      if (recovery.phase === 'cancelling') {
+        for (const alias of recovery.associatedScopes) if (alias !== key) removeOperation(alias);
+      }
+      removeOperation(key);
+      return true;
+    } catch (error) {
+      persistenceStates.set(
+        entityType,
+        error instanceof EditDraftPersistenceError && error.kind === 'conflict'
+          ? 'conflict'
+          : 'unsaved'
+      );
+      return false;
+    }
+  };
+
   const journal = {
     subscribe: (_scope: EditDraftScope | undefined, listener: () => void) => {
       assertActive();
@@ -289,8 +436,9 @@ export function createDraftJournal(
         manualDraftListeners.delete(listener);
       };
     },
-    mutate: (_entityType: PublishableEntityType, fn: () => void) => {
+    mutate: (entityType: PublishableEntityType, fn: () => void) => {
       assertActive();
+      if (cancellationBlocks(entityType)) throw new EditDraftPersistenceError('cleanup-pending');
       mutationDepth += 1;
       try {
         fn();
@@ -299,14 +447,28 @@ export function createDraftJournal(
         if (mutationDepth === 0) flushRecording();
       }
     },
-    hasUnsavedDrafts: () => [...persistenceStates.values()].some((state) => state !== 'saved'),
+    hasUnsavedDrafts: () =>
+      [...persistenceStates.values()].some((state) => state !== 'saved') ||
+      [...operationRecords.values()].some(
+        (record) => record.gameDataRecovery && record.gameDataRecovery.phase !== 'prepared'
+      ),
     retryDraftPersistence: (
       scope?: EditDraftScope
     ): ReturnType<EditSession['retryDraftPersistence']> => {
       assertActive();
       const types = scope ? [scopeEntityType(scope)] : PUBLISHABLE_ENTITY_TYPES;
       const saved = types
-        .map((entityType) => save(entityType, history.read(entityType)))
+        .map((entityType) => {
+          const pending = [...operationRecords].filter(
+            ([key, record]) =>
+              recordDomain(key, record) === entityType &&
+              record.gameDataRecovery &&
+              record.gameDataRecovery.phase !== 'prepared'
+          );
+          if (pending.length > 0 && activePublishes.has(entityType)) return false;
+          if (pending.some(([key, record]) => !finishRecovery(key, record))) return false;
+          return save(entityType, history.read(entityType));
+        })
         .every(Boolean);
       notifyDrafts();
       return saved
@@ -331,236 +493,95 @@ export function createDraftJournal(
     discardDraft: (scope: EditDraftScope): ReturnType<EditSession['discardDraft']> => {
       assertActive();
       const entityType = scopeEntityType(scope);
-      const source = history.read(entityType);
-      const { matching, remaining } = selectHistory(scope, source);
-      const entries = squashDraft(entityType, matching);
-      const discardScope = operationScope(scope, entries.length > 0 ? entries : matching);
-      const originalEntries = squashActions(matching, {
-        currentRoot: mutableDomain(stores, entityType),
-      });
-      const originalScope = operationScope(
-        scope,
-        originalEntries.length > 0 ? originalEntries : matching
-      );
-      if (matching.length > 0) {
-        withRecordingSuppressed(entityType, () => {
-          const root = mutableDomain(stores, entityType);
-          for (let index = matching.length - 1; index >= 0; index -= 1) {
-            applyActionEntry(root, invertActionEntry(matching[index]!));
-          }
-        });
-      }
-      let cleanupError: Error | null = null;
-      let cleanupSucceeded = false;
+      if (activePublishes.has(entityType)) return { status: 'busy' };
       try {
-        cleanupSucceeded = history.replace(entityType, remaining);
-      } catch (error) {
-        cleanupError = error instanceof Error ? error : new Error('Failed to persist draft.');
-      }
-      if (!cleanupSucceeded && matching.length > 0) {
+        const associated = relatedOperations(scope);
+        if (
+          associated.some(
+            ([, record]) => selectHistory(scope, recordEntries(record)).remaining.length > 0
+          )
+        ) {
+          return { status: 'storage-failed', error: new PublishOperationConflictError() };
+        }
+        const priorCancellation = associated.find(
+          ([, record]) => record.gameDataRecovery?.phase === 'cancelling'
+        );
+        if (priorCancellation) {
+          const succeeded = finishRecovery(...priorCancellation);
+          notifyDrafts();
+          return succeeded
+            ? { status: 'discarded' }
+            : { status: 'storage-failed', error: new EditDraftCleanupError() };
+        }
+        const source = history.read(entityType);
+        const { matching, remaining } = selectHistory(scope, source);
+        if (associated.length > 0) {
+          const [key, record] = associated[0]!;
+          const cancellation: DraftOperation = {
+            ...record,
+            gameDataRecovery: {
+              version: 1,
+              phase: 'cancelling',
+              scope,
+              source,
+              target: remaining,
+              associatedScopes: associated.map(([alias]) => alias),
+            },
+          };
+          writeOperation(key, cancellation);
+          pendingTargetWrites.add(key);
+          // This instance knows the history write has not happened yet.
+          if (!history.replace(entityType, remaining)) {
+            notifyDrafts();
+            return { status: 'storage-failed', error: new EditDraftCleanupError() };
+          }
+          appliedTargets.add(key);
+        } else if (!history.replace(entityType, remaining)) {
+          notifyDrafts();
+          return { status: 'storage-failed', error: new EditDraftCleanupError() };
+        }
         withRecordingSuppressed(entityType, () => {
           const root = mutableDomain(stores, entityType);
-          matching.forEach((entry) => applyActionEntry(root, entry));
+          for (let index = matching.length - 1; index >= 0; index--)
+            applyActionEntry(root, invertActionEntry(matching[index]!));
         });
+        const succeeded =
+          associated.length === 0 ||
+          finishRecovery(associated[0]![0], operationRecords.get(associated[0]![0])!);
+        invalidate();
+        notifyDrafts();
+        return succeeded
+          ? { status: 'discarded' }
+          : { status: 'storage-failed', error: new EditDraftCleanupError() };
+      } catch (error) {
+        persistenceStates.set(entityType, 'unsaved');
+        notifyDrafts();
+        return {
+          status: 'storage-failed',
+          error: error instanceof Error ? error : new EditDraftCleanupError(),
+        };
       }
-      if (cleanupSucceeded) {
-        clearPublishOperation(discardScope);
-        clearPublishOperation(originalScope);
-      }
-      invalidate();
-      notifyDrafts();
-      return cleanupSucceeded
-        ? { status: 'discarded' }
-        : {
-            status: 'storage-failed',
-            error: cleanupError ?? new Error('Failed to persist discarded draft.'),
-          };
     },
-    publishDraft: async (
+    publishDraft: (
       scope: EditDraftScope,
       options: EditPublishOptions = {}
     ): ReturnType<EditSession['publishDraft']> => {
       assertActive();
       const entityType = scopeEntityType(scope);
-      const source = history.read(entityType);
-      if (!save(entityType, source)) {
-        notifyDrafts();
-        return {
-          status: 'failed',
-          error: new EditDraftPersistenceError(
-            persistenceStates.get(entityType) === 'conflict' ? 'conflict' : 'unavailable'
-          ),
-        };
-      }
-      const { matching, remaining } = selectHistory(scope, source);
-      const squashed = squashActions(matching, { currentRoot: mutableDomain(stores, entityType) });
-      const legacySquashed = squashActions(matching, {
-        currentRoot: mutableDomain(stores, entityType),
-        preserveLegacyCreations: true,
-      });
-      const legacyScope = operationScope(scope, legacySquashed);
-      const originalScope = readPublishOperation(legacyScope)
-        ? legacyScope
-        : operationScope(scope, squashed);
-      const existingOperation = readPublishOperation(originalScope);
-      const requestFingerprint = (
-        entries: readonly ActionHistoryEntry[],
-        endpoint = scope.kind === 'character-relations'
-          ? '/api/game-data-actions/publish-relations'
-          : '/api/game-data-actions/publish'
-      ) =>
-        getPublishOperationFingerprint({
-          endpoint,
-          entries,
-          message: options.message?.trim() || null,
-          submitMode: options.submitMode ?? 'default',
-        });
-      // An uncertain request must retain its exact payload for an idempotent retry.
-      const retryEntries = existingOperation
-        ? [squashed, legacySquashed].find(
-            (entries) =>
-              existingOperation.fingerprint === requestFingerprint(entries) ||
-              (originalScope.startsWith('relations:pair:') &&
-                existingOperation.fingerprint ===
-                  requestFingerprint(
-                    entries,
-                    scope.kind === 'character-relations'
-                      ? '/api/game-data-actions/publish'
-                      : '/api/game-data-actions/publish-relations'
-                  ))
-          )
-        : undefined;
-      const retrying = retryEntries !== undefined;
-      const entries = retryEntries ?? squashDraft(entityType, matching);
-      const publishScope = existingOperation
-        ? originalScope
-        : operationScope(scope, entries.length > 0 ? entries : matching);
-
-      if (
-        entityType === 'characters' &&
-        !retrying &&
-        (!existingOperation || existingOperation.fingerprint === requestFingerprint(entries))
-      ) {
-        withRecordingSuppressed(entityType, () => {
-          for (const action of squashed.flat()) {
-            if (isUnchangedCharacterRelationInitialization(action, baseline.characters)) {
-              // Restore absence so the next edit records the correct before-value.
-              applyActionEntry(mutableDomain(stores, entityType), invertActionEntry(action));
-            }
-          }
-        });
-      }
-
-      if (entries.length === 0) {
-        if (existingOperation) {
-          return { status: 'failed', error: new PublishOperationConflictError() };
-        }
-        if (!history.replace(entityType, remaining)) {
-          notifyDrafts();
-          return { status: 'failed', error: new EditDraftCleanupError() };
-        }
-        clearPublishOperation(publishScope);
-        notifyDrafts();
-        return { status: 'empty' };
-      }
-
-      if (entityType === 'characters') {
-        const invalidGroup = findInvalidModifiedKnowledgeCardGroup(
-          baseline.characters,
-          snapshot(stores.characters),
-          entries
-            .flatMap((entry) => (Array.isArray(entry) ? entry : [entry]))
-            .map((action) => action.path),
-          (cardId) => baseline.cards[cardId.slice(cardId.indexOf('-') + 1)]?.cost ?? 0
-        );
-        if (invalidGroup) {
-          return {
-            status: 'failed',
-            error: new Error(`${KNOWLEDGE_CARD_GROUP_COST_MESSAGE} (${invalidGroup})`),
-          };
-        }
-      }
-
-      let endpoint: PublishTransportRequest['endpoint'] =
-        scope.kind === 'character-relations'
-          ? '/api/game-data-actions/publish-relations'
-          : '/api/game-data-actions/publish';
-      const fingerprintForEndpoint = (value: PublishTransportRequest['endpoint']) =>
-        getPublishOperationFingerprint({
-          endpoint: value,
-          entries,
-          message: options.message?.trim() || null,
-          submitMode: options.submitMode ?? 'default',
-        });
-
-      try {
-        let operationId: string;
-        try {
-          operationId = getOrCreatePublishOperationId(
-            publishScope,
-            fingerprintForEndpoint(endpoint)
-          );
-        } catch (error) {
-          if (
-            !(error instanceof PublishOperationConflictError) ||
-            !publishScope.startsWith('relations:pair:')
-          ) {
-            throw error;
-          }
-          // The server includes the endpoint's permission in its operation fingerprint.
-          // Retry the original transport only when the complete draft still matches.
-          endpoint =
-            endpoint === '/api/game-data-actions/publish'
-              ? '/api/game-data-actions/publish-relations'
-              : '/api/game-data-actions/publish';
-          operationId = getOrCreatePublishOperationId(
-            publishScope,
-            fingerprintForEndpoint(endpoint)
-          );
-        }
-        const body: PublishTransportRequest['body'] = {
-          ...(endpoint === '/api/game-data-actions/publish-relations' ? {} : { entityType }),
-          entries,
-          ...(options.message === undefined ? {} : { message: options.message }),
-          ...(options.pendingAcknowledgementToken === undefined
-            ? {}
-            : { pendingAcknowledgementToken: options.pendingAcknowledgementToken }),
-          ...(options.submitMode === undefined ? {} : { submitMode: options.submitMode }),
-        };
-        const result = await publish({ endpoint, operationId, body });
-        if (result.status === 'pending-conflict') return result;
-
-        const latest = history.read(entityType);
-        const reconciled = reconcilePublishHistory(source, remaining, latest);
-        if (reconciled === null) {
-          notifyDrafts();
-          return {
-            status: 'cleanup-conflict',
-            outcome: result.outcome,
-            reason: 'history-diverged',
-          };
-        }
-        if (!history.replace(entityType, reconciled)) {
-          notifyDrafts();
-          return {
-            status: 'cleanup-conflict',
-            outcome: result.outcome,
-            reason:
-              persistenceStates.get(entityType) === 'conflict'
-                ? 'history-diverged'
-                : 'storage-failed',
-          };
-        }
-        clearPublishOperation(publishScope);
-        notifyDrafts();
-        return result;
-      } catch (error) {
-        if (error instanceof RejectedGameDataEditSubmissionError) {
-          // A definitive rejection saved nothing under this key; allow a corrected draft.
-          clearPublishOperation(publishScope);
-        }
-        return { status: 'failed', error: error instanceof Error ? error : new Error('发布失败') };
-      }
+      const signature = JSON.stringify({ scope, options, source: history.read(entityType) });
+      const active = activePublishes.get(entityType);
+      if (active)
+        return active.signature === signature
+          ? active.promise
+          : Promise.resolve({ status: 'failed', error: new PublishOperationConflictError() });
+      const promise = executePublish(scope, options)
+        .catch((error: unknown) => ({
+          status: 'failed' as const,
+          error: error instanceof Error ? error : new Error('发布失败'),
+        }))
+        .finally(() => activePublishes.delete(entityType));
+      activePublishes.set(entityType, { signature, promise });
+      return promise;
     },
     dispose: () => {
       if (disposed) return;
@@ -568,6 +589,280 @@ export function createDraftJournal(
       recordingSubscriptions.forEach((unsubscribe) => unsubscribe());
       manualDraftListeners.clear();
     },
+  };
+  const sendPrepared = async (
+    key: string,
+    record: DraftOperation
+  ): ReturnType<EditSession['publishDraft']> => {
+    const recovery = record.gameDataRecovery;
+    if (!recovery || recovery.phase !== 'prepared') throw new PublishOperationConflictError();
+    const entityType = scopeEntityType(recovery.scope);
+    try {
+      const result = await publish({
+        endpoint: recovery.endpoint,
+        operationId: record.operationId,
+        body: recovery.body,
+      });
+      if (disposed)
+        return { status: 'failed', error: new Error('编辑会话已结束，提交记录已保留。') };
+      if (result.status === 'pending-conflict') {
+        writeOperation(key, {
+          ...record,
+          gameDataRecovery: {
+            ...recovery,
+            acknowledgementToken: result.conflict.pendingAcknowledgementToken,
+          },
+        });
+        return result;
+      }
+      const acknowledged: DraftOperation = {
+        ...record,
+        gameDataRecovery: {
+          version: 1,
+          phase: 'acknowledged',
+          scope: recovery.scope,
+          source: recovery.source,
+          endpoint: recovery.endpoint,
+          body: recovery.body,
+          outcome: result.outcome,
+        },
+      };
+      let completed = false;
+      try {
+        writeOperation(key, acknowledged);
+        completed = finishRecovery(key, acknowledged);
+      } catch {
+        persistenceStates.set(entityType, 'unsaved');
+      }
+      notifyDrafts();
+      return completed
+        ? result
+        : {
+            status: 'cleanup-conflict',
+            outcome: result.outcome,
+            reason:
+              persistenceStates.get(entityType) === 'conflict'
+                ? 'history-diverged'
+                : 'storage-failed',
+          };
+    } catch (error) {
+      if (!disposed && error instanceof RejectedGameDataEditSubmissionError) {
+        try {
+          removeOperation(key);
+        } catch (cleanupError) {
+          persistenceStates.set(entityType, 'unsaved');
+          notifyDrafts();
+          return {
+            status: 'failed',
+            error: cleanupError instanceof Error ? cleanupError : new EditDraftCleanupError(),
+          };
+        }
+      }
+      return { status: 'failed', error: error instanceof Error ? error : new Error('发布失败') };
+    }
+  };
+  const executePublish = async (
+    scope: EditDraftScope,
+    options: EditPublishOptions = {}
+  ): ReturnType<EditSession['publishDraft']> => {
+    assertActive();
+    const entityType = scopeEntityType(scope);
+    const associated = relatedOperations(scope);
+    if (associated.length > 1 || cancellationBlocks(entityType))
+      return { status: 'failed', error: new PublishOperationConflictError() };
+    const recovered = associated[0];
+    if (recovered?.[1].gameDataRecovery?.phase === 'acknowledged') {
+      const recovery = recovered[1].gameDataRecovery;
+      const completed = finishRecovery(...recovered);
+      notifyDrafts();
+      return completed
+        ? { status: 'published', outcome: recovery.outcome }
+        : {
+            status: 'cleanup-conflict',
+            outcome: recovery.outcome,
+            reason:
+              persistenceStates.get(entityType) === 'conflict'
+                ? 'history-diverged'
+                : 'storage-failed',
+          };
+    }
+    const source = history.read(entityType);
+    if (!save(entityType, source)) {
+      notifyDrafts();
+      return {
+        status: 'failed',
+        error: new EditDraftPersistenceError(
+          persistenceStates.get(entityType) === 'conflict' ? 'conflict' : 'unavailable'
+        ),
+      };
+    }
+    if (recovered?.[1].gameDataRecovery?.phase === 'prepared') {
+      const [key, record] = recovered;
+      const recovery = record.gameDataRecovery as Extract<DraftRecovery, { phase: 'prepared' }>;
+      const body = readDraftRequestBody(recovery);
+      if (
+        JSON.stringify(selectHistory(scope, source).matching) !==
+          JSON.stringify(selectHistory(recovery.scope, recovery.source).matching) ||
+        JSON.stringify(selectHistory(recovery.scope, source).matching) !==
+          JSON.stringify(selectHistory(recovery.scope, recovery.source).matching) ||
+        (options.message !== undefined && options.message !== body.message) ||
+        (options.submitMode !== undefined && options.submitMode !== (body.submitMode ?? 'default'))
+      )
+        return { status: 'failed', error: new PublishOperationConflictError() };
+      let prepared = record;
+      if (
+        options.pendingAcknowledgementToken !== undefined &&
+        options.pendingAcknowledgementToken !== body.pendingAcknowledgementToken
+      ) {
+        if (options.pendingAcknowledgementToken !== recovery.acknowledgementToken)
+          return { status: 'failed', error: new PublishOperationConflictError() };
+        prepared = {
+          ...record,
+          gameDataRecovery: {
+            ...recovery,
+            body: JSON.stringify({
+              ...JSON.parse(recovery.body),
+              pendingAcknowledgementToken: options.pendingAcknowledgementToken,
+            }),
+          },
+        };
+        writeOperation(key, prepared);
+      }
+      return sendPrepared(key, prepared);
+    }
+    const { matching, remaining } = selectHistory(scope, source);
+    const squashed = squashActions(matching, { currentRoot: mutableDomain(stores, entityType) });
+    const legacySquashed = squashActions(matching, {
+      currentRoot: mutableDomain(stores, entityType),
+      preserveLegacyCreations: true,
+    });
+    const legacyScope = operationScope(scope, legacySquashed);
+    const originalScope =
+      recovered?.[0] ??
+      (operations.read(legacyScope) ? legacyScope : operationScope(scope, squashed));
+    const existingOperation = recovered?.[1] ?? operations.read(originalScope);
+    const requestFingerprint = (
+      entries: readonly ActionHistoryEntry[],
+      endpoint = scope.kind === 'character-relations'
+        ? '/api/game-data-actions/publish-relations'
+        : '/api/game-data-actions/publish'
+    ) =>
+      getPublishOperationFingerprint({
+        endpoint,
+        entries,
+        message: options.message?.trim() || null,
+        submitMode: options.submitMode ?? 'default',
+      });
+    // An uncertain request must retain its exact payload for an idempotent retry.
+    const retryEntries = existingOperation
+      ? [squashed, legacySquashed].find(
+          (entries) =>
+            existingOperation.fingerprint === requestFingerprint(entries) ||
+            (operationScope(scope, entries).startsWith('relations:pair:') &&
+              existingOperation.fingerprint ===
+                requestFingerprint(
+                  entries,
+                  scope.kind === 'character-relations'
+                    ? '/api/game-data-actions/publish'
+                    : '/api/game-data-actions/publish-relations'
+                ))
+        )
+      : undefined;
+    const retrying = retryEntries !== undefined;
+    const entries = retryEntries ?? squashDraft(entityType, matching);
+    const publishScope = existingOperation
+      ? originalScope
+      : operationScope(scope, entries.length > 0 ? entries : matching);
+
+    if (
+      entityType === 'characters' &&
+      !retrying &&
+      (!existingOperation || existingOperation.fingerprint === requestFingerprint(entries))
+    ) {
+      withRecordingSuppressed(entityType, () => {
+        for (const action of squashed.flat()) {
+          if (isUnchangedCharacterRelationInitialization(action, baseline.characters)) {
+            // Restore absence so the next edit records the correct before-value.
+            applyActionEntry(mutableDomain(stores, entityType), invertActionEntry(action));
+          }
+        }
+      });
+    }
+
+    if (entries.length === 0) {
+      if (existingOperation) {
+        return { status: 'failed', error: new PublishOperationConflictError() };
+      }
+      if (!history.replace(entityType, remaining)) {
+        notifyDrafts();
+        return { status: 'failed', error: new EditDraftCleanupError() };
+      }
+      notifyDrafts();
+      return { status: 'empty' };
+    }
+
+    if (entityType === 'characters') {
+      const invalidGroup = findInvalidModifiedKnowledgeCardGroup(
+        baseline.characters,
+        snapshot(stores.characters),
+        entries
+          .flatMap((entry) => (Array.isArray(entry) ? entry : [entry]))
+          .map((action) => action.path),
+        (cardId) => baseline.cards[cardId.slice(cardId.indexOf('-') + 1)]?.cost ?? 0
+      );
+      if (invalidGroup) {
+        return {
+          status: 'failed',
+          error: new Error(`${KNOWLEDGE_CARD_GROUP_COST_MESSAGE} (${invalidGroup})`),
+        };
+      }
+    }
+
+    let endpoint: PublishTransportRequest['endpoint'] =
+      scope.kind === 'character-relations'
+        ? '/api/game-data-actions/publish-relations'
+        : '/api/game-data-actions/publish';
+    const fingerprintForEndpoint = (value: PublishTransportRequest['endpoint']) =>
+      getPublishOperationFingerprint({
+        endpoint: value,
+        entries,
+        message: options.message?.trim() || null,
+        submitMode: options.submitMode ?? 'default',
+      });
+
+    if (existingOperation && existingOperation.fingerprint !== fingerprintForEndpoint(endpoint)) {
+      if (!operationScope(scope, entries).startsWith('relations:pair:'))
+        return { status: 'failed', error: new PublishOperationConflictError() };
+      endpoint =
+        endpoint === '/api/game-data-actions/publish'
+          ? '/api/game-data-actions/publish-relations'
+          : '/api/game-data-actions/publish';
+      if (existingOperation.fingerprint !== fingerprintForEndpoint(endpoint))
+        return { status: 'failed', error: new PublishOperationConflictError() };
+    }
+    const body: DraftRequestBody = {
+      ...(endpoint === '/api/game-data-actions/publish-relations' ? {} : { entityType }),
+      entries,
+      ...(options.message === undefined ? {} : { message: options.message }),
+      ...(options.pendingAcknowledgementToken === undefined
+        ? {}
+        : { pendingAcknowledgementToken: options.pendingAcknowledgementToken }),
+      ...(options.submitMode === undefined ? {} : { submitMode: options.submitMode }),
+    };
+    const record: DraftOperation = {
+      operationId: existingOperation?.operationId ?? crypto.randomUUID(),
+      fingerprint: existingOperation?.fingerprint ?? fingerprintForEndpoint(endpoint),
+      gameDataRecovery: {
+        version: 1,
+        phase: 'prepared',
+        scope,
+        source,
+        endpoint,
+        body: JSON.stringify(body),
+      },
+    };
+    writeOperation(publishScope, record);
+    return sendPrepared(publishScope, record);
   };
 
   const flushRecording = () => {
@@ -586,20 +881,39 @@ export function createDraftJournal(
   };
   try {
     const errors: unknown[] = [];
+    for (const [key, record] of operations.list()) operationRecords.set(key, record);
+    for (const entityType of PUBLISHABLE_ENTITY_TYPES)
+      histories.set(entityType, structuredClone(persistence.read(entityType)));
+    const recoveries = [...operationRecords].sort(
+      ([, a], [, b]) =>
+        Number(b.gameDataRecovery?.phase === 'cancelling') -
+        Number(a.gameDataRecovery?.phase === 'cancelling')
+    );
+    const fencedKeys = new Set(
+      recoveries.flatMap(([, record]) =>
+        record.gameDataRecovery?.phase === 'cancelling'
+          ? record.gameDataRecovery.associatedScopes
+          : []
+      )
+    );
+    for (const [key, record] of recoveries) {
+      if (!operationRecords.has(key)) continue;
+      if (record.gameDataRecovery?.phase === 'cancelling' || !fencedKeys.has(key))
+        finishRecovery(key, record);
+    }
     for (const entityType of PUBLISHABLE_ENTITY_TYPES) {
       try {
         const entity = mutableDomain(stores, entityType);
-        const stored = persistence.read(entityType);
-        histories.set(entityType, structuredClone(stored));
+        const stored = history.read(entityType);
+        const unresolved = [...operationRecords].some(
+          ([key, record]) => recordDomain(key, record) === entityType
+        );
         const normalized =
-          entityType === 'characters' ? normalizeCharacterRelationPairHistory(stored) : stored;
+          entityType === 'characters' && !unresolved
+            ? normalizeCharacterRelationPairHistory(stored)
+            : stored;
         const restored =
-          entityType === 'characters' &&
-          ![
-            'relations:characters',
-            'page:characters:',
-            ...Object.keys(entity).map((id) => 'page:characters:' + id),
-          ].some(hasPublishOperation)
+          entityType === 'characters' && !unresolved
             ? migrateLegacyCharacterRelationDrafts(normalized, entity)
             : normalized;
         if (!isEqual(restored, stored) && !history.replace(entityType, restored))
@@ -636,11 +950,12 @@ export function createDraftJournal(
         )
       );
     });
+    restoring = false;
     return journal;
   } catch (error) {
     recordingSubscriptions.forEach((unsubscribe) => unsubscribe());
     manualDraftListeners.clear();
     disposed = true;
-    throw error;
+    throw error instanceof EditDraftRestoreError ? error : new EditDraftRestoreError([error]);
   }
 }

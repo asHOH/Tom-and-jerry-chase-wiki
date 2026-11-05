@@ -94,7 +94,14 @@ export const useRelationMatrixEditMode = (
   const discardChanges = useCallback(() => {
     const result = discardDraft();
     if (result.status === 'discarded') info('已放弃关系修改');
-    else error('放弃关系修改后本地草稿清理失败，请重试');
+    else
+      error(
+        result.status === 'busy'
+          ? '正在提交，请稍后再放弃修改。'
+          : result.error instanceof PublishOperationConflictError
+            ? '这些修改属于同一提交，请重试原提交，或一并放弃该提交涉及的全部修改。'
+            : '放弃关系修改后本地草稿清理失败，请重试'
+      );
     return result.status === 'discarded';
   }, [discardDraft, error, info]);
 

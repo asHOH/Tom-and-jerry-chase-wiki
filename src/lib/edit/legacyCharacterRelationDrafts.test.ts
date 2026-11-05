@@ -103,7 +103,7 @@ it.each(['A', 'B'])(
     ).not.toThrow();
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ result: [{ is_public: true, status: 'approved' }] }),
+      json: async () => ({ result: [{ id: 'action-1', is_public: true, status: 'approved' }] }),
     });
     const originalFetch = global.fetch;
     global.fetch = fetchMock;

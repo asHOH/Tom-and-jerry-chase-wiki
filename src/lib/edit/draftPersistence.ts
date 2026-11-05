@@ -246,13 +246,15 @@ export function createBrowserDraftOperationStore() {
 }
 
 export class EditDraftPersistenceError extends Error {
-  constructor(readonly kind: 'unavailable' | 'invalid' | 'conflict') {
+  constructor(readonly kind: 'unavailable' | 'invalid' | 'conflict' | 'cleanup-pending') {
     super(
-      kind === 'conflict'
-        ? '其他页面已修改本地草稿，请保留当前内容后重新进入编辑模式。'
-        : kind === 'invalid'
-          ? '本地草稿格式异常，已保留原始记录，请先恢复草稿。'
-          : '本地草稿保存失败，刷新或离开可能丢失修改，请重试保存。'
+      kind === 'cleanup-pending'
+        ? '放弃修改尚未完成，请重试保存后继续编辑。'
+        : kind === 'conflict'
+          ? '其他页面已修改本地草稿，请保留当前内容后重新进入编辑模式。'
+          : kind === 'invalid'
+            ? '本地草稿格式异常，已保留原始记录，请先恢复草稿。'
+            : '本地草稿保存失败，刷新或离开可能丢失修改，请重试保存。'
     );
     this.name = 'EditDraftPersistenceError';
   }

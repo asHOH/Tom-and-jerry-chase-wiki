@@ -687,7 +687,7 @@ describe('usePageEditMode', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(mockShowToast).toHaveBeenCalledWith(
-        '其他页面已修改本地草稿，请保留当前内容后重新进入编辑模式。'
+        '发布成功，但本地草稿历史已变化，未清理已发布草稿，请确认后重试。'
       );
     });
   });

@@ -91,6 +91,8 @@ function editAndBlur(element: HTMLElement, text: string) {
 
 describe('editable', () => {
   beforeEach(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
     session = installTestEditSession();
     mockIsEditMode = false;
     mockHandleSelectCharacter.mockClear();
@@ -140,6 +142,34 @@ describe('editable', () => {
         'plaintext-only'
       );
     });
+  });
+
+  it('restores the displayed field when a cancellation fence rejects its save', async () => {
+    mockIsEditMode = true;
+    const scope = { kind: 'domain', entityType: 'items' } as const;
+    global.fetch = jest.fn().mockRejectedValue(new Error('uncertain'));
+    await session.publishDraft(scope);
+    const original = Storage.prototype.removeItem;
+    const remove = jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(function (
+      this: Storage,
+      key
+    ) {
+      if (this === window.localStorage) throw new Error('quota');
+      original.call(this, key);
+    });
+    expect(session.discardDraft(scope).status).toBe('storage-failed');
+    const log = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const Span = editable('items').span;
+    render(<Span path='description' initialValue='Old item description' />);
+    const element = screen.getByText('Old item description');
+    editAndBlur(element, 'unsaved replacement');
+    expect(element).toHaveTextContent('Old item description');
+    expect(session.readEntity({ entityType: 'items', entityId: 'test-item' })?.description).toBe(
+      'Old item description'
+    );
+    expect(log).toHaveBeenCalled();
+    remove.mockRestore();
+    log.mockRestore();
   });
 
   it('saves trimmed edited text on blur', async () => {

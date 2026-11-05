@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { toast } from 'sonner';
 
 import type { EditSession } from '@/lib/edit/editSession';
 import type { PublishedGameDataEntityByType } from '@/lib/gameData/published/types';
@@ -38,11 +39,48 @@ describe('editable game-data reads', () => {
 
   beforeEach(() => {
     window.localStorage.clear();
+    window.sessionStorage.clear();
     session = installTestEditSession();
   });
 
   afterEach(() => {
     act(() => clearTestEditSession(session));
+  });
+
+  it('reports a cancellation fence without invoking either editable mutation callback', async () => {
+    const id = Object.keys(items)[0]!;
+    const scope = { kind: 'entity', entity: { entityType: 'items', entityId: id } } as const;
+    session.updateEntity(scope.entity, (item) => {
+      item.name = 'draft';
+    });
+    global.fetch = jest.fn().mockRejectedValue(new Error('uncertain'));
+    await session.publishDraft(scope);
+    const original = Storage.prototype.removeItem;
+    const remove = jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(function (
+      this: Storage,
+      key
+    ) {
+      if (this === window.localStorage) throw new Error('quota');
+      original.call(this, key);
+    });
+    expect(session.discardDraft(scope).status).toBe('storage-failed');
+    const feedback = jest.spyOn(toast, 'error').mockReturnValue('test');
+    const { result } = renderHook(
+      () => ({
+        entity: useEditableEntity(scope.entity, items[id]!),
+        domain: useEditableDomain('items', items),
+      }),
+      { wrapper: createWrapper('ready') }
+    );
+    const mutate = jest.fn();
+    act(() => {
+      expect(() => result.current.entity[1](mutate)).toThrow('放弃修改尚未完成');
+      expect(() => result.current.domain[1](mutate)).toThrow('放弃修改尚未完成');
+    });
+    expect(mutate).not.toHaveBeenCalled();
+    expect(feedback).toHaveBeenCalledWith('放弃修改尚未完成，请重试保存后继续编辑。');
+    remove.mockRestore();
+    feedback.mockRestore();
   });
 
   it('keeps the published fallback until the runtime is ready', () => {

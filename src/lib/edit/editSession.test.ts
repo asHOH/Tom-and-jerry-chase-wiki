@@ -233,7 +233,9 @@ describe('createEditSession', () => {
 
     session = createEditSession(baseline, 'v1:test');
     expect((await session.publishDraft(scope, options)).status).toBe('failed');
-    expect(window.sessionStorage.getItem(operationKey)).toBe(operation);
+    expect(JSON.parse(window.sessionStorage.getItem(operationKey)!)).toMatchObject(
+      JSON.parse(operation)
+    );
     session.dispose();
     session = createEditSession(baseline, 'v1:test');
     expect(await session.publishDraft(scope, options)).toEqual({
@@ -435,7 +437,7 @@ describe('createEditSession', () => {
         expect(publish).toHaveBeenCalledWith({
           endpoint: '/api/game-data-actions/publish',
           operationId,
-          body: { entityType: 'traits', entries: legacyEntries, ...options },
+          body: JSON.stringify({ entityType: 'traits', entries: legacyEntries, ...options }),
         });
         expect(history.read('traits')).toEqual([]);
         expect(readPublishOperation('page:traits:')).toBeNull();
@@ -502,7 +504,7 @@ describe('createEditSession', () => {
     expect(publish).toHaveBeenCalledWith({
       endpoint: '/api/game-data-actions/publish',
       operationId,
-      body: { entityType: 'traits', entries: legacyEntries },
+      body: JSON.stringify({ entityType: 'traits', entries: legacyEntries }),
     });
     expect(readPublishOperation('page:traits:')).toBeNull();
   });
@@ -641,7 +643,7 @@ describe('createEditSession', () => {
       status: mixed ? 'published' : 'empty',
     });
     if (mixed) {
-      expect(publish.mock.calls[0]![0].body.entries).toEqual([
+      expect(JSON.parse(publish.mock.calls[0]![0].body).entries).toEqual([
         expect.objectContaining({ path: '巴特.description', newValue: 'changed' }),
       ]);
     } else expect(publish).not.toHaveBeenCalled();
@@ -684,7 +686,7 @@ describe('createEditSession', () => {
       const scope = { kind: 'character-relations' } as const;
       expect(session.readDraft(scope).publishEntries).toEqual([action]);
       await session.publishDraft(scope);
-      expect(publish.mock.calls[0]![0].body.entries).toEqual([action]);
+      expect(JSON.parse(publish.mock.calls[0]![0].body).entries).toEqual([action]);
     }
   );
 
@@ -717,7 +719,7 @@ describe('createEditSession', () => {
     });
     expect((await session.publishDraft(scope)).status).toBe('published');
     expect(publish.mock.calls[1]![0]).toEqual(publish.mock.calls[0]![0]);
-    expect(publish.mock.calls[0]![0].body.entries).toHaveLength(1);
+    expect(JSON.parse(publish.mock.calls[0]![0].body).entries).toHaveLength(1);
     expect(session.readDomain('characters').巴特!).not.toHaveProperty('disadvantageModes');
     session.updateDomain('characters', (draft) => {
       addCharacterRelationItem(draft, '巴特', 'disadvantageModes', {
@@ -912,11 +914,11 @@ describe('createEditSession', () => {
     expect(publish).toHaveBeenCalledWith({
       endpoint: '/api/game-data-actions/publish-relations',
       operationId: expect.any(String),
-      body: {
+      body: JSON.stringify({
         entries: [submitted],
         message: '关系更新',
         submitMode: 'force_pending',
-      },
+      }),
     });
     expect(history.read('characters')).toEqual([unrelated, appended]);
   });
@@ -997,10 +999,10 @@ describe('createEditSession', () => {
           });
           expect(publish).toHaveBeenCalledWith(
             expect.objectContaining({
-              body: {
+              body: JSON.stringify({
                 entityType: 'characters',
                 entries: [{ op: 'set', path: pairPath, oldValue: undefined, newValue: relation }],
-              },
+              }),
             })
           );
         } else {

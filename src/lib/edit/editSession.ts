@@ -64,7 +64,7 @@ export type EditPublishResult =
   | { status: 'failed'; error: Error };
 
 export type EditDiscardResult =
-  { status: 'discarded' } | { status: 'storage-failed'; error: Error };
+  { status: 'discarded' } | { status: 'busy' } | { status: 'storage-failed'; error: Error };
 
 export { EditDraftCleanupError } from './draftJournal';
 export { EditDraftPersistenceError } from './draftPersistence';
