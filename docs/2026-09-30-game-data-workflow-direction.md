@@ -1,109 +1,54 @@
 # Game-data workflow
 
-**Date:** 2026-09-30
-**Status:** Observe the current workflow before undertaking an overhaul; allow bounded editor safety fixes.
-**Purpose:** Preserve the reasoning for a future agent. This is a direction, not a fixed implementation specification or an instruction to start migrating now.
+**Created:** 2026-09-30 · **Last reviewed:** 2026-11-06
+**Status:** Retain the current workflow; larger changes remain deferred.
 
-## Intent
+## Decision and goal
 
-The action workflow has become too large while still allowing stray submissions and requiring difficult cleanup. The goal is to make editing and publishing dependable and easier to maintain, with fewer opportunities for accidental changes and less recurring operator work.
+The goal is dependable editing and publishing with less recurring maintenance work. Approved edits must become public independently of code deployment.
 
-The user has explicitly established that:
+Earlier stray submissions and difficult cleanup prompted a proposal to make the database authoritative for published content. Validation and retry safeguards have since improved the existing workflow. On 2026-11-06, the user clarified that moderation conflicts are rare, including stale pending edits and approvals that block other submissions. Their frequency offers little benefit for the cost and risk of a redesign.
 
-- Approved edits must become public independently of code deployment.
-- Preventing future stray submissions matters more than further discussion of the completed compaction work.
-- The four confirmed validation gaps should be closed first; that implementation work was completed in this chat.
-- Making the database authoritative is an acceptable direction, but is open to reconsideration.
-- We should now observe for longer and leave the larger change for a later agent.
+Keep the current architecture and recovery procedures. Defer the workflow overhaul, legacy relation migration, and additional moderation recovery tooling. The immediate priority is documentation cleanup. There is no implementation timetable or dedicated monitoring or investigation project.
 
-Keeping the existing editor initially is a recommendation, not a confirmed requirement. No observation deadline, automatic monitoring schedule, or threshold for starting the overhaul has been agreed.
+## Current position and evidence
 
-The follow-up review of PR #261 authorized a minimal, low-risk extraction. On 2026-10-25, the user additionally confirmed that each character pair must have one shared description, tag set, and strength, editable from either character. This is implemented within the existing character domain; introducing a separate published domain or moving publication authority to the database remains deferred.
+Public game data combines a checked-in baseline with public database actions. Publishing, replay, deployment, and eventual compaction all participate in the content lifecycle. Server validation protects against unsupported structures, contradictory relations, new character roots, and ineffective submissions. Atomic requests and stable operation keys protect retries; rejected drafts remain available for correction.
 
-## Where things stand
+Character-pair editing already shares one record between both characters, including description, tags, and strength. Deleting a pair suppresses it from both views and from inferred suggestions. Legacy data remains readable, and draft/history adapters preserve older work. This arrangement is independent of any decision to move published content into the database.
 
-Public game data currently combines a checked-in baseline with public database action rows. The database is therefore not yet the sole authority for current content. Publishing, historical replay, deployment, and eventual compaction all participate in the content lifecycle.
+A 2026-11-04 dry run converted 490 unique baseline pairs to shared overrides and replayed approved edits. It changed inferred tags and display order, blocked a valid legacy draft, and made an unsent shared-pair draft stale. History and exact retry requests survived with the existing adapters retained; the retry receipt was simulated. Full legacy removal would therefore add transition logic while retaining compatibility responsibilities. Keep the current representation. The relation-report command was repaired and regression-tested.
 
-The recent fixes add server-side protection against:
+## Deferred architectural direction
 
-1. Unsupported character fields and structures, including an unrendered `relations` wrapper.
-2. Contradictory explicit relations that the display layer would otherwise silently resolve.
-3. New root characters submitted through actions, which the current navigation model cannot safely support.
-4. Submissions without retry protection. A UUID v4 operation key is now required, and submissions use the atomic request RPC.
+If maintenance becomes burdensome, consider storing current published content and its revision in the database. Approval would apply a reviewed change once to current content. Public pages would read that state through caches; history would serve review, attribution, and undo.
 
-Rows with no net change are also rejected. Unchanged array context is still allowed inside a row containing a real edit. Definitively rejected drafts remain editable, while uncertain network outcomes retain the operation identity needed for a safe retry.
+> Edit published data → submit intended changes → validate and review → atomically update content and history → refresh public caches.
 
-Character-pair edits now write one record at `characters.<owner>.characterRelationOverrides.<other>`, where the owner is the lexically smaller character ID. The record holds the relation kind from the owner's perspective and the shared description, tags, and strength. Both character pages and the matrix read that record and derive the inverse kind. A `null` record deliberately removes the pair from both views, including inferred suggestions. Non-character relations retain their existing collections.
+The benefit would come from retiring routine replay and baseline compaction for migrated content. Scope database authority to editable published content; application configuration, assets, and other static definitions can retain their existing storage.
 
-The matrix compares normalized form values with the displayed cell before writing. Opening and saving an unchanged cell creates no draft actions. Deliberately editing a suggestion makes only that pair explicit; other suggestions remain derived. Existing baseline relations and legacy overlays remain readable until a shared record supersedes that pair. Historical accepted rows are preserved. New submissions and approvals reject legacy writes that would be masked by a shared record, retaining rejected local drafts for correction.
+This direction could remove conflicts caused by inserting approvals into historical replay order. Overlapping edits would still need an explicit resolution policy. Changing storage alone cannot settle which changes belong together for review or how moderators should resolve competing edits.
 
-Pair edits use independent leaf actions, so either character page can publish or discard the shared change while preserving unrelated pairs and prose. Restored map snapshots normalize into those leaf actions. Fresh legacy collection drafts also convert into pair leaves; stale or unsupported drafts and unresolved submissions retain their original history for recovery. Standalone pair retries share an operation identity across both pages and the matrix, preserving the original submission endpoint after an uncertain result. Permissions, pending-change warnings, public history, update metadata, and contributor attribution include both endpoints. Server validation checks canonical ownership, existing endpoints, legal factions and kinds, complete record writes, and freshness.
+## When and how to reconsider
 
-Deploy `20261025000000_credit_both_character_relation_endpoints.sql` before enabling shared-pair writes so contributor attribution includes both characters. It updates the existing contributor extraction function; it adds no new tables or publication domain.
+Revisit the proposal if routine submissions or support reports show recurring incorrect publications, valid edits blocked by replay history, or repeated manual repair. Keep concrete examples of the author's intent, submitted changes, and published result. Assess whether a bounded fix would remove the burden before expanding the scope.
 
-The implementation session reported 2,024 passing tests, plus lint, type, formatting, and actor-profile checks. Those are historical validation results, not a claim about a later checkout or production deployment. The guards are present in the checkout inspected for this note; production deployment and current action backlog were not checked for this handoff. The earlier compaction's completion does not establish that the live backlog remains empty.
+If an overhaul becomes worthwhile, first re-establish the repository, deployment, and live-data state. Prove one complete character-edit flow covering submission, review, publication, conflict resolution, retry, and undo. Reuse the existing editing and public-read boundaries. Choose the UI, schema, and migration sequence around that proof.
 
-## What to learn while observing
+Preserve these contracts:
 
-Use actual submissions, support reports, and existing diagnostics to judge whether the fixes are sufficient. Useful observations include whether stray or duplicate rows recur, whether valid edits are now rejected, whether authors can recover rejected drafts, and how much manual compaction or conflict repair remains necessary.
+- **Published content and pending work:** import the full published result, including uncompacted approved edits; retain drafts, submissions, history, and attribution.
+- **Editing intent:** publish deliberate changes, preserve unrelated edits, and require explicit resolution for overlapping changes.
+- **Atomic publication and retries:** keep dependent changes together and ensure content, revision, and history agree. An uncertain retry must recover the original result.
+- **Access and contribution rules:** retain validation, permissions, moderation, supported anonymous contributions, and deployment-independent publishing.
+- **Undo:** use a deliberate reversal that preserves unrelated later work.
+- **One publication authority:** define deployment and outage behavior, then remove obsolete replay and synchronization responsibilities as each part migrates.
 
-Keep examples of what the author intended, what was submitted, and what became public. A blocked invalid request and an unintended published change are different outcomes. Absence of incidents during a quiet period provides limited evidence.
+Before implementation, settle the unit of review and undo, moderator resolution powers, treatment of conflicting legacy copies, and whether deployments may intentionally replace published content. These decisions remain open until a redesign has a demonstrated maintenance benefit.
 
-Do not build another monitoring subsystem merely to justify this proposal. Keeping the hardened current workflow longer is a valid choice if it proves reliable and inexpensive to operate.
+## References
 
-## Proposed destination
-
-Store the current published content and its revision in the database. Publishing changes that current state once. Public reads use that stored state, with appropriate caching. Action history records what happened for review, attribution, and undo; normal page reads no longer need to execute that history.
-
-Conceptually:
-
-> Edit published data → submit intended changes → validate and review → atomically update published data and history → refresh public caches.
-
-This should make routine baseline compaction unnecessary for the migrated content. It should also reduce the number of lifecycle stages that an author or maintainer must understand. A new storage layer that permanently keeps the old replay and compaction machinery in the normal path would miss that goal.
-
-Database authority here concerns editable published content. It does not imply moving application configuration, assets, or every static definition into the database.
-
-Character-pair editing now uses **canonical single-record ownership** within the existing character action domain. Removing the legacy fallback and migrating all historical relation storage remain separate work. Single-record ownership is independent of where published data lives; it does not require moving all game data into the database or adopting #261's implementation.
-
-Any future storage migration must preserve the currently published result, including uncompacted approved actions, and account for pending submissions and existing drafts. Broader publication and undo changes remain future design work.
-
-## Principles to preserve
-
-- **Publish intent, not incidental edit-session activity.** The submitted unit should contain the deliberate, reviewable changes. Initializing an editor, restoring drafts, or normalizing display data must not accidentally create contributions.
-- **Protect unrelated work.** The user's earlier preference to apply only the diff when resolving conflicts reflects this intent. Two edits to different fields should coexist. An old whole-record snapshot must not overwrite another author's work; incompatible edits to the same field must not be silently guessed away. This does not require an elaborate automatic merge engine.
-- **Validate meaning before publication.** A payload being replayable does not make it valid game data. Relations are a particular concern: shared links, inverse links, local overrides, and derived suggestions must not leave contradictory explicit facts for rendering to hide.
-- **Make each accepted change complete and retryable.** Content, its revision, and the corresponding history should agree. Retrying after an uncertain response should recover the original result. Coupled edits must not become public only in part.
-- **Preserve the product's existing promises.** Keep permissions, moderation behavior, supported anonymous contributions, draft recovery, and deployment-independent publishing. Changing review policy is a separate decision from changing storage.
-- **Make undo deliberate.** Prefer an explicit reversal that preserves unrelated later edits. Removing an old event from a replay chain or restoring an entire old snapshot should not be the default meaning of undo.
-- **Remove complexity as the replacement takes over.** The intended benefit includes deleting obsolete replay, synchronization, and compaction responsibilities, not merely adding a cleaner interface over them.
-
-## How a later agent should approach it
-
-First re-establish the actual state of the repository, deployments, and recent submissions. Read the observation evidence before assuming a rewrite is still necessary. The previous validation work is a starting point, not evidence that every action-workflow problem has been solved.
-
-If the overhaul remains worthwhile, a small complete character-edit flow is a reasonable first proof: load, edit, submit, review, publish, retry, conflict, and undo. Reuse the existing edit-session and public-read boundaries where practical. Avoid redesigning the entire UI at the same time without a concrete need.
-
-Any initial import must preserve the currently published result, including public actions that have not been compacted. A transition may temporarily compare old and new reads, but each migrated piece of content needs one clear publication authority. Decide how deployments interact with that authority before switching writes. Preserve historical attribution and pending work, and follow the repository's deployment and migration procedures.
-
-No table layout, API inventory, migration sequence, or implementation timetable is prescribed here. Choose the smallest design that satisfies the intent after inspecting the code and evidence then available.
-
-## Decisions still open
-
-- May code deployments intentionally replace published content, or should content changes always go through publication while deployments change structure and behavior?
-- What is the unit of review and undo: a submission, an entity, or a coherent group of related changes? Atomic persistence alone does not settle this product decision.
-- How should conflicting historical legacy copies be reconciled during a future bulk migration? New pair records share all metadata; older records are retained as compatibility inputs until explicitly superseded.
-- Which observation would justify the overhaul: recurring incorrect submissions, excessive manual cleanup, or maintenance complexity despite otherwise correct behavior?
-- How should database outages and schema changes affect public reads? An old checked-in baseline must not silently become a competing current authority.
-
-These questions should guide the next conversation; they are not blockers to observing the current system.
-
-## Starting points in the repository
-
-- `src/lib/gameData/submission.ts` and `trustedGameDataMutations.ts`: submission, approval, persistence, and retry handling.
-- `src/lib/gameData/actionFreshness.ts`, `characterDataValidation.ts`, and `submissionValidation.test.ts`: existing guards and concrete regression examples.
-- `src/lib/gameData/published/`: current baseline-plus-action public reads.
-- `src/lib/edit/editSession.ts`: the existing editor and draft-lifecycle boundary.
-- `src/features/characters/utils/relationReadModel.ts`: relation composition and display normalization.
-- [Edit-session refactor](archive/completed/2026-08-24-edit-session-deep-module-refactor-plan.md), [compaction operations](operations/game-data-action-compaction.md), and [pending-action recovery](operations/pending-game-data-recovery.md): relevant history and current procedures, not a requirement to preserve every mechanism in a replacement.
-
-The handoff succeeds if the next agent understands why simplification matters and which user promises must survive. It does not need to inherit a predetermined implementation.
+- [Project contracts](../AGENTS.md), [submission and approval](../src/lib/gameData/trustedGameDataMutations.ts), and [published reads](../src/lib/gameData/published/): current boundaries and safeguards.
+- [Relation read model](../src/features/characters/utils/relationReadModel.ts) and [shared-pair attribution migration](../supabase/migrations/20261025000000_credit_both_character_relation_endpoints.sql): current pair behavior and its database prerequisite.
+- [Compaction operations](operations/game-data-action-compaction.md) and [pending-action recovery](operations/pending-game-data-recovery.md): current maintenance procedures.
+- [Completed edit-session refactor](archive/completed/2026-08-24-edit-session-deep-module-refactor-plan.md): implementation background.
