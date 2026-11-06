@@ -1,5 +1,7 @@
 import { decodeStoredActionRow } from '@/lib/gameData/actionRowDecoder';
+import { packReferenceSection, unpackReferenceRow } from '@/lib/referenceProjection';
 import { referenceDomains, type ReferenceCatalog } from '@/lib/referenceSources';
+import * as bundledCatalog from '@/data/static';
 
 import { createApprovedActionSnapshot } from './approvedActionSnapshot';
 import { getCanonicalGameData } from './canonicalSources';
@@ -21,6 +23,39 @@ const mention = '新增描述提到{经验蛋糕}。';
 const catalog = Object.fromEntries(
   referenceDomains.map((domain) => [domain, getCanonicalGameData(domain)])
 ) as ReferenceCatalog;
+
+it('looks up aliases by the route key after an item changes its display name', () => {
+  const item = { ...catalog.items[target.name]!, name: '新的经验蛋糕', aliases: ['公开别名'] };
+  const map = { ...Object.values(catalog.maps)[0]!, description: '{公开别名}' };
+  const [section] = selectReferenceSections(
+    { ...catalog, items: { [target.name]: item }, maps: { map } },
+    [{ type: 'item', name: item.name, sourceId: target.name }]
+  );
+  expect(section!.groups[0]!.rows).toEqual([
+    expect.objectContaining({ href: '/maps/map', description: '{公开别名}' }),
+  ]);
+});
+
+it('keeps same-named sources and stored group, prototype and owner identities after a rename', () => {
+  const item = { ...catalog.items[target.name]!, name: '同名道具', description: '{同名道具}' };
+  const entity = { ...Object.values(catalog.entities)[0]!, name: '测试衍生物', owner: target };
+  const map = { ...Object.values(catalog.maps)[0]!, description: '{测试衍生物}、{原型}和{鞭炮}' };
+  const data = {
+    ...catalog,
+    items: { other: item, [target.name]: item, 鞭炮束: { ...item, name: '新的鞭炮束' } },
+    entities: { child: entity },
+    maps: { map },
+  };
+  const [root, firecracker] = selectReferenceSections(data, [
+    { type: 'item', sourceId: target.name, name: item.name },
+    { type: 'item', sourceId: '鞭炮束', name: '新的鞭炮束' },
+  ]);
+  const links = root!.groups[0]!.rows.map((row) => row.href);
+  expect(links).toContain('/items/other');
+  expect(links).not.toContain('/items/' + encodeURIComponent(target.name));
+  expect(root!.groups.map((group) => group.title)).toEqual([item.name, '测试衍生物', '原型']);
+  expect(firecracker!.groups[0]!.rows.map((row) => row.href)).toContain('/maps/map');
+});
 
 function characterEdit(id: string, description: string) {
   const decoded = decodeStoredActionRow({
@@ -44,6 +79,12 @@ it('adds and removes the first reference when only the referring character chang
     const [section] = selectReferenceSections({ ...catalog, characters }, [target]);
     const hits = section!.groups.flatMap((group) => group.rows);
     expect(hits).toHaveLength(expectedCount);
+    const transported = packReferenceSection(catalog, section!).groups.flatMap((group) =>
+      group.rows.map((row) => unpackReferenceRow(catalog, row, group.keywords, true))
+    );
+    expect(transported.map((row) => row.description)).toEqual(
+      hits.map((row) => row.mobileDescription ?? row.description)
+    );
     if (expectedCount)
       expect(hits[0]).toMatchObject({
         name: characters['汤姆']!.skills[0]!.name,
@@ -52,6 +93,26 @@ it('adds and removes the first reference when only the referring character chang
         href: '/characters/' + encodeURIComponent('汤姆'),
         description: mention,
       });
+  }
+});
+
+it('transports canonical matches by location and reconstructs both published excerpts', () => {
+  const [section] = selectReferenceSections(catalog, [{ type: 'item', name: '鞭炮束' }]);
+  const packed = packReferenceSection(catalog, section!);
+  expect(packed.groups[0]!.rows.every((row) => 'at' in row)).toBe(true);
+  for (const [groupIndex, group] of packed.groups.entries()) {
+    for (const [index, row] of group.rows.entries()) {
+      const {
+        location: _location,
+        mobileDescription,
+        ...desktop
+      } = section!.groups[groupIndex]!.rows[index]!;
+      expect(unpackReferenceRow(bundledCatalog, row, group.keywords, false)).toEqual(desktop);
+      expect(unpackReferenceRow(bundledCatalog, row, group.keywords, true)).toEqual({
+        ...desktop,
+        description: mobileDescription ?? desktop.description,
+      });
+    }
   }
 });
 

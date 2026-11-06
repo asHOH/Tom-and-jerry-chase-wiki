@@ -1,10 +1,17 @@
+import { isDeepStrictEqual } from 'node:util';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { packReferenceRevisions } from '@/lib/gameData/published/referenceRevisionProps';
+import {
+  getPublishedReferenceSections,
+  getReferenceActionSnapshot,
+  packPublishedReferenceSection,
+} from '@/lib/gameData/published/reverseReferences';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { items as canonicalItems } from '@/data/static';
 import type { Item } from '@/data/types';
+import canonicalItems from '@/features/items/data/items';
 import StructuredData from '@/components/StructuredData';
 
 import ItemDetailClient from './ItemDetailsClient';
@@ -33,7 +40,13 @@ export async function generateMetadata({
   params: Promise<{ itemName: string }>;
 }): Promise<Metadata> {
   const itemName = decodeURIComponent((await params).itemName);
-  const { data: item } = await getPublishedEntityRouteReadModel('items', itemName);
+  const snapshot = await getReferenceActionSnapshot();
+  const { data: item } = await getPublishedEntityRouteReadModel(
+    'items',
+    itemName,
+    undefined,
+    snapshot
+  );
 
   if (!item) {
     return {};
@@ -55,19 +68,26 @@ export default async function ItemDetailPage({
   params: Promise<{ itemName: string }>;
 }) {
   const itemName = decodeURIComponent((await params).itemName);
-  const readModel = await getPublishedEntityRouteReadModel('items', itemName);
+  const snapshot = await getReferenceActionSnapshot();
+  const readModel = await getPublishedEntityRouteReadModel('items', itemName, undefined, snapshot);
   const item = readModel.data;
 
   if (!item) {
     notFound();
   }
 
+  const { sections, revisions } = await getPublishedReferenceSections(snapshot, [
+    { name: item.name, sourceId: itemName, type: 'item' },
+  ]);
+  const { items: _primaryRevision, ...relatedRevisions } = revisions;
   return (
     <>
       <StructuredData data={generateStructuredData(itemName, item)} />
       <ItemDetailClient
-        item={item}
+        item={isDeepStrictEqual(item, canonicalItems[itemName]) ? null : item}
         itemName={itemName}
+        references={packPublishedReferenceSection(sections[0]!)}
+        relatedRevisions={packReferenceRevisions(relatedRevisions)}
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
       />

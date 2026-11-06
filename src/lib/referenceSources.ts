@@ -25,77 +25,96 @@ type ReferenceSource = {
   skillOwner?: { id: string; factionId: FactionId; index: number };
 };
 
-export function* referenceSources(data: ReferenceCatalog): Generator<ReferenceSource> {
-  for (const [id, character] of Object.entries(data.characters)) {
-    for (const [index, skill] of character.skills.entries()) {
-      yield {
-        item: { name: skill.name, type: 'skill' },
-        href: '/characters/' + encodeURIComponent(id),
-        skillOwner: { id, factionId: character.factionId, index },
-        imageUrl: skill.imageUrl,
-        fields: [
-          skill.description,
-          skill.detailedDescription,
-          ...skill.skillLevels.flatMap((level) => [level.description, level.detailedDescription]),
-        ],
-      };
-    }
-  }
-  for (const [id, card] of Object.entries(data.cards)) {
-    yield {
-      item: { name: card.id, type: 'knowledgeCard' },
-      href: '/cards/' + encodeURIComponent(id),
-      imageUrl: card.imageUrl,
-      fields: [card.description, card.detailedDescription],
+export type ReferenceLocation =
+  | readonly ['skill', string, number]
+  | readonly ['specialSkill' | 'achievement', string, FactionId]
+  | readonly ['knowledgeCard' | 'item' | 'entity' | 'buff' | 'map' | 'mode' | 'fixture', string];
+
+const simpleDomains = {
+  knowledgeCard: 'cards',
+  item: 'items',
+  entity: 'entities',
+  buff: 'buffs',
+  map: 'maps',
+  mode: 'modes',
+  fixture: 'fixtures',
+} as const;
+
+export function referenceSourceAt(
+  data: ReferenceCatalog,
+  location: ReferenceLocation
+): ReferenceSource | undefined {
+  const [type, id] = location;
+  if (type === 'skill') {
+    const character = data.characters[id];
+    const index = location[2];
+    const skill = character?.skills[index];
+    if (!character || !skill) return;
+    return {
+      item: { name: skill.name, type },
+      href: '/characters/' + encodeURIComponent(id),
+      imageUrl: skill.imageUrl,
+      skillOwner: { id, factionId: character.factionId, index },
+      fields: [
+        skill.description,
+        skill.detailedDescription,
+        ...skill.skillLevels.flatMap((level) => [level.description, level.detailedDescription]),
+      ],
     };
   }
-  for (const factionId of ['cat', 'mouse'] as const) {
-    for (const [id, skill] of Object.entries(data.specialSkills[factionId])) {
-      yield {
-        item: { name: skill.name, type: 'specialSkill', factionId },
-        href: '/special-skills/' + factionId + '/' + encodeURIComponent(id),
-        imageUrl: skill.imageUrl,
-        fields: [skill.description, skill.detailedDescription],
-      };
-    }
+  if (type === 'specialSkill' || type === 'achievement') {
+    const factionId = location[2];
+    const record =
+      type === 'specialSkill'
+        ? data.specialSkills[factionId][id]
+        : data.achievements[factionId][id];
+    if (!record) return;
+    const path = type === 'specialSkill' ? 'special-skills' : 'achievements';
+    return {
+      item: { name: record.name, type, factionId },
+      href: '/' + path + '/' + factionId + '/' + encodeURIComponent(id),
+      imageUrl: record.imageUrl,
+      fields: [record.description, record.detailedDescription],
+    };
   }
-  for (const [domain, type] of [
-    ['items', 'item'],
-    ['entities', 'entity'],
-    ['buffs', 'buff'],
-    ['maps', 'map'],
-    ['modes', 'mode'],
-    ['fixtures', 'fixture'],
-  ] as const) {
-    for (const [id, entity] of Object.entries(data[domain])) {
-      yield {
-        item: { name: entity.name, type },
-        href: '/' + domain + '/' + encodeURIComponent(id),
-        imageUrl: entity.imageUrl,
-        fields: [entity.description, entity.detailedDescription],
-        ...(domain === 'entities' ? { entityOwners: data.entities[id]?.owner } : {}),
-        ...(domain === 'modes'
-          ? { rules: [data.modes[id]?.rules, data.modes[id]?.detailedRules] }
-          : {}),
-      };
-    }
+  const domain = simpleDomains[type];
+  const record = data[domain][id];
+  if (!record) return;
+  const name = type === 'knowledgeCard' ? data.cards[id]!.id : 'name' in record ? record.name : id;
+  return {
+    item: { name, type },
+    href: '/' + domain + '/' + encodeURIComponent(id),
+    imageUrl: record.imageUrl,
+    fields: [record.description, record.detailedDescription],
+    ...(type === 'entity' ? { entityOwners: data.entities[id]?.owner } : {}),
+    ...(type === 'mode' ? { rules: [data.modes[id]?.rules, data.modes[id]?.detailedRules] } : {}),
+  };
+}
+
+function* locations(data: ReferenceCatalog): Generator<ReferenceLocation> {
+  for (const [id, character] of Object.entries(data.characters)) {
+    for (const index of character.skills.keys()) yield ['skill', id, index];
   }
-  for (const factionId of ['cat', 'mouse'] as const) {
-    for (const [id, achievement] of Object.entries(data.achievements[factionId])) {
-      yield {
-        item: {
-          name: achievement.name,
-          type: 'achievement',
-          factionId: achievement.factionId ?? factionId,
-        },
-        href: '/achievements/' + factionId + '/' + encodeURIComponent(id),
-        imageUrl: achievement.imageUrl,
-        fields: [achievement.description, achievement.detailedDescription],
-      };
-    }
+  for (const id of Object.keys(data.cards)) yield ['knowledgeCard', id];
+  for (const faction of ['cat', 'mouse'] as const) {
+    for (const id of Object.keys(data.specialSkills[faction])) yield ['specialSkill', id, faction];
+  }
+  for (const type of ['item', 'entity', 'buff', 'map', 'mode', 'fixture'] as const) {
+    for (const id of Object.keys(data[simpleDomains[type]])) yield [type, id];
+  }
+  for (const faction of ['cat', 'mouse'] as const) {
+    for (const id of Object.keys(data.achievements[faction])) yield ['achievement', id, faction];
   }
 }
 
+export function* referenceSources(
+  data: ReferenceCatalog
+): Generator<ReferenceSource & { location: ReferenceLocation }> {
+  for (const location of locations(data)) {
+    const source = referenceSourceAt(data, location);
+    if (source) yield { ...source, location };
+  }
+}
 export function matchesReference(source: ReferenceSource, keywords: readonly string[]) {
   const matches = (text: string | undefined) =>
     text != null && keywords.some((keyword) => text.includes(keyword));

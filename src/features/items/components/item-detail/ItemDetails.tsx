@@ -1,26 +1,39 @@
 'use client';
 
+import type { PackedSection } from '@/lib/referenceProjection';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Item } from '@/data/types';
+import canonicalItems from '@/features/items/data/items';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
-import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import PublishedReverseCard from '@/features/shared/detail-view/PublishedReverseCard';
 import { editable } from '@/components/ui/editable';
 
 import ItemAttributesCard from './ItemAttributesCard';
 
-export default function ItemDetailClient({ item }: { item: Item }) {
+export default function ItemDetailClient({
+  item,
+  itemName: routeItemName,
+  references,
+}: {
+  item: Item | null;
+  itemName: string;
+  references: PackedSection;
+}) {
   const { isEditMode } = useEditMode();
   const { itemName } = useLocalItem();
   const ed = editable('items');
 
-  const [effectiveItem] = useEditableEntity({ entityType: 'items', entityId: itemName }, item);
+  const [effectiveItem] = useEditableEntity(
+    { entityType: 'items', entityId: itemName },
+    item ?? canonicalItems[routeItemName]!
+  );
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveItem.name, 'item');
@@ -51,7 +64,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
         >
           <div className='-mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveItem.name, type: 'item' }} />
-            <DetailReverseCard singleItem={{ name: effectiveItem.name, type: 'item' }} />
+            <PublishedReverseCard section={references} />
             <DetailOwnbuffsCard singleItem={{ name: effectiveItem.name, type: 'item' }} />
           </div>
         </DetailTextSection>

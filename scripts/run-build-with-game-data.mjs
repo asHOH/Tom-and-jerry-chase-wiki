@@ -34,6 +34,8 @@ const {
 const { parseApprovedActionArtifactPayload } = jiti(
   '../src/lib/gameData/approvedActionArtifact.ts'
 );
+const { createPublishedDomainRevision } = jiti('../src/lib/gameData/published/revision.ts');
+const { referenceDomains } = jiti('../src/lib/referenceSources.ts');
 const { queryCharacterContributorSource } = jiti(
   '../src/lib/gameData/characterContributorSourceQuery.ts'
 );
@@ -121,6 +123,14 @@ await runBuildAttemptCoordinator({
       cwd: projectRoot,
       env: {
         ...process.env,
+        TJWIKI_REFERENCE_BUILD_REVISIONS: JSON.stringify(
+          Object.fromEntries(
+            referenceDomains.map((domain) => [
+              domain,
+              createPublishedDomainRevision(deploymentIdentity, domain, approvedActions.snapshot),
+            ])
+          )
+        ),
         DEPLOY_BUILD_ID: deploymentIdentity,
         GAME_DATA_BUILD_ARTIFACT_PATH: artifactPath,
         TJWIKI_GAME_DATA_ARTIFACT_METADATA: JSON.stringify({

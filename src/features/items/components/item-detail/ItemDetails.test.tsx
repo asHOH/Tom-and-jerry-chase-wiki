@@ -6,8 +6,18 @@ import type { ReactNode } from 'react';
 import { renderToString } from 'react-dom/server';
 
 import type { Item } from '@/data/types';
+import canonicalItems from '@/features/items/data/items';
+import ItemDetailsClient from '@/app/(main)/items/[itemName]/ItemDetailsClient';
 
-import ItemDetails from './ItemDetails';
+jest.mock('next/dynamic', () => () => jest.requireActual('./ItemDetails').default);
+jest.mock('@/components/ui/EditModePageShell', () => ({
+  __esModule: true,
+  default: ({ children }: { children: ReactNode }) => children,
+}));
+jest.mock('@/components/PublishedRevisionBoundary', () => ({
+  __esModule: true,
+  default: ({ children }: { children: ReactNode }) => children,
+}));
 
 type EditModeState = {
   isEditMode: boolean;
@@ -110,7 +120,7 @@ jest.mock('@/features/shared/detail-view/DetailOwnbuffsCard', () => ({
   default: () => null,
 }));
 
-jest.mock('@/features/shared/detail-view/DetailReverseCard', () => ({
+jest.mock('@/features/shared/detail-view/PublishedReverseCard', () => ({
   __esModule: true,
   default: () => null,
 }));
@@ -125,14 +135,37 @@ jest.mock('./ItemAttributesCard', () => ({
   default: ({ item }: { item: Item }) => <aside>{item.name}</aside>,
 }));
 
-function renderWithState(state: EditModeState) {
+function renderWithState(state: EditModeState, item: Item | null = publishedItem) {
   mockEditMode = state;
-  return renderToString(<ItemDetails item={publishedItem} />);
+  return renderToString(
+    <ItemDetailsClient
+      item={item}
+      itemName={item?.name ?? '叉子'}
+      references={{ title: '引用项', groups: [] }}
+      relatedRevisions={{}}
+      publishedRevision='v1:test'
+      publishedHistory={{ entries: [], unavailable: false }}
+    />
+  );
 }
 
 describe('ItemDetails draft data selection', () => {
   beforeEach(() => {
     mockDraftItems = { fork: draftItem };
+  });
+
+  it('restores a verified canonical item while the edit runtime loads', () => {
+    const html = renderWithState(
+      {
+        isEditMode: false,
+        isEditModeRequested: true,
+        runtimeStatus: 'refreshing',
+        isPreviewMode: false,
+      },
+      null
+    );
+    expect(html).toContain(canonicalItems['叉子']!.description);
+    expect(html).not.toContain('draft description');
   });
 
   it('renders published data outside edit mode', () => {

@@ -74,6 +74,8 @@ const nextConfig: NextConfig = {
     // the exact generateBuildId value in the built artifact prevents cache reuse
     // across deployments even when the source commit is unchanged.
     TJWIKI_BUILD_IDENTITY: productionBuildIdentity,
+    // The reference cards share build revisions and carry runtime approval changes on the page.
+    TJWIKI_REFERENCE_BUILD_REVISIONS: process.env.TJWIKI_REFERENCE_BUILD_REVISIONS || '{}',
     // Preserve version metadata when runtime revalidation follows build-artifact cleanup.
     TJWIKI_GAME_DATA_ARTIFACT_METADATA: process.env.TJWIKI_GAME_DATA_ARTIFACT_METADATA || 'null',
     // Use the commit timestamp if available (set by start_server.sh), otherwise fallback to build time

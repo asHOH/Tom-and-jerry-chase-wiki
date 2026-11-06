@@ -3,14 +3,15 @@ import { resolveSpecialSkill } from '@/features/special-skills/resolveSpecialSki
 
 import type { ReferenceCatalog } from './referenceSources';
 import { buildReferenceKeywords, type CategorizedKeywords } from './referenceText';
-import { compareSingleItem } from './singleItemTools';
+import { compareSingleItem } from './singleItemIdentity';
 
 export function getReferenceKeywords(
   data: ReferenceCatalog,
   itemGroups: Readonly<Record<string, ItemGroup>>,
   autoWrapNames: readonly string[],
   singleItem: SingleItem,
-  skillLocation?: { characterId: string; index: number }
+  skillLocation?: { characterId: string; index: number },
+  sourceId = singleItem.name
 ): CategorizedKeywords {
   const {
     characters,
@@ -26,7 +27,7 @@ export function getReferenceKeywords(
   } = data;
   const specialSkill =
     singleItem.type === 'specialSkill'
-      ? resolveSpecialSkill(specialSkills, singleItem.name, singleItem.factionId)
+      ? resolveSpecialSkill(specialSkills, sourceId, singleItem.factionId)
       : undefined;
   if (singleItem.type === 'specialSkill' && !specialSkill) {
     return { originalKeywords: [], aliasKeywords: [], groupKeywords: [], allKeywords: [] };
@@ -36,28 +37,28 @@ export function getReferenceKeywords(
   const getSingleItemAliases = (singleItem: SingleItem): readonly string[] => {
     let R: readonly string[] | undefined;
     if (singleItem.type == 'character') {
-      R = characters[singleItem.name]?.aliases;
+      R = characters[sourceId]?.aliases;
     } else if (singleItem.type == 'knowledgeCard') {
-      R = cards[singleItem.name]?.aliases;
+      R = cards[sourceId]?.aliases;
     } else if (singleItem.type == 'specialSkill') {
       R = specialSkill?.aliases;
     } else if (singleItem.type == 'item') {
-      R = items[singleItem.name]?.aliases;
+      R = items[sourceId]?.aliases;
     } else if (singleItem.type == 'entity') {
-      R = entities[singleItem.name]?.aliases;
+      R = entities[sourceId]?.aliases;
     } else if (singleItem.type == 'buff') {
-      R = buffs[singleItem.name]?.aliases;
+      R = buffs[sourceId]?.aliases;
     } else if (singleItem.type == 'map') {
-      R = maps[singleItem.name]?.aliases;
+      R = maps[sourceId]?.aliases;
     } else if (singleItem.type == 'fixture') {
-      R = fixtures[singleItem.name]?.aliases;
+      R = fixtures[sourceId]?.aliases;
     } else if (singleItem.type == 'mode') {
-      R = modes[singleItem.name]?.aliases;
+      R = modes[sourceId]?.aliases;
     } else if (singleItem.type == 'achievement') {
       const factionId = singleItem.factionId;
       R = factionId
-        ? achievements[factionId][singleItem.name]?.aliases
-        : (achievements.cat[singleItem.name] ?? achievements.mouse[singleItem.name])?.aliases;
+        ? achievements[factionId][sourceId]?.aliases
+        : (achievements.cat[sourceId] ?? achievements.mouse[sourceId])?.aliases;
     } else if (singleItem.type == 'skill') {
       if (skillLocation)
         return characters[skillLocation.characterId]?.skills[skillLocation.index]?.aliases ?? [];
@@ -71,8 +72,9 @@ export function getReferenceKeywords(
   };
 
   // 【修复关键】正确获取组合名：仅从itemGroups数据源获取
+  const identity = { ...singleItem, name: sourceId };
   const groupNames = Object.values(itemGroups)
-    .filter((itemGroup) => itemGroup.group.some((item) => compareSingleItem(item, singleItem)))
+    .filter((itemGroup) => itemGroup.group.some((item) => compareSingleItem(item, identity)))
     .flatMap((itemGroup) => [itemGroup.name, ...(itemGroup.aliases || [])]);
 
   return buildReferenceKeywords(

@@ -60,7 +60,7 @@ const { code } = transformSync(source, {
   loader: 'ts', format: 'cjs',
   define: Object.fromEntries(Object.entries(config.env).map(([key, value]) => ['process.env.' + key, JSON.stringify(value)])),
 });
-fs.writeFileSync(${JSON.stringify(output)}, JSON.stringify({ code, artifact, artifactPath: process.env.GAME_DATA_BUILD_ARTIFACT_PATH }));
+fs.writeFileSync(${JSON.stringify(output)}, JSON.stringify({ code, artifact, referenceRevisions: JSON.parse(config.env.TJWIKI_REFERENCE_BUILD_REVISIONS), artifactPath: process.env.GAME_DATA_BUILD_ARTIFACT_PATH }));
 `
   );
   await promisify(execFile)(
@@ -72,7 +72,11 @@ fs.writeFileSync(${JSON.stringify(output)}, JSON.stringify({ code, artifact, art
       env: { ...process.env, NEXT_PUBLIC_DISABLE_ARTICLES: '1', npm_execpath: fixture },
     }
   );
-  const { code, artifact, artifactPath } = JSON.parse(await readFile(output, 'utf8'));
+  const { code, artifact, referenceRevisions, artifactPath } = JSON.parse(
+    await readFile(output, 'utf8')
+  );
+  assert.match(referenceRevisions.characters, /^v1:[a-f\d]{64}$/);
+  assert.notEqual(referenceRevisions.characters, referenceRevisions.items);
   await assert.rejects(access(artifactPath), { code: 'ENOENT' });
   const expected = {
     deploymentIdentity: artifact.deploymentIdentity,
