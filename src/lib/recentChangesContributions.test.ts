@@ -44,6 +44,7 @@ jest.mock('@/lib/supabase/public', () => ({
 function createThenableQuery<T>(result: T) {
   const query = {
     select: jest.fn(),
+    eq: jest.fn(),
     or: jest.fn(),
     order: jest.fn(),
     range: jest.fn(),
@@ -53,6 +54,7 @@ function createThenableQuery<T>(result: T) {
   };
 
   query.select.mockReturnValue(query);
+  query.eq.mockReturnValue(query);
   query.or.mockReturnValue(query);
   query.order.mockReturnValue(query);
   query.range.mockReturnValue(query);
@@ -127,5 +129,46 @@ describe('recent changes contribution queries', () => {
     expect(countQuery.or).toHaveBeenCalledWith(GAME_DATA_CONTRIBUTION_FILTER);
     expect(rowsQuery.or).toHaveBeenCalledWith(GAME_DATA_CONTRIBUTION_FILTER);
     expect(supabaseServerPublic!.from).not.toHaveBeenCalled();
+  });
+
+  it('looks up only distinct editors on the displayed page of the combined feed', async () => {
+    const articleRows = Array.from({ length: 12 }, (_, index) => ({
+      id: `article-${index}`,
+      article_id: 'guide',
+      articles: { title: '攻略' },
+      commit_message: null,
+      created_at: new Date(Date.UTC(2026, 6, 25, 0, 24 - 2 * index)).toISOString(),
+      editor_id: index >= 10 ? 'shared' : 'off-page',
+    }));
+    const gameRows = Array.from({ length: 12 }, (_, index) => ({
+      id: `game-${index}`,
+      entity_type: 'characters',
+      entry: { op: 'set', path: '汤姆.description', value: '更新' },
+      message: null,
+      created_at: new Date(Date.UTC(2026, 6, 25, 0, 23 - 2 * index)).toISOString(),
+      created_by: index === 11 ? 'missing' : 'shared',
+    }));
+    const usersQuery = createThenableQuery({
+      data: [{ id: 'shared', nickname: '编辑者' }],
+      error: null,
+    });
+    const articlesQuery = createThenableQuery({ data: articleRows, error: null });
+    const gamesQuery = createThenableQuery({ data: gameRows, error: null });
+    supabaseServerPublic.from.mockReturnValue(articlesQuery);
+    supabaseAdmin.from
+      .mockReturnValueOnce(gamesQuery)
+      .mockReturnValueOnce(gamesQuery)
+      .mockReturnValueOnce(usersQuery);
+
+    const page = await getRecentChanges('all', 2);
+
+    expect(usersQuery.in.mock.calls).toEqual([['id', ['shared', 'missing']]]);
+    const editor = { id: 'shared', nickname: '编辑者' };
+    expect(page.changes.map(({ id, editor }) => [id, editor])).toEqual([
+      ['article-10', editor],
+      ['game-10', editor],
+      ['article-11', editor],
+      ['game-11', null],
+    ]);
   });
 });

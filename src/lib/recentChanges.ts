@@ -104,18 +104,33 @@ export function mapGameDataChange(row: GameDataChangeRow): RecentChange {
   };
 }
 
+type RecentChangeRow = ArticleChangeRow | GameDataChangeRow;
+
+function mapRecentChangeRow(row: RecentChangeRow): RecentChange {
+  return 'article_id' in row ? mapArticleChange(row) : mapGameDataChange(row);
+}
+
+function selectRecentChangeRows(
+  articleRows: ArticleChangeRow[],
+  gameDataRows: GameDataChangeRow[],
+  offset: number,
+  limit: number
+): RecentChangeRow[] {
+  return [...articleRows, ...gameDataRows]
+    .sort((left, right) => {
+      const timeDifference = Date.parse(right.created_at) - Date.parse(left.created_at);
+      return timeDifference || right.id.localeCompare(left.id);
+    })
+    .slice(offset, offset + limit);
+}
+
 export function mergeRecentChangeRows(
   articleRows: ArticleChangeRow[],
   gameDataRows: GameDataChangeRow[],
   offset: number,
   limit: number
 ): RecentChange[] {
-  return [...articleRows.map(mapArticleChange), ...gameDataRows.map(mapGameDataChange)]
-    .sort((left, right) => {
-      const timeDifference = Date.parse(right.createdAt) - Date.parse(left.createdAt);
-      return timeDifference || right.id.localeCompare(left.id);
-    })
-    .slice(offset, offset + limit);
+  return selectRecentChangeRows(articleRows, gameDataRows, offset, limit).map(mapRecentChangeRow);
 }
 
 async function countArticleChanges(): Promise<number> {
@@ -166,17 +181,15 @@ async function queryGameDataChanges(from: number, to: number): Promise<GameDataC
   return (data ?? []) as unknown as GameDataChangeRow[];
 }
 
-async function attachPublicUserNames(
-  articleRows: ArticleChangeRow[],
-  gameDataRows: GameDataChangeRow[]
-): Promise<void> {
+function getEditorId(row: RecentChangeRow): string | null {
+  return 'article_id' in row ? row.editor_id : row.created_by;
+}
+
+async function attachPublicUserNames(rows: RecentChangeRow[]): Promise<void> {
   const supabaseAdmin = getOptionalSupabaseAdminClient();
   if (!supabaseAdmin) return;
 
-  const userIds = [
-    ...articleRows.map((row) => row.editor_id),
-    ...gameDataRows.map((row) => row.created_by),
-  ].filter((id): id is string => id !== null);
+  const userIds = rows.map(getEditorId).filter((id) => id !== null);
   const uniqueUserIds = [...new Set(userIds)];
   if (uniqueUserIds.length === 0) return;
 
@@ -191,12 +204,9 @@ async function attachPublicUserNames(
   }
 
   const nicknames = new Map((data ?? []).map((user) => [user.id, user.nickname]));
-  for (const row of articleRows) {
-    const nickname = row.editor_id ? nicknames.get(row.editor_id) : undefined;
-    row.users = nickname ? { nickname } : null;
-  }
-  for (const row of gameDataRows) {
-    const nickname = row.created_by ? nicknames.get(row.created_by) : undefined;
+  for (const row of rows) {
+    const editorId = getEditorId(row);
+    const nickname = editorId ? nicknames.get(editorId) : undefined;
     row.users = nickname ? { nickname } : null;
   }
 }
@@ -228,15 +238,16 @@ async function loadRecentChanges(
       ? queryGameDataChanges(sourceFrom, sourceTo)
       : Promise.resolve([]),
   ]);
-  await attachPublicUserNames(articleRows, gameDataRows);
+  const pageRows = selectRecentChangeRows(
+    articleRows,
+    gameDataRows,
+    filter === 'all' ? offset : 0,
+    RECENT_CHANGES_PAGE_SIZE
+  );
+  await attachPublicUserNames(pageRows);
 
   return {
-    changes: mergeRecentChangeRows(
-      articleRows,
-      gameDataRows,
-      filter === 'all' ? offset : 0,
-      RECENT_CHANGES_PAGE_SIZE
-    ),
+    changes: pageRows.map(mapRecentChangeRow),
     currentPage,
     totalItems,
     totalPages,
