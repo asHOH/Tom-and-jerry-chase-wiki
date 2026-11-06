@@ -1,6 +1,5 @@
 import { getFactionLabel } from '@/constants/factions';
 import type { FactionId, SingleItem, SingleItemOrGroup } from '@/data/types';
-import getEntityFactionId from '@/features/entities/lib/getEntityFactionId';
 import { resolveSpecialSkill } from '@/features/special-skills/resolveSpecialSkill';
 import {
   achievements,
@@ -17,6 +16,7 @@ import {
 } from '@/data';
 
 import { variantEdges } from '../data/variants';
+import { resolveItemFaction } from './itemFaction';
 
 const findAchievement = (singleItem: SingleItem) => {
   if (singleItem.factionId) return achievements[singleItem.factionId][singleItem.name];
@@ -112,54 +112,19 @@ export const getSingleItemImageUrl = (singleItem: SingleItemOrGroup): string => 
   return result || '/images/icons/cat-faction.png';
 };
 
+const factionCache = new Map<string, FactionId | undefined>();
+
 export const getSingleItemFactionId = (
   singleItem: SingleItem,
-  _visitedSet?: Set<string>,
-  _cache?: Map<string, FactionId | undefined>
-): FactionId | undefined => {
-  if (singleItem.type === 'specialSkill') {
-    return resolveSpecialSkill(specialSkills, singleItem.name, singleItem.factionId)?.factionId;
-  }
-
-  if (singleItem.factionId !== undefined) {
-    return singleItem.factionId;
-  }
-
-  const findFactionId = (): FactionId | undefined => {
-    if (singleItem.type === 'character') {
-      return characters[singleItem.name]?.factionId;
-    }
-
-    if (singleItem.type === 'knowledgeCard') {
-      return cards[singleItem.name]?.factionId;
-    }
-
-    if (singleItem.type === 'item') {
-      return items[singleItem.name]?.factionId;
-    }
-
-    if (singleItem.type === 'skill') {
-      const owner = Object.values(characters).find((character) =>
-        character.skills.some((skill) => skill.name === singleItem.name)
-      );
-      return owner?.factionId;
-    }
-
-    if (singleItem.type === 'achievement') {
-      return findAchievement(singleItem)?.factionId;
-    }
-
-    return undefined;
-  };
-
-  if (singleItem.type === 'entity') {
-    const entity = entities[singleItem.name];
-    if (!entity) return undefined;
-    return getEntityFactionId(entity, _visitedSet, _cache);
-  }
-
-  return findFactionId();
-};
+  visitedSet = new Set<string>(),
+  cache = factionCache
+): FactionId | undefined =>
+  resolveItemFaction(
+    singleItem,
+    { characters, cards, entities, achievements, items, specialSkills },
+    visitedSet,
+    cache
+  );
 
 const formatOwnerName = (ownerName: string, ownerFactionId?: FactionId): string => {
   const ownerFactionLabel = getFactionLabel(ownerFactionId);
