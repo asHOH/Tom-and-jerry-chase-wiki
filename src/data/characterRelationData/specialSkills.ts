@@ -430,7 +430,7 @@ export const characterRelationSpecialSkillTraits: CharacterRelationTrait[] = [
       kind: 'countersSpecialSkills',
       subject: { name: '天使杰瑞', type: 'character' },
       target: { name: '我生气了！', type: 'specialSkill', factionId: 'cat' },
-      tags: [{ counters: '不惧', counteredBy: '怕不惧' }],
+      tags: [{ counters: '机制', counteredBy: '怕机制' }],
       isMinor: false,
     },
   },
