@@ -1,5 +1,7 @@
 import { GameDataManager } from '@/lib/dataManager';
-import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
+import { createApprovedActionSnapshotFromRows } from '@/lib/gameData/published/approvedActionSnapshot';
+import { getCanonicalGameData } from '@/lib/gameData/published/canonicalSources';
+import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
 import { contributors } from '@/data/contributors';
 import { getActorProfile } from '@/features/actor-profiles/selectors';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
@@ -12,10 +14,13 @@ jest.mock('@/features/actor-profiles/pendingProfiles', () => ({
     '待补充角色',
   ]),
 }));
-jest.mock('@/lib/gameData/published/publishedSnapshot', () => {
-  const actual = jest.requireActual('@/lib/gameData/published/publishedSnapshot');
-  return { ...actual, getPublishedGameDataSnapshot: jest.fn(actual.getPublishedGameDataSnapshot) };
+jest.mock('@/lib/gameData/published/canonicalSources', () => {
+  const actual = jest.requireActual('@/lib/gameData/published/canonicalSources');
+  return { getCanonicalGameData: jest.fn(actual.getCanonicalGameData) };
 });
+jest.mock('@/lib/gameData/published/getApprovedActionSnapshot', () => ({
+  getApprovedActionSnapshot: jest.fn(),
+}));
 
 jest.mock('server-only', () => ({}), { virtual: true });
 jest.mock('next/cache', () => ({
@@ -51,8 +56,14 @@ const getRecommendedData = async (): Promise<RecommendedCharacter[]> => {
 };
 
 describe('echoflow resolvers', () => {
+  beforeEach(() => {
+    jest
+      .mocked(getApprovedActionSnapshot)
+      .mockResolvedValue(createApprovedActionSnapshotFromRows([]));
+  });
+
   it('serves contributors even when published game data is unavailable', async () => {
-    const reader = jest.mocked(getPublishedGameDataSnapshot);
+    const reader = jest.mocked(getApprovedActionSnapshot);
     await reader.withImplementation(
       async () => {
         throw new Error('Published data unavailable');
@@ -72,6 +83,7 @@ describe('echoflow resolvers', () => {
           meta: { updatedAt: expect.any(String) },
         });
         expect(reader).not.toHaveBeenCalled();
+        expect(getCanonicalGameData).not.toHaveBeenCalled();
       }
     );
   });
@@ -83,7 +95,32 @@ describe('echoflow resolvers', () => {
       hasDetail: false,
     });
     expect(await resolvePath('missing resource')).toBeNull();
-    expect(getPublishedGameDataSnapshot).not.toHaveBeenCalled();
+    expect(getApprovedActionSnapshot).not.toHaveBeenCalled();
+    expect(getCanonicalGameData).not.toHaveBeenCalled();
+  });
+
+  it('lists items with approved edits and reads only the items domain', async () => {
+    jest.mocked(getApprovedActionSnapshot).mockResolvedValueOnce(
+      createApprovedActionSnapshotFromRows([
+        {
+          id: 'item-edit',
+          entity_type: 'items',
+          entry: { op: 'set', path: '火箭.description', newValue: 'EchoFlow test edit' },
+          created_at: '2026-10-04T00:00:00Z',
+          status: 'approved',
+          message: null,
+          reviewed_at: null,
+          created_by: null,
+        },
+      ])
+    );
+    expect((await resolvePath('items'))?.data).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: '火箭', description: 'EchoFlow test edit' }),
+      ])
+    );
+    expect(jest.mocked(getApprovedActionSnapshot).mock.calls).toEqual([['items']]);
+    expect(jest.mocked(getCanonicalGameData).mock.calls).toEqual([['items']]);
   });
 
   it.each([
@@ -106,8 +143,36 @@ describe('echoflow resolvers', () => {
     }
   );
 
-  it('advertises faction-qualified special-skill detail IDs', async () => {
-    const path = (await getAvailablePaths()).find(({ path }) => path === 'special-skills');
+  it('discovers detail IDs using one scoped snapshot across all detail domains', async () => {
+    const detailDomains = [
+      'achievements',
+      'buffs',
+      'cards',
+      'characters',
+      'entities',
+      'fixtures',
+      'items',
+      'maps',
+      'modes',
+      'specialSkills',
+    ];
+    const paths = await getAvailablePaths();
+    const acquisitions = jest.mocked(getApprovedActionSnapshot).mock.calls;
+    expect(acquisitions).toHaveLength(1);
+    expect([...acquisitions[0]!].sort()).toEqual(detailDomains);
+    expect(
+      jest
+        .mocked(getCanonicalGameData)
+        .mock.calls.map(([domain]) => domain)
+        .sort()
+    ).toEqual(detailDomains);
+    expect(paths.find(({ path }) => path === 'articles')?.availableDetails).toEqual([]);
+    expect(paths.find(({ path }) => path === 'factions')?.availableDetails).toEqual([
+      'cat',
+      'mouse',
+    ]);
+    expect(paths.find(({ path }) => path === 'traits')).not.toHaveProperty('availableDetails');
+    const path = paths.find(({ path }) => path === 'special-skills');
     expect(path?.availableDetails).toEqual(
       expect.arrayContaining(['cat.应急治疗', 'mouse.应急治疗'])
     );
@@ -132,28 +197,22 @@ describe('echoflow resolvers', () => {
   });
 
   it('returns null profile fields in lists and details for a pending character', async () => {
-    const snapshot = await getPublishedGameDataSnapshot();
+    const characters = getCanonicalGameData('characters');
     const pendingCharacter = {
       id: '待补充角色',
       factionId: 'mouse' as const,
-      faction: snapshot.data.characters['巴特']!.faction,
+      faction: characters['巴特']!.faction,
       imageUrl: '',
       createDate: null,
       description: '',
       skills: [],
       knowledgeCardGroups: [],
     };
-    const pendingSnapshot = {
-      ...snapshot,
-      data: {
-        ...snapshot.data,
-        characters: { ...snapshot.data.characters, [pendingCharacter.id]: pendingCharacter },
-      },
-    };
+    const pendingCharacters = { ...characters, [pendingCharacter.id]: pendingCharacter };
     jest
-      .mocked(getPublishedGameDataSnapshot)
-      .mockResolvedValueOnce(pendingSnapshot)
-      .mockResolvedValueOnce(pendingSnapshot);
+      .mocked(getCanonicalGameData)
+      .mockReturnValueOnce(pendingCharacters)
+      .mockReturnValueOnce(pendingCharacters);
     const resolver = (await getResolvers()).characters!;
     const result = await resolver.list();
     expect(result.data).toEqual(

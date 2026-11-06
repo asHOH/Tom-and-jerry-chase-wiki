@@ -11,7 +11,10 @@ import {
   getArticlesPageData,
 } from '@/lib/articles/serverQueries';
 import { GameDataManager } from '@/lib/dataManager';
-import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
+import {
+  getPublishedDomainReadModel,
+  getPublishedDomainsReadModel,
+} from '@/lib/gameData/published/publishedSnapshot';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { contributors } from '@/data/contributors';
 import { historyData } from '@/data/history';
@@ -263,7 +266,7 @@ function createFullDataResult(
 }
 
 async function readDomain<T extends keyof PublishedGameDataByType>(domain: T) {
-  return (await getPublishedGameDataSnapshot()).data[domain];
+  return (await getPublishedDomainReadModel(domain)).data;
 }
 
 export async function getResolvers(): Promise<Record<string, PathResolver>> {
@@ -862,6 +865,19 @@ export async function getResolvers(): Promise<Record<string, PathResolver>> {
   };
 }
 
+const detailDomains = [
+  'characters',
+  'cards',
+  'items',
+  'entities',
+  'buffs',
+  'maps',
+  'fixtures',
+  'modes',
+  'achievements',
+  'specialSkills',
+] as const;
+
 export async function getAvailablePaths(): Promise<
   Array<{
     path: string;
@@ -870,7 +886,7 @@ export async function getAvailablePaths(): Promise<
     availableDetails?: string[];
   }>
 > {
-  const snapshot = await getPublishedGameDataSnapshot();
+  const { data } = await getPublishedDomainsReadModel(detailDomains);
   const resolvers = await getResolvers();
   return Object.entries(resolvers).map(([path, resolver]) => {
     const result: {
@@ -885,14 +901,17 @@ export async function getAvailablePaths(): Promise<
     };
 
     if (resolver.detail) {
-      result.availableDetails = getDetailIds(path, snapshot.data);
+      result.availableDetails = getDetailIds(path, data);
     }
 
     return result;
   });
 }
 
-function getDetailIds(resourcePath: string, data: PublishedGameDataByType): string[] {
+function getDetailIds(
+  resourcePath: string,
+  data: Pick<PublishedGameDataByType, (typeof detailDomains)[number]>
+): string[] {
   const {
     achievements,
     buffs,
