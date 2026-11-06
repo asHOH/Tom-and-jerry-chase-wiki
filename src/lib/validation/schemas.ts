@@ -58,6 +58,11 @@ export type CommentScope = (typeof COMMENT_SCOPES)[number];
 export const commentsListQuerySchema = z.object({
   scope: z.enum(COMMENT_SCOPES),
   targetId: z.string().trim().min(1),
+  cursor: z
+    .string()
+    .transform((value) => value.split('|'))
+    .pipe(z.tuple([z.iso.datetime({ offset: true }), z.uuid()]))
+    .optional(),
   topicsOnly: z
     .string()
     .trim()

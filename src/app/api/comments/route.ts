@@ -171,7 +171,7 @@ async function notifyDiscussionSubscribersOfComment({
 
 export async function GET(req: Request) {
   if (!hasSupabasePublicConfig()) {
-    return NextResponse.json({ comments: [] as ApiComment[] });
+    return NextResponse.json({ comments: [] as ApiComment[], nextCursor: null });
   }
 
   const rl = await checkRateLimit(req, 'read', 'comments-get');
@@ -184,6 +184,7 @@ export async function GET(req: Request) {
     scope: url.searchParams.get('scope') ?? undefined,
     targetId: url.searchParams.get('targetId') ?? undefined,
     topicsOnly: url.searchParams.get('topicsOnly') ?? undefined,
+    cursor: url.searchParams.get('cursor') ?? undefined,
     limit: url.searchParams.get('limit') ?? undefined,
   });
 
@@ -194,7 +195,7 @@ export async function GET(req: Request) {
     );
   }
 
-  const { scope, targetId, topicsOnly } = parsed.data;
+  const { scope, targetId, topicsOnly, cursor } = parsed.data;
   const limit = parsed.data.limit ?? 50;
 
   const supabase = await createClient();
@@ -205,7 +206,13 @@ export async function GET(req: Request) {
     .eq('scope', scope)
     .eq('target_id', targetId)
     .order('created_at', { ascending: true })
-    .limit(limit);
+    .order('id', { ascending: true })
+    .limit(limit + 1);
+
+  if (cursor) {
+    const [timestamp, id] = cursor;
+    query = query.or(`created_at.gt.${timestamp},and(created_at.eq.${timestamp},id.gt.${id})`);
+  }
 
   if (topicsOnly) {
     query = query.is('parent_id', null).not('title', 'is', null);
@@ -218,14 +225,16 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Failed to load comments' }, { status: 500 });
   }
 
-  const typedRows = (rows ?? []) as CommentRow[];
+  const typedRows = (rows ?? []).slice(0, limit) as CommentRow[];
 
   const authorIds = Array.from(new Set(typedRows.map((r) => r.author_id)));
   const nicknameMap = await getNicknamesByUserIds(authorIds);
 
   const comments: ApiComment[] = typedRows.map((row) => rowToComment(row, nicknameMap));
 
-  return NextResponse.json({ comments });
+  const last = comments.at(-1);
+  const nextCursor = last && (rows?.length ?? 0) > limit ? `${last.created_at}|${last.id}` : null;
+  return NextResponse.json({ comments, nextCursor });
 }
 
 export async function POST(req: Request) {

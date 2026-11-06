@@ -4,8 +4,9 @@ import { notifyDiscussionCommentSubscribers, publishNotification } from '@/lib/n
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
+import { createClient } from '@/lib/supabase/server';
 
-import { POST } from './route';
+import { GET, POST } from './route';
 
 function jsonResponse(body: unknown, init?: { status?: number; headers?: HeadersInit }) {
   return {
@@ -128,6 +129,78 @@ describe('comments route', () => {
         }),
       },
     } as never);
+  });
+
+  describe('GET', () => {
+    const requestPage = (params = '') =>
+      GET({
+        url: `http://localhost/api/comments?scope=articles&targetId=article-1${params}`,
+      } as Request);
+
+    function mockReadQuery(data: unknown[]) {
+      const query = {
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        order: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        is: jest.fn().mockReturnThis(),
+        not: jest.fn().mockReturnThis(),
+        or: jest.fn().mockReturnThis(),
+        data,
+        error: null,
+      };
+      jest.mocked(createClient).mockResolvedValue({ from: () => query } as never);
+      return query;
+    }
+
+    it('pages through visible rows once even when a reply shares its earlier parent’s timestamp', async () => {
+      // Model the ordered result visible to the request's Supabase client.
+      const rows = Array.from({ length: 53 }, (_, i) => ({
+        ...commentRow,
+        id: `00000000-0000-4000-8000-${String(i + 1).padStart(12, '0')}`,
+        created_at: '2026-07-25T10:00:00.123456+00:00',
+        parent_id: i === 50 ? commentId : null,
+      }));
+      const query = mockReadQuery(rows.slice(0, 51));
+      const first = await (await requestPage()).json();
+      expect(query.eq.mock.calls).toEqual([
+        ['scope', 'articles'],
+        ['target_id', 'article-1'],
+      ]);
+      expect(query.order.mock.calls).toEqual([
+        ['created_at', { ascending: true }],
+        ['id', { ascending: true }],
+      ]);
+      expect(query.limit).toHaveBeenCalledWith(51);
+      expect(first.comments).toHaveLength(50);
+      const boundary = rows[49]!;
+      expect(first.nextCursor).toBe(`${boundary.created_at}|${boundary.id}`);
+      const nextQuery = mockReadQuery(rows.slice(50));
+      const next = await (
+        await requestPage(`&cursor=${encodeURIComponent(first.nextCursor)}`)
+      ).json();
+      expect(nextQuery.or).toHaveBeenCalledWith(
+        `created_at.gt.${boundary.created_at},and(created_at.eq.${boundary.created_at},id.gt.${boundary.id})`
+      );
+      expect(next.comments[0].parent_id).toBe(first.comments[0].id);
+      expect([...first.comments, ...next.comments].map((c) => c.id)).toEqual(rows.map((c) => c.id));
+      expect(next.nextCursor).toBeNull();
+    });
+
+    it('filters topics before paging and ends an exactly full page without a cursor', async () => {
+      const query = mockReadQuery([{ ...commentRow, title: 'Topic' }]);
+      const { comments, nextCursor } = await (await requestPage('&topicsOnly=true&limit=1')).json();
+      expect(query.is).toHaveBeenCalledWith('parent_id', null);
+      expect(query.not).toHaveBeenCalledWith('title', 'is', null);
+      expect(query.limit).toHaveBeenCalledWith(2);
+      expect(comments).toHaveLength(1);
+      expect(nextCursor).toBeNull();
+    });
+
+    it('rejects an invalid cursor before querying Supabase', async () => {
+      expect((await requestPage('&cursor=invalid')).status).toBe(400);
+      expect(createClient).not.toHaveBeenCalled();
+    });
   });
 
   it('notifies the article author about a visible new article comment', async () => {
