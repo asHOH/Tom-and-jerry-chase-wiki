@@ -1,5 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
+import { renderToString } from 'react-dom/server';
 import { SWRConfig, type State } from 'swr';
+import { unstable_serialize } from 'swr/infinite';
 
 import type { ApiComment } from '@/lib/comments/types';
 import { TalkPageClient } from '@/features/discussion/TalkPageClient';
@@ -128,3 +130,42 @@ it.each(['articles', 'characters'] as const)(
     expect(screen.queryByText(reply)).toBeNull();
   }
 );
+
+it('hydrates a discussion with a restored topic while revalidation is pending', async () => {
+  const topic: ApiComment = {
+    id: 'topic',
+    parent_id: null,
+    title: '缓存的话题',
+    content: '讨论内容',
+    created_at: '2026-01-01T00:00:00Z',
+    author: { id: 'user', nickname: '汤姆' },
+    status: 'visible',
+  };
+  const firstKey = '/api/comments?scope=characters&targetId=warm';
+  const page = { comments: [topic], nextCursor: null };
+  const cache = new Map<string, State>([
+    [firstKey, { data: page }],
+    [unstable_serialize(() => firstKey), { data: [page] }],
+  ]);
+  global.fetch = jest.fn(() => new Promise<Response>(() => {}));
+  const reader = (data: Map<string, State>) => (
+    <SWRConfig value={{ provider: () => data }}>
+      <TalkPageClient
+        scope='characters'
+        targetId='warm'
+        entityTitle='汤姆'
+        entityTypeLabel='角色'
+        parentUrl='/characters/'
+      />
+    </SWRConfig>
+  );
+
+  const container = document.body.appendChild(document.createElement('div'));
+  container.innerHTML = renderToString(reader(new Map()));
+  const onRecoverableError = jest.fn();
+  const view = render(reader(cache), { container, hydrate: true, onRecoverableError });
+
+  expect(onRecoverableError).not.toHaveBeenCalled();
+  expect(await view.findByRole('heading', { name: topic.title! })).toBeVisible();
+  expect(view.getByRole('button', { name: '隐藏' })).toBeVisible();
+});

@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useIsClient } from 'usehooks-ts';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import type { ApiComment } from '@/lib/comments/types';
@@ -29,7 +30,21 @@ type TalkPageClientProps = {
   parentUrl: string;
 };
 
-export function TalkPageClient({
+function DiscussionLoading() {
+  return (
+    <div className='flex min-h-75 items-center justify-center'>
+      <LoadingSpinner size='lg' />
+    </div>
+  );
+}
+
+export function TalkPageClient(props: TalkPageClientProps) {
+  const isClient = useIsClient();
+  // The browser can restore comment pages that were unavailable during server rendering.
+  return isClient ? <Discussion {...props} /> : <DiscussionLoading />;
+}
+
+function Discussion({
   scope,
   targetId,
   entityTitle,
@@ -90,13 +105,8 @@ export function TalkPageClient({
     setShowLoginDialog(true);
   }, []);
 
-  // Loading state
   if (pages.isLoading && !pages.hasData) {
-    return (
-      <div className='flex min-h-75 items-center justify-center'>
-        <LoadingSpinner size='lg' />
-      </div>
-    );
+    return <DiscussionLoading />;
   }
 
   // Error state
