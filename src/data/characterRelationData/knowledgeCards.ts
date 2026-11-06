@@ -124,7 +124,7 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
       subject: { name: '剑客泰菲', type: 'character' },
       target: { name: '严防死守', type: 'knowledgeCard', factionId: 'cat' },
       tags: [
-        { counters: '破冰', counteredBy: '怕破冰' },
+        { counters: '稳救', counteredBy: '怕稳救' },
         { counters: '免疫', counteredBy: '怕免疫' },
       ],
       isMinor: false,
@@ -406,7 +406,7 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
       kind: 'counteredByKnowledgeCards',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '穷追猛打', type: 'knowledgeCard', factionId: 'cat' },
-      tags: [{ counters: '破冰', counteredBy: '怕破冰' }],
+      tags: [{ counters: '追击', counteredBy: '怕追击' }],
       isMinor: false,
     },
   },
