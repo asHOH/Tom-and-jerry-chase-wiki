@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { unstable_serialize, useSWRConfig } from 'swr';
+import { unstable_serialize as serializePages } from 'swr/infinite';
 
 import { storage, StorageKey } from '@/lib/localStorage';
 
@@ -37,5 +38,32 @@ it('keeps moderation pages out of persisted SWR data without dropping other cach
   window.dispatchEvent(new Event('pagehide'));
   const saved = storage.getJson<Array<[string, unknown]>>(StorageKey.SwrCache);
   expect(saved?.map(([key]) => key)).toEqual(['ordinary-cache']);
+  storage.removeItem(StorageKey.SwrCache);
+});
+
+it('restores loaded comment pages together and keeps their individual cache entries in memory only', async () => {
+  const firstKey = '/api/comments?scope=list_pages&targetId=fixtures';
+  const secondKey = firstKey + '&cursor=next';
+  const pagesKey = serializePages(() => firstKey);
+  const first = { comments: [{ id: 'parent' }], nextCursor: 'next' };
+  const second = { comments: [{ id: '51', parent_id: 'parent' }], nextCursor: null };
+  const aggregate = { data: [first, second], _l: 2 };
+  storage.setJson(StorageKey.SwrCache, [
+    [pagesKey, aggregate],
+    [firstKey, { data: first }],
+    [secondKey, { data: second }],
+  ]);
+
+  const { result } = renderHook(() => useSWRConfig(), { wrapper: UserProvider });
+  expect(result.current.cache.get(pagesKey)).toEqual(aggregate);
+  expect(result.current.cache.get(firstKey)).toBeUndefined();
+  expect(result.current.cache.get(secondKey)).toBeUndefined();
+
+  await act(async () => {
+    await result.current.mutate(secondKey, second, { revalidate: false });
+  });
+  expect(result.current.cache.get(secondKey)?.data).toEqual(second);
+  window.dispatchEvent(new Event('pagehide'));
+  expect(storage.getJson(StorageKey.SwrCache)).toEqual([[pagesKey, aggregate]]);
   storage.removeItem(StorageKey.SwrCache);
 });

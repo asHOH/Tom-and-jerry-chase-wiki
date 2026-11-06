@@ -72,6 +72,12 @@ const AuthListener = () => {
 const MAX_CACHE_SIZE = 1024 * 1024; // 1MB limit to prevent performance issues
 const SAVE_DEBOUNCE_MS = 1500;
 
+function shouldPersistCacheKey(key: string) {
+  // Persist the combined thread for immediate display. SWR refetches each page when its individual entry is missing.
+  // Moderation data stays in memory for the current session.
+  return !key.startsWith('/api/comments?') && !key.includes('game-data-actions-admin');
+}
+
 const localStorageProvider = () => {
   // When initializing, we restore the data from `localStorage` into a map.
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -88,7 +94,7 @@ const localStorageProvider = () => {
           // oxlint-disable-next-line typescript/no-explicit-any
           const parsed = storage.parseJson<Array<[string, any]>>(stored);
           if (Array.isArray(parsed)) {
-            initialEntries = parsed.filter(([key]) => !key.includes('game-data-actions-admin'));
+            initialEntries = parsed.filter(([key]) => shouldPersistCacheKey(key));
           } else {
             storage.removeItem(StorageKey.SwrCache);
           }
@@ -115,10 +121,7 @@ const localStorageProvider = () => {
   };
 
   const persistCache = () => {
-    // Moderation pages are session-only; never restore them for another account.
-    const entries = Array.from(map.entries()).filter(
-      ([key]) => !key.includes('game-data-actions-admin')
-    );
+    const entries = Array.from(map.entries()).filter(([key]) => shouldPersistCacheKey(key));
     let payload = entries;
     let serialized = JSON.stringify(payload);
 
