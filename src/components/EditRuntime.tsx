@@ -285,7 +285,7 @@ export default function EditRuntime({
     !hasUnsavedDrafts && status === 'error' && activeRuntimeRef.current !== null;
 
   return (
-    <div className='pointer-events-none fixed inset-x-0 bottom-3 z-10060 flex justify-center px-3'>
+    <div className='pointer-events-none fixed inset-x-0 top-(--nav-height) z-40 flex justify-center px-3 in-[.offline-banner-visible]:mt-(--offline-banner-height)'>
       <div className='bg-surface-raised/95 text-foreground pointer-events-auto rounded-lg border border-blue-200 px-3 py-2 text-sm shadow-lg backdrop-blur dark:border-blue-900'>
         {hasUnsavedDrafts
           ? '草稿暂未保存，刷新或离开可能丢失修改。'
