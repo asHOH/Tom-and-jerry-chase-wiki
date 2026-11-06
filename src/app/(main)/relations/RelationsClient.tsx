@@ -169,6 +169,7 @@ export default function RelationsClient({
   const [columnCategory, setColumnCategory] = useState<RelationMatrixColumnCategory>('cat');
   const [matrixSize, setMatrixSize] = useState(DEFAULT_MATRIX_SIZE);
   const [selectedCell, setSelectedCell] = useState<RelationMatrixCellSelection | null>(null);
+  const [mounted, setMounted] = useState(false);
   const canEditRelations = permissions.has('relation.update');
   const isRelationEditMode = isEditMode && canEditRelations;
   const pendingAwareness = usePendingActionAwarenessSource({
@@ -208,6 +209,8 @@ export default function RelationsClient({
     [charactersSnapshot, coercedColumnCategory, publishedData, isRelationEditMode, rowFaction]
   );
   const actionCount = getActionCount();
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!publishedRevision) return undefined;
@@ -254,7 +257,7 @@ export default function RelationsClient({
       title='角色关系'
       description={description}
       descriptionVisibility='desktop'
-      actions={canEditRelations && !isEditMode ? <EditButton /> : undefined}
+      actions={mounted && canEditRelations && !isEditMode ? <EditButton /> : undefined}
       filters={
         <div className='border-border bg-surface-sunken flex flex-col gap-3 rounded-md border p-3'>
           <RowFactionSelector selected={rowFaction} onSelect={handleRowFactionSelect} />

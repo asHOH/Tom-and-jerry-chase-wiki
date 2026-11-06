@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { renderToString } from 'react-dom/server';
 
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import type { RelationMatrixCellSelection } from '@/features/character-relations/matrix/CharacterRelationsMatrix';
@@ -272,6 +273,19 @@ describe('RelationsClient', () => {
     render(<RelationsClient description='关系说明' />);
 
     expect(screen.queryByRole('button', { name: '编辑' })).not.toBeInTheDocument();
+  });
+
+  it('hydrates the public matrix when editor permissions are cached in the browser', () => {
+    const page = <RelationsClient description='关系说明' />;
+    const container = document.body.appendChild(document.createElement('div'));
+    container.innerHTML = renderToString(page);
+    mockUserRole = 'Contributor';
+
+    const onRecoverableError = jest.fn();
+    const view = render(page, { container, hydrate: true, onRecoverableError });
+
+    expect(onRecoverableError).not.toHaveBeenCalled();
+    expect(view.getByRole('button', { name: '编辑' })).toBeInTheDocument();
   });
 
   it.each(['Contributor', 'Reviewer', 'Coordinator'])(
