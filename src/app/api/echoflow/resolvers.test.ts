@@ -1,9 +1,10 @@
 import { GameDataManager } from '@/lib/dataManager';
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
+import { contributors } from '@/data/contributors';
 import { getActorProfile } from '@/features/actor-profiles/selectors';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 
-import { getAvailablePaths, getResolvers, type ResolverResult } from './resolvers';
+import { getAvailablePaths, getResolvers, resolvePath, type ResolverResult } from './resolvers';
 
 jest.mock('@/features/actor-profiles/pendingProfiles', () => ({
   PENDING_ACTOR_PROFILE_NAMES: new Set([
@@ -50,6 +51,41 @@ const getRecommendedData = async (): Promise<RecommendedCharacter[]> => {
 };
 
 describe('echoflow resolvers', () => {
+  it('serves contributors even when published game data is unavailable', async () => {
+    const reader = jest.mocked(getPublishedGameDataSnapshot);
+    await reader.withImplementation(
+      async () => {
+        throw new Error('Published data unavailable');
+      },
+      async () => {
+        expect(await resolvePath('Contributors', 'ignored')).toEqual({
+          data: contributors,
+          meta: {
+            type: 'Contributor',
+            path: '/contributors',
+            count: contributors.length,
+            hasDetail: false,
+          },
+        });
+        expect(await resolvePath('contributors', 'ignored', true)).toMatchObject({
+          data: contributors,
+          meta: { updatedAt: expect.any(String) },
+        });
+        expect(reader).not.toHaveBeenCalled();
+      }
+    );
+  });
+
+  it('keeps case-insensitive item group lookup and operation precedence', async () => {
+    expect((await resolvePath('itemgroups'))?.meta.path).toBe('/itemGroups');
+    expect(await resolvePath('ITEMGROUPS', 'missing group', true)).toBeNull();
+    expect((await resolvePath('usages', undefined, true))?.meta).toMatchObject({
+      hasDetail: false,
+    });
+    expect(await resolvePath('missing resource')).toBeNull();
+    expect(getPublishedGameDataSnapshot).not.toHaveBeenCalled();
+  });
+
   it.each([
     ['cat.应急治疗', 'cat'],
     ['mouse.应急治疗', 'mouse'],
@@ -107,13 +143,17 @@ describe('echoflow resolvers', () => {
       skills: [],
       knowledgeCardGroups: [],
     };
-    jest.mocked(getPublishedGameDataSnapshot).mockResolvedValueOnce({
+    const pendingSnapshot = {
       ...snapshot,
       data: {
         ...snapshot.data,
         characters: { ...snapshot.data.characters, [pendingCharacter.id]: pendingCharacter },
       },
-    });
+    };
+    jest
+      .mocked(getPublishedGameDataSnapshot)
+      .mockResolvedValueOnce(pendingSnapshot)
+      .mockResolvedValueOnce(pendingSnapshot);
     const resolver = (await getResolvers()).characters!;
     const result = await resolver.list();
     expect(result.data).toEqual(

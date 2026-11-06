@@ -15,13 +15,13 @@ import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/published
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { contributors } from '@/data/contributors';
 import { historyData } from '@/data/history';
-import { itemGroups } from '@/data/static';
 import { WikiChangeType } from '@/data/types';
 import { wikiHistoryData } from '@/data/wikiHistory';
 import { winRatesData } from '@/data/winRates';
 import type { ActorProfile } from '@/features/actor-profiles/schema';
 import { getOptionalActorProfile } from '@/features/actor-profiles/selectors';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
+import itemGroups from '@/features/items/data/itemGroups';
 import { resolveSpecialSkill } from '@/features/special-skills/resolveSpecialSkill';
 
 let updateLookup: Map<string, { date: string; description?: string }> | null = null;
@@ -262,36 +262,26 @@ function createFullDataResult(
   };
 }
 
-function createResolvers(data: PublishedGameDataByType): Record<string, PathResolver> {
-  const {
-    achievements,
-    buffs,
-    cards,
-    characters,
-    entities,
-    fixtures,
-    items,
-    maps,
-    modes,
-    specialSkills,
-    traits,
-  } = data;
+async function readDomain<T extends keyof PublishedGameDataByType>(domain: T) {
+  return (await getPublishedGameDataSnapshot()).data[domain];
+}
 
+export async function getResolvers(): Promise<Record<string, PathResolver>> {
   return {
     characters: {
       description: '游戏角色列表（猫和老鼠）',
-      list: () => {
-        const charactersRecord = characters;
-        const charactersList = recordToArray(charactersRecord, 'id').map((character) => ({
+      list: async () => {
+        const characters = await readDomain('characters');
+        const charactersList = recordToArray(characters, 'id').map((character) => ({
           ...character,
           ...createActorProfilePayload(character.id),
         }));
         return createListResult(charactersList, 'Character', '/characters', true);
       },
       detail: async (id: string) => {
-        const charactersRecord = characters;
+        const characters = await readDomain('characters');
         const decodedId = safeDecode(id);
-        const character = charactersRecord[decodedId];
+        const character = characters[decodedId];
         if (!character) return null;
 
         const relations = getCharacterRelation(characters, decodedId);
@@ -323,9 +313,9 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
           updateInfo?.date
         );
       },
-      fullData: () => {
-        const charactersRecord = characters;
-        const fullCharacters = Object.entries(charactersRecord).map(([id, character]) => {
+      fullData: async () => {
+        const characters = await readDomain('characters');
+        const fullCharacters = Object.entries(characters).map(([id, character]) => {
           const relations = getCharacterRelation(characters, id);
           return {
             ...character,
@@ -353,11 +343,13 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     cards: {
       description: '知识卡牌列表',
-      list: () => {
+      list: async () => {
+        const cards = await readDomain('cards');
         const cardsList = recordToArray(cards, 'id');
         return createListResult(cardsList, 'Card', '/cards', true);
       },
       detail: async (id: string) => {
+        const cards = await readDomain('cards');
         const decodedId = safeDecode(id);
         const card = cards[decodedId];
         if (!card) return null;
@@ -369,7 +361,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
           updateInfo?.date
         );
       },
-      fullData: () => {
+      fullData: async () => {
+        const cards = await readDomain('cards');
         const fullCards = Object.entries(cards).map(([id, card]) => ({ ...card, id }));
         return createFullDataResult(fullCards, 'Card', '/cards');
       },
@@ -377,17 +370,20 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     items: {
       description: '道具列表',
-      list: () => {
+      list: async () => {
+        const items = await readDomain('items');
         const itemsList = recordToArray(items, 'name');
         return createListResult(itemsList, 'Item', '/items', true);
       },
       detail: async (id: string) => {
+        const items = await readDomain('items');
         const item = findByKey(items, id);
         if (!item) return null;
         const updateInfo = await getMergedUpdateTime('items', item.name);
         return createDetailResult(item, 'Item', `/items/${item.name}`, updateInfo?.date);
       },
-      fullData: () => {
+      fullData: async () => {
+        const items = await readDomain('items');
         const fullItems = recordToArray(items, 'name');
         return createFullDataResult(fullItems, 'Item', '/items');
       },
@@ -395,17 +391,20 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     entities: {
       description: '衍生物/实体列表',
-      list: () => {
+      list: async () => {
+        const entities = await readDomain('entities');
         const entitiesList = recordToArray(entities, 'name');
         return createListResult(entitiesList, 'Entity', '/entities', true);
       },
       detail: async (id: string) => {
+        const entities = await readDomain('entities');
         const entity = findByKey(entities, id);
         if (!entity) return null;
         const updateInfo = await getMergedUpdateTime('entities', entity.name);
         return createDetailResult(entity, 'Entity', `/entities/${entity.name}`, updateInfo?.date);
       },
-      fullData: () => {
+      fullData: async () => {
+        const entities = await readDomain('entities');
         const fullEntities = recordToArray(entities, 'name');
         return createFullDataResult(fullEntities, 'Entity', '/entities');
       },
@@ -413,17 +412,20 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     buffs: {
       description: '状态效果列表',
-      list: () => {
+      list: async () => {
+        const buffs = await readDomain('buffs');
         const buffsList = recordToArray(buffs, 'name');
         return createListResult(buffsList, 'Buff', '/buffs', true);
       },
       detail: async (id: string) => {
+        const buffs = await readDomain('buffs');
         const buff = findByKey(buffs, id);
         if (!buff) return null;
         const updateInfo = await getMergedUpdateTime('buffs', buff.name);
         return createDetailResult(buff, 'Buff', `/buffs/${buff.name}`, updateInfo?.date);
       },
-      fullData: () => {
+      fullData: async () => {
+        const buffs = await readDomain('buffs');
         const fullBuffs = recordToArray(buffs, 'name');
         return createFullDataResult(fullBuffs, 'Buff', '/buffs');
       },
@@ -431,17 +433,20 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     maps: {
       description: '地图列表',
-      list: () => {
+      list: async () => {
+        const maps = await readDomain('maps');
         const mapsList = recordToArray(maps, 'name');
         return createListResult(mapsList, 'Map', '/maps', true);
       },
       detail: async (id: string) => {
+        const maps = await readDomain('maps');
         const map = findByKey(maps, id);
         if (!map) return null;
         const updateInfo = await getMergedUpdateTime('maps', map.name);
         return createDetailResult(map, 'Map', `/maps/${map.name}`, updateInfo?.date);
       },
-      fullData: () => {
+      fullData: async () => {
+        const maps = await readDomain('maps');
         const fullMaps = recordToArray(maps, 'name');
         return createFullDataResult(fullMaps, 'Map', '/maps');
       },
@@ -449,11 +454,13 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     fixtures: {
       description: '地图组件/固定物列表',
-      list: () => {
+      list: async () => {
+        const fixtures = await readDomain('fixtures');
         const fixturesList = recordToArray(fixtures, 'name');
         return createListResult(fixturesList, 'Fixture', '/fixtures', true);
       },
       detail: async (id: string) => {
+        const fixtures = await readDomain('fixtures');
         const fixture = findByKey(fixtures, id);
         if (!fixture) return null;
         const updateInfo = await getMergedUpdateTime('fixtures', fixture.name);
@@ -464,7 +471,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
           updateInfo?.date
         );
       },
-      fullData: () => {
+      fullData: async () => {
+        const fixtures = await readDomain('fixtures');
         const fullFixtures = recordToArray(fixtures, 'name');
         return createFullDataResult(fullFixtures, 'Fixture', '/fixtures');
       },
@@ -472,17 +480,20 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     modes: {
       description: '游戏模式列表',
-      list: () => {
+      list: async () => {
+        const modes = await readDomain('modes');
         const modesList = recordToArray(modes, 'name');
         return createListResult(modesList, 'Mode', '/modes', true);
       },
       detail: async (id: string) => {
+        const modes = await readDomain('modes');
         const mode = findByKey(modes, id);
         if (!mode) return null;
         const updateInfo = await getMergedUpdateTime('modes', mode.name);
         return createDetailResult(mode, 'Mode', `/modes/${mode.name}`, updateInfo?.date);
       },
-      fullData: () => {
+      fullData: async () => {
+        const modes = await readDomain('modes');
         const fullModes = recordToArray(modes, 'name');
         return createFullDataResult(fullModes, 'Mode', '/modes');
       },
@@ -490,7 +501,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     achievements: {
       description: '成就列表（猫/鼠阵营）',
-      list: () => {
+      list: async () => {
+        const achievements = await readDomain('achievements');
         const achievementsList = (['cat', 'mouse'] as const).flatMap((factionId) =>
           recordToArray(achievements[factionId], 'name').map((achievement) => ({
             ...achievement,
@@ -500,6 +512,7 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
         return createListResult(achievementsList, 'Achievement', '/achievements', true);
       },
       detail: async (id: string) => {
+        const achievements = await readDomain('achievements');
         const decodedId = decodeURIComponent(id);
         const separatorIndex = decodedId.indexOf('.');
         const requestedFaction =
@@ -525,7 +538,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
           updateInfo?.date
         );
       },
-      fullData: () => {
+      fullData: async () => {
+        const achievements = await readDomain('achievements');
         const fullAchievements = (['cat', 'mouse'] as const).flatMap((factionId) =>
           recordToArray(achievements[factionId], 'name').map((achievement) => ({
             ...achievement,
@@ -538,7 +552,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     'special-skills': {
       description: '特技列表（猫/鼠阵营）',
-      list: () => {
+      list: async () => {
+        const specialSkills = await readDomain('specialSkills');
         const catSkillsList = recordToArray(specialSkills.cat, 'name').map((s) => ({
           ...s,
           factionId: 'cat' as const,
@@ -551,6 +566,7 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
         return createListResult(allSkills, 'SpecialSkill', '/special-skills', true);
       },
       detail: async (id: string) => {
+        const specialSkills = await readDomain('specialSkills');
         const decodedId = decodeURIComponent(id);
         const separatorIndex = decodedId.indexOf('.');
         const factionId = separatorIndex === -1 ? undefined : decodedId.slice(0, separatorIndex);
@@ -569,7 +585,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
           updateInfo?.date
         );
       },
-      fullData: () => {
+      fullData: async () => {
+        const specialSkills = await readDomain('specialSkills');
         const catSkillsList = recordToArray(specialSkills.cat, 'name').map((s) => ({
           ...s,
           factionId: 'cat' as const,
@@ -585,7 +602,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     factions: {
       description: '阵营信息（猫/鼠）及其角色',
-      list: () => {
+      list: async () => {
+        const characters = await readDomain('characters');
         const factionsWithCharacters = GameDataManager.getFactionsWithCharacters(characters);
         const factionsList = Object.entries(factionsWithCharacters).map(([id, faction]) => ({
           ...faction,
@@ -593,7 +611,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
         }));
         return createListResult(factionsList, 'Faction', '/factions', true);
       },
-      detail: (id: string) => {
+      detail: async (id: string) => {
+        const characters = await readDomain('characters');
         const decodedId = decodeURIComponent(id);
         if (decodedId !== 'cat' && decodedId !== 'mouse') return null;
         const factionsWithCharacters = GameDataManager.getFactionsWithCharacters(characters);
@@ -605,7 +624,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
           `/factions/${decodedId}`
         );
       },
-      fullData: () => {
+      fullData: async () => {
+        const characters = await readDomain('characters');
         const factionsWithCharacters = GameDataManager.getFactionsWithCharacters(characters);
         const factionsList = Object.entries(factionsWithCharacters).map(([id, faction]) => ({
           ...faction,
@@ -650,7 +670,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     ranks: {
       description: '角色定位标签排行',
-      list: () => {
+      list: async () => {
+        const characters = await readDomain('characters');
         const rankData = Object.entries(characters).map(([id, char]) => ({
           id,
           name: id,
@@ -660,7 +681,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
         }));
         return createListResult(rankData, 'CharacterRank', '/ranks', false);
       },
-      fullData: () => {
+      fullData: async () => {
+        const characters = await readDomain('characters');
         const rankData = Object.entries(characters).map(([id, char]) => ({
           id,
           name: id,
@@ -674,7 +696,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     recommended: {
       description: '角色推荐信息（关系、地图适配等）',
-      list: () => {
+      list: async () => {
+        const characters = await readDomain('characters');
         const recommendedData = Object.entries(characters).map(([id, char]) => {
           const relations = getCharacterRelation(characters, id);
           return {
@@ -687,7 +710,8 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
         });
         return createListResult(recommendedData, 'RecommendedCharacter', '/recommended', false);
       },
-      fullData: () => {
+      fullData: async () => {
+        const characters = await readDomain('characters');
         const recommendedData = Object.entries(characters).map(([id, char]) => {
           const relations = getCharacterRelation(characters, id);
           return {
@@ -704,11 +728,13 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     traits: {
       description: '角色特性/机制数据',
-      list: () => {
+      list: async () => {
+        const traits = await readDomain('traits');
         const traitsList = recordToArray(traits, 'id');
         return createListResult(traitsList, 'Trait', '/traits', false);
       },
-      fullData: () => {
+      fullData: async () => {
+        const traits = await readDomain('traits');
         const traitsList = recordToArray(traits, 'id');
         return createFullDataResult(traitsList, 'Trait', '/traits');
       },
@@ -716,18 +742,18 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
 
     'character-relations': {
       description: '角色关系数据',
-      list: () => {
-        const charactersRecord = characters;
-        const relationsList = Object.keys(charactersRecord).map((characterId) => ({
+      list: async () => {
+        const characters = await readDomain('characters');
+        const relationsList = Object.keys(characters).map((characterId) => ({
           id: characterId,
           relations: getCharacterRelation(characters, characterId),
         }));
         return createListResult(relationsList, 'CharacterRelation', '/character-relations', true);
       },
-      detail: (id: string) => {
+      detail: async (id: string) => {
+        const characters = await readDomain('characters');
         const decodedId = decodeURIComponent(id);
-        const charactersRecord = characters;
-        if (!charactersRecord[decodedId]) return null;
+        if (!characters[decodedId]) return null;
         const relations = getCharacterRelation(characters, decodedId);
         return createDetailResult(
           { id: decodedId, relations },
@@ -735,9 +761,9 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
           `/character-relations/${id}`
         );
       },
-      fullData: () => {
-        const charactersRecord = characters;
-        const relationsList = Object.keys(charactersRecord).map((characterId) => ({
+      fullData: async () => {
+        const characters = await readDomain('characters');
+        const relationsList = Object.keys(characters).map((characterId) => ({
           id: characterId,
           relations: getCharacterRelation(characters, characterId),
         }));
@@ -836,11 +862,6 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
   };
 }
 
-export async function getResolvers(): Promise<Record<string, PathResolver>> {
-  const snapshot = await getPublishedGameDataSnapshot();
-  return createResolvers(snapshot.data);
-}
-
 export async function getAvailablePaths(): Promise<
   Array<{
     path: string;
@@ -850,7 +871,7 @@ export async function getAvailablePaths(): Promise<
   }>
 > {
   const snapshot = await getPublishedGameDataSnapshot();
-  const resolvers = createResolvers(snapshot.data);
+  const resolvers = await getResolvers();
   return Object.entries(resolvers).map(([path, resolver]) => {
     const result: {
       path: string;
