@@ -2,16 +2,17 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
-import useSWR from 'swr';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
-import { fetchJson } from '@/lib/fetchJson';
+import type { ApiComment } from '@/lib/comments/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageShell from '@/components/ui/PageShell';
+import { CommentPageButton } from '@/components/comments/CommentPageButton';
+import { useCommentPages } from '@/components/comments/useCommentPages';
 import LoginDialog from '@/components/LoginDialog';
 
 import { DiscussionInfoBanner } from './components/DiscussionInfoBanner';
@@ -19,38 +20,6 @@ import { NewTopicForm } from './components/NewTopicForm';
 import { TableOfContents } from './components/TableOfContents';
 import { TopicSection } from './components/TopicSection';
 import type { CommentNode } from './types';
-
-type ApiComment = {
-  id: string;
-  parent_id: string | null;
-  content: string;
-  created_at: string;
-  title: string | null;
-  status: string;
-  author: {
-    id: string;
-    nickname: string | null;
-  };
-};
-
-type CommentsResponse = { comments: ApiComment[] };
-
-/** Build a nested reply tree from flat comments. */
-function buildReplyTree(comments: ApiComment[], parentId: string, depth: number): CommentNode[] {
-  return comments
-    .filter((c) => c.parent_id === parentId)
-    .map((c) => ({
-      id: c.id,
-      parentId: c.parent_id,
-      content: c.content,
-      createdAt: c.created_at,
-      title: c.title,
-      status: c.status,
-      author: c.author,
-      children: buildReplyTree(comments, c.id, depth + 1),
-      depth,
-    }));
-}
 
 type TalkPageClientProps = {
   scope: string;
@@ -78,60 +47,32 @@ export function TalkPageClient({
   const [showNewTopicForm, setShowNewTopicForm] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
-  const apiUrl = useMemo(
-    () =>
-      `/api/comments?scope=${encodeURIComponent(scope)}&targetId=${encodeURIComponent(targetId)}`,
-    [scope, targetId]
-  );
-
-  const {
-    data,
-    error: loadError,
-    mutate,
-    isLoading,
-  } = useSWR<CommentsResponse>(targetId ? apiUrl : null, fetchJson);
-
-  const comments = useMemo(() => data?.comments ?? [], [data]);
-
+  const pages = useCommentPages(scope, targetId);
+  const { byParent, mutate } = pages;
   const topics = useMemo(() => {
-    return comments
-      .filter((c) => c.parent_id === null && c.title)
-      .map((topic) => {
-        const replies = comments.filter((c) => c.parent_id === topic.id);
-        const lastActivity =
-          replies.length > 0 ? replies[replies.length - 1]!.created_at : topic.created_at;
-        return {
-          id: topic.id,
-          title: topic.title,
-          authorId: topic.author.id,
-          authorNickname: topic.author.nickname,
-          content: topic.content,
-          createdAt: topic.created_at,
-          replyCount: replies.length,
-          lastActivityAt: lastActivity,
-          status: topic.status,
-        };
-      })
-      .sort((a, b) => new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime());
-  }, [comments]);
-
-  const topicTrees = useMemo(() => {
-    return topics.map((topic) => {
-      const topicComment = comments.find((c) => c.id === topic.id);
-      if (!topicComment) return null;
+    function buildNode(comment: ApiComment, depth: number): CommentNode {
       return {
-        id: topicComment.id,
-        parentId: topicComment.parent_id,
-        content: topicComment.content,
-        createdAt: topicComment.created_at,
-        title: topicComment.title,
-        status: topicComment.status,
-        author: topicComment.author,
-        children: buildReplyTree(comments, topicComment.id, 1),
-        depth: 0,
-      } satisfies CommentNode;
-    });
-  }, [topics, comments]);
+        id: comment.id,
+        parentId: comment.parent_id,
+        content: comment.content,
+        createdAt: comment.created_at,
+        title: comment.title,
+        status: comment.status,
+        author: comment.author,
+        children: (byParent.get(comment.id) ?? []).map((reply) => buildNode(reply, depth + 1)),
+        depth,
+      };
+    }
+
+    function lastActivity(topic: CommentNode) {
+      return Date.parse(topic.children.at(-1)?.createdAt ?? topic.createdAt);
+    }
+
+    return (byParent.get(null) ?? [])
+      .filter((topic) => topic.title)
+      .map((topic) => buildNode(topic, 0))
+      .sort((a, b) => lastActivity(b) - lastActivity(a));
+  }, [byParent]);
 
   const handleCreateTopic = useCallback(() => {
     if (!nickname) {
@@ -150,7 +91,7 @@ export function TalkPageClient({
   }, []);
 
   // Loading state
-  if (isLoading) {
+  if (pages.isLoading && !pages.hasData) {
     return (
       <div className='flex min-h-75 items-center justify-center'>
         <LoadingSpinner size='lg' />
@@ -159,7 +100,7 @@ export function TalkPageClient({
   }
 
   // Error state
-  if (loadError) {
+  if (pages.error && !pages.hasData) {
     return (
       <div className='rounded-lg border border-red-200 bg-red-50 p-6 text-center dark:border-red-800 dark:bg-red-950'>
         <p className='text-red-600 dark:text-red-400'>讨论加载失败</p>
@@ -218,29 +159,27 @@ export function TalkPageClient({
       {topics.length > 1 && <TableOfContents topics={topics} />}
 
       {/* Empty state */}
-      {topics.length === 0 && (
+      {topics.length === 0 && !pages.hasMore && (
         <Card bordered className='bg-surface/70 dark:bg-background/40 p-8 text-center'>
           <p className='text-gray-500 dark:text-gray-400'>暂无讨论，来创建第一个话题吧</p>
         </Card>
       )}
 
       {/* Topic sections */}
-      {topicTrees.map(
-        (node) =>
-          node && (
-            <TopicSection
-              key={node.id}
-              topic={node}
-              scope={scope}
-              targetId={targetId}
-              isAuthenticated={Boolean(nickname)}
-              isAdmin={isAdmin}
-              userNickname={null}
-              onMutate={handleMutate}
-              onLoginRequired={handleLoginRequired}
-            />
-          )
-      )}
+      {topics.map((node) => (
+        <TopicSection
+          key={node.id}
+          topic={node}
+          scope={scope}
+          targetId={targetId}
+          isAuthenticated={Boolean(nickname)}
+          isAdmin={isAdmin}
+          userNickname={null}
+          onMutate={handleMutate}
+          onLoginRequired={handleLoginRequired}
+        />
+      ))}
+      <CommentPageButton pages={pages} />
 
       <LoginDialog
         open={showLoginDialog}

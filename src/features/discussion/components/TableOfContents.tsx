@@ -5,7 +5,7 @@ import Card from '@/components/ui/Card';
 import type { DiscussionTopic } from '../types';
 
 type TableOfContentsProps = {
-  topics: DiscussionTopic[];
+  topics: Pick<DiscussionTopic, 'id' | 'title'>[];
 };
 
 export function TableOfContents({ topics }: TableOfContentsProps) {

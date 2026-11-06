@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { requirePermission } from '../../../lib/auth/requirePermission';
 import { getRequestIp } from '../../../lib/blocks/server';
 import { shouldAllowComment } from '../../../lib/comments/moderation';
+import type { ApiComment } from '../../../lib/comments/types';
 import {
   notifyDiscussionCommentSubscribers,
   publishNotification,
@@ -22,19 +23,6 @@ import {
 } from '../../../lib/validation/schemas';
 
 export const dynamic = 'force-dynamic';
-
-type ApiComment = {
-  id: string;
-  parent_id: string | null;
-  content: string;
-  created_at: string;
-  title: string | null;
-  status: string;
-  author: {
-    id: string;
-    nickname: string | null;
-  };
-};
 
 async function getNicknamesByUserIds(userIds: string[]): Promise<Map<string, string | null>> {
   if (!userIds.length) {

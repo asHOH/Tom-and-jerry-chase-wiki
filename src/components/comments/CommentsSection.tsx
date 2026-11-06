@@ -1,11 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import useSWR from 'swr';
+import { useState } from 'react';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
+import type { ApiComment } from '@/lib/comments/types';
 import { formatArticleDate } from '@/lib/dateUtils';
-import { fetchJson } from '@/lib/fetchJson';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
@@ -15,36 +14,11 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import SectionHeader from '@/components/ui/SectionHeader';
 import LoginDialog from '@/components/LoginDialog';
 
+import { CommentPageButton } from './CommentPageButton';
+import { useCommentPages } from './useCommentPages';
+
 type CommentScope = 'articles';
-
-type ApiComment = {
-  id: string;
-  parent_id: string | null;
-  content: string;
-  created_at: string;
-  author: {
-    id: string;
-    nickname: string | null;
-  };
-};
-
-type CommentsResponse = { comments: ApiComment[] };
-
 type CreateCommentResponse = { comment?: ApiComment; error?: string };
-
-function buildTree(comments: ApiComment[]) {
-  const byParent = new Map<string | null, ApiComment[]>();
-  for (const comment of comments) {
-    const key = comment.parent_id;
-    const list = byParent.get(key);
-    if (list) {
-      list.push(comment);
-    } else {
-      byParent.set(key, [comment]);
-    }
-  }
-  return byParent;
-}
 
 export default function CommentsSection({
   scope,
@@ -67,20 +41,8 @@ export default function CommentsSection({
   const [error, setError] = useState<string | null>(null);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
-  const apiUrl = useMemo(
-    () =>
-      `/api/comments?scope=${encodeURIComponent(scope)}&targetId=${encodeURIComponent(targetId)}`,
-    [scope, targetId]
-  );
-
-  const {
-    data,
-    error: loadError,
-    mutate,
-  } = useSWR<CommentsResponse>(targetId ? apiUrl : null, fetchJson);
-
-  const comments = useMemo(() => data?.comments ?? [], [data?.comments]);
-  const tree = useMemo(() => buildTree(comments), [comments]);
+  const pages = useCommentPages(scope, targetId);
+  const { byParent: tree, mutate } = pages;
 
   const handleSubmit = async () => {
     if (!canComment) {
@@ -175,12 +137,13 @@ export default function CommentsSection({
     );
   };
 
-  const loading = !data && !loadError;
-
   return (
     <section id='comments' className='mt-8'>
       <SectionHeader title='评论' variant='compact'>
-        <span className='text-sm text-gray-500 dark:text-gray-400'>{comments.length} 条</span>
+        <span className='text-sm text-gray-500 dark:text-gray-400'>
+          {pages.hasMore ? '已加载 ' : ''}
+          {pages.count} 条
+        </span>
       </SectionHeader>
 
       <Card bordered className='bg-surface/70 dark:bg-background/40 shadow-sm'>
@@ -234,18 +197,18 @@ export default function CommentsSection({
       </Card>
 
       <div className='mt-4 space-y-3'>
-        {loading ? (
+        {pages.isLoading && !pages.hasData ? (
           <div className='flex min-h-30 items-center justify-center'>
             <LoadingSpinner size='md' />
           </div>
-        ) : loadError ? (
+        ) : pages.error && !pages.hasData ? (
           <Card
             bordered
             className='bg-surface/70 text-muted-foreground dark:bg-background/40 text-sm'
           >
             评论加载失败，请稍后再试。
           </Card>
-        ) : comments.length === 0 ? (
+        ) : pages.count === 0 ? (
           <Card
             bordered
             className='bg-surface/70 text-muted-foreground dark:bg-background/40 text-sm'
@@ -256,6 +219,8 @@ export default function CommentsSection({
           (tree.get(null) ?? []).map((comment) => renderComment(comment, 0))
         )}
       </div>
+
+      <CommentPageButton pages={pages} />
 
       <LoginDialog
         open={showLoginDialog}
