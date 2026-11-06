@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getPublishedReferenceRoute } from '@/lib/gameData/published/referenceRoute';
+import { getReferenceActionSnapshot } from '@/lib/gameData/published/reverseReferences';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { entities as canonicalEntities } from '@/data/static';
@@ -32,7 +34,13 @@ export async function generateMetadata({
   params: Promise<{ entityName: string }>;
 }): Promise<Metadata> {
   const entityName = decodeURIComponent((await params).entityName);
-  const { data: entity } = await getPublishedEntityRouteReadModel('entities', entityName);
+  const snapshot = await getReferenceActionSnapshot();
+  const { data: entity } = await getPublishedEntityRouteReadModel(
+    'entities',
+    entityName,
+    undefined,
+    snapshot
+  );
 
   if (!entity) {
     return {};
@@ -54,19 +62,16 @@ export default async function EntityDetailPage({
   params: Promise<{ entityName: string }>;
 }) {
   const entityName = decodeURIComponent((await params).entityName);
-  const readModel = await getPublishedEntityRouteReadModel('entities', entityName);
+  const readModel = await getPublishedReferenceRoute('entities', entityName);
+  if (!readModel) notFound();
   const entity = readModel.data;
-
-  if (!entity) {
-    notFound();
-  }
-
   return (
     <>
       <StructuredData data={generateStructuredData(entityName, entity)} />
       <EntityDetailClient
         entity={entity}
         entityName={entityName}
+        referencePage={readModel.referencePage}
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
       />

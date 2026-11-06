@@ -2,8 +2,10 @@
 
 import dynamic from 'next/dynamic';
 
+import type { PackedReferencePage } from '@/lib/gameData/published/reverseReferences';
 import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import type { Fixture } from '@/data/types';
+import ReferencePageContent from '@/features/shared/detail-view/ReferencePageContent';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 
@@ -17,11 +19,13 @@ const FixtureDetails = dynamic(
 export default function FixtureDetailsClient({
   fixture,
   fixtureName,
+  referencePage,
   publishedRevision,
   publishedHistory,
 }: {
   fixture: Fixture;
   fixtureName: string;
+  referencePage: PackedReferencePage;
   publishedRevision: `v1:${string}`;
   publishedHistory: PublishedEntityHistory;
 }) {
@@ -33,7 +37,9 @@ export default function FixtureDetailsClient({
       publishedRevision={publishedRevision}
       publishedHistory={publishedHistory}
     >
-      <FixtureDetails fixture={fixture} />
+      <ReferencePageContent page={referencePage}>
+        <FixtureDetails fixture={fixture} />
+      </ReferencePageContent>
     </EditModePageShell>
   );
 }

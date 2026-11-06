@@ -3,10 +3,15 @@
 import { useLayoutEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import singleItemReverse from '@/lib/singleItemReverse';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useEditMode } from '@/context/EditModeContext';
+import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
+import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
+import { DraftReferenceCards } from '@/features/shared/detail-view/ReferencePageContent';
+import CollapseCard from '@/components/ui/CollapseCard';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
 
@@ -47,5 +52,28 @@ export default function UserCharacterPageClient({
     return <PageLoadingState type='character-detail' message='未找到角色草稿，可能已被清除。' />;
   }
 
-  return <CharacterDetailsClient character={character} />;
+  // These private draft targets only exist in this browser's edit session.
+  const root = { name: character.id, type: 'character' as const };
+  const count = singleItemReverse(root).length;
+  const cards = [
+    count ? (
+      <CollapseCard
+        key='character'
+        title={character.id + '自身的引用项(' + count + ')'}
+        size='xs'
+        className='rounded-md px-1 pb-1 whitespace-pre-wrap'
+        titleClassName='pl-3'
+      >
+        <SingleItemReverseCard singleItem={root} />
+      </CollapseCard>
+    ) : null,
+    ...character.skills.map((skill, index) => (
+      <DetailReverseCard key={index} singleItem={{ name: skill.name, type: 'skill' }} />
+    )),
+  ];
+  return (
+    <DraftReferenceCards cards={cards}>
+      <CharacterDetailsClient character={character} />
+    </DraftReferenceCards>
+  );
 }

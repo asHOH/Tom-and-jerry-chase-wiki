@@ -4,7 +4,7 @@ import { cache } from 'react';
 
 import { resolveItemFaction } from '@/lib/itemFaction';
 import { getReferenceKeywords } from '@/lib/referenceKeywords';
-import { packReferenceSection } from '@/lib/referenceProjection';
+import { packReferenceSection, type PackedSection } from '@/lib/referenceProjection';
 import {
   matchesReference,
   referenceDomains,
@@ -23,6 +23,7 @@ import type { ApprovedActionSnapshot } from './approvedActionSnapshot';
 import { getCanonicalGameData } from './canonicalSources';
 import { getApprovedActionSnapshot } from './getApprovedActionSnapshot';
 import { getPublishedDomainReadModel } from './publishedSnapshot';
+import { packReferenceRevisions } from './referenceRevisionProps';
 import type { PublishedRevision } from './revision';
 
 export type PublishedReferenceRow = SingleItem & {
@@ -195,18 +196,29 @@ const readReferenceCatalog = cache(async (snapshot: ApprovedActionSnapshot) => {
   return { data, revisions };
 });
 
-export async function getPublishedReferenceSections(
+type ReferenceDomain = (typeof referenceDomains)[number];
+export type PackedReferencePage = {
+  primary: ReferenceDomain;
+  sections: PackedSection[];
+  relatedRevisions: ReturnType<typeof packReferenceRevisions>;
+};
+
+export async function getReferencePage(
   snapshot: ApprovedActionSnapshot,
+  primary: ReferenceDomain,
   roots: readonly ReferenceTarget[]
 ) {
   const { data, revisions } = await readReferenceCatalog(snapshot);
-  return { sections: selectReferenceSections(data, roots), revisions };
-}
-
-// Compare against the same checked-in data bundled for offline browsing.
-export function packPublishedReferenceSection(section: ReferenceSection) {
+  const { [primary]: _primary, ...related } = revisions;
   const canonical = Object.fromEntries(
     referenceDomains.map((type) => [type, getCanonicalGameData(type)])
   ) as ReferenceCatalog;
-  return packReferenceSection(canonical, section);
+  const page: PackedReferencePage = {
+    primary,
+    relatedRevisions: packReferenceRevisions(related),
+    sections: selectReferenceSections(data, roots).map((section) =>
+      packReferenceSection(canonical, section)
+    ),
+  };
+  return { page, data };
 }

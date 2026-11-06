@@ -6,6 +6,8 @@ import { Article, WithContext } from 'schema-dts';
 import { getEmbeddedArticlesForCharacter } from '@/lib/articles/serverQueries';
 import { GameDataManager } from '@/lib/dataManager';
 import { getContentWritersForCharacter } from '@/lib/gameData/contentWriters';
+import { getPublishedReferenceRoute } from '@/lib/gameData/published/referenceRoute';
+import { getReferenceActionSnapshot } from '@/lib/gameData/published/reverseReferences';
 import {
   getPublishedEntityRouteReadModel,
   type PublishedEntityRouteReadModel,
@@ -75,7 +77,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const resolvedParams = await params;
   const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
-  const { data: character } = await getPublishedEntityRouteReadModel('characters', characterId);
+  const snapshot = await getReferenceActionSnapshot();
+  const { data: character } = await getPublishedEntityRouteReadModel(
+    'characters',
+    characterId,
+    undefined,
+    snapshot
+  );
 
   if (!character) {
     return {};
@@ -100,20 +108,18 @@ export default async function CharacterPage({
   const resolvedParams = await params;
   const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
   const [readModel, docPage, contentWriterData] = await Promise.all([
-    getPublishedEntityRouteReadModel('characters', characterId),
+    getPublishedReferenceRoute('characters', characterId),
     getTutorialPage(characterId),
     getContentWritersForCharacter(characterId),
   ]);
+  if (!readModel) notFound();
   const character = readModel.data;
-
-  if (!character) {
-    notFound();
-  }
   const gameHistory = getHistory([character.id, ...(character.aliases ?? [])]);
 
   if (!hasSupabasePublicConfig()) {
     return (
       <CharacterDetailsClient
+        referencePage={readModel.referencePage}
         character={character}
         gameHistory={gameHistory}
         contentWriters={contentWriterData.writers}
@@ -139,6 +145,7 @@ export default async function CharacterPage({
         data={generateStructuredData(characterId, character, contentWriterData.writers)}
       />
       <CharacterDetailsClient
+        referencePage={readModel.referencePage}
         character={character}
         gameHistory={gameHistory}
         contentWriters={contentWriterData.writers}

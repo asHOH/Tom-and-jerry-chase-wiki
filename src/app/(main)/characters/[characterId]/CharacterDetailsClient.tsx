@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo } from 'react';
 
+import type { PackedReferencePage } from '@/lib/gameData/published/reverseReferences';
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { scheduleBackgroundPreparation } from '@/lib/scheduleBackgroundPreparation';
 import { CharacterDetailsProps } from '@/lib/types';
@@ -18,6 +19,7 @@ import {
 import { PublishedEntityHistoryProvider } from '@/context/PublishedEntityHistoryContext';
 import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
+import ReferencePageContent from '@/features/shared/detail-view/ReferencePageContent';
 import PageShell from '@/components/ui/PageShell';
 import EditModeToolbar from '@/components/ui/PreparedEditModeToolbar';
 import {
@@ -26,7 +28,9 @@ import {
   searchDialogModule,
 } from '@/components/panelModules';
 
-export default function CharacterDetailsClient(props: CharacterDetailsProps) {
+export default function CharacterDetailsClient(
+  props: CharacterDetailsProps & { referencePage?: PackedReferencePage }
+) {
   useEffect(
     () =>
       scheduleBackgroundPreparation([
@@ -42,7 +46,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const { exitEditMode } = useSearchParamEditMode();
   const { info } = useToast();
   const showSubmissionFeedback = useContributionSubmissionFeedback();
-  const currentCharacterId = characterId || props.character.id;
+  const currentCharacterId = characterId.trim() || props.character.id;
   const pendingAwareness = usePendingActionAwarenessSource({
     enabled: isEditMode && !isPreviewMode,
     entityType: 'characters',
@@ -99,7 +103,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     [editMode, isEditMode, isPreviewMode, props.publishedRevision]
   );
 
-  return (
+  const content = (
     <>
       <PageShell width='maximum' className='min-h-screen'>
         <EditModeContext value={editModeContextValue}>
@@ -165,5 +169,10 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
         </>
       )}
     </>
+  );
+  return props.referencePage ? (
+    <ReferencePageContent page={props.referencePage}>{content}</ReferencePageContent>
+  ) : (
+    content
   );
 }

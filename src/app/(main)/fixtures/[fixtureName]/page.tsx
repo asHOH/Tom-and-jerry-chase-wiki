@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getPublishedReferenceRoute } from '@/lib/gameData/published/referenceRoute';
+import { getReferenceActionSnapshot } from '@/lib/gameData/published/reverseReferences';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { fixtures as canonicalFixtures } from '@/data/static';
@@ -33,7 +35,13 @@ export async function generateMetadata({
   params: Promise<{ fixtureName: string }>;
 }): Promise<Metadata> {
   const fixtureName = decodeURIComponent((await params).fixtureName);
-  const { data: fixture } = await getPublishedEntityRouteReadModel('fixtures', fixtureName);
+  const snapshot = await getReferenceActionSnapshot();
+  const { data: fixture } = await getPublishedEntityRouteReadModel(
+    'fixtures',
+    fixtureName,
+    undefined,
+    snapshot
+  );
 
   if (!fixture) {
     return {};
@@ -55,19 +63,16 @@ export default async function FixtureDetailPage({
   params: Promise<{ fixtureName: string }>;
 }) {
   const fixtureName = decodeURIComponent((await params).fixtureName);
-  const readModel = await getPublishedEntityRouteReadModel('fixtures', fixtureName);
+  const readModel = await getPublishedReferenceRoute('fixtures', fixtureName);
+  if (!readModel) notFound();
   const fixture = readModel.data;
-
-  if (!fixture) {
-    notFound();
-  }
-
   return (
     <>
       <StructuredData data={generateStructuredData(fixtureName, fixture)} />
       <FixtureDetailClient
         fixture={fixture}
         fixtureName={fixtureName}
+        referencePage={readModel.referencePage}
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
       />

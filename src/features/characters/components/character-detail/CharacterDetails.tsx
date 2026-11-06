@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
 import type { HistoryEntry } from '@/lib/historyUtils';
-import singleItemRreverse from '@/lib/singleItemReverse';
 import type { CharacterWithFaction, ContentEditor } from '@/lib/types';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
@@ -19,11 +18,11 @@ import { Skill } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import { getEditableCharacterRelations } from '@/features/characters/utils/characterRelationOverlay';
 import { characterRelationTagPairs } from '@/features/characters/utils/characterRelationTags';
-import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import EditableCheckboxGroup from '@/features/shared/detail-view/EditableCheckboxGroup';
 import EditableStringList from '@/features/shared/detail-view/EditableStringList';
+import { useRouteReferenceCard } from '@/features/shared/detail-view/RouteReferenceCard';
 import { filterTraitsBySingleItem } from '@/features/shared/traits/filterTraitsBySingleItem';
 import Card from '@/components/ui/Card';
 import CollapseCard from '@/components/ui/CollapseCard';
@@ -100,18 +99,20 @@ export default function CharacterDetails({
   const isMobile = useMobile();
   const { addSecondWeapon } = useCharacterActions();
   const { characterId } = useLocalCharacter();
+  const sourceId = characterId.trim() || character.id;
   const [localCharacter, updateCharacter] = useEditableEntity(
-    { entityType: 'characters', entityId: characterId || character.id },
+    { entityType: 'characters', entityId: sourceId },
     character
   );
   const [charactersSnapshot] = useEditableDomain('characters', staticCharacters);
   const characterRelations = getEditableCharacterRelations(
     charactersSnapshot,
-    localCharacter.id,
+    sourceId,
     localCharacter
   );
   const hasCharacterRelations = Object.values(characterRelations).some((items) => items.length > 0);
   const factionId = localCharacter.factionId!;
+  const actorProfileName = Object.hasOwn(staticCharacters, sourceId) ? sourceId : localCharacter.id;
   const skillAnchorIds = useMemo(
     () => localCharacter.skills.map((skill) => `Skill:${skill.name}`),
     [localCharacter.skills]
@@ -138,7 +139,7 @@ export default function CharacterDetails({
     true,
     traits
   ).length;
-  const characterReverseCount = singleItemRreverse(characterSingleItem).length;
+  const characterReferenceCard = useRouteReferenceCard();
 
   return (
     <EditModeContext
@@ -148,7 +149,7 @@ export default function CharacterDetails({
         isPreviewMode: false,
       }}
     >
-      <PublishedCharacterProvider character={character}>
+      <PublishedCharacterProvider character={character} sourceId={sourceId}>
         <div className='space-y-8'>
           <div className='flex flex-col gap-8 md:flex-row'>
             <div className='md:w-1/3'>
@@ -184,7 +185,7 @@ export default function CharacterDetails({
                     />
                     <CreateDateDisplay createDate={localCharacter.createDate} />
                     {characterHistory}
-                    <WinRatesDisplay characterName={localCharacter.id} />
+                    <WinRatesDisplay characterName={sourceId} />
                     <SingleItemWikiHistoryDisplay
                       singleItem={{ name: localCharacter.id, type: 'character' }}
                     />
@@ -226,7 +227,7 @@ export default function CharacterDetails({
                         />
                         <CreateDateDisplay createDate={localCharacter.createDate} />
                         {characterHistory}
-                        <WinRatesDisplay characterName={localCharacter.id} />
+                        <WinRatesDisplay characterName={sourceId} />
                         <SingleItemWikiHistoryDisplay
                           singleItem={{ name: localCharacter.id, type: 'character' }}
                         />
@@ -245,7 +246,7 @@ export default function CharacterDetails({
                     <div>
                       <span className='text-xs text-gray-500 dark:text-gray-400'>角色别名</span>
                       <EditableStringList
-                        actionPath={`${localCharacter.id}.aliases`}
+                        actionPath={`${sourceId}.aliases`}
                         values={localCharacter.aliases ?? []}
                         itemLabel='角色别名'
                         onChange={(aliases) => {
@@ -259,7 +260,7 @@ export default function CharacterDetails({
                     <div>
                       <span className='text-xs text-gray-500 dark:text-gray-400'>关系标签</span>
                       <EditableCheckboxGroup
-                        actionPath={`${localCharacter.id}.counterTags`}
+                        actionPath={`${sourceId}.counterTags`}
                         options={characterRelationTagPairs.flatMap((tag) => [
                           tag.counters,
                           tag.counteredBy,
@@ -311,7 +312,7 @@ export default function CharacterDetails({
                 <div className='mt-6 space-y-3'>
                   {localCharacter.EnglishName !== undefined ? (
                     <ActorAttributesSection
-                      name={localCharacter.id}
+                      name={actorProfileName}
                       EnglishName={localCharacter.EnglishName}
                       context='character'
                       factionId={factionId}
@@ -324,7 +325,7 @@ export default function CharacterDetails({
                     />
                   ) : (
                     <ActorAttributesSection
-                      name={localCharacter.id}
+                      name={actorProfileName}
                       context='character'
                       factionId={factionId}
                       {...(localCharacter.specialClawKnifeCdHit === undefined
@@ -340,7 +341,7 @@ export default function CharacterDetails({
                     descriptors={[
                       {
                         op: 'set',
-                        path: `${localCharacter.id}.${
+                        path: `${sourceId}.${
                           factionId === 'cat' ? 'catPositioningTags' : 'mousePositioningTags'
                         }`,
                         hasNewValue: true,
@@ -354,7 +355,7 @@ export default function CharacterDetails({
                     descriptors={[
                       {
                         op: 'set',
-                        path: `${localCharacter.id}.specialSkills`,
+                        path: `${sourceId}.specialSkills`,
                         hasNewValue: true,
                       },
                     ]}
@@ -386,7 +387,7 @@ export default function CharacterDetails({
                 descriptors={[
                   {
                     op: 'set',
-                    path: `${localCharacter.id}.knowledgeCardGroups`,
+                    path: `${sourceId}.knowledgeCardGroups`,
                     hasNewValue: true,
                   },
                 ]}
@@ -408,7 +409,7 @@ export default function CharacterDetails({
                           key={skill.id}
                           skill={skill}
                           isSingleWeapon={isSingleWeapon && skill.type === 'weapon1'}
-                          characterId={localCharacter.id}
+                          characterId={sourceId}
                           skillIndex={index}
                         />
                       ))
@@ -430,7 +431,7 @@ export default function CharacterDetails({
                         ) : null
                       );
                   })()}
-                  {characterTraitCount > 0 || characterReverseCount > 0 ? (
+                  {characterTraitCount > 0 || characterReferenceCard ? (
                     <div className='space-y-2'>
                       {characterTraitCount > 0 ? (
                         <CollapseCard
@@ -442,16 +443,7 @@ export default function CharacterDetails({
                           <SingleItemTraitsText singleItem={characterSingleItem} />
                         </CollapseCard>
                       ) : null}
-                      {characterReverseCount > 0 ? (
-                        <CollapseCard
-                          title={`${localCharacter.id}自身的引用项(${characterReverseCount})`}
-                          size='xs'
-                          className='rounded-md px-1 pb-1 whitespace-pre-wrap'
-                          titleClassName='pl-3'
-                        >
-                          <SingleItemReverseCard singleItem={characterSingleItem} />
-                        </CollapseCard>
-                      ) : null}
+                      {characterReferenceCard}
                     </div>
                   ) : null}
                 </div>
@@ -460,7 +452,7 @@ export default function CharacterDetails({
                 <CharacterSection
                   title={localCharacter.factionId == 'cat' ? '克制关系' : '克制/协作关系'}
                 >
-                  <CharacterRelationDisplay id={localCharacter.id} factionId={factionId} />
+                  <CharacterRelationDisplay id={sourceId} factionId={factionId} />
                 </CharacterSection>
               )}
               {children}

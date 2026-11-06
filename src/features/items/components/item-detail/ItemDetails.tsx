@@ -1,6 +1,5 @@
 'use client';
 
-import type { PackedSection } from '@/lib/referenceProjection';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
@@ -12,7 +11,7 @@ import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
-import PublishedReverseCard from '@/features/shared/detail-view/PublishedReverseCard';
+import RouteReferenceCard from '@/features/shared/detail-view/RouteReferenceCard';
 import { editable } from '@/components/ui/editable';
 
 import ItemAttributesCard from './ItemAttributesCard';
@@ -20,11 +19,9 @@ import ItemAttributesCard from './ItemAttributesCard';
 export default function ItemDetailClient({
   item,
   itemName: routeItemName,
-  references,
 }: {
   item: Item | null;
   itemName: string;
-  references: PackedSection;
 }) {
   const { isEditMode } = useEditMode();
   const { itemName } = useLocalItem();
@@ -64,7 +61,7 @@ export default function ItemDetailClient({
         >
           <div className='-mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveItem.name, type: 'item' }} />
-            <PublishedReverseCard section={references} />
+            <RouteReferenceCard />
             <DetailOwnbuffsCard singleItem={{ name: effectiveItem.name, type: 'item' }} />
           </div>
         </DetailTextSection>

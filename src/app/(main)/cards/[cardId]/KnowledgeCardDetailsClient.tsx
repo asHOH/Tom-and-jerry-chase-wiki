@@ -3,8 +3,10 @@
 import dynamic from 'next/dynamic';
 
 import type { KnowledgeCardCharacterLookup } from '@/lib/gameData/published/clientProjections';
+import type { PackedReferencePage } from '@/lib/gameData/published/reverseReferences';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
+import ReferencePageContent from '@/features/shared/detail-view/ReferencePageContent';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 
@@ -21,6 +23,7 @@ const KnowledgeCardDetails = dynamic(
 
 type KnowledgeCardDetailsClientProps = KnowledgeCardDetailsProps & {
   cardId: string;
+  referencePage: PackedReferencePage;
   publishedRevision: `v1:${string}`;
   publishedHistory: PublishedEntityHistory;
   charactersData: KnowledgeCardCharacterLookup;
@@ -28,6 +31,7 @@ type KnowledgeCardDetailsClientProps = KnowledgeCardDetailsProps & {
 
 export default function KnowledgeCardDetailsClient({
   cardId,
+  referencePage,
   publishedRevision,
   publishedHistory,
   ...props
@@ -40,7 +44,9 @@ export default function KnowledgeCardDetailsClient({
       publishedRevision={publishedRevision}
       publishedHistory={publishedHistory}
     >
-      <KnowledgeCardDetails {...props} />
+      <ReferencePageContent page={referencePage}>
+        <KnowledgeCardDetails {...props} />
+      </ReferencePageContent>
     </EditModePageShell>
   );
 }

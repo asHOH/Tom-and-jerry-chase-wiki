@@ -6,10 +6,10 @@ import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboard
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Buff, SingleItem, SingleItemTypeChineseNameList } from '@/data/types';
-import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import RouteReferenceCard from '@/features/shared/detail-view/RouteReferenceCard';
 import SingleItemListEditor from '@/features/shared/detail-view/SingleItemListEditor';
 import AccordionCard from '@/components/ui/AccordionCard';
 import { editable } from '@/components/ui/editable';
@@ -58,7 +58,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
         >
           <div className='-mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveBuff.name, type: 'buff' }} />
-            <DetailReverseCard singleItem={{ name: effectiveBuff.name, type: 'buff' }} />
+            <RouteReferenceCard />
           </div>
         </DetailTextSection>
       ),

@@ -2,12 +2,8 @@ import { isDeepStrictEqual } from 'node:util';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { packReferenceRevisions } from '@/lib/gameData/published/referenceRevisionProps';
-import {
-  getPublishedReferenceSections,
-  getReferenceActionSnapshot,
-  packPublishedReferenceSection,
-} from '@/lib/gameData/published/reverseReferences';
+import { getPublishedReferenceRoute } from '@/lib/gameData/published/referenceRoute';
+import { getReferenceActionSnapshot } from '@/lib/gameData/published/reverseReferences';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import type { Item } from '@/data/types';
@@ -68,26 +64,16 @@ export default async function ItemDetailPage({
   params: Promise<{ itemName: string }>;
 }) {
   const itemName = decodeURIComponent((await params).itemName);
-  const snapshot = await getReferenceActionSnapshot();
-  const readModel = await getPublishedEntityRouteReadModel('items', itemName, undefined, snapshot);
+  const readModel = await getPublishedReferenceRoute('items', itemName);
+  if (!readModel) notFound();
   const item = readModel.data;
-
-  if (!item) {
-    notFound();
-  }
-
-  const { sections, revisions } = await getPublishedReferenceSections(snapshot, [
-    { name: item.name, sourceId: itemName, type: 'item' },
-  ]);
-  const { items: _primaryRevision, ...relatedRevisions } = revisions;
   return (
     <>
       <StructuredData data={generateStructuredData(itemName, item)} />
       <ItemDetailClient
         item={isDeepStrictEqual(item, canonicalItems[itemName]) ? null : item}
         itemName={itemName}
-        references={packPublishedReferenceSection(sections[0]!)}
-        relatedRevisions={packReferenceRevisions(relatedRevisions)}
+        referencePage={readModel.referencePage}
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
       />

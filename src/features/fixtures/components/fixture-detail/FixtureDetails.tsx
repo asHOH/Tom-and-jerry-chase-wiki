@@ -7,10 +7,10 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Fixture, SingleItem } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
-import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import RouteReferenceCard from '@/features/shared/detail-view/RouteReferenceCard';
 import { editable } from '@/components/ui/editable';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 
@@ -57,7 +57,7 @@ export default function FixtureDetailClient({ fixture }: { fixture: Fixture }) {
         >
           <div className='-mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveFixture.name, type: 'fixture' }} />
-            <DetailReverseCard singleItem={{ name: effectiveFixture.name, type: 'fixture' }} />
+            <RouteReferenceCard />
             <DetailOwnbuffsCard singleItem={{ name: effectiveFixture.name, type: 'fixture' }} />
           </div>
         </DetailTextSection>

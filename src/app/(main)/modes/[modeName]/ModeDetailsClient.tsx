@@ -3,9 +3,11 @@
 import dynamic from 'next/dynamic';
 
 import type { MapModeRelationCharacterLookup } from '@/lib/gameData/published/clientProjections';
+import type { PackedReferencePage } from '@/lib/gameData/published/reverseReferences';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import type { Mode } from '@/data/types';
+import ReferencePageContent from '@/features/shared/detail-view/ReferencePageContent';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 
@@ -16,6 +18,7 @@ const ModeDetails = dynamic(() => import('@/features/modes/components/mode-detai
 export default function ModeDetailsClient({
   mode,
   modeName,
+  referencePage,
   publishedRevision,
   publishedHistory,
   mapsData,
@@ -23,6 +26,7 @@ export default function ModeDetailsClient({
 }: {
   mode: Mode;
   modeName: string;
+  referencePage: PackedReferencePage;
   publishedRevision: `v1:${string}`;
   publishedHistory: PublishedEntityHistory;
   mapsData: PublishedGameDataByType['maps'];
@@ -36,7 +40,9 @@ export default function ModeDetailsClient({
       publishedRevision={publishedRevision}
       publishedHistory={publishedHistory}
     >
-      <ModeDetails mode={mode} mapsData={mapsData} charactersData={charactersData} />
+      <ReferencePageContent page={referencePage}>
+        <ModeDetails mode={mode} mapsData={mapsData} charactersData={charactersData} />
+      </ReferencePageContent>
     </EditModePageShell>
   );
 }

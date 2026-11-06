@@ -2,8 +2,10 @@
 
 import dynamic from 'next/dynamic';
 
+import type { PackedReferencePage } from '@/lib/gameData/published/reverseReferences';
 import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import type { Entity } from '@/data/types';
+import ReferencePageContent from '@/features/shared/detail-view/ReferencePageContent';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 
@@ -14,11 +16,13 @@ const EntityDetails = dynamic(() => import('@/features/entities/entity-detail/En
 export default function EntityDetailsClient({
   entity,
   entityName,
+  referencePage,
   publishedRevision,
   publishedHistory,
 }: {
   entity: Entity;
   entityName: string;
+  referencePage: PackedReferencePage;
   publishedRevision: `v1:${string}`;
   publishedHistory: PublishedEntityHistory;
 }) {
@@ -30,7 +34,9 @@ export default function EntityDetailsClient({
       publishedRevision={publishedRevision}
       publishedHistory={publishedHistory}
     >
-      <EntityDetails entity={entity} />
+      <ReferencePageContent page={referencePage}>
+        <EntityDetails entity={entity} />
+      </ReferencePageContent>
     </EditModePageShell>
   );
 }

@@ -10,10 +10,10 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Entity, Skill } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
-import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import RouteReferenceCard from '@/features/shared/detail-view/RouteReferenceCard';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PendingActionWarningBoundary } from '@/components/ui/PendingActionWarning';
@@ -61,7 +61,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
         >
           <div className='-mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveEntity.name, type: 'entity' }} />
-            <DetailReverseCard singleItem={{ name: effectiveEntity.name, type: 'entity' }} />
+            <RouteReferenceCard />
             <DetailOwnbuffsCard singleItem={{ name: effectiveEntity.name, type: 'entity' }} />
           </div>
         </DetailTextSection>

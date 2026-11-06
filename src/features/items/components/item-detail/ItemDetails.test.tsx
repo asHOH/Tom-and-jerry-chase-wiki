@@ -120,7 +120,7 @@ jest.mock('@/features/shared/detail-view/DetailOwnbuffsCard', () => ({
   default: () => null,
 }));
 
-jest.mock('@/features/shared/detail-view/PublishedReverseCard', () => ({
+jest.mock('@/features/shared/detail-view/RouteReferenceCard', () => ({
   __esModule: true,
   default: () => null,
 }));
@@ -141,8 +141,7 @@ function renderWithState(state: EditModeState, item: Item | null = publishedItem
     <ItemDetailsClient
       item={item}
       itemName={item?.name ?? '叉子'}
-      references={{ title: '引用项', groups: [] }}
-      relatedRevisions={{}}
+      referencePage={{ primary: 'items', sections: [], relatedRevisions: {} }}
       publishedRevision='v1:test'
       publishedHistory={{ entries: [], unavailable: false }}
     />

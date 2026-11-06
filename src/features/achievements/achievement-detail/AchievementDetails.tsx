@@ -6,10 +6,10 @@ import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboard
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Achievement } from '@/data/types';
-import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import RouteReferenceCard from '@/features/shared/detail-view/RouteReferenceCard';
 import { editable } from '@/components/ui/editable';
 
 import AchievementAttributesCard from './AchievementAttributesCard';
@@ -69,13 +69,7 @@ export default function AchievementDetailClient({ achievement }: { achievement: 
                 factionId: effectiveAchievement.factionId,
               }}
             />
-            <DetailReverseCard
-              singleItem={{
-                name: effectiveAchievement.name,
-                type: 'achievement',
-                factionId: effectiveAchievement.factionId,
-              }}
-            />
+            <RouteReferenceCard />
           </div>
         </DetailTextSection>
       ),

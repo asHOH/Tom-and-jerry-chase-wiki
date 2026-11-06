@@ -2,8 +2,10 @@
 
 import dynamic from 'next/dynamic';
 
+import type { PackedReferencePage } from '@/lib/gameData/published/reverseReferences';
 import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import type { Achievement, FactionId } from '@/data/types';
+import ReferencePageContent from '@/features/shared/detail-view/ReferencePageContent';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 
@@ -18,12 +20,14 @@ export default function AchievementDetailsClient({
   achievement,
   factionId,
   achievementName,
+  referencePage,
   publishedRevision,
   publishedHistory,
 }: {
   achievement: Achievement;
   factionId: FactionId;
   achievementName: string;
+  referencePage: PackedReferencePage;
   publishedRevision: `v1:${string}`;
   publishedHistory: PublishedEntityHistory;
 }) {
@@ -37,7 +41,9 @@ export default function AchievementDetailsClient({
       publishedRevision={publishedRevision}
       publishedHistory={publishedHistory}
     >
-      <AchievementDetails achievement={achievement} />
+      <ReferencePageContent page={referencePage}>
+        <AchievementDetails achievement={achievement} />
+      </ReferencePageContent>
     </EditModePageShell>
   );
 }

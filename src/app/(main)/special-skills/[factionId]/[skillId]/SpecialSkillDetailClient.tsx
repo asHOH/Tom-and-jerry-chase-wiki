@@ -3,8 +3,10 @@
 import dynamic from 'next/dynamic';
 
 import type { SpecialSkillCharacterLookup } from '@/lib/gameData/published/clientProjections';
+import type { PackedReferencePage } from '@/lib/gameData/published/reverseReferences';
 import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import type { FactionId, SpecialSkill } from '@/data/types';
+import ReferencePageContent from '@/features/shared/detail-view/ReferencePageContent';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 
@@ -19,6 +21,7 @@ export default function SpecialSkillDetailClient({
   skill,
   factionId,
   skillId,
+  referencePage,
   publishedRevision,
   publishedHistory,
   charactersData,
@@ -26,6 +29,7 @@ export default function SpecialSkillDetailClient({
   skill: SpecialSkill;
   factionId: FactionId;
   skillId: string;
+  referencePage: PackedReferencePage;
   publishedRevision: `v1:${string}`;
   publishedHistory: PublishedEntityHistory;
   charactersData: SpecialSkillCharacterLookup;
@@ -40,7 +44,9 @@ export default function SpecialSkillDetailClient({
       publishedRevision={publishedRevision}
       publishedHistory={publishedHistory}
     >
-      <SpecialSkillDetails skill={skill} charactersData={charactersData} />
+      <ReferencePageContent page={referencePage}>
+        <SpecialSkillDetails skill={skill} charactersData={charactersData} />
+      </ReferencePageContent>
     </EditModePageShell>
   );
 }

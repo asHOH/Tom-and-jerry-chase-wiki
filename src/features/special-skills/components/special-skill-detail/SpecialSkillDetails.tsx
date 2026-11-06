@@ -13,10 +13,10 @@ import { characters } from '@/data/static';
 import { SpecialSkill } from '@/data/types';
 import CharacterList from '@/features/knowledge-cards/components/knowledge-card-detail/CharacterList';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
-import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import RouteReferenceCard from '@/features/shared/detail-view/RouteReferenceCard';
 import { editable } from '@/components/ui/editable';
 
 import SpecialSkillAttributesCard from './SpecialSkillAttributesCard';
@@ -113,13 +113,7 @@ export default function SpecialSkillDetailClient({
                 factionId: effectiveSkill.factionId,
               }}
             />
-            <DetailReverseCard
-              singleItem={{
-                name: effectiveSkill.name,
-                type: 'specialSkill',
-                factionId: effectiveSkill.factionId,
-              }}
-            />
+            <RouteReferenceCard />
             <DetailOwnbuffsCard
               singleItem={{
                 name: effectiveSkill.name,

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getPublishedReferenceRoute } from '@/lib/gameData/published/referenceRoute';
+import { getReferenceActionSnapshot } from '@/lib/gameData/published/reverseReferences';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { achievements as canonicalAchievements } from '@/data/static';
@@ -43,10 +45,12 @@ export async function generateMetadata({
   const factionId = decodeURIComponent(resolvedParams.factionId);
   const achievementName = decodeURIComponent(resolvedParams.achievementName);
   if (factionId !== 'cat' && factionId !== 'mouse') return {};
+  const snapshot = await getReferenceActionSnapshot();
   const { data: achievement } = await getPublishedEntityRouteReadModel(
     'achievements',
     achievementName,
-    factionId
+    factionId,
+    snapshot
   );
 
   if (!achievement) return {};
@@ -75,14 +79,9 @@ export default async function AchievementDetailPage({
   if (factionIdRaw !== 'cat' && factionIdRaw !== 'mouse') notFound();
 
   const factionId = factionIdRaw as FactionId;
-  const readModel = await getPublishedEntityRouteReadModel(
-    'achievements',
-    achievementName,
-    factionId
-  );
+  const readModel = await getPublishedReferenceRoute('achievements', achievementName, factionId);
+  if (!readModel) notFound();
   const achievement = readModel.data;
-  if (!achievement) notFound();
-
   return (
     <>
       <StructuredData data={generateStructuredData(factionId, achievementName, achievement)} />
@@ -90,6 +89,7 @@ export default async function AchievementDetailPage({
         achievement={achievement}
         factionId={factionId}
         achievementName={achievementName}
+        referencePage={readModel.referencePage}
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
       />

@@ -1,14 +1,12 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { projectMapModeRelationCharacters } from '@/lib/gameData/published/clientProjections';
-import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
-import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
+import { getPublishedReferenceRoute } from '@/lib/gameData/published/referenceRoute';
+import { getReferenceActionSnapshot } from '@/lib/gameData/published/reverseReferences';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { modes as canonicalModes } from '@/data/static';
 import type { Mode } from '@/data/types';
-import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 import StructuredData from '@/components/StructuredData';
 
 import ModeDetailClient from './ModeDetailsClient';
@@ -37,7 +35,13 @@ export async function generateMetadata({
   params: Promise<{ modeName: string }>;
 }): Promise<Metadata> {
   const modeName = decodeURIComponent((await params).modeName);
-  const { data: mode } = await getPublishedEntityRouteReadModel('modes', modeName);
+  const snapshot = await getReferenceActionSnapshot();
+  const { data: mode } = await getPublishedEntityRouteReadModel(
+    'modes',
+    modeName,
+    undefined,
+    snapshot
+  );
 
   if (!mode) {
     return {};
@@ -59,29 +63,21 @@ export default async function ModeDetailPage({
   params: Promise<{ modeName: string }>;
 }) {
   const modeName = decodeURIComponent((await params).modeName);
-  const snapshot = await getApprovedActionSnapshot('modes', 'maps', 'characters');
-  const [readModel, maps, characters] = await Promise.all([
-    getPublishedEntityRouteReadModel('modes', modeName, undefined, snapshot),
-    getPublishedDomainReadModel('maps', snapshot),
-    getPublishedDomainReadModel('characters', snapshot),
-  ]);
+  const readModel = await getPublishedReferenceRoute('modes', modeName);
+  if (!readModel) notFound();
   const mode = readModel.data;
-
-  if (!mode) {
-    notFound();
-  }
-
   return (
-    <PublishedRevisionBoundary revisions={{ maps: maps.revision, characters: characters.revision }}>
+    <>
       <StructuredData data={generateStructuredData(modeName, mode)} />
       <ModeDetailClient
         mode={mode}
         modeName={modeName}
+        referencePage={readModel.referencePage}
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
-        mapsData={maps.data}
-        charactersData={projectMapModeRelationCharacters(characters.data)}
+        mapsData={readModel.mapsData}
+        charactersData={readModel.charactersData}
       />
-    </PublishedRevisionBoundary>
+    </>
   );
 }

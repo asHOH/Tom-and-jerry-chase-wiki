@@ -13,8 +13,8 @@ import { useEditMode } from '@/context/EditModeContext';
 import { Skill, SkillLevel } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
-import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import RouteReferenceCard from '@/features/shared/detail-view/RouteReferenceCard';
 import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
@@ -227,6 +227,11 @@ export default function SkillCard({
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const publishedCharacter = usePublishedCharacter(characterId);
+  const matchesSkill = (entry: DeepReadonly<Skill> | undefined) =>
+    entry?.id === skill.id && entry?.name === skill.name;
+  const referenceIndex = matchesSkill(publishedCharacter.skills[skillIndex])
+    ? skillIndex
+    : publishedCharacter.skills.findIndex(matchesSkill);
   const [localCharacter, updateCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
@@ -337,7 +342,7 @@ export default function SkillCard({
       </div>
       <div className='mt-4 space-y-2'>
         <DetailTraitsCard singleItem={{ name: skill.name, type: 'skill' }} />
-        <DetailReverseCard singleItem={{ name: skill.name, type: 'skill' }} />
+        {referenceIndex >= 0 && <RouteReferenceCard index={referenceIndex + 1} />}
         <DetailOwnbuffsCard singleItem={{ name: skill.name, type: 'skill' }} />
       </div>
     </Card>

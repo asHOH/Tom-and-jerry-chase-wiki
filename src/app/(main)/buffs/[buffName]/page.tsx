@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getPublishedReferenceRoute } from '@/lib/gameData/published/referenceRoute';
+import { getReferenceActionSnapshot } from '@/lib/gameData/published/reverseReferences';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { buffs as canonicalBuffs } from '@/data/static';
@@ -33,7 +35,13 @@ export async function generateMetadata({
   params: Promise<{ buffName: string }>;
 }): Promise<Metadata> {
   const buffName = decodeURIComponent((await params).buffName);
-  const { data: buff } = await getPublishedEntityRouteReadModel('buffs', buffName);
+  const snapshot = await getReferenceActionSnapshot();
+  const { data: buff } = await getPublishedEntityRouteReadModel(
+    'buffs',
+    buffName,
+    undefined,
+    snapshot
+  );
 
   if (!buff) {
     return {};
@@ -55,19 +63,16 @@ export default async function BuffDetailPage({
   params: Promise<{ buffName: string }>;
 }) {
   const buffName = decodeURIComponent((await params).buffName);
-  const readModel = await getPublishedEntityRouteReadModel('buffs', buffName);
+  const readModel = await getPublishedReferenceRoute('buffs', buffName);
+  if (!readModel) notFound();
   const buff = readModel.data;
-
-  if (!buff) {
-    notFound();
-  }
-
   return (
     <>
       <StructuredData data={generateStructuredData(buffName, buff)} />
       <BuffDetailClient
         buff={buff}
         buffName={buffName}
+        referencePage={readModel.referencePage}
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
       />

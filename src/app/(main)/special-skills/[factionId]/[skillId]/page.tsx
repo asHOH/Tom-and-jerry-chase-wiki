@@ -1,14 +1,12 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { projectSpecialSkillCharacters } from '@/lib/gameData/published/clientProjections';
-import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
-import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
+import { getPublishedReferenceRoute } from '@/lib/gameData/published/referenceRoute';
+import { getReferenceActionSnapshot } from '@/lib/gameData/published/reverseReferences';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { specialSkills as canonicalSpecialSkills } from '@/data/static';
 import type { FactionId, SpecialSkill } from '@/data/types';
-import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 import StructuredData from '@/components/StructuredData';
 
 import SpecialSkillDetailClient from './SpecialSkillDetailClient';
@@ -47,10 +45,12 @@ export async function generateMetadata({
     return {};
   }
   const factionId = factionIdRaw as FactionId;
+  const snapshot = await getReferenceActionSnapshot();
   const { data: skill } = await getPublishedEntityRouteReadModel(
     'specialSkills',
     skillId,
-    factionId
+    factionId,
+    snapshot
   );
 
   if (!skill) {
@@ -81,28 +81,21 @@ export default async function SpecialSkillDetailPage({
     notFound();
   }
   const factionId = factionIdRaw as FactionId;
-  const snapshot = await getApprovedActionSnapshot('specialSkills', 'characters');
-  const [readModel, characters] = await Promise.all([
-    getPublishedEntityRouteReadModel('specialSkills', skillId, factionId, snapshot),
-    getPublishedDomainReadModel('characters', snapshot),
-  ]);
+  const readModel = await getPublishedReferenceRoute('specialSkills', skillId, factionId);
+  if (!readModel) notFound();
   const skill = readModel.data;
-
-  if (!skill) {
-    notFound();
-  }
-
   return (
-    <PublishedRevisionBoundary revisions={{ characters: characters.revision }}>
+    <>
       <StructuredData data={generateStructuredData(factionId, skillId, skill)} />
       <SpecialSkillDetailClient
         skill={skill}
         factionId={factionId}
         skillId={skillId}
+        referencePage={readModel.referencePage}
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
-        charactersData={projectSpecialSkillCharacters(characters.data)}
+        charactersData={readModel.charactersData}
       />
-    </PublishedRevisionBoundary>
+    </>
   );
 }

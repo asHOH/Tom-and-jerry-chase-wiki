@@ -1,14 +1,12 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { projectKnowledgeCardCharacters } from '@/lib/gameData/published/clientProjections';
-import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
-import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
+import { getPublishedReferenceRoute } from '@/lib/gameData/published/referenceRoute';
+import { getReferenceActionSnapshot } from '@/lib/gameData/published/reverseReferences';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { createArticleJsonLd, generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { cards as canonicalCards } from '@/data/static';
 import type { Card } from '@/data/types';
-import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 import StructuredData from '@/components/StructuredData';
 
 import KnowledgeCardDetailsClient from './KnowledgeCardDetailsClient';
@@ -38,7 +36,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const resolvedParams = await params;
   const cardId = decodeURIComponent(resolvedParams.cardId); // Decode the URL-encoded card ID
-  const { data: card } = await getPublishedEntityRouteReadModel('cards', cardId);
+  const snapshot = await getReferenceActionSnapshot();
+  const { data: card } = await getPublishedEntityRouteReadModel(
+    'cards',
+    cardId,
+    undefined,
+    snapshot
+  );
 
   if (!card) {
     return {};
@@ -59,27 +63,20 @@ export async function generateMetadata({
 export default async function CardPage({ params }: { params: Promise<{ cardId: string }> }) {
   const resolvedParams = await params;
   const cardId = decodeURIComponent(resolvedParams.cardId); // Decode the URL-encoded card ID
-  const snapshot = await getApprovedActionSnapshot('cards', 'characters');
-  const [readModel, characters] = await Promise.all([
-    getPublishedEntityRouteReadModel('cards', cardId, undefined, snapshot),
-    getPublishedDomainReadModel('characters', snapshot),
-  ]);
+  const readModel = await getPublishedReferenceRoute('cards', cardId);
+  if (!readModel) notFound();
   const card = readModel.data;
-
-  if (!card) {
-    notFound();
-  }
-
   return (
-    <PublishedRevisionBoundary revisions={{ characters: characters.revision }}>
+    <>
       <StructuredData data={generateStructuredData(cardId, card)} />
       <KnowledgeCardDetailsClient
         card={card}
         cardId={cardId}
+        referencePage={readModel.referencePage}
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
-        charactersData={projectKnowledgeCardCharacters(characters.data)}
+        charactersData={readModel.charactersData}
       />
-    </PublishedRevisionBoundary>
+    </>
   );
 }

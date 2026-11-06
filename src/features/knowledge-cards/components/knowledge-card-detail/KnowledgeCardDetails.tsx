@@ -18,10 +18,10 @@ import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
-import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import RouteReferenceCard from '@/features/shared/detail-view/RouteReferenceCard';
 import Button from '@/components/ui/Button';
 import { editable } from '@/components/ui/editable';
 import Image from '@/components/Image';
@@ -175,7 +175,7 @@ export default function KnowledgeCardDetails({
           </div>
           <div className='mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveCard.id, type: 'knowledgeCard' }} />
-            <DetailReverseCard singleItem={{ name: effectiveCard.id, type: 'knowledgeCard' }} />
+            <RouteReferenceCard />
             <DetailOwnbuffsCard singleItem={{ name: effectiveCard.id, type: 'knowledgeCard' }} />
           </div>
         </DetailTextSection>

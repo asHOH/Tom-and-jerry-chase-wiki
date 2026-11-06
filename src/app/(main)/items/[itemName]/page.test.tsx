@@ -1,24 +1,28 @@
 import { render, screen } from '@testing-library/react';
 
 import {
-  getPublishedReferenceSections,
   getReferenceActionSnapshot,
+  getReferencePage,
 } from '@/lib/gameData/published/reverseReferences';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { items } from '@/data';
 
 import ItemDetailPage, { generateMetadata } from './page';
 
+jest.mock('server-only', () => ({}));
 jest.mock('@/lib/gameData/published/routeSelectors', () => ({
   getPublishedEntityRouteReadModel: jest.fn(),
 }));
 
 jest.mock('@/lib/gameData/published/reverseReferences', () => ({
-  packPublishedReferenceSection: (section: unknown) => section,
   getReferenceActionSnapshot: jest.fn(async () => ({ rows: [], actionRevision: 'v1:snapshot' })),
-  getPublishedReferenceSections: jest.fn(async () => ({
-    sections: [{ title: '引用项', groups: [] }],
-    revisions: { characters: 'v1:referring-character' },
+  getReferencePage: jest.fn(async () => ({
+    page: {
+      sections: [{ title: '引用项', groups: [] }],
+      primary: 'items',
+      relatedRevisions: { characters: 'v1:referring-character' },
+    },
+    data: {},
   })),
 }));
 jest.mock('@/components/StructuredData', () => ({
@@ -33,14 +37,14 @@ jest.mock('./ItemDetailsClient', () => ({
   default: ({
     item,
     publishedRevision,
-    relatedRevisions,
+    referencePage,
   }: {
     item: { description?: string } | null;
     publishedRevision: string;
-    relatedRevisions: { characters: string };
+    referencePage: { relatedRevisions: { characters: string } };
   }) => (
     <div data-revision={publishedRevision} data-testid='item-description'>
-      <span data-testid='referring-revision'>{relatedRevisions.characters}</span>
+      <span data-testid='referring-revision'>{referencePage.relatedRevisions.characters}</span>
       {item === null ? 'canonical-pointer' : item.description}
     </div>
   ),
@@ -100,7 +104,7 @@ describe('item detail published-data characterization', () => {
       undefined,
       snapshot
     );
-    expect(getPublishedReferenceSections).toHaveBeenCalledWith(snapshot, [
+    expect(getReferencePage).toHaveBeenCalledWith(snapshot, 'items', [
       { type: 'item', name: items[itemName]!.name, sourceId: itemName },
     ]);
     expect(screen.getByTestId('referring-revision')).toHaveTextContent('v1:referring-character');

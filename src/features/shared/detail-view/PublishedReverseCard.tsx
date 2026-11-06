@@ -1,97 +1,44 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 
-import {
-  unpackReferenceRow,
-  type PackedGroup,
-  type PackedSection,
-} from '@/lib/referenceProjection';
-import { useMobile } from '@/hooks/useMediaQuery';
-import {
-  achievements,
-  buffs,
-  cards,
-  characters,
-  entities,
-  fixtures,
-  items,
-  maps,
-  modes,
-  specialSkills,
-} from '@/data/static';
+import { preparedModule } from '@/lib/preparedModule';
+import type { PackedGroup, PackedSection } from '@/lib/referenceProjection';
+import { usePreparedComponent } from '@/hooks/usePreparedComponent';
+import Button from '@/components/ui/Button';
 
-import {
-  createReferenceHighlighter,
-  ReverseReferenceResults,
-  ReverseResultButton,
-} from '../components/ReverseReferenceResults';
 import DetailRelatedCard from './DetailRelatedCard';
 
-const canonical = {
-  achievements,
-  buffs,
-  cards,
-  characters,
-  entities,
-  fixtures,
-  items,
-  maps,
-  modes,
-  specialSkills,
-};
+const referenceRows = preparedModule(() => import('./PublishedReferenceRows'));
 
-function PublishedRow({
-  value,
-  keywords,
-  mobile,
-  highlight,
-}: {
-  value: PackedGroup['rows'][number];
-  keywords: PackedGroup['keywords'];
-  mobile: boolean;
-  highlight: ReturnType<typeof createReferenceHighlighter>;
-}) {
-  const row = unpackReferenceRow(canonical, value, keywords, mobile);
+function PreparedRows({ group }: { group: PackedGroup }) {
+  const { Component: Rows, error, retry } = usePreparedComponent(referenceRows, true);
+  if (Rows) return <Rows group={group} />;
   return (
-    <ReverseResultButton
-      published
-      result={row}
-      highlightKeywords={highlight}
-      href={row.href}
-      imageUrl={row.imageUrl}
-      ownerSuffix={row.ownerSuffix}
-    />
-  );
-}
-
-function GroupRows({ group }: { group: PackedGroup }) {
-  const mobile = useMobile();
-  const highlight = useMemo(() => createReferenceHighlighter(group.keywords), [group.keywords]);
-  return (
-    <ReverseReferenceResults
-      rows={group.rows}
-      typeOf={(row) => ('at' in row ? row.at[0] : row.type)}
-      renderRow={(value, index) => (
-        <PublishedRow
-          key={index}
-          value={value}
-          keywords={group.keywords}
-          mobile={mobile}
-          highlight={highlight}
-        />
+    <div role='status'>
+      {error ? (
+        <>
+          引用项加载失败 <Button onClick={retry}>重试</Button>
+        </>
+      ) : (
+        '正在加载引用项…'
       )}
-    />
+    </div>
   );
 }
 
 export default function PublishedReverseCard({ section }: { section: PackedSection }) {
-  if (!section.groups.length) return null;
+  const hasRows = section.groups.length > 0;
+  useEffect(() => {
+    // Warm the code after render for offline visits. Opening the card retries a failed warmup.
+    if (hasRows) void referenceRows.load().catch(() => {});
+  }, [hasRows]);
+  if (!hasRows) return null;
   const items = section.groups.map((group, index) => ({
     id: String(index),
     title: group.title + '(' + group.rows.length + ')',
     count: group.rows.length,
-    children: <GroupRows group={group} />,
+    children: <PreparedRows group={group} />,
     activeColor: 'orange' as const,
   }));
   const total = items.reduce((sum, item) => sum + item.count, 0);

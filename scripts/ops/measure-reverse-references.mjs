@@ -15,6 +15,20 @@ const routes = [
   { path: '/items/经验蛋糕/', marker: 'Section:道具描述', hasResults: false },
   { path: '/characters/汤姆/', marker: 'Section:技能描述', hasResults: true },
 ];
+const migration = process.argv[4] === 'migration';
+if (migration) {
+  routes.push(
+    ...[
+      ['/buffs/眩晕/', 'Section:详细介绍'],
+      ['/entities/线条火箭/', 'Section:衍生物描述'],
+      ['/fixtures/平台/', 'Section:物件描述'],
+      ['/achievements/mouse/无畏/', 'Section:成就描述'],
+      ['/cards/缴械/', 'Section:知识卡效果'],
+      ['/modes/多元乱斗/', 'Section:模式规则'],
+      ['/special-skills/mouse/勇气投掷/', 'Section:技能描述'],
+    ].map(([path, marker]) => ({ path, marker, hasResults: true }))
+  );
+}
 
 async function fileBytes(file) {
   const info = await stat(file);
@@ -129,6 +143,13 @@ try {
         '.next/server/chunks',
         '.next/cache/fetch-cache',
         '.next/server/app/items',
+        ...(migration
+          ? [
+              ...new Set(
+                routes.slice(2).map((route) => '.next/server/app/' + route.path.split('/')[1])
+              ),
+            ]
+          : []),
       ].map(async (directory) => [directory, await fileBytes(directory)])
     )
   );
@@ -142,19 +163,20 @@ try {
     page.setDefaultTimeout(20000);
     const cdp = await context.newCDPSession(page);
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-    await page.addInitScript(() => {
-      window.detailReady = new Promise((resolve) => {
-        function check() {
-          if (
-            document.getElementById('Section:道具描述') ||
-            document.getElementById('Section:技能描述')
-          ) {
-            requestAnimationFrame(() => resolve(performance.now()));
-          } else requestAnimationFrame(check);
-        }
-        requestAnimationFrame(check);
-      });
-    });
+    await page.addInitScript(
+      (markers) => {
+        const marker = markers[decodeURI(location.pathname)];
+        window.detailReady = new Promise((resolve) => {
+          function check() {
+            if (marker && document.getElementById(marker)) {
+              requestAnimationFrame(() => resolve(performance.now()));
+            } else requestAnimationFrame(check);
+          }
+          if (marker) requestAnimationFrame(check);
+        });
+      },
+      Object.fromEntries(routes.map((route) => [route.path, route.marker]))
+    );
     await page.goto(origin + '/');
     await page.waitForFunction(() => navigator.serviceWorker.controller, null, { timeout: 60000 });
     await page.waitForLoadState('networkidle');

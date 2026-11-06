@@ -129,16 +129,6 @@ jest.mock('@/components/ui/editable', () => ({
   }),
 }));
 
-jest.mock('@/lib/singleItemReverse', () => ({
-  __esModule: true,
-  default: () => [],
-}));
-
-jest.mock('@/features/shared/components/SingleItemReverseCard', () => ({
-  __esModule: true,
-  default: () => <div>reverse-card</div>,
-}));
-
 jest.mock('@/features/shared/components/SingleItemTraitsText', () => ({
   __esModule: true,
   default: () => <div>traits-text</div>,
@@ -202,7 +192,13 @@ jest.mock('./skills/SkillAllocationSection', () => ({
 
 jest.mock('./skills/SkillCard', () => ({
   __esModule: true,
-  default: () => <div />,
+  default: function SkillFixture({ characterId }: { characterId: string }) {
+    const { usePublishedCharacter } = jest.requireActual<
+      typeof import('./PublishedCharacterContext')
+    >('./PublishedCharacterContext');
+    const owner = usePublishedCharacter(characterId);
+    return <div data-skill-owner={characterId}>{owner.skills[0]?.name}</div>;
+  },
 }));
 
 jest.mock('./skills/SpecialSkillsSection', () => ({
@@ -317,6 +313,16 @@ describe('CharacterDetails', () => {
 
     expect(html).toContain('draft description');
     expect(html).toContain('draft positioning tag');
+  });
+
+  it('keeps the route owner for skill cards when the draft display ID changes', () => {
+    mockIsEditMode = mockIsEditModeRequested = true;
+    mockRuntimeStatus = 'ready';
+    const skill = { name: '公开技能', id: 'owner-skill', type: 'active' as const, skillLevels: [] };
+    const published = { ...character, id: '公开显示名', skills: [skill] };
+    mockDraftDomains!.characters!.汤姆 = { ...published, id: '新草稿名' };
+    const html = renderToString(<CharacterDetails character={published} />);
+    expect(html).toContain('data-skill-owner="汤姆">公开技能');
   });
 
   it('renders a consistent draft without edit controls while previewing', () => {

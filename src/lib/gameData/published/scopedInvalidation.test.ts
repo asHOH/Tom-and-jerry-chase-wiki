@@ -3,7 +3,7 @@ import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import { readFreshApprovedActionRows } from '@/lib/gameData/runtimeActionSources';
 
 import { getPublishedDomainReadModel, getPublishedDomainsReadModel } from './publishedSnapshot';
-import { getPublishedReferenceSections, getReferenceActionSnapshot } from './reverseReferences';
+import { getPublishedReferenceRoute } from './referenceRoute';
 
 jest.mock('server-only', () => ({}), { virtual: true });
 jest.mock('react', () => ({
@@ -16,6 +16,9 @@ jest.mock('@/lib/supabase/buildSourceGuard', () => ({
 }));
 jest.mock('@/lib/gameData/runtimeActionSources', () => ({
   readFreshApprovedActionRows: jest.fn(),
+}));
+jest.mock('@/lib/gameData/publicActions', () => ({
+  fetchPublicGameDataActionHistory: async () => [],
 }));
 jest.mock('next/cache', () => {
   const entries = new Map<string, { tags: string[]; value: Promise<unknown> }>();
@@ -42,15 +45,11 @@ it('refreshes an empty item reference list when only a referring domain is inval
   const readSource = jest.mocked(readFreshApprovedActionRows);
   const itemId = '经验蛋糕';
   async function readPage() {
-    const snapshot = await getReferenceActionSnapshot();
-    const [item, references] = await Promise.all([
-      getPublishedDomainReadModel('items', snapshot),
-      getPublishedReferenceSections(snapshot, [{ name: itemId, type: 'item' }]),
-    ]);
+    const item = await getPublishedReferenceRoute('items', itemId);
+    if (!item) throw new Error('Missing item fixture');
     return {
       item,
-      references,
-      rows: references.sections[0]!.groups.flatMap((group) => group.rows),
+      rows: item.referencePage.sections[0]!.groups.flatMap((group) => group.rows),
     };
   }
   readSource.mockResolvedValue([]);
@@ -74,7 +73,9 @@ it('refreshes an empty item reference list when only a referring domain is inval
   invalidatePublicGameDataActionsCache(['characters']);
   const added = await readPage();
   expect(added.item.revision).toBe(initial.item.revision);
-  expect(added.references.revisions.characters).not.toBe(initial.references.revisions.characters);
+  expect(added.item.referencePage.relatedRevisions.characters).not.toBe(
+    initial.item.referencePage.relatedRevisions.characters
+  );
   expect(added.rows).toHaveLength(1);
   expect(added.rows[0]).toMatchObject({
     name: '改名的技能',
@@ -85,6 +86,42 @@ it('refreshes an empty item reference list when only a referring domain is inval
   readSource.mockResolvedValue([]);
   invalidatePublicGameDataActionsCache(['characters']);
   expect((await readPage()).rows).toEqual([]);
+});
+
+it('uses the normalized character route key for skill aliases and self-references', async () => {
+  const row: PublicActionRow = {
+    id: 'skill-alias',
+    entity_type: 'characters',
+    created_at: '2026-11-07T00:00:00Z',
+    created_by: null,
+    status: 'approved',
+    reviewed_at: null,
+    message: null,
+    entry: { op: 'set', path: '汤姆.skills.0.aliases', newValue: ['路线别名'] },
+  };
+  jest.mocked(readFreshApprovedActionRows).mockResolvedValue([
+    row,
+    {
+      ...row,
+      id: 'item-mention',
+      entity_type: 'items',
+      entry: { op: 'set', path: '火箭.description', newValue: '{路线别名}' },
+    },
+  ]);
+  invalidatePublicGameDataActionsCache();
+  const canonical = await getPublishedReferenceRoute('characters', '汤姆');
+  expect(
+    canonical!.referencePage.sections[1]!.groups.flatMap((group) => group.rows)
+  ).toContainEqual(
+    expect.objectContaining({
+      href: '/items/' + encodeURIComponent('火箭'),
+      description: '{路线别名}',
+    })
+  );
+  const padded = await getPublishedReferenceRoute('characters', ' 汤姆 ');
+  expect(padded!.referencePage).toEqual(canonical!.referencePage);
+  jest.mocked(readFreshApprovedActionRows).mockResolvedValue([]);
+  invalidatePublicGameDataActionsCache();
 });
 
 it('refreshes a published/revoked domain without refilling unrelated source and projection caches', async () => {
