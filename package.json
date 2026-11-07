@@ -135,7 +135,7 @@
     "json5": "^2.2.3",
     "lodash-es": "^4.18.1",
     "motion": "^12.43.0",
-    "next": "^16.3.6",
+    "next": "^16.4.1",
     "next-themes": "^0.4.6",
     "nextjs-toploader": "^3.9.17",
     "pinyin-pro": "^3.29.4",
@@ -144,7 +144,7 @@
     "react-dom": "^19.3.0",
     "react-plock": "^3.6.1",
     "remark-gfm": "^4.0.1",
-    "sanitize-html": "^2.18.0",
+    "sanitize-html": "^2.18.1",
     "serwist": "^9.5.3",
     "sharp": "^0.35.5",
     "sonner": "^2.0.8",
@@ -156,7 +156,7 @@
     "valtio": "^2.3.2",
     "vm2": "^3.12.2",
     "web-streams-polyfill": "^3.3.3",
-    "zod": "^4.6.5"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
