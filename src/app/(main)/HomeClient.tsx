@@ -7,7 +7,6 @@ import { useUser } from '@/hooks/useUser';
 import { SITE_NAME } from '@/constants/brand';
 import { QQ_GROUP_NUMBER, QQ_GROUP_URL } from '@/constants/community';
 import { isNavGroup, NAV_ITEMS, NavItem } from '@/constants/navigation';
-import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import ExternalLinksDisplay from '@/components/ui/ExternalLinksDisplay';
 import FactionButton from '@/components/ui/FactionButton';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
@@ -27,7 +26,6 @@ type Props = { description: string; hasServiceKey: boolean };
 export default function HomeContentClient({ description, hasServiceKey }: Props) {
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
-  const changeLogsRef = useRef<ChangeLogsRef>(null);
   const { nickname } = useUser();
   const isMobile = useMobile();
   const isFeedbackEnabled = env.NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL !== '1';
@@ -35,8 +33,8 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
   // Double-click on 网站说明 now only triggers login dialog if not logged in
   // Edit mode is now controlled via ?edit=1 URL param on individual pages
   const handleDoubleClick = () => {
-    if (feedbackSectionRef.current?.isOpen?.() || changeLogsRef.current?.isOpen?.()) {
-      return; // Do nothing if feedback or changelog modal is open
+    if (feedbackSectionRef.current?.isOpen?.()) {
+      return;
     }
 
     // Show login dialog if not logged in (for user convenience)
@@ -112,7 +110,6 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         <VersionDisplay />
         <div className='mt-4 flex flex-wrap justify-center gap-4 sm:mt-6'>
           <FeedbackSection ref={feedbackSectionRef} />
-          <ChangeLogs ref={changeLogsRef} />
           <div>
             <FactionButton
               title='使用指南'

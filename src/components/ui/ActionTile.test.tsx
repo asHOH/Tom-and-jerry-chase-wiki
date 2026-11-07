@@ -19,9 +19,9 @@ jest.mock('@/components/Link', () => ({
 
 describe('ActionTile', () => {
   it('renders a button when href is not provided', () => {
-    render(<ActionTile title='Changelog' ariaLabel='Changelog' />);
+    render(<ActionTile title='Feedback' ariaLabel='Feedback' />);
 
-    expect(screen.getByRole('button', { name: 'Changelog' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Feedback' })).toBeInTheDocument();
   });
 
   it('renders an internal link when href is provided', () => {
@@ -121,15 +121,15 @@ describe('ActionTile', () => {
   it('renders stacked utility tiles with visible description text', () => {
     render(
       <ActionTile
-        title='Changelog'
-        description='View site update history'
-        ariaLabel='Changelog'
+        title='Feedback'
+        description='Share suggestions'
+        ariaLabel='Feedback'
         layout='stacked'
       />
     );
 
-    expect(screen.getByRole('button', { name: 'Changelog' })).toBeInTheDocument();
-    expect(screen.getByText('View site update history')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Feedback' })).toBeInTheDocument();
+    expect(screen.getByText('Share suggestions')).toBeInTheDocument();
   });
 
   it('keeps active stacked external tiles interactive', () => {

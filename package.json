@@ -31,7 +31,6 @@
     "build:debug": "node scripts/run-build-with-game-data.mjs build:output:debug",
     "build:output": "npm run generate:history-dates && npm run validate:actor-profiles && node scripts/generate-doc-pages.mjs && node scripts/run-image-optimization.cjs && node scripts/generate-site-images.mjs && next build && serwist build serwist.config.mjs",
     "build:output:debug": "npm run generate:history-dates && npm run validate:actor-profiles && node scripts/generate-doc-pages.mjs && node scripts/run-image-optimization.cjs && node scripts/generate-site-images.mjs && next build --debug && serwist build serwist.config.mjs",
-    "generate:changelogs": "node scripts/generate-changelogs.mjs",
     "generate:database-types": "node scripts/generate-database-types.mjs",
     "generate:site-images": "node scripts/generate-site-images.mjs",
     "report:character-relations": "node scripts/report-character-relations.mjs",

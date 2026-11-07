@@ -1,14 +1,12 @@
 'use client';
 
-import { useRef } from 'react';
-
 import { useEditMode } from '@/context/EditModeContext';
 import { TOOL_NAV_ITEMS } from '@/constants/navigation';
-import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
-import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
+import FeedbackSection from '@/components/ui/FeedbackSection';
 import HomePageSection from '@/components/ui/NavSection';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
+import { env } from '@/env';
 
 interface CharacterRankingGridProps {
   description?: string;
@@ -16,8 +14,6 @@ interface CharacterRankingGridProps {
 
 export default function CharacterRankingGrid({ description }: CharacterRankingGridProps) {
   const { isEditMode } = useEditMode();
-  const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
-  const changeLogsRef = useRef<ChangeLogsRef>(null);
 
   const SECTIONS = [
     {
@@ -79,18 +75,23 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
         return <HomePageSection key={index} {...props} buttons={buttons} />;
       })}
 
-      <div className='mt-24 px-2 sm:px-4'>
-        <div className='mx-auto max-w-4xl'>
-          <div className='bg-border h-px w-full'></div>
-        </div>
-      </div>
-      <div className='mt-8 px-2 text-center sm:px-4'>
-        <h2 className='mb-10 py-3 text-3xl font-bold text-gray-800 dark:text-white'>网站工具</h2>
-        <div className='mt-6 flex flex-wrap justify-center gap-4'>
-          <FeedbackSection ref={feedbackSectionRef} />
-          <ChangeLogs ref={changeLogsRef} />
-        </div>
-      </div>
+      {env.NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL !== '1' && (
+        <>
+          <div className='mt-24 px-2 sm:px-4'>
+            <div className='mx-auto max-w-4xl'>
+              <div className='bg-border h-px w-full'></div>
+            </div>
+          </div>
+          <div className='mt-8 px-2 text-center sm:px-4'>
+            <h2 className='mb-10 py-3 text-3xl font-bold text-gray-800 dark:text-white'>
+              网站工具
+            </h2>
+            <div className='mt-6 flex flex-wrap justify-center gap-4'>
+              <FeedbackSection />
+            </div>
+          </div>
+        </>
+      )}
 
       {/*<div className='border-t-2 border-b-2 border-dashed border-gray-300 dark:border-gray-700'>
         {children}
