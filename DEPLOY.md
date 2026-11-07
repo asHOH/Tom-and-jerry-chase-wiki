@@ -122,8 +122,8 @@ docker compose up -d
 curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 source ~/.nvm/nvm.sh
 # 版本要求以 package.json 的 engines、packageManager 和 devEngines 为准
-nvm install 22
-nvm use 22
+nvm install 26
+nvm use 26
 npm install --global npm@11.20.0
 ```
 

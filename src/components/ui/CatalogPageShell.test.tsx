@@ -6,6 +6,7 @@ const originalMatchMedia = Object.getOwnPropertyDescriptor(window, 'matchMedia')
 
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
+    configurable: true,
     writable: true,
     value: jest.fn().mockImplementation((query: string) => ({
       matches: false,

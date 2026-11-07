@@ -40,7 +40,7 @@ Security Audit ── Dependency vulnerability checks
 
 ## 🔧 Configuration
 
-- **Node.js Version**: 24
+- **Node.js Version**: 26
 - **Package Manager**: npm
 - **Build Tool**: Next.js
 - **Deployment**: VPS + Cloudflare Tunnel (production), Vercel (development preview)
