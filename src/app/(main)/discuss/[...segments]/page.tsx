@@ -18,7 +18,14 @@ export async function generateMetadata({
 
 export default async function DiscussPage({ params }: { params: Promise<{ segments: string[] }> }) {
   const { segments } = await params;
-  const target = await resolveDiscussionTarget(segments);
+  // Page catch-all params can be URL-encoded even when metadata params are decoded.
+  let decodedSegments: string[];
+  try {
+    decodedSegments = segments.map(decodeURIComponent);
+  } catch {
+    notFound();
+  }
+  const target = await resolveDiscussionTarget(decodedSegments);
   if (!target) notFound();
 
   return (
