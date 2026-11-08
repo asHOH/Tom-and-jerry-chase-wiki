@@ -1,9 +1,12 @@
 import { splitCharacterRelationTraits } from '@/data/characterRelationData';
 import type { TraitRelationKind } from '@/data/types';
+import { characterFactionById } from '@/features/characters/data/characterMetadata';
 
 import {
   areCharacterRelationItemsEqual,
   characterRelationTags,
+  getAllowedCharacterRelationTags,
+  getAllowedInferredCharacterRelationTags,
   getCharacterRelationTagDefinition,
   getCharacterRelationTagLabels,
   normalizeCharacterRelationTags,
@@ -36,6 +39,48 @@ it('compares projected tags across formats while preserving other fields and mal
   ).toBe(false);
   expect(areCharacterRelationItemsEqual(item, { ...legacy, tags: ['免疫'] })).toBe(false);
   expect(areCharacterRelationItemsEqual(item, { ...legacy, tags: [null] })).toBe(false);
+});
+
+it.each([
+  ['counters', 'counteredBy'],
+  ['countersKnowledgeCards', 'counteredByKnowledgeCards'],
+  ['countersSpecialSkills', 'counteredBySpecialSkills'],
+] satisfies [TraitRelationKind, TraitRelationKind][])(
+  'uses the countering faction for %s and its inverse %s',
+  (direct, inverse) => {
+    const shared = ['机制', '高伤', '无视', '免疫', '控制', '大视野'];
+    const cat = [...shared, '追击'].sort();
+    const mouse = [...shared, '拉扯', '自保', '稳救', '破局', '干扰', '速推', '辅助'].sort();
+    expect([...getAllowedCharacterRelationTags('cat', direct)].sort()).toEqual(cat);
+    expect([...getAllowedCharacterRelationTags('mouse', inverse)].sort()).toEqual(cat);
+    expect([...getAllowedCharacterRelationTags('mouse', direct)].sort()).toEqual(mouse);
+    expect([...getAllowedCharacterRelationTags('cat', inverse)].sort()).toEqual(mouse);
+    expect(getAllowedCharacterRelationTags('mouse', 'collaborators')).toEqual([]);
+    expect(getAllowedCharacterRelationTags(undefined, direct)).toEqual([]);
+  }
+);
+
+it('limits automatic relation traits to the permitted direction', () => {
+  expect(getAllowedInferredCharacterRelationTags('cat')).toEqual(['怕拉扯']);
+  expect(getAllowedInferredCharacterRelationTags('mouse')).toEqual(['拉扯']);
+});
+
+it('reports every baseline tag that violates faction direction', () => {
+  const failures = splitCharacterRelationTraits.flatMap(({ relation }) => {
+    const allowed = getAllowedCharacterRelationTags(
+      characterFactionById[relation.subject.name],
+      relation.kind
+    );
+    return (relation.tags ?? [])
+      .filter((tag) => typeof tag !== 'string' || !allowed.includes(tag))
+      .map((tag) => ({
+        subject: relation.subject,
+        target: relation.target,
+        kind: relation.kind,
+        tag,
+      }));
+  });
+  expect(failures).toEqual([]);
 });
 
 it.each([

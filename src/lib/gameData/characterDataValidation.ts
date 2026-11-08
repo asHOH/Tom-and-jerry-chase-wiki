@@ -7,12 +7,20 @@ import {
   isCharacterRelationKind,
 } from '@/lib/edit/characterRelationActions';
 import { getPositioningTagKey } from '@/constants/positioningTagSequences';
-import type { TraitRelationKind } from '@/data/types';
+import { characterRelationValidationContext } from '@/data/characterRelations';
+import type { CharacterRelationValidationContext } from '@/data/characterRelationValidation';
+import type { CharacterRelationTag, TraitRelationKind } from '@/data/types';
 import {
   CHARACTER_PAIR_RELATION_KINDS,
   CHARACTER_RELATION_PAIR_FIELD,
   parseCharacterRelationPairPath,
 } from '@/features/characters/utils/characterRelationPairs';
+import {
+  getAllowedCharacterRelationTags,
+  getAllowedInferredCharacterRelationTags,
+  getCharacterRelationTagName,
+  supportsCharacterRelationTags,
+} from '@/features/characters/utils/characterRelationTags';
 import {
   getExplicitCharacterRelation,
   normalizeCharacterRelationProjection,
@@ -167,6 +175,7 @@ export class InvalidGameDataValueError extends Error {
         | 'relation_conflict'
         | 'no_changes'
         | 'duplicate_tag'
+        | 'relation_tag_direction'
         | 'knowledge_card_cost';
     }
   ) {
@@ -178,7 +187,8 @@ export class InvalidGameDataValueError extends Error {
 /** Check the final affected character fields, including replacements of their ancestors. */
 export function validateCharacterData(
   target: Record<string, unknown>,
-  actionPaths: readonly string[]
+  actionPaths: readonly string[],
+  relationContext: CharacterRelationValidationContext = characterRelationValidationContext
 ): void {
   for (const path of actionPaths) {
     if (path.split('.')[1] !== CHARACTER_RELATION_PAIR_FIELD) continue;
@@ -220,6 +230,62 @@ export function validateCharacterData(
             ? { reason: 'duplicate_tag' as const }
             : {}),
       });
+    }
+  }
+
+  const characters = target as CharacterGameData;
+  for (const scope of scopes) {
+    const [id, field] = scope.split('.') as [string, string?];
+    const current = characters[id]!;
+    const checkTags = (
+      tags: readonly CharacterRelationTag[] | undefined,
+      kind: TraitRelationKind,
+      path: string,
+      otherId: string
+    ) => {
+      if (!tags?.length) return;
+      if (supportsCharacterRelationTags(kind)) {
+        const targetFaction = kind.endsWith('KnowledgeCards')
+          ? relationContext.getKnowledgeCardFactionId?.(otherId)
+          : kind.endsWith('SpecialSkills')
+            ? relationContext.getSpecialSkillFactionId?.({
+                name: otherId,
+                type: 'specialSkill',
+                factionId: current.factionId === 'cat' ? 'mouse' : 'cat',
+              })
+            : characters[otherId]?.factionId;
+        if (!targetFaction || targetFaction === current.factionId) {
+          throw new InvalidGameDataValueError({ path, reason: 'relation_conflict' });
+        }
+      }
+      const allowed = getAllowedCharacterRelationTags(current.factionId, kind);
+      if (tags.some((tag) => !allowed.includes(getCharacterRelationTagName(tag)))) {
+        throw new InvalidGameDataValueError({ path, reason: 'relation_tag_direction' });
+      }
+    };
+    if (field === undefined || field === 'factionId' || field === 'counterTags') {
+      const allowed = getAllowedInferredCharacterRelationTags(current.factionId);
+      if (current.counterTags?.some((tag) => !allowed.includes(tag))) {
+        throw new InvalidGameDataValueError({
+          path: `${id}.counterTags`,
+          reason: 'relation_tag_direction',
+        });
+      }
+    }
+    if (field === CHARACTER_RELATION_PAIR_FIELD) {
+      for (const path of actionPaths.filter((path) => path.startsWith(`${scope}.`))) {
+        const pair = parseCharacterRelationPairPath(path)!;
+        const relation = current.characterRelationOverrides?.[pair.otherId];
+        if (relation) checkTags(relation.tags, relation.kind, `${path}.tags`, pair.otherId);
+      }
+    } else if (field === undefined || field === 'factionId' || isCharacterRelationKind(field)) {
+      const explicit = getExplicitCharacterRelation(characters, id);
+      for (const kind of CHARACTER_RELATION_KINDS) {
+        if (field !== undefined && field !== 'factionId' && field !== kind) continue;
+        explicit[kind].forEach((item, index) =>
+          checkTags(item.tags, kind, `${id}.${kind}.${index}.tags`, item.id)
+        );
+      }
     }
   }
 

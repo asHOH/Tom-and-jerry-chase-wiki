@@ -133,6 +133,6 @@ it('rejects duplicate counter tags and accepts distinct ones', () => {
   expect(() => validateCharacterData(target, ['Tom.counterTags.1'])).toThrow(
     expect.objectContaining({ detail: { path: 'Tom.counterTags', reason: 'duplicate_tag' } })
   );
-  target.Tom.counterTags = ['怕拉扯', '怕控制'];
+  target.Tom.counterTags = ['怕拉扯'];
   expect(() => validateCharacterData(target, ['Tom'])).not.toThrow();
 });

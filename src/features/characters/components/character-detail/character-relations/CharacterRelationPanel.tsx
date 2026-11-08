@@ -196,7 +196,7 @@ function RelationTagEditor({ item }: { item: RelationDisplayItem }) {
         <div key={index} className='grid grid-cols-[1fr_auto] items-center gap-1.5'>
           <CharacterRelationTagSelect
             value={tag}
-            existingTags={item.tags}
+            options={item.tagOptions ?? []}
             onChange={(nextTag) => {
               const nextTags = tags.map((current, tagIndex) =>
                 tagIndex === index ? nextTag : current

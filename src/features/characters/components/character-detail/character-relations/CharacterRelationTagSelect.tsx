@@ -1,23 +1,20 @@
 'use client';
 
-import { characterRelationTags } from '@/features/characters/utils/characterRelationTags';
 import { FormSelect } from '@/components/ui/FormControls';
 
 type CharacterRelationTagSelectProps = {
   value: string;
-  existingTags?: readonly string[];
+  options: readonly string[];
   onChange: (tag: string) => void;
   'aria-label': string;
 };
 
 export default function CharacterRelationTagSelect({
   value,
-  existingTags = [],
+  options,
   onChange,
   'aria-label': ariaLabel,
 }: CharacterRelationTagSelectProps) {
-  const options = [...new Set([...characterRelationTags, ...existingTags].filter(Boolean))];
-
   return (
     <FormSelect
       value={value}
@@ -32,6 +29,11 @@ export default function CharacterRelationTagSelect({
       <option value='' disabled>
         选择克制分类
       </option>
+      {value && !options.includes(value) && (
+        <option value={value} disabled>
+          {value}（当前方向不可用）
+        </option>
+      )}
       {options.map((tag) => (
         <option key={tag} value={tag}>
           {tag}

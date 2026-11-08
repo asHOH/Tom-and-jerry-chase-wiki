@@ -23,19 +23,23 @@ function createCharacters() {
     汤姆: {
       ...structuredClone(canonicalCharacters['汤姆']!),
       ...emptyRelations(),
-      counterTags: ['拉扯'],
+      counterTags: ['怕拉扯'],
     },
     杰瑞: {
       ...structuredClone(canonicalCharacters['杰瑞']!),
       ...emptyRelations(),
-      counterTags: ['怕拉扯'],
+      counterTags: ['拉扯'],
     },
   };
 }
 
 function renderEditor(source: '汤姆' | '杰瑞' = '汤姆') {
   const target = source === '汤姆' ? '杰瑞' : '汤姆';
-  const kind = source === '汤姆' ? 'counters' : 'counteredBy';
+  const kind = getCharacterRelation(session.readDomain('characters'), source).counters.some(
+    ({ id }) => id === target
+  )
+    ? 'counters'
+    : 'counteredBy';
   const item = getCharacterRelation(session.readDomain('characters'), source)[kind].find(
     ({ id }) => id === target
   )!;
@@ -50,6 +54,7 @@ function renderEditor(source: '汤姆' | '杰瑞' = '汤姆') {
           label: source,
           type: 'character',
           href: '/characters/汤姆/',
+          factionId: source === '汤姆' ? 'cat' : 'mouse',
         },
         column: {
           id: target,
@@ -57,6 +62,7 @@ function renderEditor(source: '汤姆' | '杰瑞' = '汤姆') {
           label: target,
           type: 'character',
           href: '/characters/杰瑞/',
+          factionId: target === '汤姆' ? 'cat' : 'mouse',
         },
         cell: {
           sourceKind: kind,
@@ -129,7 +135,7 @@ it('still records an intentional matrix edit', async () => {
   await act(async () => fireEvent.click(screen.getByRole('button', { name: '保存' })));
 
   expect(session.readDraft(scope).actionCount).toBeGreaterThan(0);
-  expect(getCharacterRelation(session.readDomain('characters'), '汤姆').counters).toEqual(
+  expect(getCharacterRelation(session.readDomain('characters'), '汤姆').counteredBy).toEqual(
     expect.arrayContaining([expect.objectContaining({ id: '杰瑞', description: '经验证的说明' })])
   );
 });

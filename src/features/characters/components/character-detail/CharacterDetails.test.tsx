@@ -315,6 +315,17 @@ describe('CharacterDetails', () => {
     expect(html).toContain('draft positioning tag');
   });
 
+  it('offers permitted inferred traits and keeps saved incompatible traits available for removal', () => {
+    mockIsEditMode = mockIsEditModeRequested = true;
+    mockRuntimeStatus = 'ready';
+    const render = () => renderToString(<CharacterDetails character={character} />);
+    expect(render()).toContain('aria-label="角色关系标签怕拉扯"');
+    expect(render()).not.toContain('aria-label="角色关系标签拉扯"');
+    mockDraftDomains!.characters!.汤姆!.counterTags = ['拉扯'];
+    expect(render()).toContain('aria-label="角色关系标签拉扯"');
+    expect(mockDraftDomains!.characters!.汤姆!.counterTags).toEqual(['拉扯']);
+  });
+
   it('keeps the route owner for skill cards when the draft display ID changes', () => {
     mockIsEditMode = mockIsEditModeRequested = true;
     mockRuntimeStatus = 'ready';

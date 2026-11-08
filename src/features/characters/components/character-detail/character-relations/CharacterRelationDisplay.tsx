@@ -18,6 +18,7 @@ import {
   updateCharacterRelationDescription,
   updateCharacterRelationTags,
 } from '@/features/characters/utils/characterRelationOverlay';
+import { getAllowedCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
 
 import KnowledgeCardSelector from '../knowledge-cards/KnowledgeCardSelector';
@@ -83,8 +84,8 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { navigate } = useNavigation();
 
   const oppositeFactionId = factionId === 'cat' ? 'mouse' : 'cat';
-  const createRelationOptions = (relationKind: TraitRelationKind) =>
-    createEditableRelationItemOptions({
+  const createRelationOptions = (relationKind: TraitRelationKind) => ({
+    ...createEditableRelationItemOptions({
       characterId: id,
       relationKind,
       getDescriptionPath: getCharacterRelationDescriptionPath,
@@ -96,7 +97,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         updateCharacters((characters) => updateCharacterRelationDescription(characters, ...args)),
       onUpdateTags: (...args) =>
         updateCharacters((characters) => updateCharacterRelationTags(characters, ...args)),
-    });
+    }),
+    tagOptions: getAllowedCharacterRelationTags(factionId, relationKind),
+  });
   const createSelectHandler = (relationKind: TraitRelationKind) =>
     createRelationSelectHandler({
       characterId: id,

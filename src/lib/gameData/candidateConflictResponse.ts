@@ -120,6 +120,8 @@ export function invalidGameDataMessage(error: TrustedGameDataMutationError): str
     return `不能通过在线改动新增角色「${path}」，请通过角色数据文件添加。`;
   if (reason === 'relation_conflict')
     return `字段「${path}」包含矛盾或不允许的关系，请同时移除旧关系后重新提交。`;
+  if (reason === 'relation_tag_direction')
+    return `字段「${path}」包含当前克制方向不可用的分类，请更换或删除后重新提交。`;
   if (reason === 'no_changes')
     return `字段「${path}」所在的改动没有实际变化，未保存。请移除无变化的改动后重新提交。`;
   if (reason === 'unsupported_field') return `不支持字段「${path}」，请修正后重新提交。`;

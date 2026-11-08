@@ -35,6 +35,7 @@ const createEntity = (
   label: id,
   type,
   href: `/${type}/${encodeURIComponent(id)}`,
+  factionId: id === '杰瑞' ? 'mouse' : 'cat',
 });
 
 const createCell = (
@@ -141,5 +142,20 @@ describe('RelationMatrixCellEditor', () => {
 
     expect(screen.getByLabelText('关系类型')).toHaveValue('advantageMaps');
     expect(screen.getByRole('option', { name: '优势地图' })).toBeInTheDocument();
+  });
+
+  it('updates permitted tags on direction changes and requires an incompatible tag to be resolved', () => {
+    renderEditor({ selection: createSelection({ ...createCell('counters'), tags: ['稳救'] }) });
+    expect(screen.getByRole('option', { name: '稳救' })).toBeEnabled();
+    expect(screen.queryByRole('option', { name: '追击' })).not.toBeInTheDocument();
+    expect(screen.getByRole('option', { name: '大视野' })).toBeEnabled();
+    fireEvent.change(screen.getByLabelText('关系类型'), { target: { value: 'counteredBy' } });
+    expect(screen.getByLabelText('克制分类 1')).toHaveValue('稳救');
+    expect(screen.getByRole('option', { name: '稳救（当前方向不可用）' })).toBeDisabled();
+    expect(screen.getByRole('option', { name: '追击' })).toBeEnabled();
+    expect(screen.getByRole('option', { name: '大视野' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: '保存' })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('克制分类 1'), { target: { value: '追击' } });
+    expect(screen.getByRole('button', { name: '保存' })).toBeEnabled();
   });
 });

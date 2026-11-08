@@ -1,7 +1,12 @@
 import isEqual from 'lodash-es/isEqual';
 import isEqualWith from 'lodash-es/isEqualWith';
 
-import type { CharacterRelationItem, CharacterRelationTag, TraitRelationKind } from '@/data/types';
+import type {
+  CharacterRelationItem,
+  CharacterRelationTag,
+  FactionId,
+  TraitRelationKind,
+} from '@/data/types';
 
 export const characterRelationTags = [
   '拉扯',
@@ -19,6 +24,25 @@ export const characterRelationTags = [
   '追击',
   '大视野',
 ] as const;
+
+export type CharacterRelationTagName = (typeof characterRelationTags)[number];
+
+const counteringFactionByTag: Record<CharacterRelationTagName, FactionId | 'both'> = {
+  拉扯: 'mouse',
+  机制: 'both',
+  高伤: 'both',
+  无视: 'both',
+  自保: 'mouse',
+  免疫: 'both',
+  稳救: 'mouse',
+  破局: 'mouse',
+  控制: 'both',
+  干扰: 'mouse',
+  速推: 'mouse',
+  辅助: 'mouse',
+  追击: 'cat',
+  大视野: 'both',
+};
 
 const characterRelationTagDefinitions: Record<(typeof characterRelationTags)[number], string> = {
   拉扯: '利用机动性打游击，保证奶酪进度的同时让猫咪难以找到节奏。',
@@ -81,6 +105,29 @@ const counteredByKinds = new Set<TraitRelationKind>([
 
 export const supportsCharacterRelationTags = (kind: TraitRelationKind): boolean =>
   countersKinds.has(kind) || counteredByKinds.has(kind);
+
+// Counter relations (including cards and skills) connect opposite factions.
+export const getAllowedCharacterRelationTags = (
+  subjectFaction: FactionId | undefined,
+  kind: TraitRelationKind
+): readonly string[] => {
+  if (!subjectFaction || !supportsCharacterRelationTags(kind)) return [];
+  const counteringFaction = countersKinds.has(kind)
+    ? subjectFaction
+    : subjectFaction === 'cat'
+      ? 'mouse'
+      : 'cat';
+  return characterRelationTags.filter(
+    (tag) =>
+      counteringFactionByTag[tag] === 'both' || counteringFactionByTag[tag] === counteringFaction
+  );
+};
+
+export const getAllowedInferredCharacterRelationTags = (faction: FactionId): string[] =>
+  inferredCharacterRelationTags.flatMap((tag) => [
+    ...(getAllowedCharacterRelationTags(faction, 'counters').includes(tag) ? [tag] : []),
+    ...(getAllowedCharacterRelationTags(faction, 'counteredBy').includes(tag) ? [`怕${tag}`] : []),
+  ]);
 
 export const getCharacterRelationTagLabels = (
   tags: readonly CharacterRelationTag[] | undefined,

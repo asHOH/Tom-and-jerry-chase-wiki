@@ -12,6 +12,7 @@ import {
   upsertCharacterRelationItem,
 } from '@/features/characters/utils/characterRelationOverlay';
 import {
+  getAllowedCharacterRelationTags,
   normalizeCharacterRelationTags,
   supportsCharacterRelationTags,
 } from '@/features/characters/utils/characterRelationTags';
@@ -70,11 +71,18 @@ export default function RelationMatrixCellEditor({
     return null;
   }
 
-  const canSave = selectedKind !== '';
+  const tagOptions = selectedKind
+    ? getAllowedCharacterRelationTags(selection.row.factionId, selectedKind)
+    : [];
+  const invalidTags =
+    !!selectedKind &&
+    supportsCharacterRelationTags(selectedKind) &&
+    tags.some((tag) => tag && !tagOptions.includes(tag));
+  const canSave = selectedKind !== '' && !invalidTags;
   const canRemove = selection.cell !== undefined;
 
   const handleSave = () => {
-    if (!selectedKind) return;
+    if (!selectedKind || !canSave) return;
 
     const trimmedDescription = description.trim();
     const normalizedTags = supportsCharacterRelationTags(selectedKind)
@@ -198,7 +206,7 @@ export default function RelationMatrixCellEditor({
               <div key={index} className='grid grid-cols-[1fr_auto] items-center gap-2'>
                 <CharacterRelationTagSelect
                   value={tag}
-                  existingTags={selection.cell?.tags ?? []}
+                  options={tagOptions}
                   onChange={(nextTag) =>
                     setTags((current) =>
                       current.map((item, itemIndex) => (itemIndex === index ? nextTag : item))
@@ -225,6 +233,11 @@ export default function RelationMatrixCellEditor({
             >
               添加分类
             </Button>
+            {invalidTags && (
+              <p role='alert' className='text-sm text-red-600 dark:text-red-400'>
+                请更换或删除当前方向不可用的克制分类。
+              </p>
+            )}
           </fieldset>
         )}
 

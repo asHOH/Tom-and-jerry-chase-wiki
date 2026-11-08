@@ -35,6 +35,18 @@ const set = (path: string, oldValue: unknown, newValue: unknown) => ({
 });
 
 it.each([
+  ['counteredByKnowledgeCards', '乘胜追击', '稳救'],
+  ['countersKnowledgeCards', '乘胜追击', '追击'],
+  ['counteredBySpecialSkills', '长爪一击', '稳救'],
+])('rejects tagged same-faction targets in %s', (kind, id, tag) => {
+  expect(() =>
+    validate([set(`汤姆.${kind}`, undefined, [{ id, isMinor: false, tags: [tag] }])])
+  ).toThrow(
+    expect.objectContaining({ detail: expect.objectContaining({ reason: 'relation_conflict' }) })
+  );
+});
+
+it.each([
   ['斯飞', 'catPositioningTags'],
   ['杰瑞', 'mousePositioningTags'],
   ['剑客汤姆', 'counterTags'],

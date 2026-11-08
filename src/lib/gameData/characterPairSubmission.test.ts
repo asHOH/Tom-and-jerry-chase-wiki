@@ -54,10 +54,13 @@ beforeEach(() => {
       { id, factionId, description: '', skills: [], knowledgeCardGroups: [] },
     ])
   );
-  jest
-    .mocked(getCanonicalGameData)
-    .mockImplementation(((entityType: string) =>
-      entityType === 'characters' ? characters : {}) as typeof getCanonicalGameData);
+  jest.mocked(getCanonicalGameData).mockImplementation(((entityType: string) => {
+    if (entityType === 'characters') return characters;
+    const cardTargets = { B: { factionId: 'cat' }, target: { factionId: 'cat' } };
+    if (entityType === 'cards') return cardTargets;
+    if (entityType === 'specialSkills') return { cat: cardTargets, mouse: {} };
+    return {};
+  }) as typeof getCanonicalGameData);
 });
 
 it('accepts the first complete shared record and an explicit removal marker', () => {
@@ -65,6 +68,85 @@ it('accepts the first complete shared record and an explicit removal marker', ()
   expect(() =>
     validate([set(path, relation, null)], [row(set(path, undefined, relation))])
   ).not.toThrow();
+});
+
+it.each([
+  [path, 'counters', '稳救', '追击'],
+  [path, 'counteredBy', '追击', '稳救'],
+  ['B.characterRelationOverrides.D', 'counters', '追击', '稳救'],
+  ['B.characterRelationOverrides.D', 'counteredBy', '稳救', '追击'],
+])(
+  'validates shared tags from the countering faction at %s (%s)',
+  (actionPath, kind, allowed, forbidden) => {
+    expect(() =>
+      validate([set(actionPath, undefined, { ...relation, kind, tags: [allowed, '大视野'] })])
+    ).not.toThrow();
+    for (const tag of [
+      forbidden,
+      { counters: forbidden, counteredBy: `怕${forbidden}` },
+      '未知分类',
+    ]) {
+      expect(() =>
+        validate([set(actionPath, undefined, { ...relation, kind, tags: [tag] })])
+      ).toThrow(
+        expect.objectContaining({
+          detail: { path: `${actionPath}.tags`, reason: 'relation_tag_direction' },
+        })
+      );
+    }
+  }
+);
+
+it.each([
+  'counters',
+  'counteredBy',
+  'countersKnowledgeCards',
+  'counteredByKnowledgeCards',
+  'countersSpecialSkills',
+  'counteredBySpecialSkills',
+] as const)('checks final %s tags through list, nested, and root replacements', (kind) => {
+  const forbidden = kind.startsWith('counteredBy') ? '稳救' : '追击';
+  const before = [{ id: 'B', isMinor: false, tags: ['大视野'] }];
+  const after = [{ ...before[0], tags: [forbidden] }];
+  const character = getCanonicalGameData('characters').A!;
+  for (const actions of [
+    [set(`A.${kind}`, undefined, after)],
+    [set(`A.${kind}`, undefined, before), set(`A.${kind}.0.tags.0`, '大视野', forbidden)],
+    [set('A', character, { ...character, [kind]: after })],
+  ]) {
+    expect(() => validate(actions)).toThrow(
+      expect.objectContaining({
+        detail: expect.objectContaining({ reason: 'relation_tag_direction' }),
+      })
+    );
+  }
+});
+
+it('preserves incompatible historical replay and permits unrelated edits, repairs, and removal', () => {
+  const before = { ...relation, tags: [{ counters: '稳救', counteredBy: '怕稳救' }] };
+  const saved = row(set(path, undefined, before));
+  const snapshot = createApprovedActionSnapshot([
+    {
+      entityType: 'characters',
+      decodedRow: { rowId: saved.rowId, rawEntry: null, actions: saved.actions },
+    },
+  ]);
+  const published = selectPublishedGameData(
+    'characters',
+    getCanonicalGameData('characters'),
+    snapshot
+  );
+  expect(getCharacterRelation(published, 'A').counteredBy[0]?.tags).toEqual(before.tags);
+  expect(() => validate([set('B.description', '', 'updated')], [saved])).not.toThrow();
+  expect(() =>
+    validate([set('A.characterRelationOverrides.C', undefined, relation)], [saved])
+  ).not.toThrow();
+  expect(() => validate([set(path, before, { ...before, tags: ['追击'] })], [saved])).not.toThrow();
+  expect(() => validate([set(path, before, null)], [saved])).not.toThrow();
+  expect(() =>
+    validate([set(path, before, { ...before, description: 'changed' })], [saved])
+  ).toThrow(InvalidGameDataValueError);
+  expect(saved.actions[0]!.newValue).toEqual(before);
 });
 
 it.each([

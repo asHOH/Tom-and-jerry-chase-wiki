@@ -16,6 +16,7 @@ import {
 
 export type RelationItemOptions = {
   characterId?: string;
+  tagOptions?: readonly string[];
   relationKind: TraitRelationKind;
   isEditable: boolean;
   getDescriptionPath?: (index: number, id: string) => string | undefined;
@@ -35,6 +36,7 @@ type RelationDisplayBase = {
   descriptionCharacterId?: string;
   relationKind: TraitRelationKind;
   tags: string[];
+  tagOptions?: readonly string[];
   tagLabels: string[];
   onToggleMinor?: () => void;
   getToggleLabel?: (currentIsMinor: boolean) => string;
@@ -93,6 +95,7 @@ const optionalRelationActions = (
   options: RelationItemOptions,
   descriptionPath?: string
 ) => ({
+  ...(options.tagOptions ? { tagOptions: options.tagOptions } : {}),
   ...(descriptionPath ? { descriptionPath } : {}),
   ...(options.onToggleMinor ? { onToggleMinor: () => options.onToggleMinor?.(itemId) } : {}),
   ...(options.onRemove ? { onRemove: () => options.onRemove?.(itemId) } : {}),

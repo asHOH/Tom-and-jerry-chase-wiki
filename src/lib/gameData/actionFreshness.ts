@@ -12,6 +12,7 @@ import {
   parseCharacterRelationPairPath,
 } from '@/features/characters/utils/characterRelationPairs';
 import { findInvalidModifiedKnowledgeCardGroup } from '@/features/knowledge-cards/utils/groupCostValidation';
+import { resolveSpecialSkill } from '@/features/special-skills/resolveSpecialSkill';
 
 import { parseActionPath, resolveArraySegment } from './actionPath';
 import type { ApprovedCandidateReplayRow } from './approvedCandidateReplay';
@@ -28,6 +29,7 @@ import {
   PublishedGameDataReplayError,
   selectPublishedGameData,
 } from './published/selectPublishedDomain';
+import type { PublishedGameDataByType } from './published/types';
 import { validateSceneAnnotationChanges } from './sceneAnnotationValidation';
 
 export class StaleGameDataEditError extends Error {
@@ -226,13 +228,24 @@ export function validateActionFreshness(
     const actionPaths = proposedRows
       .filter((row) => row.entityType === 'characters')
       .flatMap((row) => row.actions.map((action) => action.path));
-    validateCharacterData(characters, actionPaths);
+    const cards =
+      (targets.get('cards') as PublishedGameDataByType['cards'] | undefined) ??
+      selectPublishedGameData('cards', getCanonicalGameData('cards'), snapshot);
+    let specialSkills: PublishedGameDataByType['specialSkills'] | undefined;
+    validateCharacterData(characters, actionPaths, {
+      getKnowledgeCardFactionId: (id) => cards[id]?.factionId,
+      getSpecialSkillFactionId: ({ name, factionId }) => {
+        specialSkills ??=
+          (targets.get('specialSkills') as PublishedGameDataByType['specialSkills'] | undefined) ??
+          selectPublishedGameData('specialSkills', getCanonicalGameData('specialSkills'), snapshot);
+        return resolveSpecialSkill(specialSkills, name, factionId)?.factionId;
+      },
+    });
     validateCharacterRelationEditSources(
       originalCharacters!,
       characters as CharacterGameData,
       actionPaths
     );
-    const cards = selectPublishedGameData('cards', getCanonicalGameData('cards'), snapshot);
     const invalidGroup = findInvalidModifiedKnowledgeCardGroup(
       originalCharacters!,
       characters as CharacterGameData,
