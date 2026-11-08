@@ -13,13 +13,22 @@ import {
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
 
+import type { TableColumn } from './tableProperties';
+
 interface PropertySelectorProps {
   currentProperty?: RankableProperty | undefined;
   factionId?: FactionId | undefined;
+  view?: 'cards' | 'table';
+  tableColumns?: readonly TableColumn[];
   onPropertyChange: (property: RankableProperty) => void;
 }
 
-function PropertySelector({ currentProperty, onPropertyChange }: PropertySelectorProps) {
+function PropertySelector({
+  currentProperty,
+  view = 'cards',
+  tableColumns = ['rank', 'character', 'rankingValue'],
+  onPropertyChange,
+}: PropertySelectorProps) {
   const router = useRouter();
 
   const factionId = (useSearchParams().get('faction') ?? undefined) as FactionId | undefined;
@@ -30,10 +39,20 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
   const commonProperties = availableProperties.filter((prop) => !prop.faction);
   const factionSpecificProperties = availableProperties.filter((prop) => prop.faction);
 
+  const rankingUrl = (property: RankableProperty | undefined, faction: FactionId | undefined) => {
+    const params = new URLSearchParams();
+    if (faction) params.set('faction', faction);
+    if (view === 'table') params.set('view', 'table');
+    params.set('layout', 'custom');
+    tableColumns.forEach((key) => params.append('column', key));
+    const query = params.toString();
+    return `${property ? `/ranks/${property}` : '/ranks'}${query ? `?${query}` : ''}`;
+  };
+
   const handlePropertySelect = (property: RankableProperty) => {
     onPropertyChange(property);
     // Update URL without causing page reload
-    const url = factionId ? `/ranks/${property}?faction=${factionId}` : `/ranks/${property}`;
+    const url = rankingUrl(property, factionId);
     router.push(url, { scroll: false });
   };
 
@@ -89,15 +108,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
             options={['all', 'cat', 'mouse']}
             isActive={(opt) => (opt === 'all' ? !factionId : factionId === opt)}
             onToggle={(opt) => {
-              if (opt === 'all') {
-                const url = currentProperty ? `/ranks/${currentProperty}` : '/ranks';
-                router.push(url);
-              } else {
-                const url = currentProperty
-                  ? `/ranks/${currentProperty}?faction=${opt}`
-                  : `/ranks?faction=${opt}`;
-                router.push(url);
-              }
+              router.push(rankingUrl(currentProperty, opt === 'all' ? undefined : opt));
             }}
             getOptionLabel={(opt) => (opt === 'all' ? '全部角色' : `仅${FACTION_FULL_NAMES[opt]}`)}
             getButtonClassName={(opt, active) =>

@@ -17,10 +17,13 @@ import {
   rankCharactersByProperty,
 } from '@/features/characters/utils/ranking';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
+import FilterRow from '@/components/ui/FilterRow';
 import PageHeader from '@/components/ui/PageHeader';
 
 import CharacterRankingCard from './CharacterRankingCard';
+import CharacterRankingTable from './CharacterRankingTable';
 import PropertySelector from './PropertySelector';
+import { parseTableColumns, type TableColumn } from './tableProperties';
 
 interface CharacterRankingGridProps {
   initialProperty?: RankableProperty;
@@ -40,7 +43,15 @@ export default function CharacterRankingGrid({
     initialProperty
   );
 
-  const factionId = (useSearchParams().get('faction') ?? undefined) as FactionId | undefined;
+  const searchParams = useSearchParams();
+  const [view, setView] = useState<'cards' | 'table'>(() =>
+    searchParams.get('view') === 'table' ? 'table' : 'cards'
+  );
+  const [tableColumns, setTableColumns] = useState<TableColumn[]>(() =>
+    parseTableColumns(searchParams)
+  );
+
+  const factionId = (searchParams.get('faction') ?? undefined) as FactionId | undefined;
   const [charactersSnap] = useEditableDomain('characters', data);
 
   // Helpers to create softer backgrounds from token colors
@@ -168,6 +179,8 @@ export default function CharacterRankingGrid({
           <PropertySelector
             currentProperty={selectedProperty}
             factionId={factionId}
+            view={view}
+            tableColumns={tableColumns}
             onPropertyChange={handlePropertyChange}
           />
         </div>
@@ -184,6 +197,8 @@ export default function CharacterRankingGrid({
           <PropertySelector
             currentProperty={selectedProperty}
             factionId={factionId}
+            view={view}
+            tableColumns={tableColumns}
             onPropertyChange={handlePropertyChange}
           />
         </div>
@@ -219,19 +234,39 @@ export default function CharacterRankingGrid({
         <PropertySelector
           currentProperty={selectedProperty}
           factionId={factionId}
+          view={view}
+          tableColumns={tableColumns}
           onPropertyChange={handlePropertyChange}
         />
       </div>
 
-      {/* Rankings Grid */}
-      <CatalogGrid
-        items={rankingCardNodes}
-        className='mt-8'
-        minItemWidth={160}
-        mobileMinItemWidth={120}
-        estimatedRowHeight={260}
-        mobileEstimatedRowHeight={200}
+      <FilterRow<'cards' | 'table'>
+        label='显示方式:'
+        options={['cards', 'table']}
+        isActive={(option) => view === option}
+        onToggle={setView}
+        getOptionLabel={(option) => (option === 'cards' ? '卡片视图' : '表格视图')}
+        activeTone='blue'
       />
+
+      {view === 'cards' ? (
+        <CatalogGrid
+          items={rankingCardNodes}
+          className='mt-8'
+          minItemWidth={160}
+          mobileMinItemWidth={120}
+          estimatedRowHeight={260}
+          mobileEstimatedRowHeight={200}
+        />
+      ) : (
+        <CharacterRankingTable
+          rankedCharacters={rankedCharacters}
+          selectedProperty={selectedProperty}
+          tableColumns={tableColumns}
+          onTableColumnsChange={setTableColumns}
+          factionId={factionId}
+        />
+      )}
 
       {/* Additional Stats */}
       {rankedCharacters.length > 0 &&
