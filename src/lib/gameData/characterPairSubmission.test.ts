@@ -152,8 +152,9 @@ it('preserves incompatible historical replay and permits unrelated edits, repair
 it.each([
   ['易伤', '高伤'],
   ['减控', '机制'],
+  ['免疫', '免控'],
 ])('accepts replacing saved %s tags in shared and legacy relations', (retired, replacement) => {
-  const otherTag = { counters: '免疫', counteredBy: '怕免疫' };
+  const otherTag = { counters: '免控', counteredBy: '怕免控' };
   const before = {
     ...relation,
     tags: [{ counters: retired, counteredBy: `怕${retired}` }, otherTag],
@@ -192,6 +193,32 @@ it('keeps different pairs independent while rejecting a stale edit to the same p
 
 it.each([
   'characterRelationOverrides',
+  'counteredBy',
+  'counteredByKnowledgeCards',
+  'counteredBySpecialSkills',
+] as const)(
+  'rejects retired immunity in new %s writes and preserves exact legacy before-values',
+  (field) => {
+    const actionPath = field === 'characterRelationOverrides' ? path : `A.${field}`;
+    const before =
+      field === 'characterRelationOverrides'
+        ? { ...relation, tags: [{ counters: '免疫', counteredBy: '怕免疫' }] }
+        : [{ id: 'B', isMinor: false, tags: [{ counters: '免疫', counteredBy: '怕免疫' }] }];
+    const after =
+      field === 'characterRelationOverrides'
+        ? { ...relation, tags: ['免控'] }
+        : [{ id: 'B', isMinor: false, tags: ['免控'] }];
+    expect(() => validate([set(actionPath, undefined, before)])).toThrow(InvalidGameDataValueError);
+    const saved = row(set(actionPath, undefined, before));
+    expect(() => validate([set(actionPath, before, after)], [saved])).not.toThrow();
+    expect(() => validate([set(actionPath, after, after)], [saved])).toThrow(
+      StaleGameDataEditError
+    );
+  }
+);
+
+it.each([
+  'characterRelationOverrides',
   'counteredByKnowledgeCards',
   'counteredBySpecialSkills',
 ] as const)(
@@ -205,8 +232,8 @@ it.each([
         : [{ id: 'target', description: 'before', isMinor: false, tags: legacyTags }];
     const after =
       field === 'characterRelationOverrides'
-        ? { ...relation, tags: ['免疫'] }
-        : [{ id: 'target', description: 'after', isMinor: false, tags: ['免疫'] }];
+        ? { ...relation, tags: ['免控'] }
+        : [{ id: 'target', description: 'after', isMinor: false, tags: ['免控'] }];
     const saved = row(set(actionPath, undefined, before));
     const change = set(actionPath, before, after);
     expect(validate([change], [saved]).actions[0]!.rows[0]!.actions).toEqual([change]);
@@ -231,8 +258,8 @@ it.each([
     );
     const kind = field === 'characterRelationOverrides' ? 'counteredBy' : field;
     const item = getCharacterRelation(published, 'A')[kind][0]!;
-    expect(item.tags).toEqual(['免疫']);
-    expect(getCharacterRelationTagLabels(item.tags, kind)).toEqual(['怕免疫']);
+    expect(item.tags).toEqual(['免控']);
+    expect(getCharacterRelationTagLabels(item.tags, kind)).toEqual(['怕免控']);
     expect(saved.actions[0]!.newValue).toEqual(before);
     expect(() =>
       validate([set(actionPath, after, after)], [saved, { ...row(change), rowId: 'updated' }])

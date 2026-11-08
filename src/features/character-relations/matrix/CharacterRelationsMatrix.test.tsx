@@ -146,7 +146,7 @@ describe('CharacterRelationsMatrix', () => {
 
     const majorCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
     const majorTrigger =
-      within(majorCell).getByLabelText(/杰瑞被汤姆克制 \[怕免疫\]：杰瑞自保能力差/);
+      within(majorCell).getByLabelText(/杰瑞被汤姆克制 \[怕免控\]：杰瑞自保能力差/);
     expect(majorTrigger).toHaveClass('bg-red-500');
     expect(within(majorCell).queryByTestId('relation-minor-dot')).not.toBeInTheDocument();
 
@@ -170,7 +170,7 @@ describe('CharacterRelationsMatrix', () => {
     expect(majorCell).toHaveStyle('height: 36px; width: 36px; min-width: 36px');
 
     const majorTrigger =
-      within(majorCell).getByLabelText(/杰瑞被汤姆克制 \[怕免疫\]：杰瑞自保能力差/);
+      within(majorCell).getByLabelText(/杰瑞被汤姆克制 \[怕免控\]：杰瑞自保能力差/);
     expect(majorTrigger).toHaveStyle('height: 36px; width: 36px');
   });
 
@@ -197,7 +197,7 @@ describe('CharacterRelationsMatrix', () => {
 
     const majorCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
     const majorTrigger =
-      within(majorCell).getByLabelText(/杰瑞被汤姆克制 \[怕免疫\]：杰瑞自保能力差/);
+      within(majorCell).getByLabelText(/杰瑞被汤姆克制 \[怕免控\]：杰瑞自保能力差/);
     expect(majorTrigger).toHaveClass('bg-red-500', 'dark:bg-red-500/90');
 
     const minorCell = screen.getByTestId(getCellTestId(viewModel, '鲍姆', '托普斯'));
@@ -256,7 +256,7 @@ describe('CharacterRelationsMatrix', () => {
     });
     expect(majorButton).toHaveClass('bg-red-500', 'dark:bg-red-500/90');
     expect(
-      within(majorCell).queryByLabelText(/杰瑞被汤姆克制 \[怕免疫\]：杰瑞自保能力差/)
+      within(majorCell).queryByLabelText(/杰瑞被汤姆克制 \[怕免控\]：杰瑞自保能力差/)
     ).not.toBeInTheDocument();
 
     fireEvent.click(majorButton);

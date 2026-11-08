@@ -16,6 +16,7 @@ import {
 import {
   getCharacterRelationTagName,
   inferredCharacterRelationTags,
+  migrateRetiredCharacterRelationItemTags,
 } from '@/features/characters/utils/characterRelationTags';
 import {
   getRelationsByKind,
@@ -566,11 +567,17 @@ export function getCharacterRelation(
     derived.counteredBy
   );
 
-  return normalizeCharacterRelationProjection(
+  const projected = normalizeCharacterRelationProjection(
     id,
     applyCharacterRelationOverrides(charactersRecord, id, mergedRelation),
     { getCharacterFactionId: (characterId) => charactersRecord[characterId]?.factionId }
   );
+  for (const kind of relationKeys) {
+    projected[kind] = projected[kind].map((item) =>
+      migrateRetiredCharacterRelationItemTags(id, kind, item)
+    );
+  }
+  return projected;
 }
 
 export const getSpecialSkillRelationSummary = (

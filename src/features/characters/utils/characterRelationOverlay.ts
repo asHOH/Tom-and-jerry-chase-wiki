@@ -14,7 +14,10 @@ import {
   getInverseCharacterRelationKind,
   isCharacterPairRelationKind,
 } from './characterRelationPairs';
-import { normalizeCharacterRelationTags } from './characterRelationTags';
+import {
+  migrateRetiredCharacterRelationItemTags,
+  normalizeCharacterRelationTags,
+} from './characterRelationTags';
 
 export type EditableCharacterRelations = Record<TraitRelationKind, CharacterRelationItem[]>;
 type CharacterRelationOverlayRecord = Partial<
@@ -84,7 +87,11 @@ export const getEditableCharacterRelations = (
       // Keep inferred suggestions visible after an explicit overlay is created,
       // without treating them as stored items or hiding invalid draft entries.
       next[relationKind] = [
-        ...stored.map(normalizeCharacterRelationItem),
+        ...stored.map((item) =>
+          normalizeCharacterRelationItem(
+            migrateRetiredCharacterRelationItemTags(characterId, relationKind, item)
+          )
+        ),
         ...projectedRelations[relationKind].filter(
           (item) =>
             !stored.some((existing) => existing.id === item.id) &&
@@ -94,7 +101,13 @@ export const getEditableCharacterRelations = (
     }
   });
 
-  return applyCharacterRelationOverrides(characters, characterId, next);
+  const editable = applyCharacterRelationOverrides(characters, characterId, next);
+  for (const kind of CHARACTER_RELATION_KINDS) {
+    editable[kind] = editable[kind].map((item) =>
+      migrateRetiredCharacterRelationItemTags(characterId, kind, item)
+    );
+  }
+  return editable;
 };
 
 const writeCharacterRelationItems = (
@@ -103,7 +116,11 @@ const writeCharacterRelationItems = (
   relationKind: TraitRelationKind,
   items: CharacterRelationItem[]
 ) => {
-  setNestedProperty(characters, `${characterId}.${relationKind}`, items);
+  setNestedProperty(
+    characters,
+    `${characterId}.${relationKind}`,
+    items.map((item) => migrateRetiredCharacterRelationItemTags(characterId, relationKind, item))
+  );
 };
 
 const updateCharacterRelationItem = (
@@ -154,8 +171,12 @@ export const upsertCharacterRelationItem = (
   relationKind: TraitRelationKind,
   item: CharacterRelationItem
 ) => {
-  const normalizedItem = normalizeCharacterRelationItem(item);
-  const current = getExplicitCharacterRelation(characters, characterId)[relationKind];
+  const normalizedItem = normalizeCharacterRelationItem(
+    migrateRetiredCharacterRelationItemTags(characterId, relationKind, item)
+  );
+  const current = getExplicitCharacterRelation(characters, characterId)[relationKind].map(
+    (existing) => migrateRetiredCharacterRelationItemTags(characterId, relationKind, existing)
+  );
   const currentIndex = current.findIndex((existing) => existing.id === normalizedItem.id);
   const currentItem = current[currentIndex];
   if (currentItem && isSameCharacterRelationItem(currentItem, normalizedItem)) return;

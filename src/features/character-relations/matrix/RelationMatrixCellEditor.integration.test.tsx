@@ -152,14 +152,14 @@ it('selects one tag name and preserves the saved pair as the action before-value
   session = installTestEditSession({ characters });
   renderEditor('杰瑞');
   expect(screen.getByLabelText('克制分类 1')).toHaveValue('高伤');
-  expect(screen.getByRole('option', { name: '免疫' })).toHaveValue('免疫');
-  fireEvent.change(screen.getByLabelText('克制分类 1'), { target: { value: '免疫' } });
+  expect(screen.getByRole('option', { name: '免控' })).toHaveValue('免控');
+  fireEvent.change(screen.getByLabelText('克制分类 1'), { target: { value: '免控' } });
   await act(async () => fireEvent.click(screen.getByRole('button', { name: '保存' })));
   expect(session.readDraft(scope).publishEntries).toEqual([
     expect.objectContaining({
       path: '杰瑞.characterRelationOverrides.汤姆',
       oldValue: before,
-      newValue: { ...before, tags: ['免疫'] },
+      newValue: { ...before, tags: ['免控'] },
     }),
   ]);
 });

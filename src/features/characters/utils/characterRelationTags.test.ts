@@ -9,6 +9,7 @@ import {
   getAllowedInferredCharacterRelationTags,
   getCharacterRelationTagDefinition,
   getCharacterRelationTagLabels,
+  migrateRetiredCharacterRelationItemTags,
   normalizeCharacterRelationTags,
 } from './characterRelationTags';
 
@@ -48,7 +49,7 @@ it.each([
 ] satisfies [TraitRelationKind, TraitRelationKind][])(
   'uses the countering faction for %s and its inverse %s',
   (direct, inverse) => {
-    const shared = ['机制', '高伤', '无视', '免疫', '控制', '大视野'];
+    const shared = ['机制', '高伤', '无视', '免控', '控制', '大视野'];
     const cat = [...shared, '追击'].sort();
     const mouse = [...shared, '拉扯', '自保', '稳救', '破局', '干扰', '速推', '辅助'].sort();
     expect([...getAllowedCharacterRelationTags('cat', direct)].sort()).toEqual(cat);
@@ -115,4 +116,53 @@ it('uses only catalogued single-name tags in the character, card, and skill base
     expect(characterRelationTags).toContain(tag);
   }
   expect(new Set(tags)).toEqual(new Set(characterRelationTags));
+});
+
+it.each([
+  ['雪梨', 'counters', '塔拉', ['无视']],
+  ['塔拉', 'counteredBy', '剑客莉莉', ['无视']],
+  ['天使杰瑞', 'counteredBy', '如玉', ['无视']],
+  ['剑客杰瑞', 'counters', '牛仔汤姆', ['机制']],
+  ['剑客泰菲', 'countersKnowledgeCards', '严防死守', []],
+  ['罗宾汉杰瑞', 'counteredBy', '恶魔汤姆', []],
+  ['泰菲', 'countersSpecialSkills', '蓄力重击', ['免控']],
+] satisfies [string, TraitRelationKind, string, string[]][])(
+  'migrates retired immunity for %s %s %s without changing metadata',
+  (id, kind, targetId, tags) => {
+    for (const tag of ['免疫', { counters: '免疫', counteredBy: '怕免疫' }]) {
+      const item = { id: targetId, description: '原说明', isMinor: true, tags: [tag] };
+      const before = structuredClone(item);
+      expect(migrateRetiredCharacterRelationItemTags(id, kind, item)).toEqual({
+        id: targetId,
+        description: '原说明',
+        isMinor: true,
+        ...(tags.length ? { tags } : {}),
+      });
+      expect(item).toEqual(before);
+    }
+  }
+);
+
+it('converts the approved legacy skill tag while preserving later single-name choices', () => {
+  const item = { id: '我生气了！', isMinor: false };
+  expect(
+    migrateRetiredCharacterRelationItemTags('泰菲', 'countersSpecialSkills', {
+      ...item,
+      tags: [{ counters: '机制', counteredBy: '怕机制' }],
+    }).tags
+  ).toEqual(['免控']);
+  expect(
+    migrateRetiredCharacterRelationItemTags('泰菲', 'countersSpecialSkills', {
+      ...item,
+      tags: ['机制'],
+    }).tags
+  ).toEqual(['机制']);
+  expect(
+    migrateRetiredCharacterRelationItemTags('泰菲', 'counters', {
+      ...item,
+      tags: ['免疫', '免控', '干扰'],
+    }).tags
+  ).toEqual(['免控', '干扰']);
+  expect(getCharacterRelationTagDefinition('免控')).toContain('解除已经生效的控制');
+  expect(getCharacterRelationTagDefinition('免疫')).toBeUndefined();
 });

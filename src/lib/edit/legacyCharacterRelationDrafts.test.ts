@@ -75,6 +75,31 @@ it('does not promote unchanged baseline pairs when restoring a legacy tag collec
   ).toEqual([]);
 });
 
+it.each(['剑客杰瑞', '恶魔汤姆'])(
+  'restores retired immunity tags for %s without creating unrelated edits',
+  (characterId) => {
+    const characters = structuredClone(canonicalCharacters);
+    const items = getExplicitCharacterRelation(characters, characterId).counters;
+    const targetId = characterId === '剑客杰瑞' ? '牛仔汤姆' : '罗宾汉杰瑞';
+    const legacy = items.map((item) =>
+      item.id === targetId ? { ...item, tags: [{ counters: '免疫', counteredBy: '怕免疫' }] } : item
+    );
+    const history = [set(`${characterId}.counters`, undefined, legacy)];
+    expect(migrateLegacyCharacterRelationDrafts(history, characters)).toEqual([]);
+    const changed = legacy.map((item) =>
+      item.id === targetId ? { ...item, description: '编辑后的说明' } : item
+    );
+    const result = migrateLegacyCharacterRelationDrafts(
+      [set(`${characterId}.counters`, undefined, changed)],
+      characters
+    );
+    expect(result.flat()).toHaveLength(1);
+    expect(result.flat()[0]?.newValue).toMatchObject({ description: '编辑后的说明' });
+    expect(JSON.stringify(result)).not.toContain('免疫');
+    expect(history[0]?.newValue).toEqual(legacy);
+  }
+);
+
 afterEach(() => {
   if (session) clearTestEditSession(session);
   session = undefined;
@@ -275,8 +300,74 @@ it('preserves a legacy draft when its pair already has a published shared record
   expect(migrateLegacyCharacterRelationDrafts(history, characters)).toBe(history);
 });
 
-it('preserves an unresolved legacy submission and its operation identity during restore', () => {
-  const history = [set('A.counters', undefined, [item('B')])];
+it('restores a shared-pair immunity draft with its exact published before-value', () => {
+  const characters = structuredClone(baseline);
+  const before = {
+    kind: 'counters' as const,
+    isMinor: false,
+    description: '原说明',
+    tags: [{ counters: '免疫', counteredBy: '怕免疫' }],
+  };
+  characters.A!.characterRelationOverrides = { B: before };
+  const history = [set('A.characterRelationOverrides.B', before, { ...before, isMinor: true })];
+  window.localStorage.setItem(key, JSON.stringify(history));
+  session = installTestEditSession({ characters });
+  const entries = session.readDraft(scope('A')).publishEntries;
+  expect(entries).toEqual([
+    set('A.characterRelationOverrides.B', before, { ...before, isMinor: true, tags: ['免控'] }),
+  ]);
+  expect(() =>
+    validateCharacterData(session!.readDomain('characters'), ['A.characterRelationOverrides.B'])
+  ).not.toThrow();
+  expect(history[0]?.oldValue).toEqual(before);
+});
+
+it('restores a skill-list immunity draft while preserving its descriptions', () => {
+  const values = [
+    {
+      id: '我生气了！',
+      isMinor: false,
+      description: '解控说明',
+      tags: [{ counters: '机制', counteredBy: '怕机制' }],
+    },
+    { id: '蓄力重击', isMinor: false, description: '干扰说明', tags: ['免疫', '干扰'] },
+  ];
+  window.localStorage.setItem(
+    key,
+    JSON.stringify([set('泰菲.countersSpecialSkills', undefined, values)])
+  );
+  session = installTestEditSession({ characters: structuredClone(canonicalCharacters) });
+  expect(session.readDraft(scope('泰菲')).publishEntries).toEqual([
+    set('泰菲.countersSpecialSkills', undefined, [
+      { ...values[0], tags: ['免控'] },
+      { ...values[1], tags: ['免控', '干扰'] },
+    ]),
+  ]);
+  expect(() =>
+    validateCharacterData(session!.readDomain('characters'), ['泰菲.countersSpecialSkills'])
+  ).not.toThrow();
+});
+
+it('preserves stale non-character drafts instead of rebasing their before-values', () => {
+  const characters = structuredClone(baseline);
+  const oldValue = [{ id: 'skill', isMinor: false, description: '旧说明', tags: ['免疫'] }];
+  Object.assign(characters.A!, {
+    countersSpecialSkills: [{ ...oldValue[0], description: '已发布的新说明' }],
+  });
+  const history = [set('A.countersSpecialSkills', oldValue, [{ ...oldValue[0], isMinor: true }])];
+  expect(migrateLegacyCharacterRelationDrafts(history, characters)).toBe(history);
+});
+
+it.each([
+  set('A.counters', undefined, [item('B')]),
+  set('A.characterRelationOverrides.B', undefined, {
+    kind: 'counters',
+    isMinor: false,
+    tags: ['免疫'],
+  }),
+  set('A.countersSpecialSkills', undefined, [{ id: 'skill', isMinor: false, tags: ['免疫'] }]),
+])('preserves an unresolved submission and its operation identity during restore %#', (entry) => {
+  const history = [entry];
   window.localStorage.setItem(key, JSON.stringify(history));
   const operationId = getOrCreatePublishOperationId('page:characters:A', 'original request');
   session = installTestEditSession({ characters: baseline });

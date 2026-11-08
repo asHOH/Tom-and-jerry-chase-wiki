@@ -10,10 +10,16 @@ import {
   isCharacterPairRelationKind,
   parseCharacterRelationPairPath,
 } from '@/features/characters/utils/characterRelationPairs';
-import { areCharacterRelationItemsEqual } from '@/features/characters/utils/characterRelationTags';
+import {
+  areCharacterRelationItemsEqual,
+  migrateRetiredCharacterRelationItemTags,
+} from '@/features/characters/utils/characterRelationTags';
 import { getExplicitCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
-import { parseCharacterRelationActionPath } from './characterRelationActions';
+import {
+  isCharacterRelationKind,
+  parseCharacterRelationActionPath,
+} from './characterRelationActions';
 import { normalizeActionHistory, type Action, type ActionHistoryEntry } from './diffUtils';
 import { getNestedProperty } from './entityUtils';
 
@@ -49,7 +55,7 @@ function isRelationItems(value: unknown): value is CharacterRelationItem[] {
   });
 }
 
-/** Convert the legacy editor's complete collection writes while their original before-values match. */
+/** Convert complete relation drafts while their original before-values match. */
 export function migrateLegacyCharacterRelationDrafts(
   history: ActionHistoryEntry[],
   baseline: Record<string, unknown>
@@ -58,7 +64,7 @@ export function migrateLegacyCharacterRelationDrafts(
   if (
     !actions.some((action) => {
       const relation = parseCharacterRelationActionPath(action.path);
-      return relation && isCharacterPairRelationKind(relation.relationKind);
+      return relation || parseCharacterRelationPairPath(action.path);
     })
   )
     return history;
@@ -90,8 +96,18 @@ export function migrateLegacyCharacterRelationDrafts(
         if (!applyCheckedAction(original, action).success) return history;
 
         for (const targetId of new Set([...before, ...after].map((item) => item.id))) {
-          const previous = before.find((item) => item.id === targetId);
-          const next = after.find((item) => item.id === targetId);
+          const migrate = (items: CharacterRelationItem[]) => {
+            const item = items.find((item) => item.id === targetId);
+            return item
+              ? migrateRetiredCharacterRelationItemTags(
+                  relation.characterId,
+                  relation.relationKind,
+                  item
+                )
+              : undefined;
+          };
+          const previous = migrate(before);
+          const next = migrate(after);
           if (areCharacterRelationItemsEqual(previous, next)) continue;
           const location = getCharacterRelationPairLocation(relation.characterId, targetId);
           const sourceFaction = original[relation.characterId]?.factionId;
@@ -142,7 +158,51 @@ export function migrateLegacyCharacterRelationDrafts(
             !isEqual(getNestedProperty(original, action.path), action.oldValue)
           )
             return history;
-          nextAction = { ...action, oldValue: getNestedProperty(converted, action.path) };
+          const oldValue = getNestedProperty(converted, action.path);
+          if (!isEqual(oldValue, action.oldValue)) nextAction = { ...action, oldValue };
+          if (action.op !== 'delete' && action.newValue !== null) {
+            const value = action.newValue;
+            if (!value || typeof value !== 'object' || Array.isArray(value)) return history;
+            const { kind, ...metadata } = value as Record<string, unknown>;
+            if (
+              typeof kind !== 'string' ||
+              !isCharacterRelationKind(kind) ||
+              !isCharacterPairRelationKind(kind) ||
+              Object.hasOwn(metadata, 'id')
+            )
+              return history;
+            const items = [{ ...metadata, id: pair.otherId }];
+            if (!isRelationItems(items)) return history;
+            const { id: _id, ...migrated } = migrateRetiredCharacterRelationItemTags(
+              pair.ownerId,
+              kind,
+              items[0]!
+            );
+            nextAction = { ...nextAction, newValue: { kind, ...migrated } };
+          }
+        } else if (relation) {
+          const stored = getNestedProperty(original, action.path);
+          if (
+            relation.rest.length > 0 ||
+            !isEqual(stored, action.oldValue) ||
+            (action.op === 'add' && stored !== undefined)
+          )
+            return history;
+          const oldValue = getNestedProperty(converted, action.path);
+          if (!isEqual(oldValue, action.oldValue)) nextAction = { ...action, oldValue };
+          if (action.op !== 'delete' && action.newValue !== undefined) {
+            if (!isRelationItems(action.newValue)) return history;
+            nextAction = {
+              ...nextAction,
+              newValue: action.newValue.map((item) =>
+                migrateRetiredCharacterRelationItemTags(
+                  relation.characterId,
+                  relation.relationKind,
+                  item
+                )
+              ),
+            };
+          }
         }
         if (
           !applyCheckedAction(original, action).success ||
