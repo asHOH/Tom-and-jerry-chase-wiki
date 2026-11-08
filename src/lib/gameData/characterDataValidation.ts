@@ -56,13 +56,14 @@ const skillUsage = z.strictObject({
   cooldownTiming: z.enum(['前摇前', '释放时', '释放后']).optional(),
   cueRange: z.enum(['随距离远近变化', '全图可见', '本房间可见', '无音效']).optional(),
 });
+const relationTag = z.union([text, z.strictObject({ counters: text, counteredBy: text })]);
 const relations = z
   .array(
     z.strictObject({
       id: text,
       description: text.optional(),
       isMinor: z.boolean(),
-      tags: z.array(z.strictObject({ counters: text, counteredBy: text })).optional(),
+      tags: z.array(relationTag).optional(),
     })
   )
   .optional();
@@ -70,7 +71,7 @@ const pairRelation = z.strictObject({
   kind: z.enum(CHARACTER_PAIR_RELATION_KINDS),
   description: text.optional(),
   isMinor: z.boolean(),
-  tags: z.array(z.strictObject({ counters: text, counteredBy: text })).optional(),
+  tags: z.array(relationTag).optional(),
 });
 const relationFields = Object.fromEntries(
   CHARACTER_RELATION_KINDS.map((kind) => [kind, relations])

@@ -13,7 +13,10 @@ import {
   getCharacterRelationPairLocation,
   getInverseCharacterRelationKind,
 } from '@/features/characters/utils/characterRelationPairs';
-import { characterRelationTagPairs } from '@/features/characters/utils/characterRelationTags';
+import {
+  getCharacterRelationTagName,
+  inferredCharacterRelationTags,
+} from '@/features/characters/utils/characterRelationTags';
 import {
   getRelationsByKind,
   getRelationsBySubject,
@@ -223,7 +226,7 @@ const toRelationItem = (
     ...(relation.description ? { description: relation.description } : {}),
     isMinor: relation.isMinor ?? false,
     ...(relation.tags && relation.tags.length > 0
-      ? { tags: relation.tags.map((tag) => ({ ...tag })) }
+      ? { tags: relation.tags.map((tag) => (typeof tag === 'string' ? tag : { ...tag })) }
       : {}),
   };
 };
@@ -247,8 +250,7 @@ const mergeTagDerivedRelationItems = (
     derivedItem.tags.forEach((tag) => {
       if (
         !tags.some(
-          (existing) =>
-            existing.counters === tag.counters && existing.counteredBy === tag.counteredBy
+          (existing) => getCharacterRelationTagName(existing) === getCharacterRelationTagName(tag)
         )
       ) {
         tags.push(tag);
@@ -271,7 +273,9 @@ const normalizeLegacyItems = (
     id: item.id,
     description: item.description ?? '',
     isMinor: !!item.isMinor,
-    ...(item.tags && item.tags.length > 0 ? { tags: item.tags.map((tag) => ({ ...tag })) } : {}),
+    ...(item.tags && item.tags.length > 0
+      ? { tags: item.tags.map((tag) => (typeof tag === 'string' ? tag : { ...tag })) }
+      : {}),
   }));
 };
 
@@ -316,7 +320,9 @@ const buildLegacyOverlayRelations = (
       id: otherId,
       description: item.description ?? '',
       isMinor: !!item.isMinor,
-      ...(item.tags && item.tags.length > 0 ? { tags: item.tags.map((tag) => ({ ...tag })) } : {}),
+      ...(item.tags && item.tags.length > 0
+        ? { tags: item.tags.map((tag) => (typeof tag === 'string' ? tag : { ...tag })) }
+        : {}),
     }));
     legacy[targetKey] = mergeRelationItems(legacy[targetKey], inverseItems);
   };
@@ -424,17 +430,17 @@ const buildTagDerivedCharacterRelations = (
     if (otherId === id || other.factionId === current.factionId) return;
 
     const otherTags = new Set(other.counterTags ?? []);
-    const counterTags = characterRelationTagPairs
-      .filter((tag) => currentTags.has(tag.counters) && otherTags.has(tag.counteredBy))
-      .map((tag) => ({ ...tag }));
-    const counteredByTags = characterRelationTagPairs
-      .filter((tag) => currentTags.has(tag.counteredBy) && otherTags.has(tag.counters))
-      .map((tag) => ({ ...tag }));
+    const counterTags = inferredCharacterRelationTags.filter(
+      (tag) => currentTags.has(tag) && otherTags.has(`怕${tag}`)
+    );
+    const counteredByTags = inferredCharacterRelationTags.filter(
+      (tag) => currentTags.has(`怕${tag}`) && otherTags.has(tag)
+    );
 
     if (counterTags.length > 0) {
       counters.push({
         id: otherId,
-        description: `${id}的“${counterTags.map((tag) => tag.counters).join('、')}”特性克制${otherId}。`,
+        description: `${id}的“${counterTags.join('、')}”特性克制${otherId}。`,
         isMinor: false,
         tags: counterTags,
       });
@@ -443,7 +449,7 @@ const buildTagDerivedCharacterRelations = (
     if (counteredByTags.length > 0) {
       counteredBy.push({
         id: otherId,
-        description: `${id}的“${counteredByTags.map((tag) => tag.counteredBy).join('、')}”特性会被${otherId}克制。`,
+        description: `${id}的“${counteredByTags.map((tag) => `怕${tag}`).join('、')}”特性会被${otherId}克制。`,
         isMinor: false,
         tags: counteredByTags,
       });
@@ -518,7 +524,11 @@ export function applyCharacterRelationOverrides(
       characterId === location.ownerId ? kind : getInverseCharacterRelationKind(kind);
     result[displayKind] = [
       ...result[displayKind],
-      { id: otherId, ...metadata, ...(tags ? { tags: tags.map((tag) => ({ ...tag })) } : {}) },
+      {
+        id: otherId,
+        ...metadata,
+        ...(tags ? { tags: tags.map((tag) => (typeof tag === 'string' ? tag : { ...tag })) } : {}),
+      },
     ];
   }
   return result;

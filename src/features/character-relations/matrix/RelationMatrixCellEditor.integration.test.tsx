@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { CHARACTER_RELATION_KINDS } from '@/lib/edit/characterRelationActions';
 import type { EditSession } from '@/lib/edit/editSession';
 import { characters as canonicalCharacters } from '@/data/static';
+import { normalizeCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import { clearTestEditSession, installTestEditSession } from '@/testUtils/editRuntime';
 
@@ -63,7 +64,7 @@ function renderEditor(source: '汤姆' | '杰瑞' = '汤姆') {
           description: item.description ?? '',
           tooltipContent: '',
           isMinor: !!item.isMinor,
-          tagPairs: item.tags ?? [],
+          tags: normalizeCharacterRelationTags(item.tags),
         },
       }}
       columnCategory={source === '汤姆' ? 'mouse' : 'cat'}
@@ -131,6 +132,30 @@ it('still records an intentional matrix edit', async () => {
   expect(getCharacterRelation(session.readDomain('characters'), '汤姆').counters).toEqual(
     expect.arrayContaining([expect.objectContaining({ id: '杰瑞', description: '经验证的说明' })])
   );
+});
+
+it('selects one tag name and preserves the saved pair as the action before-value', async () => {
+  const characters = createCharacters();
+  const before = {
+    kind: 'counteredBy' as const,
+    description: 'saved',
+    isMinor: false,
+    tags: [{ counters: '高伤', counteredBy: '怕高伤' }],
+  };
+  characters.杰瑞!.characterRelationOverrides = { 汤姆: before };
+  session = installTestEditSession({ characters });
+  renderEditor('杰瑞');
+  expect(screen.getByLabelText('克制分类 1')).toHaveValue('高伤');
+  expect(screen.getByRole('option', { name: '免疫' })).toHaveValue('免疫');
+  fireEvent.change(screen.getByLabelText('克制分类 1'), { target: { value: '免疫' } });
+  await act(async () => fireEvent.click(screen.getByRole('button', { name: '保存' })));
+  expect(session.readDraft(scope).publishEntries).toEqual([
+    expect.objectContaining({
+      path: '杰瑞.characterRelationOverrides.汤姆',
+      oldValue: before,
+      newValue: { ...before, tags: ['免疫'] },
+    }),
+  ]);
 });
 
 it('saves a changed relation kind as one shared record', async () => {

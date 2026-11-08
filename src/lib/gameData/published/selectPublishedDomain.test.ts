@@ -40,6 +40,42 @@ function asMutableRecord(value: unknown): MutableRecord {
 }
 
 describe('selectPublishedGameData', () => {
+  it('replays legacy tag property edits before a newer single-name tag edit', () => {
+    const before = [
+      { id: '杰瑞', isMinor: false, tags: [{ counters: '高伤', counteredBy: '怕高伤' }] },
+    ];
+    const inputs = [
+      decodedRow('characters', 'legacy-tags', {
+        op: 'set',
+        path: '汤姆.counters',
+        newValue: before,
+      }),
+      decodedRow('characters', 'legacy-label', {
+        op: 'set',
+        path: '汤姆.counters.0.tags.0.counteredBy',
+        newValue: '旧版标签',
+      }),
+    ];
+    const snapshot = createApprovedActionSnapshot(inputs);
+    const canonical = getCanonicalGameData('characters');
+    const legacy = selectPublishedGameData('characters', canonical, snapshot);
+    expect(legacy['汤姆']).toMatchObject({
+      counters: [{ tags: [{ counters: '高伤', counteredBy: '旧版标签' }] }],
+    });
+    const next = createApprovedActionSnapshot([
+      ...inputs,
+      decodedRow('characters', 'single-tags', {
+        op: 'set',
+        path: '汤姆.counters.0.tags',
+        newValue: ['免疫'],
+      }),
+    ]);
+    expect(selectPublishedGameData('characters', canonical, next)['汤姆']).toMatchObject({
+      counters: [{ tags: ['免疫'] }],
+    });
+    expect(before[0]!.tags).toEqual([{ counters: '高伤', counteredBy: '怕高伤' }]);
+  });
+
   it.each(PUBLISHABLE_ENTITY_TYPES)(
     'matches checked replay and isolates touched branches for %s',
     (entityType) => {

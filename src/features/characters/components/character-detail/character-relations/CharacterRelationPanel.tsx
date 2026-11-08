@@ -180,25 +180,25 @@ function RelationItemMedia({ item }: { item: RelationDisplayItem }) {
 }
 
 function RelationTagEditor({ item }: { item: RelationDisplayItem }) {
-  const [tagPairs, setTagPairs] = useState(item.tagPairs);
+  const [tags, setTags] = useState(item.tags);
 
   useEffect(() => {
-    setTagPairs(item.tagPairs);
-  }, [item.id, item.relationKind, item.tagPairs]);
+    setTags(item.tags);
+  }, [item.id, item.relationKind, item.tags]);
 
   return (
     <div className='mt-2 flex flex-col gap-1.5'>
-      {tagPairs.map((tag, index) => (
+      {tags.map((tag, index) => (
         <div key={index} className='grid grid-cols-[1fr_auto] items-center gap-1.5'>
           <CharacterRelationTagSelect
             value={tag}
-            existingTags={item.tagPairs}
+            existingTags={item.tags}
             onChange={(nextTag) => {
-              const nextTags = tagPairs.map((current, tagIndex) =>
+              const nextTags = tags.map((current, tagIndex) =>
                 tagIndex === index ? nextTag : current
               );
-              setTagPairs(nextTags);
-              if (nextTags.every((current) => current.counters && current.counteredBy)) {
+              setTags(nextTags);
+              if (nextTags.every(Boolean)) {
                 item.onUpdateTags?.(nextTags);
               }
             }}
@@ -208,8 +208,8 @@ function RelationTagEditor({ item }: { item: RelationDisplayItem }) {
             type='button'
             aria-label={`删除分类 ${index + 1}`}
             onClick={() => {
-              const nextTags = tagPairs.filter((_, tagIndex) => tagIndex !== index);
-              setTagPairs(nextTags);
+              const nextTags = tags.filter((_, tagIndex) => tagIndex !== index);
+              setTags(nextTags);
               item.onUpdateTags?.(nextTags);
             }}
             variant='delete'
@@ -222,7 +222,7 @@ function RelationTagEditor({ item }: { item: RelationDisplayItem }) {
       <Button
         variant='unstyled'
         type='button'
-        onClick={() => setTagPairs((current) => [...current, { counters: '', counteredBy: '' }])}
+        onClick={() => setTags((current) => [...current, ''])}
         className='inline-flex w-fit items-center gap-1 rounded-md px-1.5 py-1 text-xs text-blue-600 hover:bg-blue-100 dark:text-blue-300 dark:hover:bg-blue-900/40'
       >
         <PlusIcon className='h-3.5 w-3.5' aria-hidden='true' />

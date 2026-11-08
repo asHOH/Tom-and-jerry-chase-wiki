@@ -143,10 +143,8 @@ type RecommendedStorePlan = {
   description: string;
 };
 
-export type CharacterRelationTag = {
-  counters: string;
-  counteredBy: string;
-};
+// Paired labels remain readable in saved actions and drafts; new edits use a single tag name.
+export type CharacterRelationTag = string | { counters: string; counteredBy: string };
 
 export type CharacterRelationItem = {
   id: string;

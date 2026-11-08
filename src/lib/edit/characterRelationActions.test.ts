@@ -1,13 +1,42 @@
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
+import { characters } from '@/data/static';
+import { getExplicitCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
 import {
   isCharacterRelationAction,
+  isUnchangedCharacterRelationInitialization,
   normalizeCharacterRelationPairHistory,
   parseCharacterRelationActionPath,
   splitCharacterRelationActionHistory,
 } from './characterRelationActions';
 
 describe('characterRelationActions', () => {
+  it('recognizes an unchanged collection initialized by a legacy tag editor', () => {
+    const items = getExplicitCharacterRelation(characters, '魔术师').counters;
+    expect(items.some((item) => item.tags?.length)).toBe(true);
+    const legacy = items.map((item) => ({
+      ...item,
+      ...(item.tags
+        ? {
+            tags: item.tags.map((tag) =>
+              typeof tag === 'string' ? { counters: tag, counteredBy: `怕${tag}` } : tag
+            ),
+          }
+        : {}),
+    }));
+    expect(
+      isUnchangedCharacterRelationInitialization(
+        {
+          op: 'set',
+          path: '魔术师.counters',
+          oldValue: undefined,
+          newValue: legacy,
+        },
+        characters
+      )
+    ).toBe(true);
+  });
+
   it('parses character relation paths with zero-based segment names', () => {
     expect(parseCharacterRelationActionPath('杰瑞.counters.0.description')).toEqual({
       characterId: '杰瑞',

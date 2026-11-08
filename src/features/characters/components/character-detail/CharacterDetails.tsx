@@ -17,7 +17,7 @@ import { characters as staticCharacters } from '@/data/static';
 import { Skill } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import { getEditableCharacterRelations } from '@/features/characters/utils/characterRelationOverlay';
-import { characterRelationTagPairs } from '@/features/characters/utils/characterRelationTags';
+import { inferredCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import EditableCheckboxGroup from '@/features/shared/detail-view/EditableCheckboxGroup';
@@ -261,10 +261,7 @@ export default function CharacterDetails({
                       <span className='text-xs text-gray-500 dark:text-gray-400'>关系标签</span>
                       <EditableCheckboxGroup
                         actionPath={`${sourceId}.counterTags`}
-                        options={characterRelationTagPairs.flatMap((tag) => [
-                          tag.counters,
-                          tag.counteredBy,
-                        ])}
+                        options={inferredCharacterRelationTags.flatMap((tag) => [tag, `怕${tag}`])}
                         selected={localCharacter.counterTags ?? []}
                         ariaLabelPrefix='角色关系标签'
                         onChange={(counterTags) => {

@@ -9,7 +9,10 @@ import {
   CHARACTER_RELATION_PAIR_FIELD,
   getCharacterRelationPairLocation,
 } from '@/features/characters/utils/characterRelationPairs';
-import { getCharacterRelationTagLabels } from '@/features/characters/utils/characterRelationTags';
+import {
+  getCharacterRelationTagLabels,
+  normalizeCharacterRelationTags,
+} from '@/features/characters/utils/characterRelationTags';
 
 export type RelationItemOptions = {
   characterId?: string;
@@ -31,7 +34,7 @@ type RelationDisplayBase = {
   descriptionPath?: string;
   descriptionCharacterId?: string;
   relationKind: TraitRelationKind;
-  tagPairs: CharacterRelationTag[];
+  tags: string[];
   tagLabels: string[];
   onToggleMinor?: () => void;
   getToggleLabel?: (currentIsMinor: boolean) => string;
@@ -105,7 +108,7 @@ const optionalRelationActions = (
 });
 
 const relationTagFields = (item: CharacterRelationItem, relationKind: TraitRelationKind) => ({
-  tagPairs: item.tags?.map((tag) => ({ ...tag })) ?? [],
+  tags: normalizeCharacterRelationTags(item.tags),
   tagLabels: getCharacterRelationTagLabels(item.tags, relationKind),
 });
 

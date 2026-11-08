@@ -14,6 +14,7 @@ import {
   getInverseCharacterRelationKind,
   isCharacterPairRelationKind,
 } from './characterRelationPairs';
+import { normalizeCharacterRelationTags } from './characterRelationTags';
 
 export type EditableCharacterRelations = Record<TraitRelationKind, CharacterRelationItem[]>;
 type CharacterRelationOverlayRecord = Partial<
@@ -41,12 +42,7 @@ const normalizeCharacterRelationItem = (
   isMinor: !!item.isMinor,
   ...(item.tags && item.tags.length > 0
     ? {
-        tags: item.tags
-          .map((tag) => ({
-            counters: tag.counters.trim(),
-            counteredBy: tag.counteredBy.trim(),
-          }))
-          .filter((tag) => tag.counters && tag.counteredBy),
+        tags: normalizeCharacterRelationTags(item.tags),
       }
     : {}),
 });
@@ -58,7 +54,8 @@ const isSameCharacterRelationItem = (
   left.id === right.id &&
   (left.description ?? '') === (right.description ?? '') &&
   !!left.isMinor === !!right.isMinor &&
-  JSON.stringify(left.tags ?? []) === JSON.stringify(right.tags ?? []);
+  JSON.stringify(normalizeCharacterRelationTags(left.tags)) ===
+    JSON.stringify(normalizeCharacterRelationTags(right.tags));
 
 export const getCharacterRelationDescriptionPath = (
   relationKind: TraitRelationKind,
@@ -229,14 +226,9 @@ export const updateCharacterRelationTags = (
   tags: CharacterRelationItem['tags']
 ) => {
   updateCharacterRelationItem(characters, characterId, relationKind, itemId, (item) => {
-    const normalizedTags = tags
-      ?.map((tag) => ({
-        counters: tag.counters.trim(),
-        counteredBy: tag.counteredBy.trim(),
-      }))
-      .filter((tag) => tag.counters && tag.counteredBy);
+    const normalizedTags = normalizeCharacterRelationTags(tags);
 
-    if (!normalizedTags || normalizedTags.length === 0) {
+    if (normalizedTags.length === 0) {
       const { tags: _unused, ...itemWithoutTags } = item;
       return itemWithoutTags;
     }

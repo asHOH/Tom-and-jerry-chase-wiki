@@ -9,6 +9,7 @@ import {
   CHARACTER_RELATION_PAIR_FIELD,
   parseCharacterRelationPairPath,
 } from '@/features/characters/utils/characterRelationPairs';
+import { areCharacterRelationItemsEqual } from '@/features/characters/utils/characterRelationTags';
 import { getExplicitCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
 import { normalizeActionHistory, type Action, type ActionHistoryEntry } from './diffUtils';
@@ -75,7 +76,7 @@ export function isUnchangedCharacterRelationInitialization(
     relation &&
     relation.rest.length === 0 &&
     characters[relation.characterId] &&
-    isEqual(
+    areCharacterRelationItemsEqual(
       getExplicitCharacterRelation(characters, relation.characterId)[relation.relationKind],
       action.newValue
     )

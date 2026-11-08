@@ -10,6 +10,7 @@ import {
   isCharacterPairRelationKind,
   parseCharacterRelationPairPath,
 } from '@/features/characters/utils/characterRelationPairs';
+import { areCharacterRelationItemsEqual } from '@/features/characters/utils/characterRelationTags';
 import { getExplicitCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
 import { parseCharacterRelationActionPath } from './characterRelationActions';
@@ -32,13 +33,14 @@ function isRelationItems(value: unknown): value is CharacterRelationItem[] {
         (!Array.isArray(item.tags) ||
           !item.tags.every(
             (tag: unknown) =>
-              tag !== null &&
-              typeof tag === 'object' &&
-              Object.keys(tag).every((key) => key === 'counters' || key === 'counteredBy') &&
-              'counters' in tag &&
-              typeof tag.counters === 'string' &&
-              'counteredBy' in tag &&
-              typeof tag.counteredBy === 'string'
+              typeof tag === 'string' ||
+              (tag !== null &&
+                typeof tag === 'object' &&
+                Object.keys(tag).every((key) => key === 'counters' || key === 'counteredBy') &&
+                'counters' in tag &&
+                typeof tag.counters === 'string' &&
+                'counteredBy' in tag &&
+                typeof tag.counteredBy === 'string')
           )))
     )
       return false;
@@ -90,7 +92,7 @@ export function migrateLegacyCharacterRelationDrafts(
         for (const targetId of new Set([...before, ...after].map((item) => item.id))) {
           const previous = before.find((item) => item.id === targetId);
           const next = after.find((item) => item.id === targetId);
-          if (isEqual(previous, next)) continue;
+          if (areCharacterRelationItemsEqual(previous, next)) continue;
           const location = getCharacterRelationPairLocation(relation.characterId, targetId);
           const sourceFaction = original[relation.characterId]?.factionId;
           const targetFaction = original[targetId]?.factionId;

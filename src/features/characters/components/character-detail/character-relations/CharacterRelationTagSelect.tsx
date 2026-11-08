@@ -1,24 +1,12 @@
 'use client';
 
-import { splitCharacterRelationTraits } from '@/data/characterRelationData';
-import type { CharacterRelationTag } from '@/data/types';
+import { characterRelationTags } from '@/features/characters/utils/characterRelationTags';
 import { FormSelect } from '@/components/ui/FormControls';
 
-const getTagKey = (tag: CharacterRelationTag) => JSON.stringify([tag.counters, tag.counteredBy]);
-
-// Derive choices from the canonical relations without expanding generic counterTags inference.
-const existingTagOptions = Array.from(
-  new Map(
-    splitCharacterRelationTraits.flatMap((trait) =>
-      (trait.relation.tags ?? []).map((tag) => [getTagKey(tag), tag] as const)
-    )
-  ).values()
-);
-
 type CharacterRelationTagSelectProps = {
-  value: CharacterRelationTag;
-  existingTags?: readonly CharacterRelationTag[];
-  onChange: (tag: CharacterRelationTag) => void;
+  value: string;
+  existingTags?: readonly string[];
+  onChange: (tag: string) => void;
   'aria-label': string;
 };
 
@@ -28,20 +16,14 @@ export default function CharacterRelationTagSelect({
   onChange,
   'aria-label': ariaLabel,
 }: CharacterRelationTagSelectProps) {
-  const options = Array.from(
-    new Map(
-      [...existingTagOptions, ...existingTags]
-        .filter((tag) => tag.counters && tag.counteredBy)
-        .map((tag) => [getTagKey(tag), tag] as const)
-    ).values()
-  );
+  const options = [...new Set([...characterRelationTags, ...existingTags].filter(Boolean))];
 
   return (
     <FormSelect
-      value={value.counters && value.counteredBy ? getTagKey(value) : ''}
+      value={value}
       onChange={(event) => {
-        const tag = options.find((option) => getTagKey(option) === event.currentTarget.value);
-        if (tag) onChange({ ...tag });
+        const tag = event.currentTarget.value;
+        if (options.includes(tag)) onChange(tag);
       }}
       aria-label={ariaLabel}
       size='sm'
@@ -51,8 +33,8 @@ export default function CharacterRelationTagSelect({
         选择克制分类
       </option>
       {options.map((tag) => (
-        <option key={getTagKey(tag)} value={getTagKey(tag)}>
-          {tag.counters} / {tag.counteredBy}
+        <option key={tag} value={tag}>
+          {tag}
         </option>
       ))}
     </FormSelect>

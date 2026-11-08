@@ -5,13 +5,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/design';
 import type { CharacterWithFaction } from '@/lib/types';
 import type { EditableUpdate } from '@/hooks/useEditableGameData';
-import type { CharacterRelationTag, TraitRelationKind } from '@/data/types';
+import type { TraitRelationKind } from '@/data/types';
 import CharacterRelationTagSelect from '@/features/characters/components/character-detail/character-relations/CharacterRelationTagSelect';
 import {
   removeCharacterRelationItem,
   upsertCharacterRelationItem,
 } from '@/features/characters/utils/characterRelationOverlay';
-import { supportsCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
+import {
+  normalizeCharacterRelationTags,
+  supportsCharacterRelationTags,
+} from '@/features/characters/utils/characterRelationTags';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import { FormSelect, FormTextarea } from '@/components/ui/FormControls';
@@ -38,11 +41,6 @@ const getInitialRelationKind = (
   return '';
 };
 
-const normalizeTagPairs = (tags: readonly CharacterRelationTag[]) =>
-  tags
-    .map((tag) => ({ counters: tag.counters.trim(), counteredBy: tag.counteredBy.trim() }))
-    .filter((tag) => tag.counters && tag.counteredBy);
-
 export default function RelationMatrixCellEditor({
   open,
   selection,
@@ -57,7 +55,7 @@ export default function RelationMatrixCellEditor({
   const [selectedKind, setSelectedKind] = useState<TraitRelationKind | ''>('');
   const [description, setDescription] = useState('');
   const [isMinor, setIsMinor] = useState(false);
-  const [tagPairs, setTagPairs] = useState<CharacterRelationTag[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
     if (!selection || !open) return;
@@ -65,7 +63,7 @@ export default function RelationMatrixCellEditor({
     setSelectedKind(getInitialRelationKind(selection, legalKinds));
     setDescription(selection.cell?.description ?? '');
     setIsMinor(!!selection.cell?.isMinor);
-    setTagPairs(selection.cell?.tagPairs?.map((tag) => ({ ...tag })) ?? []);
+    setTags(selection.cell?.tags ?? []);
   }, [legalKinds, open, selection]);
 
   if (!selection) {
@@ -79,18 +77,18 @@ export default function RelationMatrixCellEditor({
     if (!selectedKind) return;
 
     const trimmedDescription = description.trim();
-    const normalizedTagPairs = supportsCharacterRelationTags(selectedKind)
-      ? normalizeTagPairs(tagPairs)
+    const normalizedTags = supportsCharacterRelationTags(selectedKind)
+      ? normalizeCharacterRelationTags(tags)
       : [];
     if (
       selection.cell &&
       selectedKind === selection.cell.sourceKind &&
       trimmedDescription === selection.cell.description.trim() &&
       isMinor === selection.cell.isMinor &&
-      JSON.stringify(normalizedTagPairs) ===
+      JSON.stringify(normalizedTags) ===
         JSON.stringify(
           supportsCharacterRelationTags(selectedKind)
-            ? normalizeTagPairs(selection.cell.tagPairs ?? [])
+            ? normalizeCharacterRelationTags(selection.cell.tags ?? [])
             : []
         )
     ) {
@@ -101,7 +99,7 @@ export default function RelationMatrixCellEditor({
       id: selection.column.id,
       description: trimmedDescription,
       isMinor,
-      ...(normalizedTagPairs.length > 0 ? { tags: normalizedTagPairs } : {}),
+      ...(normalizedTags.length > 0 ? { tags: normalizedTags } : {}),
     };
 
     updateCharacters((characters) => {
@@ -196,13 +194,13 @@ export default function RelationMatrixCellEditor({
             <p className='text-xs text-gray-500 dark:text-gray-400'>
               选择已有的克制分类，标签将同时用于克制方与被克制方。
             </p>
-            {tagPairs.map((tag, index) => (
+            {tags.map((tag, index) => (
               <div key={index} className='grid grid-cols-[1fr_auto] items-center gap-2'>
                 <CharacterRelationTagSelect
                   value={tag}
-                  existingTags={selection.cell?.tagPairs ?? []}
+                  existingTags={selection.cell?.tags ?? []}
                   onChange={(nextTag) =>
-                    setTagPairs((current) =>
+                    setTags((current) =>
                       current.map((item, itemIndex) => (itemIndex === index ? nextTag : item))
                     )
                   }
@@ -212,7 +210,7 @@ export default function RelationMatrixCellEditor({
                   variant='danger'
                   size='sm'
                   onClick={() =>
-                    setTagPairs((current) => current.filter((_, itemIndex) => itemIndex !== index))
+                    setTags((current) => current.filter((_, itemIndex) => itemIndex !== index))
                   }
                 >
                   删除
@@ -223,9 +221,7 @@ export default function RelationMatrixCellEditor({
               variant='secondary'
               size='sm'
               className='w-fit'
-              onClick={() =>
-                setTagPairs((current) => [...current, { counters: '', counteredBy: '' }])
-              }
+              onClick={() => setTags((current) => [...current, ''])}
             >
               添加分类
             </Button>

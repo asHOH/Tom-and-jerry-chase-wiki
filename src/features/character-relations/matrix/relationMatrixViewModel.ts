@@ -9,7 +9,10 @@ import type {
   TraitRelationKind,
 } from '@/data/types';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
-import { getCharacterRelationTagLabels } from '@/features/characters/utils/characterRelationTags';
+import {
+  getCharacterRelationTagLabels,
+  normalizeCharacterRelationTags,
+} from '@/features/characters/utils/characterRelationTags';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
 export type RelationMatrixRowFaction = FactionId;
@@ -42,7 +45,7 @@ export type RelationMatrixCell = {
   description: string;
   tooltipContent: string;
   sourceKind: TraitRelationKind;
-  tagPairs?: CharacterRelationTag[];
+  tags?: string[];
   tagLabels?: string[];
 };
 
@@ -253,7 +256,7 @@ const createCell = (
     description,
     tooltipContent: `${getRelationSentence(relationKind, subjectName, targetName)}${tagSummary}：${description}`,
     sourceKind: relationKind,
-    tagPairs: item.tags?.map((tag) => ({ ...tag })) ?? [],
+    tags: normalizeCharacterRelationTags(item.tags),
     tagLabels,
   };
 };

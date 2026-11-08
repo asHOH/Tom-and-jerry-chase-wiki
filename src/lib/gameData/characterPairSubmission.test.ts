@@ -1,9 +1,13 @@
 import type { Action } from '@/lib/edit/diffUtils';
+import { getCharacterRelationTagLabels } from '@/features/characters/utils/characterRelationTags';
+import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
 import { StaleGameDataEditError, validateActionFreshness } from './actionFreshness';
 import type { ApprovedCandidateReplayRow } from './approvedCandidateReplay';
 import { InvalidGameDataValueError } from './characterDataValidation';
+import { createApprovedActionSnapshot } from './published/approvedActionSnapshot';
 import { getCanonicalGameData } from './published/canonicalSources';
+import { selectPublishedGameData } from './published/selectPublishedDomain';
 import { preparePublishActionItems } from './publishPreparation';
 
 jest.mock('server-only', () => ({}), { virtual: true });
@@ -103,6 +107,58 @@ it('keeps different pairs independent while rejecting a stale edit to the same p
     validate([set(path, undefined, relation)], [row(set(path, undefined, relation))])
   ).toThrow(StaleGameDataEditError);
 });
+
+it.each([
+  'characterRelationOverrides',
+  'counteredByKnowledgeCards',
+  'counteredBySpecialSkills',
+] as const)(
+  'publishes single-name tags over saved paired tags in %s with exact before-values',
+  (field) => {
+    const legacyTags = [{ counters: '高伤', counteredBy: '怕高伤' }];
+    const actionPath = field === 'characterRelationOverrides' ? path : `A.${field}`;
+    const before =
+      field === 'characterRelationOverrides'
+        ? { ...relation, tags: legacyTags }
+        : [{ id: 'target', description: 'before', isMinor: false, tags: legacyTags }];
+    const after =
+      field === 'characterRelationOverrides'
+        ? { ...relation, tags: ['免疫'] }
+        : [{ id: 'target', description: 'after', isMinor: false, tags: ['免疫'] }];
+    const saved = row(set(actionPath, undefined, before));
+    const change = set(actionPath, before, after);
+    expect(validate([change], [saved]).actions[0]!.rows[0]!.actions).toEqual([change]);
+    const incorrectlyNormalizedBefore =
+      field === 'characterRelationOverrides'
+        ? { ...relation, tags: ['高伤'] }
+        : [{ id: 'target', description: 'before', isMinor: false, tags: ['高伤'] }];
+    expect(() => validate([set(actionPath, incorrectlyNormalizedBefore, after)], [saved])).toThrow(
+      StaleGameDataEditError
+    );
+
+    const snapshot = createApprovedActionSnapshot(
+      [saved, row(change)].map((entry, index) => ({
+        entityType: entry.entityType,
+        decodedRow: { rowId: String(index), rawEntry: null, actions: entry.actions },
+      }))
+    );
+    const published = selectPublishedGameData(
+      'characters',
+      getCanonicalGameData('characters'),
+      snapshot
+    );
+    const kind = field === 'characterRelationOverrides' ? 'counteredBy' : field;
+    const item = getCharacterRelation(published, 'A')[kind][0]!;
+    expect(item.tags).toEqual(['免疫']);
+    expect(getCharacterRelationTagLabels(item.tags, kind)).toEqual(['怕免疫']);
+    expect(saved.actions[0]!.newValue).toEqual(before);
+    expect(() =>
+      validate([set(actionPath, after, after)], [saved, { ...row(change), rowId: 'updated' }])
+    ).toThrow(
+      expect.objectContaining({ detail: expect.objectContaining({ reason: 'no_changes' }) })
+    );
+  }
+);
 
 it.each([
   'A.characterRelationOverrides.A',

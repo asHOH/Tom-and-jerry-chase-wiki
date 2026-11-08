@@ -4,8 +4,12 @@ import {
   validateCharacterRelationEditSources,
 } from '@/lib/gameData/characterDataValidation';
 import { getOrCreatePublishOperationId } from '@/lib/gameData/publishOperation';
+import { characters as canonicalCharacters } from '@/data/static';
 import { updateCharacterRelationDescription } from '@/features/characters/utils/characterRelationOverlay';
-import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
+import {
+  getCharacterRelation,
+  getExplicitCharacterRelation,
+} from '@/features/characters/utils/relationReadModel';
 import {
   clearTestEditSession,
   getTestEditHistoryKey,
@@ -50,6 +54,25 @@ let session: EditSession | undefined;
 beforeEach(() => {
   window.localStorage.clear();
   window.sessionStorage.clear();
+});
+
+it('does not promote unchanged baseline pairs when restoring a legacy tag collection', () => {
+  const characters = structuredClone(canonicalCharacters);
+  const items = getExplicitCharacterRelation(characters, '魔术师').counters;
+  expect(items.some((item) => item.tags?.length)).toBe(true);
+  const legacy = items.map((item) => ({
+    ...item,
+    ...(item.tags
+      ? {
+          tags: item.tags.map((tag) =>
+            typeof tag === 'string' ? { counters: tag, counteredBy: `怕${tag}` } : tag
+          ),
+        }
+      : {}),
+  }));
+  expect(
+    migrateLegacyCharacterRelationDrafts([set('魔术师.counters', undefined, legacy)], characters)
+  ).toEqual([]);
 });
 
 afterEach(() => {
@@ -143,6 +166,33 @@ it('discards one restored target from the opposite endpoint while preserving ano
   ).toEqual(['A.characterRelationOverrides.C', 'A.description', 'A.advantageMaps']);
   expect(getCharacterRelation(session.readDomain('characters'), 'A').counters).toEqual([item('C')]);
 });
+
+it.each([['高伤'], [{ counters: '高伤', counteredBy: '怕高伤' }]])(
+  'restores collection drafts with tag format %j into a publishable shared record',
+  (tag) => {
+    const tags = [tag];
+    const before = { ...item('B'), tags };
+    window.localStorage.setItem(key, JSON.stringify([set('A.counters', undefined, [before])]));
+    session = installTestEditSession({ characters: baseline });
+    const entries = session.readDraft(scope('B')).publishEntries;
+    expect(entries).toEqual([
+      set('A.characterRelationOverrides.B', undefined, {
+        kind: 'counters',
+        description: 'legacy note',
+        isMinor: false,
+        tags,
+      }),
+    ]);
+    const published = structuredClone(baseline);
+    entries.forEach((entry) => applyActionEntry(published, entry));
+    expect(() =>
+      validateCharacterData(
+        published,
+        entries.flat().map(({ path }) => path)
+      )
+    ).not.toThrow();
+  }
+);
 
 it('retains deletion intent despite an inverse legacy copy', () => {
   const characters = structuredClone(baseline);

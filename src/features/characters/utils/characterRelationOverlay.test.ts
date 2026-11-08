@@ -124,6 +124,22 @@ describe('shared pair records and inferred suggestions', () => {
     expect(characters.Mouse?.characterRelationOverrides).toBeUndefined();
   });
 
+  it('keeps a legacy tag selection unchanged and writes canonical tags for a real edit', () => {
+    const legacy = {
+      kind: 'counters' as const,
+      description: 'saved note',
+      isMinor: false,
+      tags: [{ counters: '高伤', counteredBy: '怕高伤' }],
+    };
+    characters.Cat!.characterRelationOverrides = { Mouse: legacy };
+    updateCharacterRelationTags(characters, 'Mouse', 'counteredBy', 'Cat', ['高伤']);
+    expect(characters.Cat!.characterRelationOverrides.Mouse).toBe(legacy);
+    updateCharacterRelationTags(characters, 'Mouse', 'counteredBy', 'Cat', ['免疫']);
+    expect(characters.Cat!.characterRelationOverrides.Mouse).toEqual({ ...legacy, tags: ['免疫'] });
+    expect(getCharacterRelation(characters, 'Mouse').counteredBy[0]!.tags).toEqual(['免疫']);
+    expect(legacy.tags).toEqual([{ counters: '高伤', counteredBy: '怕高伤' }]);
+  });
+
   it('promotes only the selected suggestion and shares all metadata from either endpoint', () => {
     updateCharacterRelationDescription(characters, 'Cat', 'counters', 'Mouse', 'Shared note');
     toggleCharacterRelationMinor(characters, 'Mouse', 'counteredBy', 'Cat');
@@ -138,7 +154,7 @@ describe('shared pair records and inferred suggestions', () => {
         { id: 'Mouse', description: 'Shared note', isMinor: true },
         expect.objectContaining({
           id: 'OtherMouse',
-          tags: [{ counters: '拉扯', counteredBy: '怕拉扯' }],
+          tags: ['拉扯'],
         }),
       ])
     );
