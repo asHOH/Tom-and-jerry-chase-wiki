@@ -120,6 +120,10 @@ pm2() {
   case "$1" in
     --version) echo 7.0.4 ;;
     jlist)
+      # PM2 writes daemon-version warnings to stdout unless silent mode is enabled.
+      if [ "${2:-}" != --silent ]; then
+        printf '\n>>>> In-memory PM2 is out-of-date, do:\n>>>> $ pm2 update\n'
+      fi
       if [ -n "$live" ]; then
         printf '[{"name":"tjwiki","pm2_env":{"pm_cwd":"%s"}}]' "$live"
       else echo '[]'; fi

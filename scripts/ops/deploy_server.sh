@@ -475,7 +475,7 @@ ensure_pm2_process() {
 }
 
 find_active_release() {
-  ACTIVE_RELEASE="$(pm2 jlist | node -e '
+  ACTIVE_RELEASE="$(pm2 jlist --silent | node -e '
     const fs = require("node:fs");
     const apps = JSON.parse(fs.readFileSync(0, "utf8"));
     const app = apps.find((item) => item.name === process.argv[1]);
