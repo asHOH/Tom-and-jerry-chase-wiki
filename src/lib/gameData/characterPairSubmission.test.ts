@@ -63,6 +63,35 @@ it('accepts the first complete shared record and an explicit removal marker', ()
   ).not.toThrow();
 });
 
+it.each([
+  ['易伤', '高伤'],
+  ['减控', '机制'],
+])('accepts replacing saved %s tags in shared and legacy relations', (retired, replacement) => {
+  const otherTag = { counters: '免疫', counteredBy: '怕免疫' };
+  const before = {
+    ...relation,
+    tags: [{ counters: retired, counteredBy: `怕${retired}` }, otherTag],
+  };
+  const after = {
+    ...before,
+    tags: [{ counters: replacement, counteredBy: `怕${replacement}` }, otherTag],
+  };
+  const { kind: _beforeKind, ...legacyBefore } = before;
+  const { kind: _afterKind, ...legacyAfter } = after;
+
+  for (const [actionPath, oldValue, newValue] of [
+    [path, before, after],
+    ['A.counteredBy', [{ id: 'B', ...legacyBefore }], [{ id: 'B', ...legacyAfter }]],
+  ] as const) {
+    const saved = row(set(actionPath, undefined, oldValue));
+    const change = set(actionPath, oldValue, newValue);
+    const prepared = validate([change], [saved]);
+
+    expect(prepared.actions[0]!.rows[0]!.actions).toEqual([change]);
+    expect(saved.actions[0]!.newValue).toEqual(oldValue);
+  }
+});
+
 it('keeps different pairs independent while rejecting a stale edit to the same pair', () => {
   const otherPath = 'A.characterRelationOverrides.C';
   const prepared = validate([set(path, undefined, relation), set(otherPath, undefined, relation)]);

@@ -1484,7 +1484,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       target: { name: '罗宾汉泰菲', type: 'character' },
       tags: [
         { counters: '高伤', counteredBy: '怕高伤' },
-        { counters: '减控', counteredBy: '怕减控' },
+        { counters: '机制', counteredBy: '怕机制' },
       ],
       isMinor: true,
     },
@@ -2414,7 +2414,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       target: { name: '恶魔汤姆', type: 'character' },
       isMinor: true,
       tags: [
-        { counters: '易伤', counteredBy: '怕易伤' },
+        { counters: '高伤', counteredBy: '怕高伤' },
         { counters: '免疫', counteredBy: '怕免疫' },
       ],
     },
@@ -2430,7 +2430,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       tags: [
         { counters: '高伤', counteredBy: '怕高伤' },
         { counters: '追击', counteredBy: '怕追击' },
-        { counters: '减控', counteredBy: '怕减控' },
+        { counters: '机制', counteredBy: '怕机制' },
       ],
     },
   },
