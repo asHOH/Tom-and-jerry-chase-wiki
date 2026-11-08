@@ -23,7 +23,7 @@ describe('post-cutover compaction verifier script', () => {
 
   it('binds parity to historical source data while using the current verification engine', () => {
     expect(runner).toContain("'@': join(args.sourceRoot, 'src')");
-    expect(runner).toContain("'lodash-es/isEqual': join(projectDir");
+    expect(runner).toContain("'lodash-es': join(projectDir, 'node_modules/lodash-es')");
     expect(runner).toContain('const { verifyCompactionActionPatch } = helperJiti(');
     expect(runner).toContain("runnerStage = 'verify_action_patch'");
   });

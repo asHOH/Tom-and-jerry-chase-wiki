@@ -111,7 +111,7 @@ async function main() {
   const sourceJiti = createJiti(import.meta.url, {
     alias: {
       '@': join(args.sourceRoot, 'src'),
-      'lodash-es/isEqual': join(projectDir, 'node_modules/lodash-es/isEqual.js'),
+      'lodash-es': join(projectDir, 'node_modules/lodash-es'),
       'server-only': serverOnlyStub,
     },
   });
