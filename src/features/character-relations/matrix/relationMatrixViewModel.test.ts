@@ -1,5 +1,6 @@
 import { cards, maps, modes, specialSkills, characters as staticCharacters } from '@/data/static';
 import type { CharacterRelation, CharacterRelationItem, TraitRelationKind } from '@/data/types';
+import { getCharacterRelationTagDefinition } from '@/features/characters/utils/characterRelationTags';
 
 import {
   buildRelationMatrixViewModel,
@@ -107,6 +108,12 @@ describe('relationMatrixViewModel', () => {
       displayKind: 'counteredBy',
       tooltipContent: expect.stringContaining('杰瑞被汤姆克制 [怕免疫]：杰瑞自保能力差'),
     });
+    expect(getCell(catRows, '汤姆', '杰瑞')?.tooltipContent).toContain(
+      `免疫：${getCharacterRelationTagDefinition('免疫')}`
+    );
+    expect(getCell(mouseRows, '杰瑞', '汤姆')?.tooltipContent).toContain(
+      `怕免疫：${getCharacterRelationTagDefinition('免疫')}`
+    );
     expect(getCell(catRows, '牛仔汤姆', '剑客泰菲')).toMatchObject({
       displayKind: 'counteredBy',
     });

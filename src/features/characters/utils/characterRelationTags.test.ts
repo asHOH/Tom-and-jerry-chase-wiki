@@ -4,9 +4,26 @@ import type { TraitRelationKind } from '@/data/types';
 import {
   areCharacterRelationItemsEqual,
   characterRelationTags,
+  getCharacterRelationTagDefinition,
   getCharacterRelationTagLabels,
   normalizeCharacterRelationTags,
 } from './characterRelationTags';
+
+it.each(characterRelationTags)(
+  'provides the same definition for %s and its inverse label',
+  (tag) => {
+    const definition = getCharacterRelationTagDefinition(tag);
+    expect(definition).toMatch(/[\u4e00-\u9fff]/);
+    expect(getCharacterRelationTagDefinition(`怕${tag}`)).toBe(definition);
+  }
+);
+
+it.each(['旧版说明', '', 'constructor', '__proto__'])(
+  'leaves unknown label %s without a definition',
+  (tag) => {
+    expect(getCharacterRelationTagDefinition(tag)).toBeUndefined();
+  }
+);
 
 it('compares projected tags across formats while preserving other fields and malformed tags', () => {
   const item = { id: 'A', isMinor: false, tags: ['高伤'] };

@@ -10,6 +10,7 @@ import type {
 } from '@/data/types';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import {
+  getCharacterRelationTagDefinition,
   getCharacterRelationTagLabels,
   normalizeCharacterRelationTags,
 } from '@/features/characters/utils/characterRelationTags';
@@ -250,11 +251,18 @@ const createCell = (
   const description = item.description ?? '';
   const tagLabels = getCharacterRelationTagLabels(item.tags, relationKind);
   const tagSummary = tagLabels.length > 0 ? ` [${tagLabels.join('、')}]` : '';
+  const tagDefinitions = tagLabels.flatMap((label) => {
+    const definition = getCharacterRelationTagDefinition(label);
+    return definition ? [`${label}：${definition}`] : [];
+  });
   return {
     displayKind,
     isMinor: !!item.isMinor,
     description,
-    tooltipContent: `${getRelationSentence(relationKind, subjectName, targetName)}${tagSummary}：${description}`,
+    tooltipContent: [
+      `${getRelationSentence(relationKind, subjectName, targetName)}${tagSummary}：${description}`,
+      ...tagDefinitions,
+    ].join('\n'),
     sourceKind: relationKind,
     tags: normalizeCharacterRelationTags(item.tags),
     tagLabels,

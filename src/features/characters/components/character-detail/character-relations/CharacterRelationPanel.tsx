@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/design';
-import { supportsCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
+import {
+  getCharacterRelationTagDefinition,
+  supportsCharacterRelationTags,
+} from '@/features/characters/utils/characterRelationTags';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import Button from '@/components/ui/Button';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
+import Tooltip from '@/components/ui/Tooltip';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
@@ -250,93 +254,110 @@ function RelationItemCard({
   };
 
   return (
-    <div
-      className={cn(
-        'flex flex-row items-center gap-3 rounded-lg p-2',
-        themeClasses.itemBg,
-        !canEdit && themeClasses.interactive,
-        item.isMinor && 'opacity-80'
-      )}
-      role={!canEdit ? 'button' : undefined}
-      tabIndex={!canEdit ? 0 : undefined}
-      aria-label={getItemAriaLabel(item, canEdit)}
-      onClick={handleClick}
-      onKeyDown={(event) => {
-        if (!canEdit && (event.key === 'Enter' || event.key === ' ')) {
-          event.preventDefault();
-          item.onNavigate();
-        }
-      }}
-    >
-      <RelationItemMedia item={item} />
-      <div className='flex flex-1 flex-col'>
-        <div className='flex items-center gap-1'>
-          <span className={relationItemNameClassName}>{item.id}</span>
-          {canEdit && item.isEditable && item.onToggleMinor ? (
-            <Button
-              variant='unstyled'
-              type='button'
-              onClick={() => item.onToggleMinor?.()}
-              className={themeClasses.toggle}
-              aria-label={item.getToggleLabel?.(!!item.isMinor) ?? '切换关系'}
-            >
-              {item.isMinor ? '次要' : '主要'}
-            </Button>
+    <div className={cn('rounded-lg', themeClasses.itemBg, item.isMinor && 'opacity-80')}>
+      <div
+        className={cn(
+          'flex flex-row items-center gap-3 rounded-lg p-2',
+          !canEdit && themeClasses.interactive
+        )}
+        role={!canEdit ? 'button' : undefined}
+        tabIndex={!canEdit ? 0 : undefined}
+        aria-label={getItemAriaLabel(item, canEdit)}
+        onClick={handleClick}
+        onKeyDown={(event) => {
+          if (!canEdit && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            item.onNavigate();
+          }
+        }}
+      >
+        <RelationItemMedia item={item} />
+        <div className='flex flex-1 flex-col'>
+          <div className='flex items-center gap-1'>
+            <span className={relationItemNameClassName}>{item.id}</span>
+            {canEdit && item.isEditable && item.onToggleMinor ? (
+              <Button
+                variant='unstyled'
+                type='button'
+                onClick={() => item.onToggleMinor?.()}
+                className={themeClasses.toggle}
+                aria-label={item.getToggleLabel?.(!!item.isMinor) ?? '切换关系'}
+              >
+                {item.isMinor ? '次要' : '主要'}
+              </Button>
+            ) : (
+              item.isMinor && <span className={minorLabelClassName}>(次要)</span>
+            )}
+            {canEdit && item.onRemove && (
+              <IconButton
+                type='button'
+                aria-label='移除关系'
+                onClick={() => item.onRemove?.()}
+                variant='delete'
+                size='sm'
+                className='ml-auto'
+              >
+                <TrashIcon className={getIconButtonIconClassName('sm')} aria-hidden='true' />
+              </IconButton>
+            )}
+          </div>
+          {canEdit &&
+            item.isEditable &&
+            item.onUpdateTags &&
+            supportsCharacterRelationTags(item.relationKind) && <RelationTagEditor item={item} />}
+          {canEdit && canEditDescription ? (
+            item.descriptionPath ? (
+              <e.span
+                path={`${item.descriptionPath}.description`}
+                characterId={item.descriptionCharacterId}
+                initialValue={item.description}
+                className={relationItemDescriptionClassName}
+                onSave={(value) => item.onUpdateDescription?.(value)}
+              />
+            ) : (
+              <textarea
+                rows={2}
+                defaultValue={item.description}
+                onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
+                className={relationItemTextareaClassName}
+                placeholder='补充关系描述'
+              />
+            )
           ) : (
-            item.isMinor && <span className={minorLabelClassName}>(次要)</span>
-          )}
-          {canEdit && item.onRemove && (
-            <IconButton
-              type='button'
-              aria-label='移除关系'
-              onClick={() => item.onRemove?.()}
-              variant='delete'
-              size='sm'
-              className='ml-auto'
-            >
-              <TrashIcon className={getIconButtonIconClassName('sm')} aria-hidden='true' />
-            </IconButton>
+            item.description && (
+              <span className={relationItemDescriptionClassName}>
+                <TextWithHoverTooltips text={item.description} />
+              </span>
+            )
           )}
         </div>
-        {!canEdit && item.tagLabels.length > 0 && (
-          <div className='mt-1 flex flex-wrap gap-1' aria-label='克制分类'>
-            {item.tagLabels.map((tag) => (
+      </div>
+      {!canEdit && item.tagLabels.length > 0 && (
+        <div className='flex flex-wrap gap-1 px-2 pb-2 pl-15' aria-label='克制分类'>
+          {item.tagLabels.map((tag) => {
+            const definition = getCharacterRelationTagDefinition(tag);
+            return definition ? (
+              <Tooltip key={tag} asChild clickToToggle content={definition}>
+                <Button
+                  variant='unstyled'
+                  type='button'
+                  className={cn(
+                    relationTagClassName,
+                    'focus-visible:ring-focus cursor-help focus-visible:ring-2 focus-visible:outline-none'
+                  )}
+                  aria-label={`${tag}：查看分类说明`}
+                >
+                  {tag}
+                </Button>
+              </Tooltip>
+            ) : (
               <span key={tag} className={relationTagClassName}>
                 {tag}
               </span>
-            ))}
-          </div>
-        )}
-        {canEdit &&
-          item.isEditable &&
-          item.onUpdateTags &&
-          supportsCharacterRelationTags(item.relationKind) && <RelationTagEditor item={item} />}
-        {canEdit && canEditDescription ? (
-          item.descriptionPath ? (
-            <e.span
-              path={`${item.descriptionPath}.description`}
-              characterId={item.descriptionCharacterId}
-              initialValue={item.description}
-              className={relationItemDescriptionClassName}
-              onSave={(value) => item.onUpdateDescription?.(value)}
-            />
-          ) : (
-            <textarea
-              rows={2}
-              defaultValue={item.description}
-              onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
-              className={relationItemTextareaClassName}
-              placeholder='补充关系描述'
-            />
-          )
-        ) : (
-          item.description && (
-            <span className={relationItemDescriptionClassName}>
-              <TextWithHoverTooltips text={item.description} />
-            </span>
-          )
-        )}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
