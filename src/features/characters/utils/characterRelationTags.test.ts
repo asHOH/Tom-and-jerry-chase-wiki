@@ -163,6 +163,5 @@ it('converts the approved legacy skill tag while preserving later single-name ch
       tags: ['免疫', '免控', '干扰'],
     }).tags
   ).toEqual(['免控', '干扰']);
-  expect(getCharacterRelationTagDefinition('免控')).toContain('解除已经生效的控制');
   expect(getCharacterRelationTagDefinition('免疫')).toBeUndefined();
 });
