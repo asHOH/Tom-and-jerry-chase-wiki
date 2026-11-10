@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { globSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 // These are the deliberately warmed pages, plus the offline fallback. Everything else
@@ -13,7 +13,15 @@ export function getOfflinePrecacheFiles(distDir = '.next') {
     }
   };
   for (const page of ['index', 'factions/cat', 'factions/mouse', 'offline']) {
-    const html = readFileSync(path.join(distDir, 'server/app', `${page}.html`), 'utf8');
+    // Next.js adapter builds namespace prerendered HTML by its source route.
+    const htmlFiles = globSync(
+      [`server/app/${page}.html`, `server/route-cache/APP_PAGE/*/$/${page}.html`],
+      { cwd: distDir }
+    );
+    if (htmlFiles.length !== 1) {
+      throw new Error(`Expected one precache HTML file for ${page}, found ${htmlFiles.length}`);
+    }
+    const html = readFileSync(path.join(distDir, htmlFiles[0]), 'utf8');
     // RSC inline data can contain article text; only inspect actual asset tags in HTML.
     for (const match of html.matchAll(
       /<(?:script|link)\b[^>]*\b(?:src|href)="(\/_next\/static\/[^"<>]+)"/g
