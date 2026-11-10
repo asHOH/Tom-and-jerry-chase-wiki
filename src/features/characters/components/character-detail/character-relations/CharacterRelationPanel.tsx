@@ -22,6 +22,7 @@ type RelationThemeClasses = {
   headerText: string;
   iconBg: string;
   itemBg: string;
+  hover: string;
   interactive: string;
   toggle: string;
 };
@@ -54,8 +55,8 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
     headerText: 'text-blue-700 dark:text-blue-300',
     iconBg: 'bg-blue-200',
     itemBg: 'bg-blue-50 dark:bg-blue-900/30',
-    interactive:
-      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-focus active:scale-95',
+    hover: 'transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40',
+    interactive: 'cursor-pointer focus:outline-none focus:ring-2 focus:ring-focus active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full hover:bg-blue-300 dark:hover:bg-blue-600 cursor-pointer',
   },
@@ -63,8 +64,9 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
     headerText: 'text-amber-700 dark:text-amber-300',
     iconBg: 'bg-amber-200',
     itemBg: 'bg-amber-50 dark:bg-amber-900/30',
+    hover: 'transition-shadow hover:shadow-lg hover:bg-amber-100 dark:hover:bg-amber-800/40',
     interactive:
-      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-amber-100 dark:hover:bg-amber-800/40 focus:outline-none focus:ring-2 focus:ring-amber-400 active:scale-95',
+      'cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400 active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-amber-200 dark:bg-amber-700 text-amber-800 dark:text-amber-200 rounded-full hover:bg-amber-300 dark:hover:bg-amber-600 cursor-pointer',
   },
@@ -72,8 +74,9 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
     headerText: 'text-red-700 dark:text-red-300',
     iconBg: 'bg-red-200',
     itemBg: 'bg-red-50 dark:bg-red-900/30',
+    hover: 'transition-shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800/40',
     interactive:
-      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800/40 focus:outline-none focus:ring-2 focus:ring-red-400 active:scale-95',
+      'cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-400 active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200 rounded-full hover:bg-red-300 dark:hover:bg-red-600 cursor-pointer',
   },
@@ -81,8 +84,9 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
     headerText: 'text-green-700 dark:text-green-300',
     iconBg: 'bg-green-200',
     itemBg: 'bg-green-50 dark:bg-green-900/30',
+    hover: 'transition-shadow hover:shadow-lg hover:bg-green-100 dark:hover:bg-green-800/40',
     interactive:
-      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-green-100 dark:hover:bg-green-800/40 focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95',
+      'cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-green-200 dark:bg-green-700 text-green-800 dark:text-green-200 rounded-full hover:bg-green-300 dark:hover:bg-green-600 cursor-pointer',
   },
@@ -90,8 +94,9 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
     headerText: 'text-purple-700 dark:text-purple-300',
     iconBg: 'bg-purple-200',
     itemBg: 'bg-purple-50 dark:bg-purple-900/30',
+    hover: 'transition-shadow hover:shadow-lg hover:bg-purple-100 dark:hover:bg-purple-800/40',
     interactive:
-      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-purple-100 dark:hover:bg-purple-800/40 focus:outline-none focus:ring-2 focus:ring-purple-400 active:scale-95',
+      'cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400 active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-purple-200 dark:bg-purple-700 text-purple-800 dark:text-purple-200 rounded-full hover:bg-purple-300 dark:hover:bg-purple-600 cursor-pointer',
   },
@@ -99,8 +104,9 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
     headerText: 'text-orange-700 dark:text-orange-300',
     iconBg: 'bg-orange-200',
     itemBg: 'bg-orange-50 dark:bg-orange-900/30',
+    hover: 'transition-shadow hover:shadow-lg hover:bg-orange-100 dark:hover:bg-orange-800/40',
     interactive:
-      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-orange-100 dark:hover:bg-orange-800/40 focus:outline-none focus:ring-2 focus:ring-orange-400 active:scale-95',
+      'cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-400 active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-orange-200 dark:bg-orange-700 text-orange-800 dark:text-orange-200 rounded-full hover:bg-orange-300 dark:hover:bg-orange-600 cursor-pointer',
   },
@@ -254,7 +260,14 @@ function RelationItemCard({
   };
 
   return (
-    <div className={cn('rounded-lg', themeClasses.itemBg, item.isMinor && 'opacity-80')}>
+    <div
+      className={cn(
+        'rounded-lg',
+        themeClasses.itemBg,
+        !canEdit && themeClasses.hover,
+        item.isMinor && 'opacity-80'
+      )}
+    >
       <div
         className={cn(
           'flex flex-row items-center gap-3 rounded-lg p-2',
