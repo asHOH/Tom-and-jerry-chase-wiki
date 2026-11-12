@@ -409,10 +409,6 @@
       "type": "knowledgeCard"
     },
     {
-      "name": "猫鼠广场",
-      "type": "mode"
-    },
-    {
       "name": "BOOM!!",
       "type": "skill"
     },
@@ -694,6 +690,10 @@
     },
     {
       "name": "野生体格",
+      "type": "skill"
+    },
+    {
+      "name": "防狼锤",
       "type": "skill"
     },
     {
@@ -1007,14 +1007,6 @@
       "type": "knowledgeCard"
     },
     {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
-    {
-      "name": "谁是外星人",
-      "type": "mode"
-    },
-    {
       "name": "三叉戟",
       "type": "skill"
     },
@@ -1134,10 +1126,6 @@
     },
     {
       "name": "5V5经典奶酪赛",
-      "type": "mode"
-    },
-    {
-      "name": "混沌大作战",
       "type": "mode"
     },
     {
@@ -1369,10 +1357,6 @@
       "type": "mode"
     },
     {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
-    {
       "name": "奇思妙想",
       "type": "skill"
     },
@@ -1392,10 +1376,6 @@
     }
   ],
   "禁疗": [
-    {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
     {
       "name": "喜剧之王",
       "type": "skill"
@@ -1640,6 +1620,10 @@
     },
     {
       "name": "藤蔓",
+      "type": "entity"
+    },
+    {
+      "name": "长枪",
       "type": "entity"
     },
     {
@@ -1931,15 +1915,7 @@
       "type": "mode"
     },
     {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
-    {
       "name": "特工行动",
-      "type": "mode"
-    },
-    {
-      "name": "猫鼠广场",
       "type": "mode"
     },
     {
@@ -2012,6 +1988,10 @@
     },
     {
       "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "剑客长枪",
       "type": "skill"
     },
     {
@@ -2088,6 +2068,10 @@
     },
     {
       "name": "威严光盾",
+      "type": "skill"
+    },
+    {
+      "name": "小情绪",
       "type": "skill"
     },
     {
@@ -2543,6 +2527,10 @@
       "type": "entity"
     },
     {
+      "name": "汽水罐",
+      "type": "entity"
+    },
+    {
       "name": "泰菲球",
       "type": "entity"
     },
@@ -2767,6 +2755,14 @@
       "type": "skill"
     },
     {
+      "name": "小情绪",
+      "type": "skill"
+    },
+    {
+      "name": "小淘气",
+      "type": "skill"
+    },
+    {
       "name": "幻影剑气",
       "type": "skill"
     },
@@ -2804,6 +2800,10 @@
     },
     {
       "name": "朝圣瞭望",
+      "type": "skill"
+    },
+    {
+      "name": "汽水罐",
       "type": "skill"
     },
     {
@@ -3145,10 +3145,6 @@
       "type": "item"
     },
     {
-      "name": "猫鼠广场",
-      "type": "mode"
-    },
-    {
       "name": "BOOM!!",
       "type": "skill"
     },
@@ -3297,10 +3293,6 @@
     {
       "name": "电风扇",
       "type": "item"
-    },
-    {
-      "name": "猫鼠广场",
-      "type": "mode"
     },
     {
       "name": "BOOM!!",
@@ -3519,10 +3511,6 @@
       "type": "mode"
     },
     {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
-    {
       "name": "烟花大作战",
       "type": "mode"
     },
@@ -3681,10 +3669,6 @@
       "type": "item"
     },
     {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
-    {
       "name": "丰收盛宴",
       "type": "skill"
     },
@@ -3777,10 +3761,6 @@
     {
       "name": "皮糙肉厚",
       "type": "knowledgeCard"
-    },
-    {
-      "name": "混沌大作战",
-      "type": "mode"
     },
     {
       "name": "万有引力",
@@ -3942,10 +3922,6 @@
     },
     {
       "name": "创意玩法",
-      "type": "mode"
-    },
-    {
-      "name": "混沌大作战",
       "type": "mode"
     },
     {
@@ -4162,10 +4138,6 @@
     },
     {
       "name": "沙滩排球",
-      "type": "mode"
-    },
-    {
-      "name": "混沌大作战",
       "type": "mode"
     },
     {
@@ -5223,14 +5195,6 @@
       "type": "item"
     },
     {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
-    {
-      "name": "猫鼠广场",
-      "type": "mode"
-    },
-    {
       "name": "疯狂奶酪赛",
       "type": "mode"
     },
@@ -5260,6 +5224,10 @@
     },
     {
       "name": "小情绪",
+      "type": "skill"
+    },
+    {
+      "name": "小淘气",
       "type": "skill"
     },
     {
@@ -5326,10 +5294,6 @@
     },
     {
       "name": "5V5经典奶酪赛",
-      "type": "mode"
-    },
-    {
-      "name": "猫鼠广场",
       "type": "mode"
     },
     {
@@ -5585,6 +5549,10 @@
       "type": "entity"
     },
     {
+      "name": "长枪",
+      "type": "entity"
+    },
+    {
       "name": "风之屏障",
       "type": "entity"
     },
@@ -5634,6 +5602,10 @@
     },
     {
       "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "剑客长枪",
       "type": "skill"
     },
     {
@@ -5771,10 +5743,6 @@
       "type": "item"
     },
     {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
-    {
       "name": "丰收盛宴",
       "type": "skill"
     },
@@ -5905,10 +5873,6 @@
       "type": "knowledgeCard"
     },
     {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
-    {
       "name": "丰收盛宴",
       "type": "skill"
     },
@@ -6023,15 +5987,7 @@
       "type": "mode"
     },
     {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
-    {
       "name": "特工行动",
-      "type": "mode"
-    },
-    {
-      "name": "猫鼠广场",
       "type": "mode"
     },
     {
@@ -6048,6 +6004,10 @@
     },
     {
       "name": "分身大师",
+      "type": "skill"
+    },
+    {
+      "name": "剑客长枪",
       "type": "skill"
     },
     {
@@ -6268,6 +6228,10 @@
     },
     {
       "name": "追踪饮料",
+      "type": "skill"
+    },
+    {
+      "name": "防狼锤",
       "type": "skill"
     },
     {
@@ -6707,10 +6671,6 @@
       "type": "knowledgeCard"
     },
     {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
-    {
       "name": "疯狂奶酪赛",
       "type": "mode"
     },
@@ -6720,6 +6680,10 @@
     },
     {
       "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "小淘气",
       "type": "skill"
     },
     {
@@ -7745,10 +7709,6 @@
       "type": "mode"
     },
     {
-      "name": "混沌大作战",
-      "type": "mode"
-    },
-    {
       "name": "三叉戟",
       "type": "skill"
     },
@@ -7912,6 +7872,10 @@
       "type": "entity"
     },
     {
+      "name": "长枪",
+      "type": "entity"
+    },
+    {
       "name": "女主人",
       "type": "fixture"
     },
@@ -7929,6 +7893,10 @@
     },
     {
       "name": "仙人掌",
+      "type": "skill"
+    },
+    {
+      "name": "剑客长枪",
       "type": "skill"
     },
     {
@@ -8282,10 +8250,6 @@
       "type": "knowledgeCard"
     },
     {
-      "name": "猫鼠广场",
-      "type": "mode"
-    },
-    {
       "name": "BOOM!!",
       "type": "skill"
     },
@@ -8599,10 +8563,6 @@
   "初始等级提高": [
     {
       "name": "创意玩法",
-      "type": "mode"
-    },
-    {
-      "name": "混沌大作战",
       "type": "mode"
     },
     {
