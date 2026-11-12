@@ -43,6 +43,8 @@ next-env.d.ts
 # IDE
 .idea/
 .vscode/
+/.zed/
+/.hintrc
 *.code-workspace
 *.swp
 .nvimlog
