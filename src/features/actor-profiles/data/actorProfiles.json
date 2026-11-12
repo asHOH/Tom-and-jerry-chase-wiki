@@ -2182,7 +2182,7 @@
     "maxHp": 99,
     "hpRecovery": 1,
     "wallDamage": 0,
-    "attack": 0,
+    "attack": 10,
     "attackCooldown": {
       "hit": 2
     },
