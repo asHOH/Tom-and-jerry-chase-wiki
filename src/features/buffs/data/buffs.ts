@@ -4,8 +4,7 @@ import buffSources from './buffsources.json' with { type: 'json' };
 
 const getBuffImageUrl = (name: string, buff: BuffDefinition): string => {
   if (buff.specialImageUrl) return buff.specialImageUrl;
-  if (buff.unuseImage)
-    return `/images/buffs/default-${buff.type.includes('负面') ? 'debuff' : 'buff'}.png`;
+  if (buff.unuseImage) return `/images/buffs/default-buff.png`;
   return `/images/buffs/${encodeURIComponent(name)}.png`;
 };
 
@@ -36,6 +35,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
     detailedDescription:
       '!{10000}\n进入该状态会发出音效。其它老鼠可通过交互键治疗受伤的老鼠，治疗共需2.4秒，治疗期间双方无法移动，成功治疗时获得少量经验。多名老鼠可合作加速治疗。\n当角色当前HP超出当前HP上限时，会解除受伤，同时使HP复位为当前HP上限。',
+    specialImageUrl: '/images/buffs/default-debuff.png',
   },
   猫虚弱: {
     type: '状态',
@@ -44,6 +44,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     stack: '虚弱期间不会再次进入虚弱状态。',
     sourceDescription: '当猫角色HP小于0时，会受到猫虚弱状态，同时使HP复位为0。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_08.png',
   },
   鼠虚弱: {
     type: '状态',
@@ -53,6 +54,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     stack: '虚弱期间不会再次进入虚弱状态。',
     sourceDescription: '当鼠角色HP小于0时，会受到鼠虚弱状态，同时使HP复位为0。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_08.png',
   },
   抓起: {
     type: '状态',
@@ -63,6 +65,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '只有鼠角色会被抓起。鼠角色虚弱后可被敌方猫角色抓起，若有多只鼠角色同时处于抓取范围，则优先抓取编号最大的（编号详见角色头像），猫角色同时只能抓起一只老鼠，且抓住老鼠期间无法使用道具。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-debuff.png',
   },
   绑上火箭: {
     type: '状态',
@@ -73,6 +76,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '只有鼠角色会被绑上火箭。鼠角色被敌方猫角色{抓起}后，猫角色可与空置的火箭交互，将该老鼠绑上火箭并立即减少10秒放飞倒计时。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-debuff.png',
   },
   放飞: {
     type: '状态',
@@ -83,6 +87,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '只有鼠角色会被放飞。鼠角色被{绑上火箭}后，火箭读秒结束时会起飞，使该老鼠被放飞。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-debuff.png',
   },
   害怕: {
     type: '状态',
@@ -93,6 +98,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '仅对鼠角色：当[同房间内](指的是同一个子房间内。有关“房间”的具体概念，可查阅本网站机制页的“地图”相关介绍)存在敌方时，自动开始害怕。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-debuff.png',
   },
   老鼠推奶酪变慢: {
     type: '状态',
@@ -101,6 +107,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '仅对鼠角色：在{经典奶酪赛}等经典模式中，游戏初始3分钟内获得“老鼠推奶酪变慢-1”，有队友被绑上火箭期间获得“老鼠推奶酪变慢-2”。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_10.png',
   },
   老鼠推奶酪变快: {
     type: '状态',
@@ -108,6 +115,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '!{301}',
     sourceDescription: '仅对鼠角色：在{经典奶酪赛}等经典模式中，游戏开始3分钟后获得该状态。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_08.png',
   },
   强化: {
     type: '状态',
@@ -117,6 +125,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '仅对鼠角色：在{经典奶酪赛}等经典模式中，自身周围有友方角色（包括部分友方角色类NPC）时，自动获得该状态，没有此类角色后清除该状态。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_02.png',
   },
   第五块奶酪加速: {
     type: '状态',
@@ -130,6 +139,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '仅对鼠角色：在{经典奶酪赛}等经典模式中，[游戏时间剩余1分30秒时](更准确地说，是游戏开始8分30秒后)，自动获得“第五块奶酪加速-1”；在{天梯}模式，鼠方传奇V到传奇I的四排中，改为“第五块奶酪加速-2”；在{天梯}模式，鼠皇及以上的四排中，改为“第五块奶酪加速-3”。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_08.png',
   },
   低段位全局状态: {
     type: '状态',
@@ -140,6 +150,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '仅对鼠角色：在{天梯}模式，铂金及铂金以下的对局中，若4个鼠方玩家都为单独排队形式入场，则会获得以上效果。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_12.png',
   },
   伤害保护: {
     type: '状态',
@@ -151,6 +162,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '仅对猫角色：默认拥有此状态，每次受到[非”无视伤害保护“的伤害](实际上这并非造成受伤的必要条件，但现版本的伤害保护都可以归纳为该”因素“引发的)时自动叠加一层效果。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   眩晕叠加衰减: {
     type: '状态',
@@ -159,6 +171,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '在受到眩晕效果期间，受到第二个之后的眩晕效果持续时间减少70%，除了虚弱。',
     sourceDescription: '仅对猫角色：在{经典奶酪赛}等经典模式中，自动获得此状态。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   感电: {
     type: '状态',
@@ -167,12 +180,14 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription: '感电本质上只能通过{附加感电}获得，以下列举了该效果的相关来源。',
     stack: '可叠加，每次叠加重置持续时间。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_01.png',
   },
   电免疫: {
     type: '状态',
     description: '!{215}',
     sourceDescription: '只会由{感电}引发。感电结束时，自动获得电免疫效果。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_01.png',
   },
   变身: {
     type: '状态',
@@ -181,6 +196,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '外观变为指定的衍生物，且可能会更改部分属性、特性、技能等。\n根据实际特性和实现方式，变身可被分为数种：\n1.{变身饮料}相关变身：{比利鼠}（包括由技能或场景物获得的比利鼠状态），以及猫咪饮用变身饮料获得的变身效果。此类变身会使目标获得一个“变身”状态，通过该状态的“底层效果”来实现变身。这意味着这类变身有一些默认的共同特性，例如不会被{斯派克(场景组件)}索敌等。\n2.常规技能类变身：包括{小星星}/{大星星}/{线条猫}/{巨大泰菲球}等类似变身。此类变身会使目标获得一个“变身”状态，通过该状态的某些“附加效果”来实现变身。\n3.更换操作对象：包括{盔甲人}、{乾坤袋}、星元变身等，此类变身实际上是暂时将玩家的操作对象由原本角色改为新的变身对象，通常不涉及实际的“状态”。',
     stack: '角色通常只能处于一种变身效果下，已有变身时会免疫其它变身。但并不绝对。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_09.png',
   },
   /*-------------------------效果-------------------------*/
   眩晕: {
@@ -192,6 +208,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '眩晕效果在游戏中存在多种呈现方式，其动画呈现也多种多样。几乎所有明确出现“无法行动”的效果都与眩晕有关。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_01.png',
   },
   滑行: {
     type: '持续效果',
@@ -199,6 +216,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，角色不受控制地向[指定方向](通常是根据角色面朝方向向左/向右，但百叶窗是个例外——它是“向上滑行”)移动，期间无法自主移动、跳跃，但仍可进行投掷和交互。\n（注：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_05.png',
   },
   隐身: {
     type: '持续效果',
@@ -207,6 +225,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，自身的[模型动画](包括身体，昵称，HP条等)在敌方视角中变为全透明，在自身及友方视角中变为半透明。\n（注1：“隐身”只会隐藏角色的模型动画，不会隐藏角色从高处落地时产生的“[脚气特效](表现为白色烟雾特效自落地点向两侧发散一小段距离，猫角色的该特效大小比鼠角色的大)”（但会使3S级皮肤带来的特殊脚气变为普通脚气））\n（注2：部分隐身会在进行交互/使用投掷物/进行投掷物瞄准时被清除，此类隐身会单独注明）\n（注3：间歇性隐身与{隐身}的作用有些类似，但它们的本质不同，因而特性也有所不同）\n（注4：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_07.png',
   },
   失明: {
     type: '持续效果',
@@ -214,6 +233,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，{不显示小地图}，且自身的视野受到极大幅度地限制——除以自身为中心的一小片圆形区域外，其余部分均被黑色背景所覆盖。\n（注1：现版本中所有“失明”均兼具{不显示小地图}的特点，但它们实际为两个效果且并不绑定，日后如有特例将进行单独标注）\n（注2：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_02.png',
   },
   反向: {
     type: '持续效果',
@@ -221,6 +241,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，自身通过方向键进行左右移动时，将变为向反方向移动；[视野变得扭曲](使角色视野以波浪形和固定的频率幅度进行扭曲)。部分能够{飞行}的角色在飞行期间的左右移动会受本效果影响，但上下移动不会被反向。\n（注1：现版本中所有“反向”均兼具视野扭曲的特点，但它们实际为两个效果且并不绑定，日后如有特例将进行单独标注）\n（注2：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_03.png',
   },
   护盾: {
     type: '持续效果',
@@ -231,6 +252,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     stack:
       '当具有护盾效果的状态同时具备{免疫}某种状态的效果时，免疫对应状态不会消耗护盾层数。\n各护盾及{无敌}效果互不干扰，具体生效优先级有待进一步测试。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_01.png',
   },
   无敌: {
     type: '持续效果',
@@ -239,6 +261,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，当角色受到[部分负面状态](包括绝大多数负面状态（即会在状态栏显示为红色图标的状态）)时，{免疫}该状态。\n（注1：{护盾}与无敌本质上完全相同，仅有层数不同——后者的层数通常是999层。二者的大部分特性——例如具体能免疫哪些状态——是通用的）\n（注2：与护盾不同，仅有少部分具有“无敌”效果的状态会同步使角色身上出现“护盾特效”）\n（注3：一个状态至多只会拥有一个“底层效果”）',
     stack: '各{护盾}及无敌效果互不干扰，具体生效优先级有待进一步测试。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_01.png',
   },
   隐藏: {
     type: '持续效果',
@@ -246,6 +269,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，自身的[模型动画](包括身体，昵称，HP条等)暂时[消失](实际为使图层优先度降低，从而被其余物件的贴图覆盖)。\n（注：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_07.png',
   },
   冲刺: {
     type: '持续效果',
@@ -254,6 +278,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，角色将自动向面朝方向进行持续地移动，并对碰撞到的敌方角色施加指定状态；角色在冲刺期间无法自由转向（有特别注明时除外）（可以通过使用交互的方式进行转向）。\n（注1：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   吻痕: {
     type: '持续效果',
@@ -261,6 +286,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，角色在移动、跳跃和搬运{奶酪}时受到伤害：\n移动期间：每秒受到15次伤害；\n进行跳跃时：受到1次伤害；\n搬运{奶酪}期间：每秒受到30次伤害。\n伤害分型均为“不受来源影响、不可致伤”。\n（注1：该效果只会由{魅惑之吻}带来的{飞吻}附加；该效果本质上与其它底层效果是平级的）\n（注2：带有“吻痕”效果的相关状态会被大多数带有伤害和（或）控制效果的状态清除，但这并非吻痕本身的效果，而是对应状态具有清除该状态的效果）\n（注3："吻痕"疑似应当具有使角色在推奶酪时也受到伤害的作用，但现版本并不会触发，这可能是bug）\n（注4：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_08.png',
   },
   持续伤害: {
     type: '持续效果',
@@ -277,6 +303,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，角色每隔一段时间（默认为1秒）受到1次伤害。该伤害分型默认为“不受来源影响、不可致伤”。\n（注：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_05.png',
   },
   甜蜜碰撞: {
     type: '持续效果',
@@ -284,6 +311,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '与雪梨之间生成连线，连线将在超过2400后断裂；自身获得永结同心状态，在失去本状态时也会失去该状态或其衍生状态；使雪梨获得额外技能[“爱心治疗”](属于额外技能；与近身治疗效果和速度相同；若被打断则进入5秒冷却；成功使用后失去此技能)；自身在{隐身}状态下将隐藏连线，若在连线期间自身获得{隐身}则雪梨也将获得相同状态。"。\n（注：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   间歇性受到状态: {
     type: '持续效果',
@@ -292,6 +320,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，角色每隔一段时间受到1次指定状态。\n（注1：间歇性隐身与{间歇性受到状态}的作用有些类似，但它们的本质不同，因而特性也有所不同）\n（注2：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   间歇性隐身: {
     type: '持续效果',
@@ -299,6 +328,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，每隔7秒获得3.5秒的该效果：自身的[模型动画](包括身体，昵称，HP条等)在敌方视角中变为全透明，在自身及友方视角中变为半透明。\n（注1：“间歇性隐身”只会隐藏角色的模型动画，不会隐藏角色从高处落地时产生的“[脚气特效](表现为白色烟雾特效自落地点向两侧发散一小段距离，猫角色的该特效大小比鼠角色的大)”（但会使3S级皮肤带来的特殊脚气变为普通脚气））\n（注2：间歇性隐身与{隐身}或{间歇性受到状态}的作用有些类似，但它们的本质不同，因而特性也有所不同）\n（注3：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_07.png',
   },
   禁疗: {
     type: '持续效果',
@@ -306,6 +336,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，角色无法以任何方式增加HP。\n（注1：某些“使敌方无法恢复HP”的效果，实际上是通过调整{恢复倍率}等相关属性来实现的，与本词条指代的“禁疗”有所不同）\n（注2：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_01.png',
   },
   特殊底层效果: {
     type: '持续效果',
@@ -314,6 +345,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '{感电}、{冷却时间倍率}、{当前冷却时间倍率}、{当前冷却时间减少值}，以及{番茄}/{烂番茄}的粘滞、{桶}/{小推车}/{鱼缸}的无法左右移动、{爱心之吻}的连线、{爱心花束}/{花束}的奔赴飞行、{奇思妙想}/{蓝色卡牌}的漂浮、{天使祝福}的[祝福状态](指角色未触发复活前时头顶光环的状态)、{追风状态}的飞行、部分{变身}，本质上都是截然不同的“底层效果”，但因样例过少、效果不典型、分类易混淆等原因而未单独收录至底层效果条目下，此处对它们进行了集中收录。一个状态至多只会拥有一个“底层效果”。',
     sourceDescription: '可点击描述中的链接，查看对应词条内容。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   移速: {
     type: '属性',
@@ -324,6 +356,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '所有角色均有该属性，基础值因角色而异。该属性会影响角色进行移动时的速度。\n当角色在地面上水平移动时，速度与移速属性的数值相同（单位：[单位长](有关“单位长”的具体概念，可查阅本网站机制页的“移动”相关介绍)/秒）。\n移速属性受{移速倍率}、{移速加成值}、{移速保底}影响，最低为0。',
     stack: commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_03.png',
   },
   移速倍率: {
     type: '持续效果',
@@ -333,6 +366,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{移速}提高（或降低）至指定倍数。',
     stack: '同名效果乘算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_03.png',
   },
   移速加成值: {
     type: '持续效果',
@@ -342,6 +376,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{移速}增加（或减少）指定数值。',
     stack: '同名效果加算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_03.png',
   },
   移速保底: {
     type: '持续效果',
@@ -353,6 +388,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '同名效果叠加方式暂不确定。\n角色移速保底值=基础移速×移速保底。角色实际的移速数值不会低于角色移速保底值。\n' +
       commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_03.png',
   },
   跳跃能力: {
     type: '属性',
@@ -363,6 +399,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '所有角色均有该属性，基础值因角色而异。该属性会影响角色进行跳跃时的效果。\n角色基础属性中的“跳跃高度”反映的实际上是角色的“跳跃能力”属性，二者存在映射关系，可通过平抛运动的相关公式来将“跳跃高度”转化为“跳跃速度”，而“跳跃速度”与“跳跃力”的概念极其相近。\n角色在竖直方向上的速度有上限，因此“跳跃能力”并不会严格与最终的跳跃高度对应，具体可查阅本网站机制页的“移动”相关介绍。\n跳跃力属性受{跳跃力倍率}、{跳跃力加成值}、{跳跃力保底}影响，最低为0。',
     stack: commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_04.png',
   },
   跳跃能力倍率: {
     type: '持续效果',
@@ -373,6 +410,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，使角色的{跳跃能力}提高（或降低）至指定倍数。\n跳跃能力会影响角色进行跳跃时的效果。角色基础属性中的“跳跃高度”与跳跃能力存在映射关系，但角色实际跳跃高度并不与跳跃能力严格挂钩，详见本网站机制板块的“移动”相关介绍。\n跳跃高度与跳跃速度也并非同义词，但日常往往混用。',
     stack: '同名效果乘算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_04.png',
   },
   跳跃能力加成值: {
     type: '持续效果',
@@ -383,6 +421,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，使角色的{跳跃能力}增加（或减少）指定数值。\n跳跃能力会影响角色进行跳跃时的效果。角色基础属性中的“跳跃高度”与跳跃能力存在映射关系，但角色实际跳跃高度并不与跳跃能力严格挂钩，详见本网站机制板块的“移动”相关介绍。',
     stack: '同名效果加算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_04.png',
   },
   跳跃能力保底: {
     type: '持续效果',
@@ -406,6 +445,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '同名效果叠加方式暂不确定。\n角色跳跃能力保底值=基础跳跃能力×跳跃能力保底。角色实际的跳跃力数值不会低于角色跳跃力保底值。\n' +
       commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_04.png',
   },
   跳跃次数增加: {
     type: '持续效果',
@@ -426,6 +466,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，使角色可进行的跳跃次数提高。\n角色每次进行跳跃（或在未跳跃的情况下进入下落动作）时，会消耗一次跳跃次数；角色[结束滞空](“结束滞空”通常指角色接触地面或平面，可观察到角色动作由“下落”变为“站立”)时重置次数。\n（默认情况下，角色可进行的跳跃次数为1——这意味着角色通常无法在空中起跳）',
     stack: '同名效果不叠加，取最高者生效。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_04.png',
   },
   重力: {
     type: '属性',
@@ -436,6 +477,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '所有角色均具有该属性，基础值因角色而异，但现版本中的同阵营常规角色的该属性数值一致。鼠方受到的基础重力加速度为3202.94/秒²，猫方则为3543.22/秒²。\n重力会使角色持续受到垂直向下的力。',
     stack: '重力的效果会被{完全失重}覆盖；重力的具体数值受{重力缩放倍率}影响。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_05.png',
   },
   重力缩放倍率: {
     type: '持续效果',
@@ -445,6 +487,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色受到的{重力}提高（或降低）至指定倍数。',
     stack: '同名效果乘算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_05.png',
   },
   完全失重: {
     type: '持续效果',
@@ -453,6 +496,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色不受{重力}影响。',
     stack: '本效果生效优先级高于{重力}。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_05.png',
   },
   受力: {
     type: '瞬时效果',
@@ -463,6 +507,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '游戏中的受力效果极其常见，诸如物体碰撞、角色被弹飞等事件中均有受力效果的参与，此处不再单独列举。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_05.png',
   },
   速度保持: {
     type: '持续效果',
@@ -472,6 +517,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，角色将无视部分底层物理效果，包括但不限于接触物体时的“摩擦力”等。\n角色在该状态下受到{受力}效果时，由于不受摩擦力影响，因此会一直保持移动。',
     sourceDescription: '“速度保持”是实现“击退”的基础之一，此外在{眩晕}及类似状态中也十分常见。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_05.png',
   },
   伤害: {
     type: '瞬时效果',
@@ -483,6 +529,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription: '{吻痕}与{持续伤害}可以造成伤害。除此之外，伤害还有以下来源，此处进行列举。',
     stack: damageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-debuff.png',
   },
   攻击力: {
     type: '属性',
@@ -492,6 +539,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '所有角色均有该属性，基础值因角色而异。当角色对敌方造成伤害时，将受到攻击力的影响。\n攻击力属性受{攻击力倍率}及{攻击力加成值}影响，最低为0。\n（[曾用名：攻击增伤](由于先前对游戏了解不足，本网站在过去一段时间一直将“攻击力”与真正的“攻击增伤”混淆，但前者是角色的基础属性，后者只是一个能够影响伤害的附加属性)）',
     stack: damageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   攻击力倍率: {
     type: '持续效果',
@@ -500,6 +548,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{攻击力}提高（或降低）至指定倍数。',
     stack: '同名效果乘算叠加。\n' + damageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   攻击力加成值: {
     type: '持续效果',
@@ -509,6 +558,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{攻击力}增加（或减少）指定数值。',
     stack: '同名效果加算叠加。\n' + damageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   攻击增伤倍率: {
     type: '持续效果',
@@ -530,6 +580,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，角色对其他角色造成伤害时，使伤害按倍率提高（或降低）。',
     stack: '同名效果加算叠加。\n' + damageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   攻击增伤固定值: {
     type: '持续效果',
@@ -549,6 +600,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，角色对其他角色造成伤害时，使伤害按固定值提高（或降低）。',
     stack: '同名效果加算叠加。\n' + damageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   受击减伤倍率: {
     type: '持续效果',
@@ -570,6 +622,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，角色受到伤害时，使伤害按倍率降低（或提高）。',
     stack: '同名效果加算叠加。\n' + damageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_01.png',
   },
   受击减伤固定值: {
     type: '持续效果',
@@ -589,6 +642,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，角色受到伤害时，使伤害按固定值降低（或提高）。',
     stack: '同名效果加算叠加。\n' + damageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_01.png',
   },
   投掷伤害降低值: {
     type: '持续效果',
@@ -599,6 +653,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，角色对其他角色造成[来自“道具”的伤害](也包括部分与道具类似的衍生物)时，使基础伤害按固定值降低。若基础伤害因此降低至0及以下，则改为不造成伤害，跳过其它伤害结算判定。',
     stack: '该效果现版本仅有一个来源。\n' + damageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_11.png',
   },
   伤害保底: {
     type: '瞬时效果',
@@ -608,6 +663,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '使角色受到的伤害不会低于原伤害一定比例。', //待补充
     stack: damageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   电击伤害: {
     type: '瞬时效果',
@@ -616,6 +672,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '使本次附加的伤害受目标角色持有的{感电}加成；{附加}一层{感电}。\n（“受到伤害”“受到的伤害会受{感电}加成”“附加一层感电”实际上是三个独立的效果，但它们在当前游戏中总是同时出现，因此进行了合并收录）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_01.png',
   },
   引爆感电: {
     type: '瞬时效果',
@@ -625,6 +682,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '{清除}角色持有的{感电}，若成功清除则会诱发电爆，对周围所有角色造成短暂{电击}和{25*,无来源,电击}伤害（该伤害和控制可被{电免疫}免疫。由于感电结束时会立即获得{电免疫}，因此持有感电者并不会受到影响）。',
     sourceDescription: '现版本中该效果仅见于部分“水地形”附加的状态。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_01.png',
   },
   破坏力: {
     type: '属性',
@@ -634,6 +692,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '所有角色均有该属性，基础值因角色而异，其中猫角色默认为0。当角色对{墙缝}造成伤害时，将受到破坏力的影响。\n破坏力属性受{破坏力倍率}及{破坏力加成值}影响，最低为0。\n（[曾用名：破坏增伤](由于先前对游戏了解不足，本网站在过去一段时间一直使用这个名称，但它与这个属性的本质并不相称)）',
     stack: wallDamageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   破坏力倍率: {
     type: '持续效果',
@@ -642,6 +701,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{破坏力}提高（或降低）至指定倍数。',
     stack: '同名效果乘算叠加。\n' + wallDamageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   破坏力加成值: {
     type: '持续效果',
@@ -650,6 +710,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{破坏力}增加（或减少）指定数值。',
     stack: '同名效果加算叠加。\n' + wallDamageStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   HP上限: {
     type: '属性',
@@ -669,6 +730,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '所有角色均具有该属性，基础值因角色而异。角色的HP值无法超过HP上限。\nHP上限会受{HP上限加成值}和{临时HP上限}影响，在极少数极端情况下可以低于0，此时会发生较为诡异的情况，详见网站机制页的“血量”相关介绍。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_05.png',
   },
   HP上限加成值: {
     type: '持续效果',
@@ -681,6 +743,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，使角色的{HP上限}提高（或降低）指定数值。\n当角色提高HP上限时，立即{回复}等量的HP（若无，会单独注明）；当角色降低HP上限时，立即失去超出当前HP上限的HP。',
     stack: '同类效果加算叠加。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_05.png',
   },
   回复: {
     type: '瞬时效果',
@@ -689,6 +752,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     range: [0, 'infinity'],
     description: '使角色瞬间增加数点HP，但当前HP不会超过HP上限。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_05.png',
   },
   恢复速度: {
     type: '属性',
@@ -699,6 +763,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '所有角色均具有该属性，基础值因角色而异。角色每秒会{回复}等同于该属性数值的HP。\nHP恢复与{持续伤害}的效果刚好彼此相反，但二者实质上并无关联。\nHP恢复会受{HP恢复倍率}与{HP恢复加成值}影响，不会低于0。',
     stack: '同名效果乘算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_05.png',
   },
   恢复速度倍率: {
     type: '持续效果',
@@ -708,6 +773,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{HP恢复}属性提高（或降低）至指定倍数。',
     stack: '同名效果乘算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_05.png',
   },
   恢复速度加成值: {
     type: '持续效果',
@@ -723,6 +789,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{HP恢复}属性增加（或减少）指定数值。',
     stack: '同名效果加算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_05.png',
   },
   临时HP上限: {
     type: '属性',
@@ -744,6 +811,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '{HP上限}临时提高一定数值，用于一次性地抵扣伤害。角色HP降低时会降低等量的临时HP上限，降完为止。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_05.png',
   },
   推速: {
     type: '属性',
@@ -754,6 +822,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '仅有鼠角色具有该属性，基础值因角色而异，会影响老鼠推奶酪的速度。\n在本网站中，本属性单位为%/秒，代表鼠角色推入正常洞口中的奶酪时，每秒推入的奶酪进度百分比。游戏中采用的单位与“%/秒”的换算关系是严格的1:5。\n部分奶酪洞所需的“推入值”可能并非100%，鼠角色推入这些洞口的奶酪时的推入速度会按相应比例发生变化。\n推速会受{推速倍率}、{推速加成值}、{第五块奶酪推速}影响，最低为0。',
     stack: cheeseStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_08.png',
   },
   推速倍率: {
     type: '持续效果',
@@ -763,6 +832,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的推速提高（或降低）至指定倍数。',
     stack: '同名效果乘算叠加。\n' + cheeseStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_08.png',
   },
   推速加成值: {
     type: '持续效果',
@@ -773,6 +843,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，使角色的推速增加（或减少）指定数值（默认单位：%/秒，注意与游戏内的差异）。',
     stack: '同名效果加算叠加。\n' + cheeseStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_08.png',
   },
   攻击冷却: {
     type: '属性',
@@ -783,6 +854,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '仅有猫角色具有该属性，基础值因角色而异。猫角色使用爪击命中时，爪击会进入一段时间的冷却，具体时长由攻击冷却属性决定。若爪刀没有命中，则当次爪击冷却会减少一定比例，具体比例因角色而异。\n本网站角色界面的基础属性中的“爪刀CD”展示了角色在爪刀未命中/命中情况下的基础攻击冷却时长，可据此推算空刀返还冷却比例。\n攻击冷却会受{攻击冷却倍率}、{攻击冷却加成值}影响，最低为0。',
     stack: commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   攻击冷却倍率: {
     type: '持续效果',
@@ -792,6 +864,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{攻击冷却}属性提高（或降低）至指定倍数。',
     stack: '同名效果乘算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   攻击冷却加成值: {
     type: '持续效果',
@@ -809,6 +882,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{攻击冷却}属性增加（或减少）指定数值。',
     stack: '同名效果加算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   攻击范围: {
     type: '属性',
@@ -819,6 +893,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '仅有猫角色具有该属性，基础值因角色而异。猫角色使用爪刀或{苍蝇拍}时，实际的横向生效范围受攻击范围属性的影响。\n部分特殊爪刀（例如{戏剧转折}带来的特殊爪刀）不受攻击范围属性的影响。',
     stack: commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   攻击范围倍率: {
     type: '持续效果',
@@ -828,6 +903,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{攻击范围}属性提高（或降低）至指定倍数。',
     stack: '同名效果乘算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   攻击范围加成值: {
     type: '持续效果',
@@ -837,6 +913,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，使角色的{攻击范围}属性增加（或减少）指定数值。',
     stack: '同名效果加算叠加。\n' + commonStack,
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   可空刀次数增加: {
     type: '持续效果',
@@ -846,6 +923,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，使角色的爪刀攻击在未命中指定次数后才会进入CD。\n（默认情况下，角色可空刀的次数为1——这意味着角色通常在空刀后就会进入爪刀CD）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_11.png',
   },
   禁止攻击: {
     type: '持续效果',
@@ -866,6 +944,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，角色无法使用爪刀攻击。（期间爪刀冷却正常进行，若已在出刀前摇则不会中断）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_09.png',
   },
   交互速度倍率: {
     type: '持续效果',
@@ -883,6 +962,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，使角色进行指定交互时的交互/读条速度提高（或降低）至指定倍数。\n（该效果只对指定类型的交互生效，其余未被指定的交互的交互速度不受影响）\n\n当前版本中，可能会受到该效果影响的交互：\n{老鼠夹}：布置；\n{打开的老鼠夹}：挣脱；\n{火箭}：绑火箭；\n{火箭}：绑火箭（于{5V5经典奶酪赛}等模式）；\n{火箭}：绑火箭（于{装饰树大作战}等模式）；\n{火箭}：修火箭；\n{火箭}：救援队友；\n{受伤}：治疗队友；\n被抓起或被绑上火箭：自我挣扎；\n{牛奶}：食用；\n{蛋糕}：食用；\n{木门}：开门；\n{木门}：关门；\n{叉子}：拔出。', //rattrapdestroy指代对象不明
     stack: '同名效果乘算叠加。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_02.png',
   },
   交互白名单: {
     type: '持续效果',
@@ -890,6 +970,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     aliases: ['只能进行部分交互'],
     description: '持续期间，使角色无法进行除指定交互以外的任何其它交互。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_09.png',
   },
   交互黑名单: {
     type: '持续效果',
@@ -898,6 +979,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，使角色无法进行指定交互。\n（该效果只对指定类型的交互生效，其余未被指定的交互不受影响；该效果可能会被{交互白名单}的效果覆盖）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_09.png',
   },
   攀爬速度加成值: {
     type: '持续效果',
@@ -908,6 +990,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，使角色进行攀爬交互时的向上攀登速度提高（[或降低](现版本暂无相关实例)）指定数值。',
     stack: '该效果现版本仅有一个来源。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_02.png',
   },
   掉落道具: {
     type: '瞬时效果',
@@ -916,6 +999,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '使角色立即掉落手持的道具，但不掉落手中的老鼠（注意：不包括{饮料}）。\n“掉落道具”本质上是{掉落道具和老鼠}+“不会掉落手中老鼠”两个效果共同作用的结果。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_01.png',
   },
   掉落道具和老鼠: {
     type: '瞬时效果',
@@ -923,6 +1007,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     aliases: ['掉落', '掉落手持道具和老鼠'],
     description: '使角色立即掉落手持的道具及老鼠（注意：不包括{饮料}）。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_01.png',
   },
   禁用道具: {
     type: '持续效果',
@@ -930,6 +1015,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     aliases: ['禁止使用道具', '禁止拾取和投掷', '禁止拾取', '禁止投掷'],
     description: '持续期间，使角色无法拾取、投掷、丢弃道具。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_09.png',
   },
   投掷速度增加: {
     type: '持续效果',
@@ -938,6 +1024,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     range: [0, 'infinity'],
     description: '持续期间，被角色投掷的道具的初始速度将增加。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_02.png',
   },
   禁用技能: {
     type: '持续效果',
@@ -946,6 +1033,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '使角色无法使用任何技能，包括主动技能、武器技能、特技、特殊技能、“进入机器鼠”等。（期间技能冷却正常进行）（若获得该状态时处于技能前摇期间，则前摇继续进行，但前摇结束时可能不会触发技能效果也不进入CD，具体判定情况因技能而异）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_01.png',
   },
   禁用部分技能: {
     type: '持续效果',
@@ -962,6 +1050,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '使角色无法使用指定技能和（或）指定类型的技能。（期间技能冷却正常进行）（若获得该状态时处于技能前摇期间，则前摇继续进行，但前摇结束时可能不会触发技能效果也不进入CD，具体判定情况因技能而异）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_01.png',
   },
   冷却: {
     type: '持续效果',
@@ -972,6 +1061,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '当[技能可用次数未达上限](技能可用次数默认为1，表现为“技能使用后立即进入冷却”；部分技能可以储存多次，会单独注明)时，技能会进入冷却，冷却结束后积累一次可用次数。本效果对角色的[每个技能](部分状态下，角色可能会获得新技能并替换原有技能，这两者的冷却仍然是单独结算的)单独结算，通常情况下冷却时间会显示在对应图标上。\n（注：当技能可用次数不足1次时，技能通常无法使用）\n（注2：“爪刀”也具有类似的“冷却”机制，但部分情况下与技能的冷却机制有所不同。本词条暂只指代技能的相关冷却）',
     sourceDescription: '“冷却”是技能的底层逻辑之一，此处不再单独列举。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_09.png',
   },
   冷却时间倍率: {
     type: '持续效果',
@@ -982,6 +1072,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，对[主动技能和（或）武器技能](部分状态下，角色可能会获得新技能并替换原有技能，通常来说新获得的技能即便与原技能键位相同，也不会算作主动/武器技能，因而也享受不到该效果)产生以下效果：当其进入{冷却}时，使此次冷却的剩余时间变为指定倍。\n（注：此效果本质上属于“底层效果”，一个状态至多只会拥有一个“底层效果”。部分情况下，角色可能会被[静默施加](即状态图标不在状态栏显示)多个含有此效果的状态，以达到冷却的目的）',
     stack: '同名效果乘算叠加。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_09.png',
   },
   当前冷却时间倍率: {
     type: '瞬时效果',
@@ -991,6 +1082,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '对[主动技能和（或）武器技能](部分状态下，角色可能会获得新技能并替换原有技能，通常来说新获得的技能即便与原技能键位相同，也不会算作主动/武器技能，因而也享受不到该效果)产生以下效果：若此时其正在{冷却}，使此次冷却的剩余时间变为指定倍。\n（注：此效果本质上属于“底层效果”，一个状态至多只会拥有一个“底层效果”。部分情况下，角色可能会被[静默施加](即状态图标不在状态栏显示)多个含有此效果的状态，以达到冷却的目的）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_09.png',
   },
   当前冷却时间减少值: {
     type: '瞬时效果',
@@ -1002,6 +1094,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '对[主动技能和（或）武器技能](部分状态下，角色可能会获得新技能并替换原有技能，通常来说新获得的技能即便与原技能键位相同，也不会算作主动/武器技能，因而也享受不到该效果)产生以下效果：若此时其正在{冷却}，使此次冷却的剩余时间减少（[或增加](目前暂无“冷却增加”的实例，不排除以后出现的可能)）指定数值。\n注意：若冷却因本效果而归零，多余的冷却缩减数值不会继承到下一次冷却中。\n（注：此效果本质上属于“底层效果”，一个状态至多只会拥有一个“底层效果”。部分情况下，角色可能会被[静默施加](即状态图标不在状态栏显示)多个含有此效果的状态，以达到冷却的目的）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_09.png',
   },
   视野范围: {
     type: '属性',
@@ -1012,6 +1105,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '所有角色均具有该属性，基础值因角色而异。注意：该属性与实际的视野范围呈$反比$font-bold#关系，即该属性$越低$font-bold#，实际视野范围$越大$font-bold#；反之亦然。\n视野范围会受{视野范围缩放倍率}影响。此外，猫角色的视野范围属性往往低于鼠，这意味着猫咪的实际视野范围往往比鼠更大。',
     stack: '视野范围受{视野范围缩放倍率}影响。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_12.png',
   },
   视野范围缩放倍率: {
     type: '持续效果',
@@ -1023,6 +1117,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     stack:
       '同名效果乘算叠加。但在实际游戏中，为避免产生超大视野，相关状态往往会互相{清除}或{免疫}，具体详见各介绍。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_12.png',
   },
   隐匿: {
     type: '持续效果',
@@ -1033,6 +1128,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     stack:
       '有关“显示小地图位置”的生效优先级：{隐藏位置}＞{暴露位置}＞{隐藏小地图位置}＞被敌方看到。\n具备隐匿的猫咪，将不会引发敌方的{害怕}。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_07.png',
   },
   暴露位置: {
     type: '持续效果',
@@ -1042,6 +1138,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     stack:
       '有关“显示小地图位置”的生效优先级：{隐藏位置}＞{暴露位置}＞{隐藏小地图位置}＞被敌方看到。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_02.png',
   },
   隐藏位置: {
     type: '持续效果',
@@ -1051,6 +1148,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     stack:
       '有关“显示小地图位置”的生效优先级：{隐藏位置}＞{暴露位置}＞{隐藏小地图位置}＞被敌方看到。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_07.png',
   },
   不显示小地图: {
     type: '持续效果',
@@ -1058,6 +1156,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     aliases: ['隐藏小地图', '屏蔽小地图', '无法使用小地图'],
     description: '持续期间，使小地图键被隐藏，玩家将因此无法查看小地图信息。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_debuff_02.png',
   },
   挣扎读条: {
     type: '持续效果',
@@ -1069,6 +1168,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
     sourceDescription:
       '老鼠被{抓住}或{绑上火箭}时会出现挣扎读条。此外，部分状态也会出现挣扎读条，此处对它们单独进行列举。',
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   挣扎: {
     type: '瞬时效果',
@@ -1078,6 +1178,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
     sourceDescription:
       '当角色进入{挣扎读条}时，可点击挣扎键进行挣扎，进度满后就会{挣脱}（被{绑上火箭}时除外——这种情况下只有出现“星星棒”才会挣脱）。',
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   挣脱: {
     type: '瞬时效果',
@@ -1086,6 +1187,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
     sourceDescription:
       '当角色进入{挣扎读条}时，可点击挣扎键进行挣扎，进度满后就会{挣脱}（被{绑上火箭}时除外——这种情况下只有出现“星星棒”才会挣脱）。',
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   获得经验: {
     type: '瞬时效果',
@@ -1094,6 +1196,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     range: [0, 'infinity'],
     description: '使角色获得一定量的经验值。\n注意：鼠方获得的经验将与所有未被放飞的队友平分。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   初始等级提高: {
     type: '瞬时效果',
@@ -1103,6 +1206,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '在游戏开始时生效，使角色等级立即提高数级（注意：角色初始为1级，因此最终等级为该效果的数值+1）。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   可直接抓起: {
     type: '持续效果',
@@ -1112,6 +1216,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
     detailedDescription:
       '鼠角色持有该效果时，若被敌方猫咪用爪刀命中，对方将改为[尝试](若猫咪手中已有老鼠/猫咪正处于无法抓起老鼠的状态，则抓起将失败，反之则会成功)直接将该角色{抓起}至手中，[猫会掉落持有的道具](除非该效果是{斗牛}或{鞭子}赋予的)，成功抓起则不造成爪刀伤害，反之则照常造成伤害。\n{泰克}也可以直接抓起持有该效果的鼠角色。',
+    specialImageUrl: '/images/buffs/default-debuff.png',
   },
   禁止购物: {
     type: '持续效果',
@@ -1127,12 +1232,14 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '{眩晕}等状态自带“禁止购物”效果。此外，部分状态会特地单独附加该效果，此处对它们的相关来源进行列举。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-debuff.png',
   },
   真视: {
     aliases: ['透视'],
     type: '持续效果',
     description: '持续期间，角色能看到{隐身}或{间歇性隐身}状态下的敌方。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_12.png',
   },
   清除: {
     type: '瞬时效果',
@@ -1140,6 +1247,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '清除角色当前持有的指定状态和（或）指定类型的状态。',
     unuseImage: true,
     sourceDescription: '“清除”是许多状态的底层执行逻辑之一，数量繁多，此处不再单独列举。',
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   免疫: {
     type: '持续效果',
@@ -1147,6 +1255,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '持续期间，阻止角色获得指定状态和（或）指定类型的状态。（不会{清除}已有状态）',
     unuseImage: true,
     sourceDescription: '“免疫”是许多状态的底层执行逻辑之一，数量繁多，此处不再单独列举。',
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   附加: {
     type: '瞬时效果',
@@ -1156,6 +1265,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '获得时，立即使角色再获得另一个/另一些指定的状态。\n（注：本词条仅指代“一个状态带来了其它状态”的情况，而不指代“一个状态带来了一些效果”的情况，后者只是状态按原本规则发挥作用而已）',
     unuseImage: true,
     sourceDescription: '“附加”是许多状态的底层执行逻辑之一，数量繁多，此处不再单独列举。',
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   可叠加: {
     type: '持续效果',
@@ -1166,6 +1276,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '具有该效果的状态在重复获得时，不仅会刷新持续时间，还会叠加层数，最多叠加至指定层，叠满后再次获得时只会刷新持续时间。\n（注意：同名状态各层之间的实际效果是独立的，在结算时会被当作数个效果相同的状态，而非一个“数值翻倍”的状态）',
     unuseImage: true,
     sourceDescription: '“可叠加”是许多状态的底层执行逻辑之一，数量繁多，此处不再单独列举。',
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   叠满获得新状态: {
     type: '瞬时效果',
@@ -1175,6 +1286,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
     sourceDescription:
       '“叠满获得新状态”是许多{可叠加}状态的底层执行逻辑之一，数量繁多，此处不再单独列举。',
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   更改效果数值: {
     type: '持续效果',
@@ -1185,6 +1297,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
     sourceDescription:
       '“更改效果”实际上是部分技能用于精准调控对应状态而诞生的特殊机制，此处不再单独列举。',
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   免控: {
     type: '持续效果',
@@ -1193,6 +1306,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，角色免疫{虚弱}状态及{伤害}（不包括“无视护盾”的伤害）、{眩晕}、{反向}、{失明}等效果。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_01.png',
   },
   跳舞免控: {
     type: '持续效果',
@@ -1200,6 +1314,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     aliases: ['跳舞霸体', '跳舞'],
     description: '持续期间，角色免疫来自敌方及来自{冰块}/{鞭炮}的{眩晕}效果。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_01.png',
   },
   霸体: {
     type: '持续效果',
@@ -1208,6 +1323,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，角色免疫{虚弱}状态及{眩晕}、{反向}、{失明}等效果，但也会免疫底层效果为{隐身}的状态。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_01.png',
   },
   牵引: {
     type: '持续效果',
@@ -1215,18 +1331,21 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '使被牵引物体向牵引方向以固定速度被动运动。\n（注1：少部分牵引只有在被牵引者与牵引者接触时才会停止。为避免因部分地形阻挡导致出现极端情况，这类牵引通常具有额外修正机制：若长时间未到达终点则会将目标直接{传送}到对应位置）\n（注2：该效果在本质上并不属于“状态”带来的“效果”，但由于在游戏中具有较大意义，此处仍对其进行了收录）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_02.png',
   },
   传送: {
     type: '瞬时效果',
     description:
       '使物体瞬间变更到新的位置。若被传送的物体是角色，则[正常情况下](角色被二次传送、被传送到地图外、处于观战期间等特殊情况下，视野可能不会立刻切换到对应位置)会立即换到对应位置的视野。\n（该效果在本质上并不属于“状态”带来的“效果”，但由于在游戏中具有较大意义，此处仍对其进行了收录）',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_02.png',
   },
   飞行: {
     type: '持续效果',
     description:
       '完全失重，移动方式切换至摇杆，可通过摇杆向斜向的四个方向进行移动，陷入{无法移动}效果时仍可进行上下移动。进入飞行状态时若未松开方向键，则会[暂时保持方向键的移动方式](键位仍会切换至摇杆，但只能进行左右方向的移动)，直到松开移动键。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_02.png',
   },
   隐藏模型: {
     type: '持续效果',
@@ -1236,6 +1355,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '该效果通常不由“状态”，而是由某些更为高级的内容施加。角色在使用{管道}等情形下会暂时隐藏自身模型。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/ic_battle_buff_07.png',
   },
   角色闪烁: {
     type: '瞬时效果',
@@ -1243,36 +1363,42 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description: '使角色模型发生一次白光闪烁特效。',
     sourceDescription: '许多状态均附带该效果，用于提示角色受到伤害等负面内容。此处不再单独列举。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-debuff.png',
   },
   勇气值: {
     type: '属性',
     range: [0, 100],
     description: '仅有{剑客泰菲}拥有该属性，具体效果详见{勇者不惧}相关介绍。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   怜悯值: {
     type: '属性',
     range: [0, 100],
     description: '仅有{天使泰菲}拥有该属性，具体效果详见天使泰菲相关介绍。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   怒气值: {
     type: '属性',
     range: [0, 100],
     description: '仅有{马索尔}拥有该属性，具体效果详见{怒气喷发}相关介绍。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   士气值: {
     type: '属性',
     range: [0, 100],
     description: '仅有{蒙金奇}拥有该属性，具体效果详见{我，即是军团}相关介绍。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
   电能值: {
     type: '属性',
     range: [0, 100],
     description: '仅有{朵朵}拥有该属性，具体效果详见{能源装置}相关介绍。',
     unuseImage: true,
+    specialImageUrl: '/images/buffs/default-buff.png',
   },
 }; // 合并 buffsources.json 中的来源数据
 for (const [buffName, sources] of Object.entries(buffSources)) {
