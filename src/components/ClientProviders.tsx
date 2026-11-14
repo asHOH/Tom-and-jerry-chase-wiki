@@ -5,6 +5,7 @@ import { LazyMotion } from 'motion/react';
 
 import { PermissionProvider } from '@/lib/auth/PermissionProvider';
 import { ToastProvider } from '@/context/ToastContext';
+import { DialogHost } from '@/components/ui/DialogHost';
 
 import BrowserCompatibilityWarning from './BrowserCompatibilityWarning';
 import { CacheDebugPanel } from './CacheDebugPanel';
@@ -21,6 +22,7 @@ export function ClientProviders({ children }: ClientProvidersProps) {
     <LazyMotion features={loadMotionFeatures} strict>
       <ToastProvider>
         <PermissionProvider>{children}</PermissionProvider>
+        <DialogHost />
         <BrowserCompatibilityWarning />
         <ServiceWorkerRegistration />
         <CacheDebugPanel />

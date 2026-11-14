@@ -2,9 +2,16 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 
 import type { EditSession } from '@/lib/edit/editSession';
 import { EditModeContext } from '@/context/EditModeContext';
+import * as dialogs from '@/components/ui/dialogs';
 import { clearTestEditSession, installTestEditSession } from '@/testUtils/editRuntime';
 
 import TraitEditor from './TraitEditor';
+
+jest.mock('@/components/ui/dialogs', () => ({
+  confirmDialog: jest.fn(),
+  promptDialog: jest.fn(),
+  alertDialog: jest.fn(),
+}));
 
 jest.mock('@/context/ToastContext', () => ({
   useToast: () => ({ error: jest.fn(), info: jest.fn() }),
@@ -55,7 +62,7 @@ function openCard() {
 }
 
 it('keeps one pending creation through OR removal and cancels it when deleted', async () => {
-  jest.spyOn(window, 'confirm').mockReturnValue(true);
+  jest.mocked(dialogs.confirmDialog).mockResolvedValue(true);
   renderEditor();
   fireEvent.click(screen.getByRole('button', { name: '新建特性' }));
   await act(async () => {});

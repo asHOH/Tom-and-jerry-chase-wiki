@@ -9,6 +9,7 @@ import { useToast } from '@/context/ToastContext';
 import { FACTION_FULL_NAMES } from '@/constants/factions';
 import type { FactionId, SingleItemOrGroup, Trait, TraitGroup } from '@/data/types';
 import Button from '@/components/ui/Button';
+import { confirmDialog } from '@/components/ui/dialogs';
 import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormControls';
 import { PendingActionWarningBoundary } from '@/components/ui/PendingActionWarning';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
@@ -338,8 +339,8 @@ function TraitCard({
               size='sm'
               className='self-end'
               leadingIcon={<TrashIcon className='h-4 w-4' />}
-              onClick={() => {
-                if (window.confirm(`确认删除特性 ${traitId} 吗?`)) {
+              onClick={async () => {
+                if (await confirmDialog(`确认删除特性 ${traitId} 吗?`)) {
                   updateTraits((draft) => delete draft[traitId]);
                 }
               }}

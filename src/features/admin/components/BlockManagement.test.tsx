@@ -1,6 +1,14 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import * as dialogs from '@/components/ui/dialogs';
+
 import BlockManagement from './BlockManagement';
+
+jest.mock('@/components/ui/dialogs', () => ({
+  confirmDialog: jest.fn(),
+  promptDialog: jest.fn(),
+  alertDialog: jest.fn(),
+}));
 
 const originalFetch = global.fetch;
 
@@ -57,7 +65,7 @@ it('announces validation and request failures, then replaces them with successfu
 });
 
 it('announces an unblock network failure and allows a successful retry', async () => {
-  jest.spyOn(window, 'prompt').mockReturnValue('误封');
+  jest.mocked(dialogs.promptDialog).mockResolvedValue('误封');
   global.fetch = jest
     .fn()
     .mockRejectedValueOnce(new TypeError('Failed to fetch'))

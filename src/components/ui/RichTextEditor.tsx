@@ -84,8 +84,9 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   // commands bound to editor
   const transposeTable = useCallback(() => {
-    transposeTableUtil(editor);
-  }, [editor]);
+    const error = transposeTableUtil(editor);
+    if (error) showError(error);
+  }, [editor, showError]);
 
   const allowedImageSourcesText = useMemo(() => describeAllowedImageSources(), []);
 

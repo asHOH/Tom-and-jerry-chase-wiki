@@ -16,6 +16,7 @@ import ArticleDiffViewer from '@/features/articles/components/ArticleDiffViewer'
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import Card from '@/components/ui/Card';
+import { alertDialog, confirmDialog } from '@/components/ui/dialogs';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
@@ -344,7 +345,9 @@ export default function ArticleHistoryClient() {
                 {canRevoke && version.status === 'approved' && index === 0 && (
                   <Button
                     onClick={async () => {
-                      if (confirm('确定要撤销这个版本吗？这将回退到上一个已发布的版本。')) {
+                      if (
+                        await confirmDialog('确定要撤销这个版本吗？这将回退到上一个已发布的版本。')
+                      ) {
                         try {
                           const response = await fetch(
                             `/api/moderation/${version.id}?action=revoke`,
@@ -364,7 +367,7 @@ export default function ArticleHistoryClient() {
                           const refreshWarning = await clearArticleClientCache(articleId);
                           if (result?.warning === 'cache_refresh_failed' || refreshWarning) {
                             // Keep the warning visible until acknowledged before reloading.
-                            window.alert(
+                            await alertDialog(
                               [
                                 result?.warning === 'cache_refresh_failed'
                                   ? ARTICLE_CACHE_REFRESH_WARNING

@@ -6,6 +6,7 @@ import { sanitizeNoticeHTML } from '@/lib/notices/sanitize';
 import { getNoticeStatus, type AdminNotice, type NoticeStatus } from '@/lib/notices/types';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { confirmDialog } from '@/components/ui/dialogs';
 import { FormInput } from '@/components/ui/FormControls';
 import Notice from '@/components/ui/Notice';
 import { renderRichTextContent } from '@/components/ui/RichTextContent';
@@ -137,7 +138,7 @@ export default function NoticeManagement({ notices, mutateNotices }: Props) {
   };
 
   const unpublish = async (notice: AdminNotice) => {
-    if (!window.confirm(`确认取消发布“${notice.title}”？`)) return;
+    if (!(await confirmDialog(`确认取消发布“${notice.title}”？`))) return;
     try {
       await request(`/api/admin/notices/${notice.id}`, 'PATCH', { operation: 'unpublish' });
       if (editingId === notice.id) reset();
@@ -149,7 +150,7 @@ export default function NoticeManagement({ notices, mutateNotices }: Props) {
   };
 
   const deleteNotice = async (notice: AdminNotice) => {
-    if (!window.confirm(`确认永久删除“${notice.title}”？此操作无法恢复。`)) return;
+    if (!(await confirmDialog(`确认永久删除“${notice.title}”？此操作无法恢复。`))) return;
     try {
       await request(`/api/admin/notices/${notice.id}`, 'DELETE');
       if (editingId === notice.id) reset();

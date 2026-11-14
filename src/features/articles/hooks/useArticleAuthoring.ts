@@ -32,6 +32,7 @@ import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmis
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import type { ArticleRecovery } from '@/features/articles/components/ArticleSubmissionRecovery';
+import { alertDialog } from '@/components/ui/dialogs';
 
 type ArticleDraft = EditFormState & { commitMessage: string };
 type AuthoringOptions = {
@@ -284,7 +285,7 @@ export function useArticleAuthoring(options: AuthoringOptions) {
         }
         if (result?.status === 'approved' && result.article_id) {
           // A document navigation also drops previously visited Router Cache entries.
-          window.alert(message);
+          await alertDialog(message);
           window.location.assign(`/articles/${encodeURIComponent(result.article_id)}/`);
         } else {
           showSubmissionFeedback(message);

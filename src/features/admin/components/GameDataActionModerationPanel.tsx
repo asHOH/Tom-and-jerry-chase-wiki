@@ -21,6 +21,7 @@ import {
 import type { GameActionDiffView } from '@/features/admin/utils/gameActionDiff';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { confirmDialog, promptDialog } from '@/components/ui/dialogs';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import ThankContributionDialog from '@/components/contributions/ThankContributionDialog';
 
@@ -102,7 +103,7 @@ const GameDataActionModerationPanel = ({
       // ignore and fallback
     }
 
-    window.prompt('复制以下内容：', text);
+    await promptDialog('复制以下内容：', text, { selectText: true });
   };
 
   const actionableActions = useMemo(
@@ -147,7 +148,7 @@ const GameDataActionModerationPanel = ({
   const moderateMany = async (action: PendingModerationAction) => {
     if (isModerating || selectedPendingActions.length === 0) return;
 
-    const confirmed = window.confirm(
+    const confirmed = await confirmDialog(
       action === 'approve'
         ? `确认批准并公开 ${selectedPendingActions.length} 条待审核改动？`
         : `确认拒绝 ${selectedPendingActions.length} 条待审核改动？`
@@ -156,7 +157,8 @@ const GameDataActionModerationPanel = ({
 
     let reason: string | null = null;
     if (action === 'reject') {
-      reason = window.prompt('批量拒绝原因（可选，将应用于全部）') ?? '';
+      reason = await promptDialog('批量拒绝原因（可选，将应用于全部）');
+      if (reason === null) return;
     }
 
     await submitBatch(

@@ -20,6 +20,7 @@ import {
 } from '@/features/settings/resetLocalData';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { confirmDialog } from '@/components/ui/dialogs';
 import SectionHeader from '@/components/ui/SectionHeader';
 
 import PreferenceChoice from './PreferenceChoice';
@@ -77,8 +78,8 @@ export default function LocalSettings() {
     else error('部分本地数据无法清除。');
   };
 
-  const clearDrafts = () => {
-    if (!window.confirm('确认删除此浏览器中的全部编辑草稿？此操作无法撤销。')) return;
+  const clearDrafts = async () => {
+    if (!(await confirmDialog('确认删除此浏览器中的全部编辑草稿？此操作无法撤销。'))) return;
     resetWithFeedback(clearAllLocalEditDrafts, '本地编辑草稿已删除。');
   };
 

@@ -6,6 +6,7 @@ import { BLOCK_ACTIONS, type BlockAction, type BlockRestrictionInput } from '@/l
 import { cn } from '@/lib/design';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { promptDialog } from '@/components/ui/dialogs';
 import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormControls';
 import Notice from '@/components/ui/Notice';
 
@@ -188,7 +189,7 @@ export default function BlockManagement({
   };
 
   const unblock = async (block: BlockRow) => {
-    const unblockReason = window.prompt('请输入解除封禁理由', '误封或封禁期满')?.trim();
+    const unblockReason = (await promptDialog('请输入解除封禁理由', '误封或封禁期满'))?.trim();
     if (!unblockReason) return;
     let response: Response;
     try {

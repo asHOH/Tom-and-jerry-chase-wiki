@@ -1,10 +1,18 @@
 import type { ReactNode } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { toast } from 'sonner';
 import useSWR from 'swr';
 
 import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
+import * as dialogs from '@/components/ui/dialogs';
 
 import PendingClient from './PendingClient';
+
+jest.mock('@/components/ui/dialogs', () => ({
+  confirmDialog: jest.fn(),
+  promptDialog: jest.fn(),
+  alertDialog: jest.fn(),
+}));
 
 jest.mock('swr', () => ({
   __esModule: true,
@@ -33,7 +41,8 @@ const originalFetch = global.fetch;
 
 beforeEach(() => {
   jest.spyOn(console, 'error').mockImplementation(() => {});
-  jest.spyOn(window, 'alert').mockImplementation(() => {});
+  jest.mocked(dialogs.alertDialog).mockResolvedValue(undefined);
+  jest.spyOn(toast, 'success').mockReturnValue('toast');
   global.fetch = jest.fn();
   mutate.mockReset().mockResolvedValue(undefined);
   jest.mocked(useSWR).mockReturnValue({
@@ -73,7 +82,7 @@ it('reports approved plus failed thanks, still refreshing the queue without repe
   fireEvent.click(screen.getByRole('button', { name: '批准并感谢' }));
   fireEvent.click(screen.getByRole('button', { name: '批准并发送感谢' }));
   await waitFor(() =>
-    expect(window.alert).toHaveBeenCalledWith(
+    expect(dialogs.alertDialog).toHaveBeenCalledWith(
       expect.stringContaining('已成功批准此提交\n感谢发送失败: network unavailable')
     )
   );
@@ -93,7 +102,7 @@ it('retains approval and cache warnings when refreshing the queue fails', async 
   render(<PendingClient />);
   fireEvent.click(screen.getByRole('button', { name: '批准' }));
   await waitFor(() =>
-    expect(window.alert).toHaveBeenCalledWith(
+    expect(dialogs.alertDialog).toHaveBeenCalledWith(
       `已成功批准此提交\n${ARTICLE_CACHE_REFRESH_WARNING}\n审核列表刷新失败，请刷新页面查看最新状态，无需重复审核。`
     )
   );
@@ -101,14 +110,14 @@ it('retains approval and cache warnings when refreshing the queue fails', async 
 });
 
 it('consumes the committed status and refreshes related history, edit data, previews and router data', async () => {
-  jest.spyOn(window, 'prompt').mockReturnValue('请补充来源');
+  jest.mocked(dialogs.promptDialog).mockResolvedValue('请补充来源');
   jest.mocked(fetch).mockResolvedValueOnce({
     ok: true,
     json: async () => ({ article_id: 'a', version_id: 'v', status: 'rejected' }),
   } as Response);
   render(<PendingClient />);
   fireEvent.click(screen.getByRole('button', { name: '拒绝' }));
-  await waitFor(() => expect(window.alert).toHaveBeenCalledWith('已成功拒绝此提交'));
+  await waitFor(() => expect(toast.success).toHaveBeenCalledWith('已成功拒绝此提交'));
   const filter = mockRefreshRelated.mock.calls[0]![0] as (key: unknown) => boolean;
   expect(filter('/api/articles/a/history')).toBe(true);
   expect(filter('/api/articles/a/info')).toBe(true);
@@ -129,7 +138,7 @@ it('keeps the successful outcome if related article refresh fails', async () => 
   render(<PendingClient />);
   fireEvent.click(screen.getByRole('button', { name: '批准' }));
   await waitFor(() =>
-    expect(window.alert).toHaveBeenCalledWith(
+    expect(dialogs.alertDialog).toHaveBeenCalledWith(
       expect.stringContaining('已成功批准此提交\n操作已成功，但页面数据刷新失败')
     )
   );

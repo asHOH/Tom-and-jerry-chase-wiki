@@ -4,10 +4,17 @@ import useSWR, { SWRConfig } from 'swr';
 import { characters } from '@/data/static';
 import { summarizeGameActionValue } from '@/features/admin/utils/gameActionPreview';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
+import * as dialogs from '@/components/ui/dialogs';
 
 import GameDataActionModerationPanel, {
   type PendingGameDataAction,
 } from './GameDataActionModerationPanel';
+
+jest.mock('@/components/ui/dialogs', () => ({
+  confirmDialog: jest.fn(),
+  promptDialog: jest.fn(),
+  alertDialog: jest.fn(),
+}));
 
 const mockSuccess = jest.fn();
 const mockError = jest.fn();
@@ -190,7 +197,7 @@ describe('GameDataActionModerationPanel', () => {
             : {},
       } as Response;
     });
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    jest.mocked(dialogs.confirmDialog).mockResolvedValue(true);
     const refreshList = jest.fn(async () => {
       events.push('list');
     });
@@ -254,13 +261,29 @@ describe('GameDataActionModerationPanel', () => {
     expect(screen.getByRole('button', { name: '批准' })).toBeEnabled();
   });
 
+  it('does not reject an action when the reason dialog is cancelled', async () => {
+    global.fetch = jest.fn();
+    jest.mocked(dialogs.confirmDialog).mockResolvedValue(true);
+    jest.mocked(dialogs.promptDialog).mockResolvedValue(null);
+    render(
+      <GameDataActionModerationPanel
+        {...filterProps}
+        pendingActions={[sampleAction]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: '拒绝' }));
+    await waitFor(() => expect(dialogs.promptDialog).toHaveBeenCalled());
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
   it('reports a failed rejection without refreshing and allows a later retry', async () => {
     global.fetch = jest
       .fn()
       .mockResolvedValueOnce({ ok: false, json: async () => ({ error: 'Rejected request' }) })
       .mockResolvedValueOnce({ ok: true });
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
-    jest.spyOn(window, 'prompt').mockReturnValue('  reason  ');
+    jest.mocked(dialogs.confirmDialog).mockResolvedValue(true);
+    jest.mocked(dialogs.promptDialog).mockResolvedValue('  reason  ');
     const refreshList = jest.fn();
     render(
       <GameDataActionModerationPanel
@@ -290,7 +313,7 @@ describe('GameDataActionModerationPanel', () => {
         message: '字段「杰瑞.description」已变化，改动仍保持待审核。',
       }),
     });
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    jest.mocked(dialogs.confirmDialog).mockResolvedValue(true);
     const refreshList = jest.fn();
     render(
       <GameDataActionModerationPanel
@@ -719,7 +742,7 @@ describe('GameDataActionModerationPanel', () => {
         resolveFetch = resolve;
       });
     });
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    jest.mocked(dialogs.confirmDialog).mockResolvedValue(true);
 
     render(
       <GameDataActionModerationPanel
@@ -801,7 +824,7 @@ describe('GameDataActionModerationPanel', () => {
       json: async () => ({}),
     } as Response);
     global.fetch = fetchMock;
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    jest.mocked(dialogs.confirmDialog).mockResolvedValue(true);
 
     const approvedAction: PendingGameDataAction = {
       ...sampleAction,

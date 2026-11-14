@@ -6,6 +6,7 @@ import { requireSupabaseBrowserClient } from '@/lib/supabase/browserClient';
 import { Database } from '@/data/database.types';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { confirmDialog } from '@/components/ui/dialogs';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import Notice from '@/components/ui/Notice';
 
@@ -118,7 +119,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
   };
 
   const handleDeleteCategory = async (id: string) => {
-    if (!confirm('确定要删除此分类吗？此操作无法恢复。')) return;
+    if (!(await confirmDialog('确定要删除此分类吗？此操作无法恢复。'))) return;
 
     setLoading(true);
     try {

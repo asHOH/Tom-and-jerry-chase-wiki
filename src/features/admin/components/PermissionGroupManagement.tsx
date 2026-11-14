@@ -14,6 +14,7 @@ import { cn } from '@/lib/design';
 import { USER_API_KEY } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { confirmDialog } from '@/components/ui/dialogs';
 import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormControls';
 import Notice from '@/components/ui/Notice';
 import {
@@ -177,7 +178,7 @@ export default function PermissionGroupManagement({
   };
 
   const deleteGroup = async () => {
-    if (!selected || !window.confirm(`确认删除用户组“${selected.name}”？`)) return;
+    if (!selected || !(await confirmDialog(`确认删除用户组“${selected.name}”？`))) return;
     try {
       await request(`/api/admin/groups/${selected.id}`, 'DELETE');
       setSelectedId('');

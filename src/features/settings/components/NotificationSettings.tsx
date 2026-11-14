@@ -8,6 +8,7 @@ import { cn } from '@/lib/design';
 import type { NotificationSubscriptionResponse } from '@/lib/notifications/subscriptionSettings';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { confirmDialog } from '@/components/ui/dialogs';
 import { FormInput } from '@/components/ui/FormControls';
 import LoadingState from '@/components/ui/LoadingState';
 import Notice, { type NoticeVariant } from '@/components/ui/Notice';
@@ -155,7 +156,7 @@ export default function NotificationSettings() {
   };
 
   const removeEmail = async () => {
-    if (!window.confirm('确认移除通知邮箱？')) return;
+    if (!(await confirmDialog('确认移除通知邮箱？'))) return;
     setEmailBusy(true);
     const response = await fetch('/api/notifications/email', { method: 'DELETE' });
     setEmailMessage({

@@ -3,10 +3,17 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import type { ArticleEditInfoResponse } from '@/lib/articles/editSources';
 import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
+import * as dialogs from '@/components/ui/dialogs';
 import type ArticleForm from '@/components/articles/ArticleForm';
 
 import EditArticleClient from '../[id]/edit/EditArticleClient';
 import NewArticleClient from './NewArticleClient';
+
+jest.mock('@/components/ui/dialogs', () => ({
+  confirmDialog: jest.fn(),
+  promptDialog: jest.fn(),
+  alertDialog: jest.fn(),
+}));
 
 jest.mock('@/lib/supabase/browserClient', () => ({
   getOptionalSupabaseBrowserClient: () => ({
@@ -113,7 +120,7 @@ beforeEach(() => {
   mockRequiresCharacter = false;
   mockInfo = defaultInfo;
   global.fetch = jest.fn();
-  jest.spyOn(window, 'alert').mockImplementation(() => {});
+  jest.mocked(dialogs.alertDialog).mockResolvedValue(undefined);
   // jsdom cannot navigate documents; browser navigation is checked separately.
   jest.spyOn(console, 'error').mockImplementation(() => {});
 });
@@ -159,7 +166,7 @@ describe.each([
       } as Response);
       submit();
       await waitFor(() =>
-        expect(status === 'approved' ? window.alert : mockFeedback).toHaveBeenCalledWith(
+        expect(status === 'approved' ? dialogs.alertDialog : mockFeedback).toHaveBeenCalledWith(
           `${message}\n${ARTICLE_CACHE_REFRESH_WARNING}`
         )
       );

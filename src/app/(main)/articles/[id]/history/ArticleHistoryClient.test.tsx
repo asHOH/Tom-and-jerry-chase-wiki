@@ -3,8 +3,15 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import useSWR, { SWRConfig } from 'swr';
 
 import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
+import * as dialogs from '@/components/ui/dialogs';
 
 import ArticleHistoryClient from './ArticleHistoryClient';
+
+jest.mock('@/components/ui/dialogs', () => ({
+  confirmDialog: jest.fn(),
+  promptDialog: jest.fn(),
+  alertDialog: jest.fn(),
+}));
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
@@ -152,8 +159,14 @@ describe('ArticleHistoryClient diff selection', () => {
   it('shows a committed revocation warning before scheduling the existing reload', async () => {
     const originalFetch = global.fetch;
     jest.useFakeTimers();
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
-    jest.spyOn(window, 'alert').mockImplementation(() => {});
+    jest.mocked(dialogs.confirmDialog).mockResolvedValue(true);
+    let acknowledge!: () => void;
+    jest.mocked(dialogs.alertDialog).mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          acknowledge = resolve;
+        })
+    );
     mockCanRevoke = true;
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
@@ -164,8 +177,12 @@ describe('ArticleHistoryClient diff selection', () => {
       await act(async () => {
         fireEvent.click(screen.getByRole('button', { name: '撤销版本' }));
       });
-      expect(window.alert).toHaveBeenCalledWith(ARTICLE_CACHE_REFRESH_WARNING);
-      expect(jest.getTimerCount()).toBeGreaterThan(0);
+      expect(dialogs.alertDialog).toHaveBeenCalledWith(ARTICLE_CACHE_REFRESH_WARNING);
+      const timersBeforeAcknowledgement = jest.getTimerCount();
+      await act(async () => {
+        acknowledge();
+      });
+      expect(jest.getTimerCount()).toBeGreaterThan(timersBeforeAcknowledgement);
       expect(global.fetch).toHaveBeenCalledTimes(1);
       expect(mockShowError).not.toHaveBeenCalled();
     } finally {

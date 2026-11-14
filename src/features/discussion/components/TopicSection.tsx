@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { formatArticleDate } from '@/lib/dateUtils';
 import Button from '@/components/ui/Button';
+import { confirmDialog } from '@/components/ui/dialogs';
 
 import type { CommentNode } from '../types';
 import { ReplyForm } from './ReplyForm';
@@ -146,8 +147,8 @@ export function TopicSection({
                 <Button
                   variant='unstyled'
                   type='button'
-                  onClick={() => {
-                    if (window.confirm('确定要删除这条评论吗？')) {
+                  onClick={async () => {
+                    if (await confirmDialog('确定要删除这条评论吗？')) {
                       void handleStatusChange(topic.id, 'deleted');
                     }
                   }}
@@ -282,8 +283,8 @@ function ReplyItem({
               <Button
                 variant='unstyled'
                 type='button'
-                onClick={() => {
-                  if (window.confirm('确定要删除这条评论吗？')) {
+                onClick={async () => {
+                  if (await confirmDialog('确定要删除这条评论吗？')) {
                     void onStatusChange(reply.id, 'deleted');
                   }
                 }}

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import useSWR from 'swr';
 
 import type { ArticleMutationResult } from '@/lib/articles/mutationResult';
@@ -15,6 +16,7 @@ import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import Card from '@/components/ui/Card';
+import { alertDialog, promptDialog } from '@/components/ui/dialogs';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
@@ -123,7 +125,7 @@ export default function PendingClient() {
     if (processingVersions.has(versionId)) return;
 
     const feedback =
-      action === 'reject' ? window.prompt('审核反馈（可选，取消则不执行拒绝）') : null;
+      action === 'reject' ? await promptDialog('审核反馈（可选，取消则不执行拒绝）') : null;
     if (action === 'reject' && feedback === null) return;
 
     setProcessingVersions((prev) => new Set([...Array.from(prev), versionId]));
@@ -190,10 +192,11 @@ export default function PendingClient() {
           : status === 'rejected'
             ? '已成功拒绝此提交'
             : '审核操作已完成，请刷新页面查看最新状态。';
-      alert([message, ...warnings].join('\n'));
+      if (warnings.length) await alertDialog([message, ...warnings].join('\n'));
+      else toast.success(message);
     } catch (err) {
       console.error(`Error ${action}ing submission:`, err);
-      alert(
+      toast.error(
         `${action === 'approve' ? '批准' : '拒绝'}操作失败: ${err instanceof Error ? err.message : '未知错误'}`
       );
     } finally {

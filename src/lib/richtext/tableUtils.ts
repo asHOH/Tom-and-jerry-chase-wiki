@@ -1,8 +1,8 @@
 import { Node as PMNode } from '@tiptap/pm/model';
 import { Editor } from '@tiptap/react';
 
-export function transposeTable(editor: Editor | null) {
-  if (!editor) return;
+export function transposeTable(editor: Editor | null): string | undefined {
+  if (!editor) return undefined;
   const { state, view } = editor;
   const { $from } = state.selection;
   let tableDepth = -1;
@@ -13,7 +13,7 @@ export function transposeTable(editor: Editor | null) {
       break;
     }
   }
-  if (tableDepth === -1) return;
+  if (tableDepth === -1) return undefined;
   const tableNode = $from.node(tableDepth) as PMNode;
   const startPos = $from.before(tableDepth);
   const endPos = $from.after(tableDepth);
@@ -41,8 +41,7 @@ export function transposeTable(editor: Editor | null) {
     rows.push(cells);
   });
   if (hasSpan) {
-    window.alert('暂不支持包含合并单元格的表格进行转置');
-    return;
+    return '暂不支持包含合并单元格的表格进行转置';
   }
   const schema = state.schema;
   const tableRowType = schema.nodes.tableRow!;
@@ -50,8 +49,7 @@ export function transposeTable(editor: Editor | null) {
   const tableHeaderType = schema.nodes.tableHeader!;
   const paragraphType = schema.nodes.paragraph!;
   if (!tableRowType || !tableCellType || !tableHeaderType || !paragraphType) {
-    window.alert('转置失败：编辑器表格节点类型不可用');
-    return;
+    return '转置失败：编辑器表格节点类型不可用';
   }
   const hasHeaderRow =
     rows.length > 0 &&
@@ -83,4 +81,5 @@ export function transposeTable(editor: Editor | null) {
   const newTable = tableNode.type.create(tableNode.attrs ?? {}, newRowNodes);
   const tr = state.tr.replaceWith(startPos, endPos, newTable);
   view.dispatch(tr.scrollIntoView());
+  return undefined;
 }

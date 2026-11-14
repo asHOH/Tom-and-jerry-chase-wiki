@@ -12,6 +12,7 @@ import type { useGameDataModeration } from '@/features/admin/hooks/useGameDataMo
 import type { GameActionDiffView } from '@/features/admin/utils/gameActionDiff';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { confirmDialog, promptDialog } from '@/components/ui/dialogs';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 import GameDataActionPreviewList, { GameDataActionChangeViewer } from './GameDataActionPreviewList';
@@ -161,8 +162,8 @@ export default function GameDataActionRow({
                   {canApproveActions && (
                     <Button
                       disabled={isModerating}
-                      onClick={() => {
-                        const confirmed = window.confirm(
+                      onClick={async () => {
+                        const confirmed = await confirmDialog(
                           submission.is_public
                             ? '确认审核通过该已公开改动？'
                             : '确认批准并公开该改动？'
@@ -197,12 +198,12 @@ export default function GameDataActionRow({
                   {!submission.is_public && canRejectActions && (
                     <Button
                       disabled={isModerating}
-                      onClick={() => {
-                        const confirmed = window.confirm('确认拒绝该改动？');
+                      onClick={async () => {
+                        const confirmed = await confirmDialog('确认拒绝该改动？');
                         if (!confirmed) return;
-                        void moderateAction(submission.action_id, 'reject', {
-                          reason: window.prompt('拒绝原因（可选）', '') ?? '',
-                        });
+                        const reason = await promptDialog('拒绝原因（可选）', '');
+                        if (reason === null) return;
+                        void moderateAction(submission.action_id, 'reject', { reason });
                       }}
                       variant='danger'
                       size='sm'
@@ -213,8 +214,8 @@ export default function GameDataActionRow({
                   {submission.is_public && canRevokeActions && (
                     <Button
                       disabled={isModerating}
-                      onClick={() => {
-                        const confirmed = window.confirm(
+                      onClick={async () => {
+                        const confirmed = await confirmDialog(
                           '确认撤销该已公开改动？撤销后将从公开数据中移除。'
                         );
                         if (!confirmed) return;
@@ -249,8 +250,9 @@ export default function GameDataActionRow({
               {canRevokeActions && submission.status === 'approved' && (
                 <Button
                   disabled={isModerating}
-                  onClick={() => {
-                    const confirmed = window.confirm('确认撤销该改动？撤销后将从公开数据中移除。');
+                  onClick={async () => {
+                    const confirmed =
+                      await confirmDialog('确认撤销该改动？撤销后将从公开数据中移除。');
                     if (!confirmed) return;
                     void moderateAction(submission.action_id, 'revoke');
                   }}
