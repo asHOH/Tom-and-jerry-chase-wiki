@@ -7,7 +7,8 @@ import MapDetails from './MapDetails';
 
 jest.mock('@/context/AppContext', () => ({ useAppContext: () => ({ isDetailedView: false }) }));
 jest.mock('@/context/EditModeContext', () => ({ useEditMode: () => ({ isEditMode: false }) }));
-jest.mock('@/hooks/useLocalEditEntity', () => ({ useLocalMap: () => ({ mapName: '测试地图' }) }));
+let mockMapName = '测试地图';
+jest.mock('@/hooks/useLocalEditEntity', () => ({ useLocalMap: () => ({ mapName: mockMapName }) }));
 jest.mock('@/hooks/useMediaQuery', () => ({ useMobile: () => false }));
 jest.mock('@/hooks/useSpecifyTypeKeyboardNavigation', () => ({
   useSpecifyTypeKeyboardNavigation: jest.fn(),
@@ -27,11 +28,13 @@ jest.mock('@/components/Image', () => ({
     fill: _fill,
     priority: _priority,
     placeholder: _placeholder,
+    unoptimized: _unoptimized,
     ...props
   }: ImgHTMLAttributes<HTMLImageElement> & {
     fill?: boolean;
     priority?: boolean;
     placeholder?: string;
+    unoptimized?: boolean;
   }) => createElement('img', props),
 }));
 
@@ -58,4 +61,20 @@ it('names both map previews and supports opening and closing with the keyboard',
   fireEvent.click(preview);
   fireEvent.click(screen.getByRole('button', { name: '关闭全屏预览' }));
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+});
+
+it('links to the interactive map with its scene-site thumbnail', () => {
+  mockMapName = '经典之家I';
+  const map = maps[mockMapName]!;
+  render(<MapDetails map={map} fixtureNames={[]} modeNames={[]} charactersData={{}} />);
+
+  expect(screen.getByRole('img', { name: '经典之家I交互地图预览' })).toHaveAttribute(
+    'src',
+    'https://maps.tjwiki.com/map-data/classic-home-i/thumbnail.webp'
+  );
+  expect(screen.getByRole('link', { name: /打开交互地图/ })).toHaveAttribute(
+    'href',
+    'https://maps.tjwiki.com/maps/classic-home-i'
+  );
+  mockMapName = '测试地图';
 });

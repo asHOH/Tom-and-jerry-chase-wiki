@@ -27,6 +27,11 @@ export function getSceneMapUrl(mapName: string): string | undefined {
   return 'https://maps.tjwiki.com/maps/' + SCENE_MAP_IDS[mapName as keyof typeof SCENE_MAP_IDS];
 }
 
+export function getSceneMapThumbnailUrl(mapName: string): string | undefined {
+  if (!Object.hasOwn(SCENE_MAP_IDS, mapName)) return undefined;
+  return `https://maps.tjwiki.com/map-data/${SCENE_MAP_IDS[mapName as keyof typeof SCENE_MAP_IDS]}/thumbnail.webp`;
+}
+
 export function getSceneMapName(mapId: string): string | undefined {
   return Object.entries(SCENE_MAP_IDS).find(([, id]) => id === mapId)?.[0];
 }

@@ -11,7 +11,7 @@ const directives: Directives = {
     'https://static.cloudflareinsights.com',
   ],
   'style-src': ["'self'", "'unsafe-inline'", 'https://hcaptcha.com', 'https://*.hcaptcha.com'],
-  'img-src': ["'self'", 'data:', 'https://*.supabase.co'],
+  'img-src': ["'self'", 'data:', 'https://*.supabase.co', 'https://maps.tjwiki.com'],
   'font-src': ["'self'"],
   'connect-src': [
     "'self'",
