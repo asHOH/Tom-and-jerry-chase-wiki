@@ -12,6 +12,7 @@ export const characterRelationTags = [
   '拉扯',
   '机制',
   '高伤',
+  '扛伤',
   '无视',
   '自保',
   '免控',
@@ -31,6 +32,7 @@ const counteringFactionByTag: Record<CharacterRelationTagName, FactionId | 'both
   拉扯: 'mouse',
   机制: 'both',
   高伤: 'both',
+  扛伤: 'cat',
   无视: 'both',
   自保: 'mouse',
   免控: 'both',
@@ -45,16 +47,17 @@ const counteringFactionByTag: Record<CharacterRelationTagName, FactionId | 'both
 };
 
 const characterRelationTagDefinitions: Record<(typeof characterRelationTags)[number], string> = {
-  拉扯: '利用机动性打游击，保证奶酪进度的同时让猫咪难以找到节奏。',
+  拉扯: '善于打游击，保证奶酪进度的同时让猫咪难以找到节奏。',
   机制: '难以类比于其他克制关系的血脉克制。',
   高伤: '拥有较高的单次或爆发伤害。',
+  扛伤: '拥有高Hp上限、高回复或减伤而难以被击倒。',
   无视: '使对手依赖的技能或策略失效。',
   自保: '难以被追上或击倒。',
   免控: '免疫或可主动解除对手施加的控制。',
   稳救: '在猫咪防守火箭时仍能较稳定地救下队友。',
   破局: '突破猫咪对奶酪、火箭或墙缝的持续防守。',
   控制: '拥有能救下猫咪手中队友的控制。',
-  干扰: '通过各种方式妨碍猫咪行动，但无法直接救下猫咪手中的队友。',
+  干扰: '能够妨碍猫咪行动，但无法直接救下猫咪手中的队友。',
   速推: '善于推或搬奶酪、加快对局进程。',
   辅助: '为队友提供增益。',
   追击: '善于迅速接近老鼠。',
@@ -168,7 +171,9 @@ export const getAllowedCharacterRelationTags = (
       : 'cat';
   return characterRelationTags.filter(
     (tag) =>
-      counteringFactionByTag[tag] === 'both' || counteringFactionByTag[tag] === counteringFaction
+      (counteringFactionByTag[tag] === 'both' ||
+        counteringFactionByTag[tag] === counteringFaction) &&
+      (tag !== '扛伤' || kind === 'counters' || kind === 'counteredBy')
   );
 };
 

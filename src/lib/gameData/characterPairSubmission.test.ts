@@ -75,6 +75,10 @@ it.each([
   [path, 'counteredBy', '追击', '稳救'],
   ['B.characterRelationOverrides.D', 'counters', '追击', '稳救'],
   ['B.characterRelationOverrides.D', 'counteredBy', '稳救', '追击'],
+  [path, 'counters', '稳救', '扛伤'],
+  [path, 'counteredBy', '扛伤', '稳救'],
+  ['B.characterRelationOverrides.D', 'counters', '扛伤', '稳救'],
+  ['B.characterRelationOverrides.D', 'counteredBy', '稳救', '扛伤'],
 ])(
   'validates shared tags from the countering faction at %s (%s)',
   (actionPath, kind, allowed, forbidden) => {
@@ -94,6 +98,19 @@ it.each([
         })
       );
     }
+  }
+);
+
+it.each(['counteredByKnowledgeCards', 'counteredBySpecialSkills'] as const)(
+  'rejects tanking tags on %s submissions',
+  (kind) => {
+    expect(() =>
+      validate([set(`A.${kind}`, undefined, [{ id: 'B', isMinor: false, tags: ['扛伤'] }])])
+    ).toThrow(
+      expect.objectContaining({
+        detail: expect.objectContaining({ reason: 'relation_tag_direction' }),
+      })
+    );
   }
 );
 
