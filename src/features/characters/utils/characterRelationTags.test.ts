@@ -50,7 +50,7 @@ it.each([
   'uses the countering faction for %s and its inverse %s',
   (direct, inverse) => {
     const shared = ['机制', '高伤', '无视', '免控', '控制', '大视野'];
-    const cat = [...shared, '追击', ...(direct === 'counters' ? ['扛伤'] : [])].sort();
+    const cat = [...shared, '追击', ...(direct === 'counters' ? ['扛伤', '破盾'] : [])].sort();
     const mouse = [...shared, '拉扯', '自保', '稳救', '破局', '干扰', '速推', '辅助'].sort();
     expect([...getAllowedCharacterRelationTags('cat', direct)].sort()).toEqual(cat);
     expect([...getAllowedCharacterRelationTags('mouse', inverse)].sort()).toEqual(cat);

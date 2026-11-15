@@ -13,6 +13,7 @@ export const characterRelationTags = [
   '机制',
   '高伤',
   '扛伤',
+  '破盾',
   '无视',
   '自保',
   '免控',
@@ -33,6 +34,7 @@ const counteringFactionByTag: Record<CharacterRelationTagName, FactionId | 'both
   机制: 'both',
   高伤: 'both',
   扛伤: 'cat',
+  破盾: 'cat',
   无视: 'both',
   自保: 'mouse',
   免控: 'both',
@@ -51,6 +53,7 @@ const characterRelationTagDefinitions: Record<(typeof characterRelationTags)[num
   机制: '难以类比于其他克制关系的血脉克制。',
   高伤: '拥有较高的单次或爆发伤害。',
   扛伤: '拥有高Hp上限、高回复或减伤而难以被击倒。',
+  破盾: '善于快速消耗或直接移除老鼠的护盾。',
   无视: '使对手依赖的技能或策略失效。',
   自保: '难以被追上或击倒。',
   免控: '免疫或可主动解除对手施加的控制。',
@@ -173,7 +176,7 @@ export const getAllowedCharacterRelationTags = (
     (tag) =>
       (counteringFactionByTag[tag] === 'both' ||
         counteringFactionByTag[tag] === counteringFaction) &&
-      (tag !== '扛伤' || kind === 'counters' || kind === 'counteredBy')
+      (!['扛伤', '破盾'].includes(tag) || kind === 'counters' || kind === 'counteredBy')
   );
 };
 
