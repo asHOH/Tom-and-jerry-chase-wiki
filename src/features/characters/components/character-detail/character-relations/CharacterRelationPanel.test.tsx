@@ -1,9 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { getCharacterRelationTagDefinition } from '@/features/characters/utils/characterRelationTags';
+import {
+  getCharacterRelationTagDefinition,
+  getCounteringFaction,
+} from '@/features/characters/utils/characterRelationTags';
 
 import CharacterRelationPanel from './CharacterRelationPanel';
-import type { RelationDisplayItem } from './characterRelationViewModel';
+import { buildCharacterItems, type RelationDisplayItem } from './characterRelationViewModel';
 
 jest.mock('@/components/Image', () => ({ __esModule: true, default: () => null }));
 jest.mock('@/components/ui/editable', () => ({ editable: () => ({ span: 'span' }) }));
@@ -84,3 +87,33 @@ it('opens a definition when its button receives keyboard focus', () => {
   expect(screen.getByRole('tooltip')).toHaveTextContent(getCharacterRelationTagDefinition('高伤')!);
   expect(onNavigate).not.toHaveBeenCalled();
 });
+
+it.each([
+  ['cat', 'counters', '控制', '通过控制限制老鼠行动，阻止逃跑或救援。'],
+  ['mouse', 'counteredBy', '怕控制', '通过控制限制老鼠行动，阻止逃跑或救援。'],
+  ['mouse', 'counters', '控制', '拥有能救下猫咪手中队友的控制。'],
+  ['cat', 'counteredBy', '怕控制', '拥有能救下猫咪手中队友的控制。'],
+] as const)(
+  'shows the countering faction explanation on a %s page for %s',
+  (faction, relationKind, label, definition) => {
+    const items = buildCharacterItems(
+      [{ id: '目标', isMinor: false, tags: ['控制'] }],
+      () => '',
+      jest.fn(),
+      { view: () => '查看目标', edit: () => '编辑目标' },
+      {
+        relationKind,
+        isEditable: false,
+        counteringFaction: getCounteringFaction(faction, relationKind),
+      }
+    );
+    render(
+      <CharacterRelationPanel
+        isEditMode={false}
+        sections={[{ key: 'test', title: '克制关系', theme: 'red', icon: null, items }]}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: `${label}：查看分类说明` }));
+    expect(screen.getByRole('tooltip')).toHaveTextContent(definition);
+  }
+);

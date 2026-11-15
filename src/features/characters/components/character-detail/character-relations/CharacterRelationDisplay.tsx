@@ -18,7 +18,10 @@ import {
   updateCharacterRelationDescription,
   updateCharacterRelationTags,
 } from '@/features/characters/utils/characterRelationOverlay';
-import { getAllowedCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
+import {
+  getAllowedCharacterRelationTags,
+  getCounteringFaction,
+} from '@/features/characters/utils/characterRelationTags';
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
 
 import KnowledgeCardSelector from '../knowledge-cards/KnowledgeCardSelector';
@@ -99,6 +102,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         updateCharacters((characters) => updateCharacterRelationTags(characters, ...args)),
     }),
     tagOptions: getAllowedCharacterRelationTags(factionId, relationKind),
+    counteringFaction: getCounteringFaction(factionId, relationKind),
   });
   const createSelectHandler = (relationKind: TraitRelationKind) =>
     createRelationSelectHandler({

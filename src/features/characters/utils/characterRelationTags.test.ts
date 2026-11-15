@@ -16,9 +16,11 @@ import {
 it.each(characterRelationTags)(
   'provides the same definition for %s and its inverse label',
   (tag) => {
-    const definition = getCharacterRelationTagDefinition(tag);
-    expect(definition).toMatch(/[\u4e00-\u9fff]/);
-    expect(getCharacterRelationTagDefinition(`怕${tag}`)).toBe(definition);
+    for (const faction of ['cat', 'mouse'] as const) {
+      const definition = getCharacterRelationTagDefinition(tag, faction);
+      expect(definition).toMatch(/[\u4e00-\u9fff]/);
+      expect(getCharacterRelationTagDefinition(`怕${tag}`, faction)).toBe(definition);
+    }
   }
 );
 

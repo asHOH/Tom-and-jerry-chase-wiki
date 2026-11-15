@@ -348,7 +348,7 @@ function RelationItemCard({
       {!canEdit && item.tagLabels.length > 0 && (
         <div className='flex flex-wrap gap-1 px-2 pb-2 pl-15' aria-label='克制分类'>
           {item.tagLabels.map((tag) => {
-            const definition = getCharacterRelationTagDefinition(tag);
+            const definition = getCharacterRelationTagDefinition(tag, item.counteringFaction);
             return definition ? (
               <Tooltip key={tag} asChild clickToToggle content={definition}>
                 <Button

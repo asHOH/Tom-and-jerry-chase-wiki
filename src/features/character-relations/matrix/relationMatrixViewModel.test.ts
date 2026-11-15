@@ -44,6 +44,35 @@ const setRelationItems = (
 };
 
 describe('relationMatrixViewModel', () => {
+  it.each([
+    ['counteredBy', '控制', '怕控制', '通过控制限制老鼠行动，阻止逃跑或救援。'],
+    ['counters', '怕控制', '控制', '拥有能救下猫咪手中队友的控制。'],
+  ] as const)(
+    'keeps control explanations consistent across both views of a %s pair',
+    (kind, catLabel, mouseLabel, definition) => {
+      const data = createRelationData();
+      data.characters['杰瑞']!.characterRelationOverrides = {
+        汤姆: { kind, isMinor: false, tags: ['控制'] },
+      };
+      const catRows = buildRelationMatrixViewModel({
+        rowFaction: 'cat',
+        columnCategory: 'mouse',
+        data,
+      });
+      const mouseRows = buildRelationMatrixViewModel({
+        rowFaction: 'mouse',
+        columnCategory: 'cat',
+        data,
+      });
+      expect(getCell(catRows, '汤姆', '杰瑞')?.tooltipContent).toContain(
+        `${catLabel}：${definition}`
+      );
+      expect(getCell(mouseRows, '杰瑞', '汤姆')?.tooltipContent).toContain(
+        `${mouseLabel}：${definition}`
+      );
+    }
+  );
+
   it('should expose legal column categories and coerce illegal selections', () => {
     expect(getLegalColumnCategories('mouse').map((option) => option.id)).toEqual([
       'mouse',

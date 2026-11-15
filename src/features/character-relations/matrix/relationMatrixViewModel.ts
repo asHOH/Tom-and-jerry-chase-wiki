@@ -12,6 +12,7 @@ import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/c
 import {
   getCharacterRelationTagDefinition,
   getCharacterRelationTagLabels,
+  getCounteringFaction,
   normalizeCharacterRelationTags,
 } from '@/features/characters/utils/characterRelationTags';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
@@ -245,14 +246,18 @@ const createCell = (
   relationKind: TraitRelationKind,
   subjectName: string,
   targetName: string,
-  item: { description?: string; isMinor?: boolean; tags?: CharacterRelationTag[] }
+  item: { description?: string; isMinor?: boolean; tags?: CharacterRelationTag[] },
+  subjectFaction: FactionId
 ): RelationMatrixCell => {
   const displayKind = getDisplayKind(relationKind);
   const description = item.description ?? '';
   const tagLabels = getCharacterRelationTagLabels(item.tags, relationKind);
   const tagSummary = tagLabels.length > 0 ? ` [${tagLabels.join('、')}]` : '';
   const tagDefinitions = tagLabels.flatMap((label) => {
-    const definition = getCharacterRelationTagDefinition(label);
+    const definition = getCharacterRelationTagDefinition(
+      label,
+      getCounteringFaction(subjectFaction, relationKind)
+    );
     return definition ? [`${label}：${definition}`] : [];
   });
   return {
@@ -362,12 +367,12 @@ export const buildRelationMatrixViewModel = (
           warnDuplicateMatrixCell(
             cellKey,
             cells.get(cellKey),
-            createCell(relationKind, row.label, item.id, item)
+            createCell(relationKind, row.label, item.id, item, rowFaction)
           );
           continue;
         }
 
-        cells.set(cellKey, createCell(relationKind, row.label, item.id, item));
+        cells.set(cellKey, createCell(relationKind, row.label, item.id, item, rowFaction));
       }
     }
   }

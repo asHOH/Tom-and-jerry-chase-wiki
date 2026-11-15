@@ -48,18 +48,24 @@ const counteringFactionByTag: Record<CharacterRelationTagName, FactionId | 'both
   大视野: 'both',
 };
 
-const characterRelationTagDefinitions: Record<(typeof characterRelationTags)[number], string> = {
+const characterRelationTagDefinitions: Record<
+  CharacterRelationTagName,
+  string | Record<FactionId, string>
+> = {
   拉扯: '善于打游击，保证奶酪进度的同时让猫咪难以找到节奏。',
   机制: '难以类比于其他克制关系的血脉克制。',
   高伤: '拥有较高的单次或爆发伤害。',
   扛伤: '拥有高Hp上限、高回复或减伤而难以被击倒。',
-  破盾: '善于快速消耗或直接移除老鼠的护盾。',
+  破盾: '善于快速消耗老鼠的护盾。',
   无视: '使对手依赖的技能或策略失效。',
   自保: '难以被追上或击倒。',
   免控: '免疫或可主动解除对手施加的控制。',
   稳救: '在猫咪防守火箭时仍能较稳定地救下队友。',
   破局: '突破猫咪对奶酪、火箭或墙缝的持续防守。',
-  控制: '拥有能救下猫咪手中队友的控制。',
+  控制: {
+    cat: '善于通过先手控制击倒老鼠。',
+    mouse: '拥有能救下猫咪手中队友的控制。',
+  },
   干扰: '能够妨碍猫咪行动，但无法直接救下猫咪手中的队友。',
   速推: '善于推或搬奶酪、加快对局进程。',
   辅助: '为队友提供增益。',
@@ -67,11 +73,16 @@ const characterRelationTagDefinitions: Record<(typeof characterRelationTags)[num
   大视野: '拥有更大的视野范围。',
 };
 
-export const getCharacterRelationTagDefinition = (label: string): string | undefined => {
+export const getCharacterRelationTagDefinition = (
+  label: string,
+  counteringFaction?: FactionId
+): string | undefined => {
   const name = label.startsWith('怕') ? label.slice(1) : label;
-  return Object.hasOwn(characterRelationTagDefinitions, name)
-    ? characterRelationTagDefinitions[name as keyof typeof characterRelationTagDefinitions]
-    : undefined;
+  if (!Object.hasOwn(characterRelationTagDefinitions, name)) return undefined;
+  const definition = characterRelationTagDefinitions[name as CharacterRelationTagName];
+  return typeof definition === 'string'
+    ? definition
+    : counteringFaction && definition[counteringFaction];
 };
 
 // Only these character traits generate suggested relations automatically.
@@ -161,17 +172,21 @@ const counteredByKinds = new Set<TraitRelationKind>([
 export const supportsCharacterRelationTags = (kind: TraitRelationKind): boolean =>
   countersKinds.has(kind) || counteredByKinds.has(kind);
 
+export const getCounteringFaction = (
+  subjectFaction: FactionId | undefined,
+  kind: TraitRelationKind
+): FactionId | undefined => {
+  if (!subjectFaction || !supportsCharacterRelationTags(kind)) return undefined;
+  return countersKinds.has(kind) ? subjectFaction : subjectFaction === 'cat' ? 'mouse' : 'cat';
+};
+
 // Counter relations (including cards and skills) connect opposite factions.
 export const getAllowedCharacterRelationTags = (
   subjectFaction: FactionId | undefined,
   kind: TraitRelationKind
 ): readonly string[] => {
-  if (!subjectFaction || !supportsCharacterRelationTags(kind)) return [];
-  const counteringFaction = countersKinds.has(kind)
-    ? subjectFaction
-    : subjectFaction === 'cat'
-      ? 'mouse'
-      : 'cat';
+  const counteringFaction = getCounteringFaction(subjectFaction, kind);
+  if (!counteringFaction) return [];
   return characterRelationTags.filter(
     (tag) =>
       (counteringFactionByTag[tag] === 'both' ||
