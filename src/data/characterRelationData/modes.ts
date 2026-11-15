@@ -220,4 +220,20 @@ export const characterRelationModeTraits: CharacterRelationTrait[] = [
       isMinor: false,
     },
   },
+
+  {
+    description: '极长的技能冷却CD不适合此模式玩法',
+    relation: {
+      kind: 'disadvantageModes',
+      subject: {
+        name: '巴特',
+        type: 'character',
+      },
+      target: {
+        name: '5V5经典奶酪赛',
+        type: 'mode',
+      },
+      isMinor: false,
+    },
+  },
 ];

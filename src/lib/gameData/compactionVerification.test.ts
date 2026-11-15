@@ -296,6 +296,41 @@ describe('compaction verification', () => {
     ).toBe(true);
   });
 
+  it('proves temporary root deletion only from an exact same-row object reset', () => {
+    const transient = { group: [], description: 'temporary' };
+    const final = { group: [{ name: 'skill', type: 'skill' }], description: 'final' };
+    const deletion: Action = {
+      op: 'delete',
+      path: 'temporary',
+      oldValue: transient,
+      newValue: undefined,
+    };
+    const actions: Action[] = [set('temporary', transient), set('retained', final), deletion];
+    expect(verifyCompactionActionIdempotence([snapshotRow('1', actions)]).proven).toBe(true);
+    const target = { retained: structuredClone(final) };
+    for (let run = 0; run < 2; run += 1) {
+      expect(applyCheckedActionRow({ rowId: '1', actions, targets: [target] }).success).toBe(true);
+      expect(target).toEqual({ retained: final });
+    }
+    for (const invalid of [
+      [deletion],
+      [
+        set('temporary', transient),
+        { ...deletion, oldValue: { ...transient, description: 'stale' } },
+      ],
+      [set('temporary', transient), { ...deletion, oldValue: undefined }],
+      [set('temporary.group', []), deletion],
+    ]) {
+      expect(verifyCompactionActionIdempotence([snapshotRow('1', invalid)]).proven).toBe(false);
+    }
+    expect(
+      verifyCompactionActionIdempotence([
+        snapshotRow('1', [set('temporary', transient)]),
+        snapshotRow('2', [deletion]),
+      ]).proven
+    ).toBe(false);
+  });
+
   it('accepts deletes inside a concrete reset and verifies repeated checked replay', () => {
     const actions: Action[] = [
       set('item.skill', { transient: false, parts: [{ value: 1 }, {}] }),

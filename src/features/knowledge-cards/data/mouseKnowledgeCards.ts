@@ -168,7 +168,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 4,
     description: '投掷道具可额外**减速**敌方。',
     detailedDescription:
-      '投掷道具命中敌方将额外对敌方造成**减速**状态，持续5秒，最多叠加2层（每层效果间乘算）。',
+      '投掷道具（包括部分角色的技能衍生物）命中敌方将额外对敌方造成**减速**状态，持续5秒，最多叠加2层（每层效果间乘算）。',
     levels: [
       { level: 1, description: '减速**6%**。' },
       { level: 2, description: '减速**8%**。' },

@@ -262,9 +262,14 @@ it('keeps unchanged array context when a later indexed edit in the same row has 
 
 it('rejects empty relation initialization while preserving clears of existing relations', () => {
   const characters = getCanonicalGameData('characters');
-  expect(characters.巴特!).not.toHaveProperty('disadvantageModes');
-  expect(getExplicitCharacterRelation(characters, '巴特').disadvantageModes).toEqual([]);
-  const path = '巴特.disadvantageModes';
+  const characterId = Object.keys(characters).find(
+    (id) =>
+      !Object.hasOwn(characters[id]!, 'disadvantageModes') &&
+      getExplicitCharacterRelation(characters, id).disadvantageModes.length === 0
+  )!;
+  expect(characters[characterId]!).not.toHaveProperty('disadvantageModes');
+  expect(getExplicitCharacterRelation(characters, characterId).disadvantageModes).toEqual([]);
+  const path = `${characterId}.disadvantageModes`;
   const item = { id: '经典模式', description: '', isMinor: false };
   for (const entries of [
     [set(path, undefined, [])],

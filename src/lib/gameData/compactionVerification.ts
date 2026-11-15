@@ -524,6 +524,20 @@ export function verifyCompactionActionIdempotence(
             ? parsed.value.segments.slice(0, -1).join('.')
             : parsed.value.path
         ) !== null;
+      const temporaryRootProof =
+        action.op === 'delete' && parsed.success && parsed.value.segments.length === 1
+          ? reconstructResetAction(row.actions, actionIndex, parsed.value.path)
+          : null;
+      // A same-row object reset makes a temporary root exist on every replay.
+      const resetRootDelete =
+        temporaryRootProof !== null &&
+        temporaryRootProof.before.exists &&
+        !temporaryRootProof.after.exists &&
+        temporaryRootProof.before.value !== null &&
+        typeof temporaryRootProof.before.value === 'object' &&
+        !Array.isArray(temporaryRootProof.before.value) &&
+        encodeCanonicalCompactionValue(temporaryRootProof.before.value) ===
+          encodeCanonicalCompactionValue(action.oldValue);
       const propertyAdd =
         action.op === 'add' &&
         action.newValue !== undefined &&
@@ -536,6 +550,7 @@ export function verifyCompactionActionIdempotence(
         action.op !== 'set' &&
         !isTemporaryPropertyDelete(row.actions, actionIndex) &&
         !resetDelete &&
+        !resetRootDelete &&
         !resetIndexedAdd &&
         !propertyAdd
       ) {

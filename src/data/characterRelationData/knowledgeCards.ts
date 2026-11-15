@@ -695,4 +695,22 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
       isMinor: true,
     },
   },
+
+  {
+    description: '心灵手巧使猫能够在被感应雷爆炸断开交互前极限把老鼠绑上火箭',
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: {
+        name: '泰菲',
+        type: 'character',
+      },
+      target: {
+        name: '心灵手巧',
+        type: 'knowledgeCard',
+        factionId: 'cat',
+      },
+      isMinor: true,
+      tags: ['机制'],
+    },
+  },
 ];

@@ -198,16 +198,7 @@ export const characterRelationSpecialSkillTraits: CharacterRelationTrait[] = [
       isMinor: false,
     },
   },
-  {
-    description: '{火箭筒}不能取消后摇，容易被猫开启{绝地反击}反杀。',
-    relation: {
-      kind: 'counteredBySpecialSkills',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '绝地反击', type: 'specialSkill', factionId: 'cat' },
-      tags: ['免控'],
-      isMinor: true,
-    },
-  },
+
   {
     description:
       '泰菲可以用{圆滚滚}解控避免猫用{击晕}配合{我生气了！}状态下的快速爪刀秒掉泰菲；圆滚滚很难被我生气了卡真空期',
@@ -226,7 +217,7 @@ export const characterRelationSpecialSkillTraits: CharacterRelationTrait[] = [
       kind: 'countersSpecialSkills',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '蓄力重击', type: 'specialSkill', factionId: 'cat' },
-      tags: ['免控'],
+      tags: ['免控', '干扰'],
       isMinor: false,
     },
   },
@@ -246,7 +237,7 @@ export const characterRelationSpecialSkillTraits: CharacterRelationTrait[] = [
       kind: 'counteredBySpecialSkills',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '急速翻滚', type: 'specialSkill', factionId: 'cat' },
-      tags: ['无视'],
+      tags: ['追击'],
       isMinor: true,
     },
   },
@@ -523,6 +514,25 @@ export const characterRelationSpecialSkillTraits: CharacterRelationTrait[] = [
       subject: { name: '米特', type: 'character' },
       target: { name: '干扰投掷', type: 'specialSkill', factionId: 'mouse' },
       isMinor: false,
+    },
+  },
+
+  {
+    description:
+      '泰菲可以利用两发感应雷强行击飞绑火箭或修火箭的霸体猫，导致猫无法在绝地反击霸体持续时间内及时把老鼠绑上火箭',
+    relation: {
+      kind: 'countersSpecialSkills',
+      subject: {
+        name: '泰菲',
+        type: 'character',
+      },
+      target: {
+        name: '绝地反击',
+        type: 'specialSkill',
+        factionId: 'cat',
+      },
+      isMinor: false,
+      tags: ['机制'],
     },
   },
 ];

@@ -179,6 +179,35 @@ const mapDefinitions: Record<string, MapDefinition> = {
     description:
       '$地形更改$text-fuchsia-600 dark:text-fuchsia-400#：钟楼房间会随机从巨钟/弹簧预设地形中生成一种，餐厅会随机从桌子/传送带预设地形中生成一种。\n$彩蛋区域1$text-fuchsia-600 dark:text-fuchsia-400#：所有角色均可从侍卫房上方取得钥匙，到盔甲房开启彩蛋房木门，彩蛋房内有1具盔甲人，可被角色穿戴并变身。\n$彩蛋区域2$text-fuchsia-600 dark:text-fuchsia-400#：庭院右侧存在一个被隐藏的彩蛋房入口。角色在庭院最右侧跳跃数十次后可[开启彩蛋房入口](从游戏表现来看，该效果实际为“清除彩蛋房入口处原有的隐形地面”。曾有部分角色可借助特性直接进入彩蛋房)（老鼠所需的跳跃次数高于猫咪），此后所有角色均可从此处进入彩蛋房，彩蛋房内有6种饮料各一瓶，以及4个随机高级道具（随机从{遥控器}、{蓝花瓶}、{鞭炮束}、{手枪}、{苍蝇拍}中刷新）。',
     specialImageUrl: '/images/maps/雪夜古堡.png',
+
+    sceneAnnotations: {
+      points: [
+        {
+          id: '6c1a9d70-732a-4a73-99ec-a1986a185f51',
+          anchor: {
+            slot: '$root',
+            variant: '$root',
+            position: {
+              x: 236.09031601265133,
+              y: 145.19819022871292,
+            },
+          },
+          category: 'geometryBarrel',
+          description: '',
+          relatedEntries: [
+            {
+              name: '小鞭炮',
+              type: 'item',
+            },
+            {
+              name: '火药桶',
+              type: 'entity',
+            },
+          ],
+        },
+      ],
+      version: 1,
+    },
   },
   雪夜古堡III: {
     type: '常规地图',

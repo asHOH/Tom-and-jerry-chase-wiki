@@ -1512,6 +1512,667 @@ export const createTraitsData = (): Record<string, Trait> => ({
       { name: '丘比特之箭', type: 'skill', factionId: 'mouse' },
     ],
   },
+
+  '恶魔之门-铁血': {
+    group: [
+      {
+        name: '恶魔之门',
+        type: 'entity',
+      },
+      {
+        name: '铁血',
+        type: 'knowledgeCard',
+      },
+    ],
+    description:
+      '角色在铁血期间仍可使用地狱之门，且仍可因此获得护盾状态。该护盾可以抵消铁血结束时对自身造成的伤害。',
+  },
+
+  '仙人掌-机器鼠': {
+    group: [
+      {
+        name: '大仙人掌',
+        type: 'entity',
+      },
+      {
+        name: '机器鼠',
+        type: 'entity',
+      },
+    ],
+    description: '机器鼠的踩踏也会使大仙人掌消失。',
+  },
+
+  '牛仔吉他-护盾': {
+    group: [
+      {
+        name: '牛仔吉他',
+        type: 'skill',
+      },
+      [
+        {
+          name: '护盾',
+          type: 'buff',
+        },
+        {
+          name: '无敌',
+          type: 'buff',
+        },
+      ],
+    ],
+    description:
+      '护盾及无敌等状态可抵消/免疫吉他相关负面状态，但若已进入相关负面状态，则后续获得护盾等状态也不会解除。',
+    excludeFactionId: 'mouse',
+  },
+
+  '仙人掌-猫咪泡泡': {
+    group: [
+      [
+        {
+          name: '大仙人掌',
+          type: 'entity',
+        },
+        {
+          name: '小仙人掌',
+          type: 'entity',
+        },
+      ],
+      {
+        name: '猫咪泡泡',
+        type: 'entity',
+      },
+    ],
+    description:
+      '持有{猫咪泡泡}的猫咪不会受到仙人掌相关负面状态，但已进入的相关状态不会因后续获得的泡泡而解除。',
+  },
+
+  '迅捷-魔术师黄牌': {
+    group: [
+      [
+        {
+          name: '黄色卡牌',
+          type: 'entity',
+        },
+        {
+          name: '魔术戏法',
+          type: 'skill',
+        },
+      ],
+      {
+        name: '迅',
+        type: 'skill',
+      },
+    ],
+    description: '迅捷状态仍会正常获得黄色卡牌状态，但免疫由该状态带来的反向及急剧加速状态。',
+  },
+
+  侦探泰菲失明免疫: {
+    group: [
+      [
+        {
+          name: '侦探泰菲分身',
+          type: 'entity',
+        },
+        {
+          name: '饮料分身',
+          type: 'entity',
+        },
+      ],
+      {
+        name: '失明',
+        type: 'buff',
+      },
+      {
+        name: '迅',
+        type: 'skill',
+      },
+    ],
+    description:
+      '由侦探泰菲分身（包括饮料分身）造成的失明较为特殊，无法被部分单独免疫“失明”状态的状态免疫。',
+  },
+
+  '香风折扇-迅捷': {
+    group: [
+      {
+        name: '迅',
+        type: 'skill',
+      },
+      [
+        {
+          name: '反向',
+          type: 'buff',
+        },
+        {
+          name: '失明',
+          type: 'buff',
+        },
+      ],
+      {
+        name: '香风折扇',
+        type: 'skill',
+      },
+    ],
+    description: '迅捷状态可以免疫香风折扇造成的反向/失明。',
+  },
+
+  '足球-知识卡': {
+    group: [
+      {
+        name: '闪耀足球',
+        type: 'entity',
+      },
+      [
+        {
+          name: '缴械',
+          type: 'knowledgeCard',
+        },
+        {
+          name: '投手',
+          type: 'knowledgeCard',
+        },
+      ],
+    ],
+    description: '闪耀足球可以触发缴械/投手。',
+  },
+
+  '20261101-01': {
+    group: [
+      {
+        name: '侠义相助',
+        type: 'skill',
+      },
+      {
+        name: '仙丹',
+        type: 'fixture',
+      },
+    ],
+    description: '仙丹可以触发侠义相助的1级减CD效果。',
+  },
+
+  '魅惑之吻-神之惩戒': {
+    group: [
+      {
+        name: '魅惑之吻',
+        type: 'skill',
+      },
+      {
+        name: '神之惩戒',
+        type: 'skill',
+      },
+    ],
+    description: '魅惑之吻造成的伤害不会触发神之惩戒。',
+  },
+
+  '弓箭-挡板': {
+    group: [
+      [
+        {
+          name: '弓箭',
+          type: 'entity',
+        },
+        {
+          name: '蓄力箭',
+          type: 'entity',
+        },
+      ],
+      {
+        name: '挡板',
+        type: 'fixture',
+      },
+    ],
+    description: '弓箭会被挡板挡住，并会因此消失。',
+  },
+
+  '弓箭-机器鼠': {
+    group: [
+      [
+        {
+          name: '弓箭',
+          type: 'entity',
+        },
+        {
+          name: '蓄力箭',
+          type: 'entity',
+        },
+      ],
+      {
+        name: '机器鼠',
+        type: 'entity',
+      },
+    ],
+    description: '弓箭可以命中机器鼠（包括准备间的未激活机器鼠）。',
+  },
+
+  '弓箭-鞭炮': {
+    group: [
+      [
+        {
+          name: '弓箭',
+          type: 'entity',
+        },
+        {
+          name: '蓄力箭',
+          type: 'entity',
+        },
+      ],
+      {
+        name: '鞭炮',
+        type: 'itemGroup',
+      },
+    ],
+    description: '弓箭可被鞭炮影响而改变轨迹。',
+  },
+
+  '蓄力箭-跳舞霸体': {
+    group: [
+      {
+        name: '蓄力箭',
+        type: 'entity',
+      },
+      {
+        name: '跳舞免控',
+        type: 'buff',
+      },
+    ],
+    description: '蓄力箭无视跳舞免控效果，可正常对敌方造成眩晕与伤害。',
+  },
+
+  '天使祝福-免疫虚弱': {
+    group: [
+      {
+        name: '天使祝福',
+        type: 'skill',
+      },
+      [
+        {
+          name: '友情庇护',
+          type: 'skill',
+        },
+        {
+          name: '最佳表演',
+          type: 'skill',
+        },
+        {
+          name: '灵活跳跃',
+          type: 'skill',
+        },
+        {
+          name: '梦幻舞步',
+          type: 'skill',
+        },
+      ],
+    ],
+    description: '复活体在Hp为零时也会淘汰，这意味着免疫虚弱的效果并不能避免复活体被淘汰。',
+  },
+
+  '天使祝福-喜剧之王': {
+    group: [
+      {
+        name: '喜剧之王',
+        type: 'skill',
+      },
+      {
+        name: '天使祝福',
+        type: 'skill',
+      },
+    ],
+    description: '喜剧之王3级的复活效果优先于天使祝福生效。',
+  },
+
+  '天使祝福-机器鼠': {
+    group: [
+      {
+        name: '天使祝福',
+        type: 'skill',
+      },
+      {
+        name: '机器鼠',
+        type: 'entity',
+      },
+    ],
+    description:
+      '复活体的暴露位置效果可以通过进入机器鼠的方式进行暂时规避；复活体在进入机器鼠后仍会因持续伤害等状态而受到伤害，若因此导致Hp≤0也会被淘汰，并在原地留下机器鼠（不会移动，可被打爆）。',
+  },
+
+  '铁血-天使祝福': {
+    group: [
+      {
+        name: '天使祝福',
+        type: 'skill',
+      },
+      {
+        name: '铁血',
+        type: 'knowledgeCard',
+      },
+    ],
+    description:
+      '复活不会清除铁血状态。若老鼠在铁血状态下被放飞并复活，将在铁血结束时因受到高额伤害而被淘汰。',
+  },
+
+  '爱心之吻-恶魔之门': {
+    group: [
+      {
+        name: '爱心之吻',
+        type: 'skill',
+      },
+      {
+        name: '恶魔之门',
+        type: 'entity',
+      },
+    ],
+    description:
+      '由恶魔之门提供的隐身在通过爱心之吻效果共享至队友时，队友获得的状态持续时长只有1秒。',
+  },
+
+  '勇气冲刺-NPC': {
+    group: [
+      {
+        name: '勇气冲刺',
+        type: 'skill',
+      },
+      [
+        {
+          name: '小黄鸭',
+          type: 'character',
+        },
+        {
+          name: '鸭爸爸',
+          type: 'character',
+        },
+        {
+          name: '鸭妈妈',
+          type: 'character',
+        },
+      ],
+    ],
+    description: '勇气冲刺途径小黄鸭等NPC时也会消耗勇气。',
+  },
+
+  '小情绪-铁血': {
+    group: [
+      {
+        name: '小情绪',
+        type: 'skill',
+      },
+      {
+        name: '铁血',
+        type: 'knowledgeCard',
+      },
+    ],
+    description:
+      '小情绪提供的护盾不会因铁血状态而免疫，可用于帮助米雪儿的队友抵消铁血结束后的高额单次伤害，避免虚弱。',
+  },
+
+  '飘浮气球-小情绪': {
+    group: [
+      {
+        name: '飘浮气球',
+        type: 'skill',
+      },
+      {
+        name: '小情绪',
+        type: 'skill',
+      },
+    ],
+    description:
+      '米雪儿使用飘浮气球跟随角色期间仍可使用小情绪，且在此期间仍可使用跳跃键中断跟随（直接原地解除跟随，不进行跳起，不中断小情绪）。',
+    spacialCase: [
+      {
+        group: [
+          {
+            name: '飘浮气球',
+            type: 'skill',
+          },
+          {
+            name: '小情绪',
+            type: 'skill',
+          },
+          {
+            name: '铁血',
+            type: 'knowledgeCard',
+          },
+        ],
+        description:
+          '米雪儿在跟随情况下先使用小情绪再解除跟随，原先被跟随对象此次仍无法在铁血期间安抚米雪儿。',
+      },
+    ],
+  },
+
+  '超级变！变！变！-金钥匙': {
+    group: [
+      {
+        name: '超级变！变！变！',
+        type: 'skill',
+      },
+      {
+        name: '金钥匙',
+        type: 'item',
+      },
+    ],
+    description:
+      '米雪儿无法直接扫描和变形为金钥匙，但可以扫描伪装成盒子的金钥匙；米雪儿由此变形为的盒子被打开时也会掉落金钥匙，这会导致场上出现多把金钥匙。',
+  },
+
+  '超级变！变！变！-礼物盒/礼物袋': {
+    group: [
+      {
+        name: '超级变！变！变！',
+        type: 'skill',
+      },
+      [
+        {
+          name: '礼物盒',
+          type: 'item',
+        },
+        {
+          name: '礼物袋',
+          type: 'item',
+        },
+      ],
+    ],
+    description:
+      '承装有 奶酪/火箭/果盘 的 礼物盒/礼物袋 的生成物品是固定的，米雪儿在扫描时会同步记录其内容物信息；由此变形的盒子在被打开时，会掉落相同的物品。',
+  },
+
+  '超级变！变！变！-拳套盒': {
+    group: [
+      {
+        name: '超级变！变！变！',
+        type: 'skill',
+      },
+      {
+        name: '拳套盒',
+        type: 'item',
+      },
+    ],
+    description: '米雪儿变形为拳套盒后，该拳套盒在出拳时也会攻击到米雪儿自身。',
+  },
+
+  '超级变！变！变！-桶': {
+    group: [
+      {
+        name: '超级变！变！变！',
+        type: 'skill',
+      },
+      {
+        name: '桶',
+        type: 'fixture',
+      },
+    ],
+    description: '米雪儿可以扫描各种桶，但最终都会以“水桶”的外观进行变形。',
+  },
+
+  '超级变！变！变！-蓝花瓶': {
+    group: [
+      {
+        name: '超级变！变！变！',
+        type: 'skill',
+      },
+      {
+        name: '蓝花瓶',
+        type: 'item',
+      },
+    ],
+    description:
+      '超级变！变！变！扫描时不会记录蓝花瓶的内容物；若变形为蓝花瓶时被填入道具，这些道具会在米雪儿解除变身时以被投掷状态掉出。',
+  },
+
+  '超级变！变！变！-御门酒店-花朵': {
+    group: [
+      {
+        name: '超级变！变！变！',
+        type: 'skill',
+      },
+      {
+        name: '御门酒店',
+        type: 'map',
+      },
+      [
+        {
+          name: '红色花',
+          type: 'fixture',
+        },
+        {
+          name: '黄色花',
+          type: 'fixture',
+        },
+        {
+          name: '青色花',
+          type: 'fixture',
+        },
+        {
+          name: '蓝色花',
+          type: 'fixture',
+        },
+        {
+          name: '银色花',
+          type: 'fixture',
+        },
+        {
+          name: '金色花',
+          type: 'fixture',
+        },
+        {
+          name: '紫色花',
+          type: 'fixture',
+        },
+      ],
+    ],
+    description: '米雪儿可以正常扫描并变形为御门酒店的瓶装花，但变形后将无法移动。',
+  },
+
+  '意念控制-小推车-经典之家': {
+    group: [
+      {
+        name: '意念控制',
+        type: 'skill',
+      },
+      [
+        {
+          name: '经典之家I',
+          type: 'map',
+        },
+        {
+          name: '经典之家II',
+          type: 'map',
+        },
+        {
+          name: '经典之家III',
+          type: 'map',
+        },
+      ],
+      {
+        name: '小推车',
+        type: 'fixture',
+      },
+    ],
+    description: '意念控制可以吸附正常的小推车，但无法吸附 经典之家-樱花 等地图中的换皮小推车。',
+  },
+
+  '意念控制-乾坤袋-食物': {
+    group: [
+      {
+        name: '意念控制',
+        type: 'skill',
+      },
+      {
+        name: '乾坤袋',
+        type: 'entity',
+      },
+      [
+        {
+          name: '牛奶',
+          type: 'item',
+        },
+        {
+          name: '蛋糕',
+          type: 'item',
+        },
+      ],
+    ],
+    description: '被乾坤袋吐出的牛奶/蛋糕可以被恶魔泰菲吸附（与投掷物类似）。',
+  },
+
+  '恶魔之角-蓝花瓶': {
+    group: [
+      {
+        name: '蓝花瓶',
+        type: 'item',
+      },
+      {
+        name: '恶魔之角',
+        type: 'skill',
+      },
+    ],
+    description: '蓝花瓶被恶魔之角复制时，其内部已填充的道具不会一同复制。',
+  },
+
+  '恶魔之角-鞭炮': {
+    group: [
+      {
+        name: '鞭炮',
+        type: 'itemGroup',
+      },
+      {
+        name: '恶魔之角',
+        type: 'skill',
+      },
+    ],
+    description: '已点燃的鞭炮也可被复制。复制后会生成一份未点燃的鞭炮。',
+  },
+
+  喜剧之王1: {
+    group: [
+      {
+        name: '喜剧之王',
+        type: 'skill',
+      },
+      [
+        {
+          name: '小情绪',
+          type: 'skill',
+        },
+        {
+          name: '飘浮气球',
+          type: 'skill',
+        },
+      ],
+    ],
+    description: '被米雪儿跟随的表演者•杰瑞在喜剧之王1级效果触发期间仍可安抚米雪儿。',
+  },
+
+  '足球-迅捷': {
+    group: [
+      {
+        name: '闪耀足球',
+        type: 'entity',
+      },
+      {
+        name: '迅',
+        type: 'skill',
+      },
+    ],
+    description: '迅捷状态可以免疫“强光耀眼”，这同时会导致拿坡里鼠无法依靠足球造成眩晕。',
+  },
 });
 
 const traits = createTraitsData();

@@ -51,6 +51,12 @@ const baseline = {
   traits: {},
 } as unknown as PublishedGameDataByType;
 
+const emptyModeCharacterId = Object.keys(characters).find(
+  (id) =>
+    !Object.hasOwn(characters[id]!, 'disadvantageModes') &&
+    getExplicitCharacterRelation(characters, id).disadvantageModes.length === 0
+)!;
+
 function memoryHistory(
   initial: Partial<Record<keyof PublishedGameDataByType, ActionHistoryEntry[]>>
 ) {
@@ -632,9 +638,11 @@ describe('createEditSession', () => {
       publish,
     });
     const scope = { kind: 'domain', entityType: 'characters' } as const;
-    expect(getExplicitCharacterRelation(characters, '巴特').disadvantageModes).toEqual([]);
+    expect(
+      getExplicitCharacterRelation(characters, emptyModeCharacterId).disadvantageModes
+    ).toEqual([]);
     session.updateDomain('characters', (draft) => {
-      addCharacterRelationItem(draft, '巴特', 'disadvantageModes', {
+      addCharacterRelationItem(draft, emptyModeCharacterId, 'disadvantageModes', {
         id: '经典模式',
         description: '',
         isMinor: false,
@@ -642,8 +650,8 @@ describe('createEditSession', () => {
     });
     await Promise.resolve();
     session.updateDomain('characters', (draft) => {
-      removeCharacterRelationItem(draft, '巴特', 'disadvantageModes', '经典模式');
-      if (mixed) draft.巴特!.description = 'changed';
+      removeCharacterRelationItem(draft, emptyModeCharacterId, 'disadvantageModes', '经典模式');
+      if (mixed) draft[emptyModeCharacterId]!.description = 'changed';
     });
     await Promise.resolve();
     expect(session.readDraft(scope).actionCount).toBe(mixed ? 1 : 0);
@@ -654,13 +662,18 @@ describe('createEditSession', () => {
     });
     if (mixed) {
       expect(JSON.parse(publish.mock.calls[0]![0].body).entries).toEqual([
-        expect.objectContaining({ path: '巴特.description', newValue: 'changed' }),
+        expect.objectContaining({
+          path: `${emptyModeCharacterId}.description`,
+          newValue: 'changed',
+        }),
       ]);
     } else expect(publish).not.toHaveBeenCalled();
     expect(history.read('characters')).toEqual([]);
-    expect(session.readDomain('characters').巴特!).not.toHaveProperty('disadvantageModes');
+    expect(session.readDomain('characters')[emptyModeCharacterId]!).not.toHaveProperty(
+      'disadvantageModes'
+    );
     session.updateDomain('characters', (draft) => {
-      addCharacterRelationItem(draft, '巴特', 'disadvantageModes', {
+      addCharacterRelationItem(draft, emptyModeCharacterId, 'disadvantageModes', {
         id: '经典模式',
         description: '',
         isMinor: false,
@@ -668,7 +681,10 @@ describe('createEditSession', () => {
     });
     await Promise.resolve();
     expect(session.readDraft({ kind: 'character-relations' }).publishEntries).toEqual([
-      expect.objectContaining({ path: '巴特.disadvantageModes', oldValue: undefined }),
+      expect.objectContaining({
+        path: `${emptyModeCharacterId}.disadvantageModes`,
+        oldValue: undefined,
+      }),
     ]);
   });
 
@@ -703,11 +719,16 @@ describe('createEditSession', () => {
   it('retries a mixed submission with the same filtered payload after a network failure', async () => {
     const history = memoryHistory({
       characters: [
-        { op: 'set', path: '巴特.disadvantageModes', oldValue: undefined, newValue: [] },
         {
           op: 'set',
-          path: '巴特.description',
-          oldValue: characters.巴特!.description,
+          path: `${emptyModeCharacterId}.disadvantageModes`,
+          oldValue: undefined,
+          newValue: [],
+        },
+        {
+          op: 'set',
+          path: `${emptyModeCharacterId}.description`,
+          oldValue: characters[emptyModeCharacterId]!.description,
           newValue: 'changed',
         },
       ],
@@ -730,9 +751,11 @@ describe('createEditSession', () => {
     expect((await session.publishDraft(scope)).status).toBe('published');
     expect(publish.mock.calls[1]![0]).toEqual(publish.mock.calls[0]![0]);
     expect(JSON.parse(publish.mock.calls[0]![0].body).entries).toHaveLength(1);
-    expect(session.readDomain('characters').巴特!).not.toHaveProperty('disadvantageModes');
+    expect(session.readDomain('characters')[emptyModeCharacterId]!).not.toHaveProperty(
+      'disadvantageModes'
+    );
     session.updateDomain('characters', (draft) => {
-      addCharacterRelationItem(draft, '巴特', 'disadvantageModes', {
+      addCharacterRelationItem(draft, emptyModeCharacterId, 'disadvantageModes', {
         id: '经典模式',
         description: '',
         isMinor: false,
@@ -740,7 +763,10 @@ describe('createEditSession', () => {
     });
     await Promise.resolve();
     expect(session.readDraft({ kind: 'character-relations' }).publishEntries).toEqual([
-      expect.objectContaining({ path: '巴特.disadvantageModes', oldValue: undefined }),
+      expect.objectContaining({
+        path: `${emptyModeCharacterId}.disadvantageModes`,
+        oldValue: undefined,
+      }),
     ]);
   });
 
@@ -774,7 +800,7 @@ describe('createEditSession', () => {
       };
       const empty = {
         op: 'set' as const,
-        path: '巴特.disadvantageModes',
+        path: `${emptyModeCharacterId}.disadvantageModes`,
         oldValue: undefined,
         newValue: [],
       };

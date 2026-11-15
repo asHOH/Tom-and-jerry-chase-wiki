@@ -1110,4 +1110,100 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
       isMinor: false,
     },
   },
+
+  {
+    description: '立体机动可以在甲板电影院船长快速与猫拉开距离',
+    relation: {
+      kind: 'advantageMaps',
+      subject: {
+        name: '巴特',
+        type: 'character',
+      },
+      target: {
+        name: '夏日游轮I',
+        type: 'map',
+      },
+      isMinor: false,
+    },
+  },
+
+  {
+    description: '立体机动可以在甲板电影院船长快速与猫拉开距离',
+    relation: {
+      kind: 'advantageMaps',
+      subject: {
+        name: '巴特',
+        type: 'character',
+      },
+      target: {
+        name: '夏日游轮III',
+        type: 'map',
+      },
+      isMinor: false,
+    },
+  },
+
+  {
+    description: '立体机动可以在甲板电影院船长快速与猫拉开距离',
+    relation: {
+      kind: 'advantageMaps',
+      subject: {
+        name: '巴特',
+        type: 'character',
+      },
+      target: {
+        name: '夏日游轮II',
+        type: 'map',
+      },
+      isMinor: false,
+    },
+  },
+
+  {
+    description: '大平地配合特技翻滚可以拉开较长距离',
+    relation: {
+      kind: 'advantageMaps',
+      subject: {
+        name: '巴特',
+        type: 'character',
+      },
+      target: {
+        name: '太空堡垒III',
+        type: 'map',
+      },
+      isMinor: true,
+    },
+  },
+
+  {
+    description: '快速坐车',
+    relation: {
+      kind: 'advantageMaps',
+      subject: {
+        name: '巴特',
+        type: 'character',
+      },
+      target: {
+        name: '熊猫馆',
+        type: 'map',
+      },
+      isMinor: false,
+    },
+  },
+
+  {
+    description: '巴特在大图机动性高。',
+    relation: {
+      kind: 'advantageMaps',
+      subject: {
+        name: '巴特',
+        type: 'character',
+      },
+      target: {
+        name: '雪夜古堡III',
+        type: 'map',
+      },
+      isMinor: false,
+    },
+  },
 ];
