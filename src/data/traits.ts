@@ -1168,10 +1168,10 @@ export const createTraitsData = (): Record<string, Trait> => ({
       ],
     ],
   },
-  '20260608-01': {
-    description: '如玉在变成线条猫或大星星时可释放正常爪刀',
+  '如玉-变身': {
+    description: '如玉在变成线条猫或大星星时可释放正常爪刀。',
     group: [
-      { name: '如玉', type: 'character' },
+      { name: '戏剧转折', type: 'skill' },
       [
         { name: '线条猫', type: 'entity' },
         { name: '大星星', type: 'entity' },
@@ -1185,10 +1185,10 @@ export const createTraitsData = (): Record<string, Trait> => ({
       { name: '可直接抓起', type: 'buff' },
     ],
   },
-  '20260803-01': {
+  '如玉-唤猫铃': {
     description: '如玉在受到唤猫铃的影响时仍可以释放特殊爪刀。',
     group: [
-      { name: '如玉', type: 'character' },
+      { name: '戏剧转折', type: 'skill' },
       { name: '唤猫铃', type: 'fixture' },
     ],
   },

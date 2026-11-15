@@ -85,7 +85,7 @@ describe('Data Validation', () => {
       });
     });
 
-    it('should not have skill detailed descriptions without base descriptions', () => {
+    it('should only have intentional skill descriptions limited to detailed mode', () => {
       const detailedOnlyDescriptions: Array<{
         characterId: string;
         skillName: string;
@@ -104,7 +104,13 @@ describe('Data Validation', () => {
         });
       });
 
-      expect(detailedOnlyDescriptions).toEqual([]);
+      expect(detailedOnlyDescriptions).toEqual([
+        {
+          characterId: '天使杰瑞',
+          skillName: '神之惩戒',
+          path: 'skills.3.detailedDescription',
+        },
+      ]);
     });
   });
 
