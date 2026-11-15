@@ -1,23 +1,13 @@
 # Shared Game Action Correctness Rules
 
-Both game-action-patching and game-action-compaction must read this reference before inspecting,
-classifying, or editing actions. Workflow routing, checkpoints, and cutover authorization remain
-in their respective skills.
+Both game-action-patching and game-action-compaction must read this reference before inspecting, classifying, or editing actions. Workflow routing, checkpoints, and cutover authorization remain in their respective skills.
 
 ## Scope
 
-- Prefer feature-local files: character fields in `src/features/characters/data/*Characters.ts`,
-  relations in `src/data/characterRelationData/*.ts`, then entity/special-skill data. Treat
-  `src/data/characterRelations.ts` as a facade, not a source of truth. Defer ambiguous targets.
-- Interpret date ranges as inclusive Beijing calendar days. In `Asia/Shanghai`, query from the
-  start day at 00:00 through the day after the end at 00:00 (exclusive); e.g. `2026-07-06~07-08` becomes
-  `[2026-07-05T16:00:00Z, 2026-07-08T16:00:00Z)`. Apply the same next-day-exclusive rule to
-  one day. Resolve omitted years from user/current-date context.
+- Use feature-local canonical data. Character fields and pair overrides live in `src/features/characters/data/*Characters.ts`; other relations follow the mapping below. `src/data/characterRelations.ts` is a facade. Defer ambiguous physical targets.
+- Interpret date ranges as inclusive Beijing calendar days. In `Asia/Shanghai`, query from the start day at 00:00 through the day after the end at 00:00 (exclusive); e.g. `2026-07-06~07-08` becomes `[2026-07-05T16:00:00Z, 2026-07-08T16:00:00Z)`. Apply the same next-day-exclusive rule to one day. Resolve omitted years from user/current-date context.
 
-A clear target is one canonical file/record with a matching old projection or an accepted
-already-represented result: a unique `ItemId.description`, a nested skill index whose skill/level
-and old value match, or one relation target/kind with the required `factionId`.
-Never rewrite complete aggregated published records merely because replay can construct them.
+A clear target is one canonical file/record with a matching old projection or an accepted already-represented result: a unique `ItemId.description`, a nested skill index whose skill/level and old value match, or one relation target/kind with the required `factionId`. Never rewrite complete aggregated published records merely because replay can construct them.
 
 ## Inspection Command
 
@@ -43,178 +33,83 @@ npm run inspect:game-data-actions -- --date=2026-07-24 --output=.tmp/inventory-2
 npm run inspect:game-data-actions -- --ids=<comma-separated UUIDs> --include-history --output=.tmp/details.json
 ```
 
-The command is read-only and uses the same service-key credential convention and paginated query
-adapter as `npm run audit:game-data-actions`. It decodes single, array, and nested-array entries;
-projects legacy paths; compares each action with current source; groups dependent rows; and checks
-same-path old/new chains. Date scopes perform the Beijing-to-UTC conversion and return inventory
-without complete values. For oversized days, use `--page-size=1..100` (cursor-only requests default
-to 25). Each page contains compact metadata per whole database row, inspected action counts, and
-dependency group indexes/sizes computed over the entire scope. Groups may span pages; export the full
-scope to inspect group membership and chain details. Keep the same date/actor scope with `--cursor`;
-a changed row snapshot requires restarting discovery. Pages shrink if needed to stay within the
-50,000-byte output cap. This paginates output, still fetching/analyzing the complete scope per call;
-it is not an atomic database snapshot. Pagination cannot be combined with exact IDs or `--output`.
-Exact-ID scopes accept at most 25 IDs. `--values` returns complete values
-only for payloads at or below 10,000 serialized bytes; larger payloads always return bounded
-structural summaries/diffs. With `--output=<new ignored path>`, stdout contains only counts and a file
-receipt. The JSON file contains the report plus complete stored `rows` and matching `historyRows`,
-including full `entry` payloads regardless of size, scope, query start/end times, target, and repository
-HEAD. Actor-filtered exports retain whole matching rows, including sibling actions; malformed selected
-rows are retained too. History includes structural and semantic overlaps identified by the inspector.
-The parent directory must exist; tracked/unignored paths and existing files are rejected. This is
-inspection evidence, not an atomic database snapshot or deployment-bound parity proof. `--values`
-still controls small values in the report; use the stored rows for complete action content.
-Without `--output`, total output is capped near 50,000 bytes, so split an exact-ID request
-if it reports `output_too_large`. Split inspection output only; keep dependency groups together
-for classification, patching, and verification.
+The inspector decodes stored action shapes, projects legacy paths, compares source values, groups dependencies, and checks old/new chains. Keep these output forms distinct:
 
-`--include-history` finds exact, ancestor/descendant, and structural-array path overlaps, plus inverse
-character counters and reversed symmetric `collaborators`/`counterEachOther` endpoints. Dependency
-grouping uses the same matching. Both old and new endpoint `id` values are considered, including
-indexed objects and `.id` edits; whole-character snapshots are included. Missing endpoint IDs
-(for example indexed description edits) conservatively
-match possible endpoints, so an overlap is a review candidate, not proof of equal content. Other
-relation domains retain structural matching; same-path chain checks remain unchanged.
-Use direct SQL only as a diagnosed
-fallback when the inspector cannot express the required scope, and report the missing capability.
+- Console reports summarize large values; `--values` includes values up to 10,000 serialized bytes. Output is capped near 50,000 bytes. Exact-ID requests accept at most 25 IDs.
+- `--output=<new ignored path>` retains complete `rows`, `entry`, and matching `historyRows`, regardless of size or date/ID scope, plus target, query times, and repository HEAD. Create its parent directory; existing, tracked, or unignored output paths are rejected. Actor filters retain whole matching rows, including sibling actions and malformed selected rows. Reuse this content instead of refetching it.
+- `--page-size=1..100` pages inventory only; the default is 25. Each call still reads the whole scope. Keep date/actor scope fixed with `nextCursor`; a changed snapshot requires restarting. Pagination cannot combine with exact IDs or `--output`. Groups may span pages.
 
-## Relation Mapping (src/data/characterRelationData/\*.ts)
+Inspection exports are neither atomic snapshots nor deployment proofs. They omit `created_by` and `reviewed_at`; obtain contributor identity through an exact-ID server-side query when deduplicating. Use verifier-produced digests, not hashes reconstructed from incomplete inspection metadata.
 
-Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `specialSkills.ts`,
-`maps.ts`, or `modes.ts` according to target type.
+`--include-history` follows exact, ancestor/descendant, structural-array, inverse-counter, symmetric-pair, and canonical pair overlaps. It considers old/new endpoints, indexed edits, and whole-character snapshots. Unknown endpoints conservatively match possible dependencies; an overlap alone does not prove equality. Keep logical groups intact when splitting inspection requests. Use direct SQL only for a diagnosed inspector limitation, and report that limitation.
 
-| Action Path                 | Target kind                               | subject | target                         |
-| --------------------------- | ----------------------------------------- | ------- | ------------------------------ |
-| X.counters                  | counters                                  | X       | Y                              |
-| X.counteredBy               | counteredBy                               | X       | Y                              |
-| X.counterEachOther          | counterEachOther                          | X       | Y                              |
-| X.advantageMaps             | advantageMaps                             | X       | map                            |
-| X.disadvantageMaps          | disadvantageMaps                          | X       | map                            |
-| X.advantageModes            | advantageModes                            | X       | mode                           |
-| X.disadvantageModes         | disadvantageModes                         | X       | mode                           |
-| X.counteredBy[Cards/Skills] | counteredBy[KnowledgeCards/SpecialSkills] | X       | [card/skill] (needs factionId) |
+## Relation Mapping
 
-- **Text**: Put user text in top-level description.
-- **Equivalence**: Preserve existing orientation: `X.counteredBy Y` equals `Y.counters X`.
-  `collaborators` and `counterEachOther` are symmetric, so reversed endpoints are also equal.
-  Keep one edge; update only material fields (`description`, `isMinor`, tags).
-- **No-op**: Don't reorder or rewrite an equivalent unchanged relation. Report its ID as verified
-  after verification without changing remote status.
-- **Duplicate cleanup**: If an action removes a redundant edge that is already covered by another relation, remove only the redundant edge. Do not rewrite the other one.
-- **Indices**: Treat 0, 1 literally. Defer if oldValue mismatches.
-- **Flattened children**: If a parent `set` row is applied and child-path rows describe the same
-  final value, verify against the final source once and report all covered rows as verified.
-- **Placeholder defaults**: If a child action only writes a likely UI default/placeholder value
-  (e.g. `新别名`) and no later action replaces it with a real value, do not report it verified or
-  remotely sync it; report it as a likely mis-add.
+Character pairs use `characters.<owner>.characterRelationOverrides.<other>` in the character data files. Use `getCharacterRelationPairLocation` and inverse-kind helpers from `src/features/characters/utils/characterRelationPairs.ts`; the lexically smaller ID owns the record. Description, tags, and strength are shared; the inverse kind is derived. `null` suppresses the pair, including suggestions. Preserve tombstones and legacy reads/history. Overrides supersede legacy traits; editing only a masked legacy record will not change the published pair.
+
+Legacy `counters`, `counteredBy`, `counterEachOther`, and `collaborators` actions still require semantic projection and whole-chain verification. Check existing overrides before choosing their physical source; `characterCounters.ts` and `characterCollaborators.ts` remain legacy inputs, not universal write targets.
+
+Other relations use `src/data/characterRelationData/`: `knowledgeCards.ts`, `specialSkills.ts`, `maps.ts`, or `modes.ts`. Preserve subject, target, kind, and card/skill `factionId`.
+
+- `X.counteredBy Y` equals `Y.counters X`; collaborators and counterEachOther are symmetric.
+- In shared traits, description is top-level; in pair overrides, it belongs to the pair record.
+- Preserve equivalent edges and ordering. Remove only a redundant edge explicitly removed by the action.
+- Verify array indices, identities, and old values. Verify flattened parent/child chains together.
+- Treat unreplaced placeholder defaults such as `新别名` as likely mis-adds; defer their groups.
 
 ## Core Rules
 
-1. Process `created_at`, then `id`, ascending; for overlaps, apply parents before children and let
-   later/child values win. Remove obsolete twins; defer ambiguity.
-2. Project legacy actions into the current schema before comparison. For positioning tags,
-   convert `isMinor: true -> level: 2` and `false -> 4`; an existing valid `level` wins. This is
-   one-way compatibility—never collapse levels 0, 1, or 3 back to a boolean.
-3. Compare conflicts at the action's **write set**, not by labeling whole rows "conflicted" or
-   "non-conflicted":
+1. Process `created_at`, then `id`, ascending; for overlaps, apply parents before children and let later/child values win. Remove obsolete twins; defer ambiguity.
+2. Project legacy actions into the current schema before comparison. For positioning tags, convert `isMinor: true -> level: 2` and `false -> 4`; an existing valid `level` wins. This is one-way compatibility—never collapse levels 0, 1, or 3 back to a boolean.
+3. Compare conflicts at the action's **write set**, not by labeling whole rows "conflicted" or "non-conflicted":
    - Scalar/null `set`, and non-array `add` or `delete`: the exact action path is the write set.
-   - Array-index `add` or `delete`: the containing array's structure and order are the write set.
-     Array-index `set` writes the indexed item, but requires old-value and identity verification.
-   - Object `set`: changed/added/deleted descendant leaves between projected `oldValue` and
-     `newValue` are the write set. Include the container path when existence, type, or an empty
-     container changes.
-   - Array `set`: length, order, identities, and changed fields are the write set. If items lack a
-     unique stable `id`/`name`, the entire array path is the write set.
-   - Relation `set`: membership by semantic endpoints/kind/`factionId` and changed material fields
-     (`description`, `isMinor`, tags) are the write set; orientation-equivalent edges are one item.
+   - Array-index `add` or `delete`: the containing array's structure and order are the write set. Array-index `set` writes the indexed item, but requires old-value and identity verification.
+   - Object `set`: changed/added/deleted descendant leaves between projected `oldValue` and `newValue` are the write set. Include the container path when existence, type, or an empty container changes.
+   - Array `set`: length, order, identities, and changed fields are the write set. If items lack a unique stable `id`/`name`, the entire array path is the write set.
+   - Relation `set`: membership by semantic endpoints/kind/`factionId` and changed material fields (`description`, `isMinor`, tags) are the write set; orientation-equivalent edges are one item.
 
-   Treat an absent value as `ABSENT`, distinct from JSON `null`. Derive projected source `S`, old
-   state `O`, and new state `N` at each write-set location. Exact-path `add` has `O = ABSENT` and
-   `delete` has `N = ABSENT`; array-index structural operations require verified parent-array
-   before/after states. If those states cannot be reconstructed from a valid chain, defer.
+   Treat an absent value as `ABSENT`, distinct from JSON `null`. Derive projected source `S`, old state `O`, and new state `N` at each write-set location. Exact-path `add` has `O = ABSENT` and `delete` has `N = ABSENT`; array-index structural operations require verified parent-array before/after states. If those states cannot be reconstructed from a valid chain, defer.
    - `S = O`: apply `N` at that location.
    - `S = N`: it is already represented; do not rewrite it.
-   - `S` matches neither: without a date restriction, query all decoded actions for the same
-     `entity_type` whose exact, ancestor/descendant, containing-array, or equivalent-relation write
-     sets overlap. Order them by `created_at`, `id`, then action order, and resolve only as follows:
-     1. A later `synced` row, or later `approved` row with `is_public = true`, that writes the
-        location and whose resulting value equals `S` supersedes this action there; preserve `S`.
-     2. An earlier `synced` row whose resulting value equals `S` proves the source state, but does
-        not repair a stale `O`; defer the current action and never infer or text-merge a value.
-     3. An earlier row with `status = 'approved'` and `is_public = true` whose result supplies the
-        required `O` is an unsynced dependency. Apply and verify it first only when it is explicitly
-        in the current batch; otherwise defer and report the dependency.
-     4. Replay multiple qualifying rows in `(created_at, id)` order. If their old/new chain breaks,
-        two rows claim incompatible results, or no qualifying row produces `S`, defer.
+   - `S` matches neither: without a date restriction, query all decoded actions for the same `entity_type` whose exact, ancestor/descendant, containing-array, or equivalent-relation write sets overlap. Order them by `created_at`, `id`, then action order, and resolve only as follows:
+     1. A later `synced` row, or later `approved` row with `is_public = true`, that writes the location and whose resulting value equals `S` supersedes this action there; preserve `S`.
+     2. An earlier `synced` row whose resulting value equals `S` proves the source state, but does not repair a stale `O`; defer the current action and never infer or text-merge a value.
+     3. An earlier row with `status = 'approved'` and `is_public = true` whose result supplies the required `O` is an unsynced dependency. Apply and verify it first only when it is explicitly in the current batch; otherwise defer and report the dependency.
+     4. Replay multiple qualifying rows in `(created_at, id)` order. If their old/new chain breaks, two rows claim incompatible results, or no qualifying row produces `S`, defer.
 
-   Rows with `pending`, `rejected`, or `revoked` status never explain source state. Preserve values
-   outside the write set. Never overwrite an unexplained or superseding source value.
+   Rows with `pending`, `rejected`, or `revoked` status never explain source state. Preserve values outside the write set. Never overwrite an unexplained or superseding source value.
 
-4. Valid statuses: `pending`, `approved`, `rejected`, `synced`, `revoked`. Sync only verified approved
-   rows through an authorized cutover with parity or exact approved reconciliations; existing batch
-   authorization suffices. Never sync failed, fuzzy, skipped, pending, rejected, or revoked rows.
-5. Stay on the current branch. Treat Chinese terminal mojibake as a display issue unless file
-   bytes/editor output prove corruption; do not rewrite strings solely to fix terminal display.
-6. Report any important gap or error discovered in these instructions. If it makes an action
-   ambiguous, defer that action rather than guessing.
+4. Valid statuses: `pending`, `approved`, `rejected`, `synced`, `revoked`. Sync only verified approved rows through an authorized cutover with parity or exact approved reconciliations; existing batch authorization suffices. Never sync failed, fuzzy, skipped, pending, rejected, or revoked rows.
+5. Stay on the current branch. Treat Chinese terminal mojibake as a display issue unless file bytes/editor output prove corruption; do not rewrite strings solely to fix terminal display.
+6. Report any important gap or error discovered in these instructions. If it makes an action ambiguous, defer that action rather than guessing.
 
 ## Classification
 
-Assign every group exactly one disposition before editing. For each deferred row, report its ID/path,
-current baseline value, recorded old/new values, reason, and dependencies; link full values if lengthy.
+Assign every group exactly one disposition before editing. For each deferred row, report its ID/path, current baseline value, recorded old/new values, reason, and dependencies; link full values if lengthy.
 
-When presenting concrete actions for a user decision, state each row's current database `status`
-and public visibility (`is_public`) alongside its ID, date, contributor, and relevant change.
-Use a fresh exact-ID query and give the check time; if unavailable, label the last-known state and
-its timestamp explicitly. Keep database status separate from local dispositions such as Verified
-or Deferred. For an option that changes status, state the proposed transition separately from the
-current status; do not make the user infer status from words such as "published" or "superseded".
+When presenting concrete actions for a user decision, state each row's current database `status` and public visibility (`is_public`) alongside its ID, date, contributor, and relevant change. Use a fresh exact-ID query and give the check time; if unavailable, label the last-known state and its timestamp explicitly. Keep database status separate from local dispositions such as Verified or Deferred. For an option that changes status, state the proposed transition separately from the current status; do not make the user infer status from words such as "published" or "superseded".
 
-- **Ready**: every write-set location is explainable under the `S/O/N` rules above; every
-  physical target is unambiguous; required old/new or parent-array chains are valid; and no safety
-  gate raises a content concern.
-- **Represented**: the final effect is already present exactly or through an accepted semantic
-  relation equivalent. Plan no source rewrite, but retain every covered row for verification.
-- **Review required**: the source matches neither old nor new but bounded overlapping history may
-  explain it; relation orientation or material-field intent requires judgment; repeated submissions
-  conflict; or the action introduces a semantic contradiction with a paired field.
-- **Blocked**: malformed or unsupported data, unexplained broken chains, shifted or unstable array
-  identities, missing/duplicate source identities, ambiguous factions, likely placeholder children,
-  or any state that cannot be reconstructed without guessing.
+- **Ready**: every write-set location is explainable under the `S/O/N` rules above; every physical target is unambiguous; required old/new or parent-array chains are valid; and no safety gate raises a content concern.
+- **Represented**: the final effect is already present exactly or through an accepted semantic relation equivalent. Plan no source rewrite, but retain every covered row for verification.
+- **Review required**: the source matches neither old nor new but bounded overlapping history may explain it; relation orientation or material-field intent requires judgment; repeated submissions conflict; or the action introduces a semantic contradiction with a paired field.
+- **Blocked**: malformed or unsupported data, unexplained broken chains, shifted or unstable array identities, missing/duplicate source identities, ambiguous factions, likely placeholder children, or any state that cannot be reconstructed without guessing.
 
-Do not turn `Review required` into `Ready` by replaying over unexplained source. Resolve it using the
-complete overlapping history allowed by the write-set rules above or leave it deferred. Pending,
-rejected, and revoked rows never explain source state.
+Do not turn `Review required` into `Ready` by replaying over unexplained source. Resolve it using the complete overlapping history allowed by the write-set rules above or leave it deferred. Pending, rejected, and revoked rows never explain source state.
 
 ## Verification
 
 - **Static/object**: Compare the affected canonical field/subtree exactly after transforms.
-- **Array**: Verify the literal index and old item, then final length, order, identity (`id`/`name`),
-  and changed fields.
-- **Relation**: Verify semantic subject/target/kind/`factionId` and material fields, accepting
-  inverse/symmetric equivalents.
-- Verify every flattened parent/child action against the final source and check for duplicates,
-  contradictions, or unintended reordering.
+- **Array**: Verify the literal index and old item, then final length, order, identity (`id`/`name`), and changed fields.
+- **Relation**: Verify semantic subject/target/kind/`factionId` and material fields, accepting inverse/symmetric equivalents.
+- Verify every flattened parent/child action against the final source and check for duplicates, contradictions, or unintended reordering.
 
-Run `npm run verify:game-data-actions -- --ids=<complete-group-row-ids>` for every applied or
-represented group. Pass every row in a parent/child or old/new chain together so reverse
-verification can reconstruct intermediate states. The verifier accepts groups larger than 25 rows:
-it fetches at most 25 IDs per request, checks that every requested row was returned, then sorts and
-verifies the entire group once. The inspector's exact-ID limit does not limit verification groups.
-Defer the whole submitted verification batch
-if any row is unsupported or mismatched. Never split a dependency group to fit a tool limit;
-report a tooling blocker if the verifier cannot accept the complete group.
+Run `npm run verify:game-data-actions -- --ids=<complete-group-row-ids>` for every applied or represented group. Pass every row in a parent/child or old/new chain together so reverse verification can reconstruct intermediate states. The verifier accepts groups larger than 25 rows: it fetches at most 25 IDs per request, checks that every requested row was returned, then sorts and verifies the entire group once. The inspector's exact-ID limit does not limit verification groups. Defer failed dependency groups intact and reverify the independent remainder. Never split a group to pass verification; report a tooling blocker if the complete group is unsupported.
 
 ## Safety Gates
 
 - Check newValue placement and schema shape.
-- Report existing semantic differences (including summary/detail mismatches), but do not defer solely
-  because of them. Defer contradictions introduced by the action until user-approved reconciliation;
-  do not mark those actions verified or remotely sync them before resolution.
+- Report existing semantic differences (including summary/detail mismatches), but do not defer solely because of them. Defer contradictions introduced by the action until user-approved reconciliation; do not mark those actions verified or remotely sync them before resolution.
 - Verify message intent (e.g. relation added and old deleted).
-- Relations: run targeted Prettier, grep/read checks, and
-  `npm run report:character-relations` (the report does not check formatting).
-- Static character data: run targeted Prettier, projection checks, `npm run lint`, and
-  `npm run type-check`. Add relevant tests for logic/components; full tests for broad changes or on request.
-- Reuse passing local checks while their source/cohort is unchanged; rerun affected checks after changes
-  or failures. Fresh remote-state and deployment checks remain mandatory at cutover and post-check.
+- Relations: run targeted Prettier, grep/read checks, and `npm run report:character-relations` (the report does not check formatting).
+- Static character data: run targeted Prettier, projection checks, `npm run lint`, and `npm run type-check`. Add relevant tests for logic/components; full tests for broad changes or on request.
+- Reuse passing local checks while their source/cohort is unchanged; rerun affected checks after changes or failures. Refresh remote state at cutover; verify deployment and its data snapshot in post-check.

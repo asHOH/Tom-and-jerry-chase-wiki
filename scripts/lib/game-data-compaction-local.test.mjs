@@ -19,7 +19,7 @@ test('local checks need no deployment and cannot write cutover evidence', () => 
   assert.throws(() => parseArgs([...args, '--mode=local', '--write-manifest']), {
     code: 'local_mode_is_read_only',
   });
-  assert.throws(() => parseArgs(args), { code: 'required_argument_missing' });
+  assert.equal(parseArgs(args).productionOrigin, undefined);
   assert.throws(() => parseArgs([...args, '--mode=post-cutover']), {
     code: 'required_argument_missing',
   });
@@ -113,6 +113,23 @@ test(
       assert.deepEqual(report.evidence.actionPatch.verifiedRowIds, [row.id]);
       assert.equal(requests.length, 2);
       assert.equal(await readFile(manifestPath, 'utf8'), serialized);
+
+      const { stdout: preflightOutput } = await execFileAsync(
+        process.execPath,
+        [...commandArgs.filter((arg) => arg !== '--mode=local'), '--write-manifest'],
+        options
+      );
+      const preflight = JSON.parse(preflightOutput);
+      assert.equal(preflight.mode, 'preflight');
+      assert.equal(preflight.evidence.production, null);
+      const boundManifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+      const { prepareCompactionCutoverManifest } = jiti(
+        '../../src/lib/gameData/compactionCutoverManifest.ts'
+      );
+      assert.equal(prepareCompactionCutoverManifest(boundManifest).success, true);
+      assert.equal(boundManifest.repository.patchedHead, head.trim());
+      assert.equal(boundManifest.repository.deployedHead, undefined);
+      assert.equal(requests.length, 4);
 
       manifest.rows[0].actionCount = 2;
       await writeFile(manifestPath, JSON.stringify(manifest));

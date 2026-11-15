@@ -18,7 +18,7 @@ const createManifest = () => ({
   rows: [{ id: 'cutover-1' }, { id: 'cutover-2' }],
   cutoverRowIds: ['cutover-1', 'cutover-2'],
   verificationDependencyRowIds: ['dependency-1'],
-  repository: { deployedHead: 'deployed-commit' },
+  repository: { patchedHead: 'patched-commit' },
   fingerprint: {
     replayEpoch: 42,
     actionRevision,
@@ -30,6 +30,7 @@ const createManifest = () => ({
   },
   result: {
     cutoverVerification: {
+      patchedCommit: 'patched-commit',
       manifestUnchanged: true,
       snapshotStableDuringVerification: true,
       idempotence: { proven: true },
@@ -39,15 +40,7 @@ const createManifest = () => ({
         dependencyReplayFailures: [],
       },
       publishedParity: { proven: true },
-      production: {
-        deployedCommit: 'deployed-commit',
-        gameDataArtifact: {
-          deploymentIdentity: 'deployment-identity',
-          replayEpoch: 42,
-          actionRevision,
-          rowCount: 3,
-        },
-      },
+      production: null,
     },
   },
 });

@@ -12,7 +12,6 @@ test('sync reads the actor from the environment, allows an explicit override, an
   const args = [
     '--manifest=.tmp/manifest.json',
     '--patched-ref=HEAD',
-    '--production-origin=https://example.invalid',
     '--mode=sync',
     '--expected-supabase-host=example.supabase.co',
     '--confirm=SYNC_APPROVED_COMPACTION_BATCH',
@@ -20,6 +19,7 @@ test('sync reads the actor from the environment, allows an explicit override, an
   try {
     process.env.GAME_DATA_COMPACTION_ACTOR_ID = ` ${actor} `;
     assert.equal(parseArgs(args).actorId, actor);
+    assert.equal(parseArgs(args).productionOrigin, undefined);
     assert.equal(parseArgs([...args, `--actor-id=${override}`]).actorId, override);
     assert.throws(() => parseArgs([...args, '--actor-id=invalid']), { code: 'invalid_actor_id' });
     assert.throws(() => parseArgs(args.slice(0, -1)), { code: 'confirmation_required' });
@@ -27,9 +27,21 @@ test('sync reads the actor from the environment, allows an explicit override, an
     assert.throws(() => parseArgs([...args, '--expected-supabase-host=']), {
       code: 'expected_supabase_host_required',
     });
-    assert.throws(() => parseArgs([...args, '--mode=post-check', '--expected-supabase-host=']), {
-      code: 'post_check_argument_missing',
+    assert.throws(() => parseArgs([...args, '--mode=post-check']), {
+      code: 'required_argument_missing',
     });
+    assert.throws(
+      () =>
+        parseArgs([
+          ...args,
+          '--mode=post-check',
+          '--production-origin=https://example.invalid',
+          '--expected-supabase-host=',
+        ]),
+      {
+        code: 'post_check_argument_missing',
+      }
+    );
     assert.equal(parseArgs(args.filter((arg) => !arg.startsWith('--mode='))).mode, 'check');
     for (const value of ['', 'invalid']) {
       process.env.GAME_DATA_COMPACTION_ACTOR_ID = value;
@@ -39,7 +51,11 @@ test('sync reads the actor from the environment, allows an explicit override, an
     assert.throws(() => parseArgs(args), { code: 'invalid_actor_id' });
     assert.equal(parseArgs([...args, `--actor-id=${override}`]).actorId, override);
     assert.equal(parseArgs([...args, '--mode=check']).actorId, undefined);
-    assert.equal(parseArgs([...args, '--mode=post-check']).actorId, undefined);
+    assert.equal(
+      parseArgs([...args, '--mode=post-check', '--production-origin=https://example.invalid'])
+        .actorId,
+      undefined
+    );
   } finally {
     if (previous === undefined) delete process.env.GAME_DATA_COMPACTION_ACTOR_ID;
     else process.env.GAME_DATA_COMPACTION_ACTOR_ID = previous;

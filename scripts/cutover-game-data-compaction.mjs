@@ -51,7 +51,7 @@ export function parseArgs(args) {
     } else if (arg.startsWith('--mode=')) mode = arg.slice('--mode='.length);
     else throw new CutoverScriptError('invalid_argument', { argument: arg });
   }
-  if (!manifestPath || !patchedRef || !productionOrigin) {
+  if (!manifestPath || !patchedRef || (mode === 'post-check' && !productionOrigin)) {
     throw new CutoverScriptError('required_argument_missing');
   }
   if (!['check', 'sync', 'post-check'].includes(mode)) {
@@ -168,7 +168,6 @@ async function runPreflight(args) {
         verifierPath,
         `--manifest=${args.manifestPath}`,
         `--patched-ref=${args.patchedRef}`,
-        `--production-origin=${args.productionOrigin}`,
         '--write-manifest',
       ],
       {
@@ -362,7 +361,7 @@ async function main() {
           actionCount: prepared.value.actionIds.length,
           dependencyCount: prepared.value.verificationDependencyRowIds.length,
           replayEpoch: prepared.value.replayEpoch,
-          deployedCommit: prepared.value.deployedCommit,
+          patchedCommit: prepared.value.patchedCommit,
         },
         null,
         2

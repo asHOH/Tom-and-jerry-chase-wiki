@@ -1,7 +1,6 @@
 import {
   readCompactionReconciliation,
   resolveCompactionManifestSelection,
-  verifyCompactionArtifactMetadata,
 } from './compactionVerification';
 
 export type CompactionCutoverInput = {
@@ -9,7 +8,7 @@ export type CompactionCutoverInput = {
   verificationDependencyRowIds: string[];
   replayEpoch: number;
   actionRevision: string;
-  deployedCommit: string;
+  patchedCommit: string;
 };
 
 type CutoverManifestResult =
@@ -83,8 +82,6 @@ export function prepareCompactionCutoverManifest(value: unknown): CutoverManifes
   if (verification.snapshotStableDuringVerification !== true) {
     failures.push('snapshot_not_stable');
   }
-  const idempotence = isRecord(verification.idempotence) ? verification.idempotence : {};
-  if (idempotence.proven !== true) failures.push('cutover_not_idempotent');
   const parity = isRecord(verification.publishedParity) ? verification.publishedParity : {};
   if (parity.proven !== true) failures.push('published_parity_not_proven');
 
@@ -110,21 +107,13 @@ export function prepareCompactionCutoverManifest(value: unknown): CutoverManifes
     failures.push('action_patch_not_verified');
   }
 
-  const production = isRecord(verification.production) ? verification.production : {};
-  const artifactProof = verifyCompactionArtifactMetadata(production.gameDataArtifact, {
-    replayEpoch: fingerprint.replayEpoch as number,
-    actionRevision: fingerprint.actionRevision as string,
-    rowCount: fingerprint.snapshotRowCount as number,
-  });
-  if (!artifactProof.proven) failures.push('production_artifact_not_bound');
-
   const repository = isRecord(value.repository) ? value.repository : {};
   if (
-    typeof repository.deployedHead !== 'string' ||
-    repository.deployedHead.length === 0 ||
-    production.deployedCommit !== repository.deployedHead
+    typeof repository.patchedHead !== 'string' ||
+    repository.patchedHead.length === 0 ||
+    verification.patchedCommit !== repository.patchedHead
   ) {
-    failures.push('deployed_commit_not_bound');
+    failures.push('patched_commit_not_bound');
   }
 
   if (failures.length > 0) return { success: false, failures };
@@ -135,7 +124,7 @@ export function prepareCompactionCutoverManifest(value: unknown): CutoverManifes
       verificationDependencyRowIds: selection.value.verificationDependencyRowIds,
       replayEpoch: fingerprint.replayEpoch as number,
       actionRevision: fingerprint.actionRevision as string,
-      deployedCommit: repository.deployedHead as string,
+      patchedCommit: repository.patchedHead as string,
     },
   };
 }

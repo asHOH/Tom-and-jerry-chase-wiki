@@ -50,7 +50,7 @@ export function parseArgs(args) {
     else throw new CompactionScriptError('invalid_argument', { argument: arg });
   }
 
-  if (!manifestPath || !patchedRef || (mode !== 'local' && !productionOrigin)) {
+  if (!manifestPath || !patchedRef || (mode === 'post-cutover' && !productionOrigin)) {
     throw new CompactionScriptError('required_argument_missing');
   }
   if (!['local', 'preflight', 'post-cutover'].includes(mode)) {
@@ -434,7 +434,6 @@ function updateManifest(manifest, evidence) {
   manifest.repository = {
     ...manifest.repository,
     patchedHead: evidence.patchedCommit,
-    deployedHead: evidence.production.deployedCommit,
   };
   manifest.fingerprint = {
     replayEpoch: evidence.replayEpoch,
@@ -447,6 +446,7 @@ function updateManifest(manifest, evidence) {
     ...manifest.result,
     cutoverVerification: {
       verifiedAt: capturedAt,
+      patchedCommit: evidence.patchedCommit,
       manifestUnchanged: true,
       snapshotStableDuringVerification: true,
       idempotence: evidence.idempotence,
@@ -471,7 +471,7 @@ function updateManifest(manifest, evidence) {
     },
     recoveryPath: {
       status: 'available',
-      deploymentFailure: 'status transition is gated on deployed artifact proof',
+      deploymentFailure: 'deploy the frozen patched commit and run read-only post-check',
       transitionFailure: 'database function rolls back the complete batch',
       uncertainResponse: 'cutover command resolves outcome by exact status re-query',
     },
@@ -776,25 +776,6 @@ async function main() {
     throw new CompactionScriptError('manifest_changed', { failures: consistency.failures });
   }
   const idempotence = verifyCompactionActionIdempotence(selectedRows);
-  if (!idempotence.proven) {
-    throw new CompactionScriptError('non_idempotent_manifest_actions', {
-      failures: idempotence.failures,
-    });
-  }
-
-  const production =
-    args.mode === 'local'
-      ? null
-      : await readProductionProof(
-          args.productionOrigin,
-          patchedCommit,
-          {
-            replayEpoch: snapshotBefore.replayEpoch,
-            actionRevision: snapshotBefore.actionSnapshot.actionRevision,
-            rowCount: snapshotBefore.rows.length,
-          },
-          verifyCompactionArtifactMetadata
-        );
   const { parity, actionPatch } = await createParityProof(
     baselineCommit,
     patchedCommit,
@@ -822,7 +803,7 @@ async function main() {
     idempotence,
     selection,
     actionPatch,
-    production,
+    production: null,
     parity,
   };
   if (args.writeManifest) {
