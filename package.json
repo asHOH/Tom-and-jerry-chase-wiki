@@ -191,14 +191,14 @@
     "oxlint": "^1.91.0",
     "postcss": "^8.5.15",
     "postcss-preset-env": "^11.6.2",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "rimraf": "^6.1.4",
     "schema-dts": "^2.1.0",
     "server-only": "^0.0.1",
     "size-limit": "^12.1.0",
     "supabase": "2.120.0",
-    "tailwindcss": "^4.3.4",
+    "tailwindcss": "^4.3.5",
     "typescript": "^7.0.2"
   },
   "overrides": {
