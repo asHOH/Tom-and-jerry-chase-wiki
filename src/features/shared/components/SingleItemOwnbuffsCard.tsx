@@ -449,8 +449,8 @@ export default class SingleItemOwnbuffsCard extends React.Component<
 
           return (
             <div key={id} id={`buff-${id}`} className='scroll-mt-24 leading-6'>
-              {/* 图标作为首行 inline 元素；-translate-y-[2px] 向上微调，修正中文视觉中线 */}
-              <span className='mr-1 inline-block h-5 w-5 -translate-y-[2px] align-middle'>
+              {/* 图标作为首行 inline 元素；translate-y-[-2px] 向上微调，修正中文视觉中线 */}
+              <span className='mr-1 inline-block h-5 w-5 translate-y-[-2px] align-middle'>
                 <Image
                   src={getBuffIconSrc(iconName)}
                   alt=''

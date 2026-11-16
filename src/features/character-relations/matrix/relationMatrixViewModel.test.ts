@@ -45,7 +45,7 @@ const setRelationItems = (
 
 describe('relationMatrixViewModel', () => {
   it.each([
-    ['counteredBy', '控制', '怕控制', '通过控制限制老鼠行动，阻止逃跑或救援。'],
+    ['counteredBy', '控制', '怕控制', '善于通过先手控制击倒老鼠。'],
     ['counters', '怕控制', '控制', '拥有能救下猫咪手中队友的控制。'],
   ] as const)(
     'keeps control explanations consistent across both views of a %s pair',

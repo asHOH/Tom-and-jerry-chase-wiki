@@ -89,8 +89,8 @@ it('opens a definition when its button receives keyboard focus', () => {
 });
 
 it.each([
-  ['cat', 'counters', '控制', '通过控制限制老鼠行动，阻止逃跑或救援。'],
-  ['mouse', 'counteredBy', '怕控制', '通过控制限制老鼠行动，阻止逃跑或救援。'],
+  ['cat', 'counters', '控制', '善于通过先手控制击倒老鼠。'],
+  ['mouse', 'counteredBy', '怕控制', '善于通过先手控制击倒老鼠。'],
   ['mouse', 'counters', '控制', '拥有能救下猫咪手中队友的控制。'],
   ['cat', 'counteredBy', '怕控制', '拥有能救下猫咪手中队友的控制。'],
 ] as const)(
