@@ -17,6 +17,21 @@ This directory contains automated workflows for the project.
 
 - **Triggers**: Package.json changes, weekly schedule
 - **Purpose**: Security vulnerability detection
+- **Failure threshold**: Moderate or higher, including development dependencies
+
+#### Transitive dependency overrides
+
+`package.json` scopes security overrides to affected versions while upstream consumers retain older requirements:
+
+| Package                   | Affected versions | Override  | Consumers                       |
+| ------------------------- | ----------------- | --------- | ------------------------------- |
+| `glob`                    | `>=9.0.0 <14.0.2` | `^14.0.6` | Jest, Serwist, coverage tooling |
+| `minimatch`               | `>=7.0.0 <11.0.1` | `^11.0.8` | Coverage tooling                |
+| `postcss-selector-parser` | `<6.1.5`          | `^6.1.5`  | Tailwind typography             |
+
+The version ranges preserve unaffected dependency branches, including consumers of the legacy `minimatch` API. Remove each override when upstream requirements resolve patched versions directly. Validate dependency changes with a clean install, the security audit, coverage and script tests, and `npm run build:skip-images` to exercise service-worker generation.
+
+As of 2026-11-17, Jest's [`deepmerge` advisory](https://github.com/advisories/GHSA-gcqx-w48m-w2h4) has no patched release. It remains visible as low-severity findings below the CI failure threshold; npm's proposed forced fix downgrades Jest.
 
 ## 🛡️ Quality Gates
 

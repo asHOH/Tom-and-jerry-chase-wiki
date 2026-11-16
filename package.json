@@ -105,7 +105,7 @@
     "@next/env": "^16.4.6",
     "@next/mdx": "^16.4.6",
     "@radix-ui/react-tooltip": "^1.4.1",
-    "@serwist/next": "^9.5.13",
+    "@serwist/next": "^9.5.14",
     "@streamdown/cjk": "^1.0.4",
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "^2.119.0",
@@ -145,7 +145,7 @@
     "react-plock": "^3.6.1",
     "remark-gfm": "^4.0.1",
     "sanitize-html": "^2.18.2",
-    "serwist": "^9.5.3",
+    "serwist": "^9.5.14",
     "sharp": "^0.35.5",
     "sonner": "^2.0.8",
     "streamdown": "^2.7.1",
@@ -160,7 +160,7 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
-    "@serwist/cli": "^9.5.12",
+    "@serwist/cli": "^9.5.14",
     "@size-limit/file": "^12.1.0",
     "@tailwindcss/postcss": "^4.3.5",
     "@tailwindcss/typography": "^0.5.20",
@@ -204,7 +204,10 @@
   "overrides": {
     "trim-newlines": "^3.0.1",
     "js-yaml": "^4.1.1",
-    "postcss": "^8.5.15"
+    "postcss": "^8.5.15",
+    "glob@>=9.0.0 <14.0.2": "^14.0.6",
+    "minimatch@>=7.0.0 <11.0.1": "^11.0.8",
+    "postcss-selector-parser@<6.1.5": "^6.1.5"
   },
   "size-limit": [
     {
