@@ -32,6 +32,7 @@ export default function HomepageNotices() {
   });
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [hasLoadedDismissals, setHasLoadedDismissals] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const stored = storage.getJson<unknown>(StorageKey.HomepageDismissedNotices);
@@ -64,29 +65,44 @@ export default function HomepageNotices() {
       aria-label='站点公告'
       className='overflow-hidden rounded-xl border border-blue-200 bg-blue-50/80 shadow-sm dark:border-blue-900/70 dark:bg-blue-950/30'
     >
-      <article className='p-4 sm:p-5'>
-        <div className='flex items-start justify-between gap-4'>
-          <div className='min-w-0'>
-            <p className='mb-1 text-xs font-semibold tracking-wider text-blue-600 uppercase dark:text-blue-300'>
+      <article className='px-4 py-3 sm:px-5'>
+        <div className='flex items-center justify-between gap-4'>
+          <div className='flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1'>
+            <p className='text-xs font-semibold tracking-wider text-blue-600 uppercase dark:text-blue-300'>
               站点公告
             </p>
-            <h2 className='text-lg font-bold text-slate-900 sm:text-xl dark:text-white'>
+            <h2 className='truncate text-sm font-bold text-slate-900 sm:text-base dark:text-white'>
               {current.title}
             </h2>
           </div>
-          <Button
-            variant='unstyled'
-            onClick={() => dismiss(current)}
-            className='focus:ring-focus shrink-0 rounded-md px-2 py-1 text-sm text-blue-700 hover:bg-blue-100 focus:ring-2 focus:outline-none dark:text-blue-200 dark:hover:bg-blue-900/50'
-            aria-label={`关闭公告：${current.title}`}
-          >
-            关闭
-          </Button>
+          <div className='flex shrink-0 items-center gap-1'>
+            <Button
+              variant='unstyled'
+              onClick={() => setExpanded((value) => !value)}
+              aria-expanded={expanded}
+              aria-controls='homepage-notice-content'
+              className='focus:ring-focus rounded-md px-2 py-1 text-sm text-blue-700 hover:bg-blue-100 focus:ring-2 focus:outline-none dark:text-blue-200 dark:hover:bg-blue-900/50'
+            >
+              {expanded ? '收起' : '展开'}
+            </Button>
+            <Button
+              variant='unstyled'
+              onClick={() => dismiss(current)}
+              className='focus:ring-focus shrink-0 rounded-md px-2 py-1 text-sm text-blue-700 hover:bg-blue-100 focus:ring-2 focus:outline-none dark:text-blue-200 dark:hover:bg-blue-900/50'
+              aria-label={`关闭公告：${current.title}`}
+            >
+              关闭
+            </Button>
+          </div>
         </div>
-        <RichNoticeContent html={current.contentHtml} />
+        {expanded && (
+          <div id='homepage-notice-content'>
+            <RichNoticeContent html={current.contentHtml} />
+          </div>
+        )}
       </article>
 
-      {previous.length > 0 && (
+      {expanded && previous.length > 0 && (
         <details className='group border-t border-blue-200 dark:border-blue-900/70'>
           <summary className='cursor-pointer px-4 py-3 text-sm font-medium text-blue-700 hover:bg-blue-100/70 focus:outline-none sm:px-5 dark:text-blue-200 dark:hover:bg-blue-900/30'>
             查看其他展示中的公告（{previous.length}）

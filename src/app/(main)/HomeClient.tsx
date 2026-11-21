@@ -68,8 +68,6 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
     <PageShell width='wide' className='space-y-6'>
       <PageHeader title={SITE_NAME} description={description} descriptionVisibility='desktop' />
 
-      <HomepageNotices />
-
       <TodayHighlightsCard />
 
       {NAV_ITEMS.map((section, index) => {
@@ -77,6 +75,10 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         if (buttons.length === 0) return null;
         return <HomePageSection key={index} title={section.label} buttons={buttons} />;
       })}
+
+      <div className='mx-auto max-w-4xl'>
+        <HomepageNotices />
+      </div>
 
       {/* Division line before 网站说明 */}
       <div className='mt-12 px-2 sm:mt-18 sm:px-4 md:mt-24'>
