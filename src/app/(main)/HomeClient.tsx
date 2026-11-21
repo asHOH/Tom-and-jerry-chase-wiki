@@ -14,9 +14,11 @@ import HomePageSection from '@/components/ui/NavSection';
 import OfficialSitesDisplay from '@/components/ui/OfficialSitesDisplay';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
+import DailyTraitCard from '@/components/DailyTraitCard';
 import HomepageNotices from '@/components/HomepageNotices';
 import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
 import LoginDialog from '@/components/LoginDialog';
+import OnThisDayCard from '@/components/OnThisDayCard';
 import { ProjectStatement } from '@/components/ProjectStatement';
 import { VersionDisplay } from '@/components/VersionDisplay';
 import { env } from '@/env';
@@ -68,6 +70,10 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
       <PageHeader title={SITE_NAME} description={description} descriptionVisibility='desktop' />
 
       <HomepageNotices />
+
+      <DailyTraitCard />
+
+      <OnThisDayCard />
 
       {NAV_ITEMS.map((section, index) => {
         const buttons = getSectionButtons(section.children);

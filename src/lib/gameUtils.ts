@@ -8,7 +8,7 @@
  * Mulberry32 — a fast, high-quality 32-bit seeded PRNG.
  * Deterministic: same seed always produces the same sequence.
  */
-function seededRandom(seed: string): () => number {
+export function seededRandom(seed: string): () => number {
   // Hash the seed string to a 32-bit integer using DJB2
   let hash = 5381;
   for (let i = 0; i < seed.length; i++) {
