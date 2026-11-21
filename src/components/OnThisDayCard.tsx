@@ -9,7 +9,11 @@ import { formatHistoryEventDate, getOnThisDayEvents } from '@/features/shared/hi
 import Button from '@/components/ui/Button';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
-export default function OnThisDayCard() {
+type OnThisDayCardProps = {
+  embedded?: boolean;
+};
+
+export default function OnThisDayCard({ embedded = false }: OnThisDayCardProps) {
   const [today, setToday] = useState<Date | null>(null);
   const [expanded, setExpanded] = useState(false);
 
@@ -36,10 +40,24 @@ export default function OnThisDayCard() {
   return (
     <section
       aria-labelledby='on-this-day-heading'
-      className='rounded-xl border border-sky-200 bg-sky-50/80 p-4 shadow-sm sm:p-5 dark:border-sky-900/70 dark:bg-sky-950/30'
+      className={
+        embedded
+          ? ''
+          : 'rounded-xl border border-sky-200 bg-sky-50/80 p-4 shadow-sm sm:p-5 dark:border-sky-900/70 dark:bg-sky-950/30'
+      }
     >
-      <div className='mb-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1'>
-        <h2 id='on-this-day-heading' className='text-lg font-bold text-slate-900 dark:text-white'>
+      <div className='mb-2 flex flex-wrap items-baseline gap-x-3 gap-y-1'>
+        <h2
+          id='on-this-day-heading'
+          className={
+            embedded
+              ? 'flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white'
+              : 'text-lg font-bold text-slate-900 dark:text-white'
+          }
+        >
+          {embedded && (
+            <span aria-hidden='true' className='h-2 w-2 rounded-full bg-sky-500 dark:bg-sky-400' />
+          )}
           历史上的今天
         </h2>
         {today && (

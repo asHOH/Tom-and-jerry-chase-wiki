@@ -12,7 +12,11 @@ import Link from '@/components/Link';
 const toTraitText = (text: string | string[]): string =>
   Array.isArray(text) ? text.join('\n') : text;
 
-export default function DailyTraitCard() {
+type DailyTraitCardProps = {
+  embedded?: boolean;
+};
+
+export default function DailyTraitCard({ embedded = false }: DailyTraitCardProps) {
   const traits = useTraitsData();
   const [today, setToday] = useState<Date | null>(null);
 
@@ -27,13 +31,30 @@ export default function DailyTraitCard() {
   return (
     <section
       aria-labelledby='daily-trait-heading'
-      className='rounded-xl border border-amber-200 bg-amber-50/80 p-4 shadow-sm sm:p-5 dark:border-amber-900/70 dark:bg-amber-950/30'
+      className={
+        embedded
+          ? ''
+          : 'rounded-xl border border-amber-200 bg-amber-50/80 p-4 shadow-sm sm:p-5 dark:border-amber-900/70 dark:bg-amber-950/30'
+      }
     >
       <div className='mb-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1'>
-        <h2 id='daily-trait-heading' className='text-lg font-bold text-slate-900 dark:text-white'>
+        <h2
+          id='daily-trait-heading'
+          className={
+            embedded
+              ? 'flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white'
+              : 'text-lg font-bold text-slate-900 dark:text-white'
+          }
+        >
+          {embedded && (
+            <span
+              aria-hidden='true'
+              className='h-2 w-2 rounded-full bg-amber-500 dark:bg-amber-400'
+            />
+          )}
           每日特性
         </h2>
-        {today && (
+        {!embedded && today && (
           <p className='text-xs font-medium text-amber-700 dark:text-amber-300'>
             {today.getFullYear()}年{today.getMonth() + 1}月{today.getDate()}日
           </p>
