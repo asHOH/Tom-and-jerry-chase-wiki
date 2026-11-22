@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import Image from 'next/image';
 
 import { CHAT_COMMANDS, conversationMarkdown, type ChatCommand } from '@/lib/ai/chatCommands';
 import { CHAT_MAX_QUESTION_LENGTH, toChatTextMessages } from '@/lib/ai/chatMessages';
@@ -26,6 +25,7 @@ import {
   PlusIcon,
   SunIcon,
 } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
 import Link from '@/components/Link';
 
 const CHAT_GREETINGS = ['今天想了解什么？', '有什么想问的？', '一起研究新玩法吧。'] as const;

@@ -1,9 +1,8 @@
 'use client';
 
-import Image from 'next/image';
-
 import type { FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
+import Image from '@/components/Image';
 
 type QuizSelectorProps = {
   onSelect: (faction: FactionId) => void;

@@ -24,6 +24,17 @@
   "rules": {
     "no-alert": "error",
     "no-array-constructor": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "next/image",
+            "message": "Import Image from '@/components/Image' instead so local images use generated AVIF/WebP sources. Server Components may keep next/image."
+          }
+        ]
+      }
+    ],
     "no-unused-expressions": "warn",
     "no-empty": "error",
     "no-unreachable": "error",
@@ -210,6 +221,12 @@
         "process": "readonly"
       },
       "plugins": ["import"]
+    },
+    {
+      "files": ["src/components/Image.tsx", "src/app/**/stat-showdown/page.tsx"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
     }
   ]
 }
