@@ -6,6 +6,7 @@ export type TableOfContentsItem = {
   id: string;
   label: ReactNode;
   depth: number;
+  extra?: ReactNode;
 };
 
 type TableOfContentsProps = {
@@ -37,7 +38,10 @@ export default function TableOfContents({
         {items.map((item) => (
           <li
             key={item.id}
-            className={layout === 'wrap' ? 'max-w-full min-w-0' : 'shrink-0'}
+            className={cn(
+              layout === 'wrap' ? 'max-w-full min-w-0' : 'shrink-0',
+              item.extra && 'flex items-center'
+            )}
             style={{ marginLeft: `${item.depth * 12}px` }}
           >
             <a
@@ -78,6 +82,7 @@ export default function TableOfContents({
             >
               {item.label}
             </a>
+            {item.extra}
           </li>
         ))}
       </ul>

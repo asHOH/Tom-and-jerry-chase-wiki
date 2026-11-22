@@ -10,6 +10,10 @@ jest.mock('@/context/EditModeContext', () => ({
   useEditMode: () => ({ isEditMode: mockIsEditMode }),
 }));
 jest.mock('@/hooks/useNavigation', () => ({ useNavigation: () => ({ navigate: jest.fn() }) }));
+jest.mock('@/components/Image', () => ({
+  __esModule: true,
+  default: ({ alt }: { alt: string }) => <span>{alt}</span>,
+}));
 
 const character: CharacterWithFaction = {
   id: '杰瑞',
@@ -40,14 +44,14 @@ it('omits absent recommendations, keeps editor entry points, and uses the mouse 
   expect(screen.getByRole('link', { name: '推荐知识卡组' })).toBeInTheDocument();
 });
 
-it('omits the skill disclosure for an empty character and respects relationship visibility', () => {
+it('omits the skill catalog for an empty character and respects relationship visibility', () => {
   const { rerender } = render(
     <CharacterSectionIndex
       character={{ ...character, skills: [] }}
       showCharacterRelations={false}
     />
   );
-  expect(screen.queryByText('技能目录')).toBeNull();
+  expect(screen.queryByRole('button', { name: '技能目录' })).toBeNull();
   expect(screen.queryByRole('navigation', { name: '角色技能目录' })).toBeNull();
   expect(screen.getByRole('link', { name: '技能描述' })).toHaveAttribute(
     'href',
@@ -84,21 +88,36 @@ it('reopens unmounted skills, including repeated navigation to the current Chine
   );
   act(() => jest.runOnlyPendingTimers());
   expect(scrollIntoView).toHaveBeenCalled();
-  const disclosure = screen.getByText('技能目录').closest('details')!;
-  expect(disclosure).not.toHaveAttribute('open');
-  fireEvent.click(screen.getByText('技能目录'));
-  expect(disclosure).toHaveAttribute('open');
+
+  const trigger = screen.getByRole('button', { name: '技能目录' });
+  expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.queryByRole('navigation', { name: '角色技能目录' })).toBeNull();
+
+  fireEvent.click(trigger);
+  expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  expect(screen.getByRole('navigation', { name: '角色技能目录' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: '奶酪' })).toHaveFocus();
   expect(screen.getByRole('link', { name: '技能描述' })).toHaveAttribute(
     'aria-current',
     'location'
   );
-  expect(screen.getByRole('link', { name: '奶酪' })).toHaveAttribute('aria-current', 'location');
+
+  fireEvent.click(screen.getByRole('link', { name: '奶酪' }));
+  expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.queryByRole('navigation', { name: '角色技能目录' })).toBeNull();
+  act(() => jest.runOnlyPendingTimers());
+  expect(screen.getByRole('button', { name: '折叠技能描述' })).toHaveAttribute(
+    'aria-expanded',
+    'true'
+  );
+
   for (let repeat = 0; repeat < 2; repeat++) {
     fireEvent.click(screen.getByRole('button', { name: '折叠技能描述' }));
     fireEvent.transitionEnd(
       screen.getByRole('heading', { name: '技能内容', hidden: true }).parentElement!
     );
     expect(screen.queryByText('技能内容')).toBeNull();
+    fireEvent.click(trigger);
     fireEvent.click(screen.getByRole('link', { name: '奶酪' }));
     act(() => jest.runOnlyPendingTimers());
     expect(screen.getByRole('heading', { name: '技能内容' })).toBeVisible();
@@ -110,6 +129,43 @@ it('reopens unmounted skills, including repeated navigation to the current Chine
   unmount();
   HTMLElement.prototype.scrollIntoView = original;
   jest.useRealTimers();
+});
+
+it('closes the skill catalog on Escape and restores trigger focus', () => {
+  render(<CharacterSectionIndex character={character} />);
+  const trigger = screen.getByRole('button', { name: '技能目录' });
+  fireEvent.click(trigger);
+  expect(screen.getByRole('link', { name: '奶酪' })).toHaveFocus();
+
+  fireEvent.keyDown(document, { key: 'Escape' });
+
+  expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.queryByRole('navigation', { name: '角色技能目录' })).toBeNull();
+  expect(trigger).toHaveFocus();
+});
+
+it('closes the skill catalog on an outside pointer press', () => {
+  render(<CharacterSectionIndex character={character} />);
+  const trigger = screen.getByRole('button', { name: '技能目录' });
+  fireEvent.click(trigger);
+  expect(trigger).toHaveAttribute('aria-expanded', 'true');
+
+  fireEvent.pointerDown(document.body);
+
+  expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.queryByRole('navigation', { name: '角色技能目录' })).toBeNull();
+});
+
+it('closes the skill catalog on hash navigation', () => {
+  render(<CharacterSectionIndex character={character} />);
+  const trigger = screen.getByRole('button', { name: '技能目录' });
+  fireEvent.click(trigger);
+
+  window.history.replaceState({}, '', `#${encodeURIComponent('Section:技能描述')}`);
+  fireEvent(window, new HashChangeEvent('hashchange'));
+
+  expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.queryByRole('navigation', { name: '角色技能目录' })).toBeNull();
 });
 
 it('updates skill anchors without scrolling or reopening a section during edits', () => {
