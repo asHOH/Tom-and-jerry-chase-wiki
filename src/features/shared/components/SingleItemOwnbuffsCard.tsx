@@ -1,8 +1,8 @@
 import React from 'react';
-import Image from 'next/image';
 
 import { getSingleItemOwnedBuffs } from '@/lib/singleItemOwnbuffs';
 import { SingleItem } from '@/data/types';
+import Image from '@/components/Image';
 
 import { getBuffIcons, getBuffIconSrc } from './buffIconMap';
 import { compareBuffDescriptions } from './compareBuff';
@@ -454,6 +454,8 @@ export default class SingleItemOwnbuffsCard extends React.Component<
                 <Image
                   src={getBuffIconSrc(iconName)}
                   alt=''
+                  width={20}
+                  height={20}
                   className='block h-5 w-5 object-contain'
                 />
               </span>
