@@ -42,6 +42,36 @@ describe('buildSemanticTextTokens', () => {
     ]);
   });
 
+  it('tokenizes bare per-second rates', () => {
+    expect(compactTokens('以100/s的速度飞行，上限2000/s', true)).toEqual([
+      { type: 'text', text: '以' },
+      { type: 'unitQuantity', text: '100/s' },
+      { type: 'text', text: '的速度飞行，上限' },
+      { type: 'unitQuantity', text: '2000/s' },
+    ]);
+  });
+
+  it('accepts 单位 without a length suffix in per-second rates', () => {
+    expect(compactTokens('移速100单位/s', true)).toEqual([
+      { type: 'text', text: '移速' },
+      { type: 'unitQuantity', text: '100单位/s' },
+    ]);
+  });
+
+  it('does not tokenize accelerations or low-value resource rates', () => {
+    expect(compactTokens('重力加速度1000/秒²，Hp恢复速度提升1.5/秒，倒计时1/秒', true)).toEqual([
+      { type: 'text', text: '重力加速度1000/秒²，Hp恢复速度提升1.5/秒，倒计时1/秒' },
+    ]);
+  });
+
+  it('keeps plain length quantities that are followed by a number', () => {
+    expect(compactTokens('范围300单位长 2秒后', true)).toEqual([
+      { type: 'text', text: '范围' },
+      { type: 'unitQuantity', text: '300单位长' },
+      { type: 'text', text: ' 2秒后' },
+    ]);
+  });
+
   it('does not tokenize quantities inside explicit markup or inline-class spans', () => {
     expect(compactTokens('{$790单位长$text-red-500#}{10单位长}', true)).toEqual([
       { type: 'explicitMarkup', rawContent: '$790单位长$text-red-500#' },

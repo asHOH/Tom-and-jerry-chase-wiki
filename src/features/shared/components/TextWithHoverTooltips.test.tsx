@@ -109,6 +109,23 @@ describe('TextWithHoverTooltips', () => {
     expect(screen.getByText('300单位长').closest('a')).toHaveAttribute('href', '/mechanics/move');
   });
 
+  it('renders bare per-second speeds as unit links', () => {
+    render(<TextWithHoverTooltips text='以100/s的速度飞行' />);
+
+    const rate = screen.getByText('100/s');
+    expect(rate.closest('a')).toHaveAttribute('href', '/mechanics/move');
+    expect(rate.closest('[data-tooltip]')).toHaveAttribute(
+      'data-tooltip',
+      expect.stringContaining('“/s”表示每秒')
+    );
+  });
+
+  it('does not link low-value resource rates to movement mechanics', () => {
+    const { container } = render(<TextWithHoverTooltips text='Hp恢复速度提升1.5/秒' />);
+
+    expect(container.querySelector('a[href="/mechanics/move"]')).not.toBeInTheDocument();
+  });
+
   it('does not nest unit links inside bracket tooltips', () => {
     const { container } = render(<TextWithHoverTooltips text='[移速790单位长/s](移动速度)' />);
 

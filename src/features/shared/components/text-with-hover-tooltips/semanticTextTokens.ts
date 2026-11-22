@@ -19,7 +19,12 @@ type UnitQuantityToken = {
 export type SemanticTextToken = InlineClassToken | ExplicitMarkupToken | UnitQuantityToken;
 
 const UNIT_QUANTITY_PATTERN =
-  /\d+(?:\.\d+)?\s*(?:单位长(?:度)?|单位距离)(?:\s*[\/／]\s*(?:秒|s))?/g;
+  /\d+(?:\.\d+)?\s*(?:单位(?:长(?:度)?|距离)(?:\s*[\/／]\s*(?:秒|s)(?!\s*[²2]))?|单位\s*[\/／]\s*(?:秒|s)(?!\s*[²2])|[\/／]\s*(?:秒|s)(?!\s*[²2]))/g;
+
+const BARE_RATE_PATTERN = /^\d+(?:\.\d+)?\s*[\/／]\s*(?:秒|s)$/;
+
+// Bare per-second values below 100 are resource rates (Hp, timers), not 单位长 speeds.
+const MIN_BARE_RATE_VALUE = 100;
 
 const splitUnitQuantities = (text: string, sourceOffset: number): SemanticTextToken[] => {
   const tokens: SemanticTextToken[] = [];
@@ -28,6 +33,10 @@ const splitUnitQuantities = (text: string, sourceOffset: number): SemanticTextTo
   let match: RegExpExecArray | null;
 
   while ((match = pattern.exec(text)) !== null) {
+    if (BARE_RATE_PATTERN.test(match[0]) && Number.parseFloat(match[0]) < MIN_BARE_RATE_VALUE) {
+      continue;
+    }
+
     if (match.index > lastIndex) {
       tokens.push({
         type: 'text',
