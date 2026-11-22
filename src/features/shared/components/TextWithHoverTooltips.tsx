@@ -105,7 +105,8 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
           token.sourceIndex,
           wallCrackDamageBoost,
           currentCharacterId,
-          linkedTargets
+          linkedTargets,
+          false
         );
 
         const tooltipRendered = renderTextWithTooltips(
@@ -113,7 +114,9 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
           attackBoost,
           token.sourceIndex,
           wallCrackDamageBoost,
-          currentCharacterId
+          currentCharacterId,
+          undefined,
+          false
         );
 
         tokenParts = [

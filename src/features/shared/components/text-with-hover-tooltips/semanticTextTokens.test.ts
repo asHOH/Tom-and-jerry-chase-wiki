@@ -24,6 +24,34 @@ describe('buildSemanticTextTokens', () => {
     ]);
   });
 
+  it('tokenizes written-out number+unit quantities', () => {
+    expect(compactTokens('移速790单位长/s，范围300单位长，高度10。', true)).toEqual([
+      { type: 'text', text: '移速' },
+      { type: 'unitQuantity', text: '790单位长/s' },
+      { type: 'text', text: '，范围' },
+      { type: 'unitQuantity', text: '300单位长' },
+      { type: 'text', text: '，高度10。' },
+    ]);
+  });
+
+  it('keeps accepting legacy unit spellings', () => {
+    expect(compactTokens('10单位长度/秒和20单位距离', true)).toEqual([
+      { type: 'unitQuantity', text: '10单位长度/秒' },
+      { type: 'text', text: '和' },
+      { type: 'unitQuantity', text: '20单位距离' },
+    ]);
+  });
+
+  it('does not tokenize quantities inside explicit markup or inline-class spans', () => {
+    expect(compactTokens('{$790单位长$text-red-500#}{10单位长}', true)).toEqual([
+      { type: 'explicitMarkup', rawContent: '$790单位长$text-red-500#' },
+      { type: 'explicitMarkup', rawContent: '10单位长' },
+    ]);
+    expect(compactTokens('$790单位长$text-red-500#', true)).toEqual([
+      { type: 'styledText', text: '790单位长', className: 'text-red-500' },
+    ]);
+  });
+
   it.each(['{5}伤害', '{5*}点伤害', '{$5$text-red-500#}伤害', '{_20*}伤害'])(
     'assigns a rendered damage suffix to its semantic token for %s',
     (text) => {

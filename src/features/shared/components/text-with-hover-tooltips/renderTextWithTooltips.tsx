@@ -11,6 +11,7 @@ import {
 import { renderInlineClassTokens } from './inlineMarkup';
 import { buildSemanticTextTokens } from './semanticTextTokens';
 import type { CharacterRecord, RenderTextPart } from './types';
+import UnitQuantity from './unitQuantity';
 
 const ADDITION_EXPRESSION_PATTERN = /^(-?\d+(?:\.\d+)?)\+(-?\d+(?:\.\d+)?)$/;
 
@@ -36,10 +37,15 @@ export const renderTextWithTooltips = (
   index: number,
   wallCrackDamageBoost?: number,
   currentCharacterId?: string,
-  linkedTargets = new Set<string>()
+  linkedTargets = new Set<string>(),
+  enableUnitQuantityTokens = true
 ): RenderTextPart[] => {
   const parts: RenderTextPart[] = [];
-  const semanticTokens = buildSemanticTextTokens(text, attackBoost !== null);
+  const semanticTokens = buildSemanticTextTokens(
+    text,
+    attackBoost !== null,
+    enableUnitQuantityTokens
+  );
 
   for (const token of semanticTokens) {
     if (token.type === 'text') {
@@ -49,6 +55,11 @@ export const renderTextWithTooltips = (
 
     if (token.type === 'styledText') {
       parts.push(...renderInlineClassTokens([token], `class-${index}`));
+      continue;
+    }
+
+    if (token.type === 'unitQuantity') {
+      parts.push(<UnitQuantity key={`unit-${index}-${token.sourceIndex}`} text={token.text} />);
       continue;
     }
 

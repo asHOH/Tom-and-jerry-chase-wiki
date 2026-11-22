@@ -87,6 +87,50 @@ describe('TextWithHoverTooltips', () => {
     expect(screen.getByText('普通描述')).toBeInTheDocument();
   });
 
+  it('renders number+unit quantities as blue links with unit tooltips', () => {
+    render(<TextWithHoverTooltips text='移速790单位长/s，范围300单位长' />);
+
+    const rate = screen.getByText('790单位长/s');
+    expect(rate.closest('a')).toHaveAttribute('href', '/mechanics/move');
+    expect(rate).toHaveClass('text-blue-500', 'underline', 'dark:text-sky-300');
+    expect(rate.closest('[data-tooltip]')).toHaveAttribute(
+      'data-tooltip',
+      expect.stringContaining('1米=32单位长')
+    );
+    expect(rate.closest('[data-tooltip]')).toHaveAttribute(
+      'data-tooltip',
+      expect.stringContaining('角色脚下阴影的横向长度为100单位长')
+    );
+    expect(rate.closest('[data-tooltip]')).toHaveAttribute(
+      'data-tooltip',
+      expect.stringContaining('“/s”表示每秒')
+    );
+
+    expect(screen.getByText('300单位长').closest('a')).toHaveAttribute('href', '/mechanics/move');
+  });
+
+  it('does not nest unit links inside bracket tooltips', () => {
+    const { container } = render(<TextWithHoverTooltips text='[移速790单位长/s](移动速度)' />);
+
+    const trigger = container.querySelector('[data-tooltip="移动速度"]');
+    expect(trigger).toHaveTextContent('移速790单位长/s');
+    expect(container.querySelector('a[href="/mechanics/move"]')).not.toBeInTheDocument();
+  });
+
+  it('does not nest unit links inside bracket tooltip content', () => {
+    const { container } = render(<TextWithHoverTooltips text='[速度](790单位长/s)' />);
+
+    expect(container.querySelector('[data-tooltip="790单位长/s"]')).toBeInTheDocument();
+    expect(container.querySelector('a[href="/mechanics/move"]')).not.toBeInTheDocument();
+  });
+
+  it('does not treat character names as unit quantities', () => {
+    const { container } = render(<TextWithHoverTooltips text='第10米可登场' />);
+
+    expect(screen.getByText('米可')).toHaveAttribute('data-name', '米可');
+    expect(container.querySelector('a[href="/mechanics/move"]')).not.toBeInTheDocument();
+  });
+
   it('renders markdown bold text', () => {
     render(<TextWithHoverTooltips text='造成**眩晕**效果' />);
 
