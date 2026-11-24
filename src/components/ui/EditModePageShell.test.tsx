@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
@@ -168,7 +168,9 @@ describe('EditModePageShell', () => {
     });
     expect(toolbarProps?.onDiscard).toBe(discardChanges);
 
-    await expect(toolbarProps?.onPublish('publish summary')).resolves.toBe(true);
+    await act(async () => {
+      await expect(toolbarProps?.onPublish('publish summary')).resolves.toBe(true);
+    });
     expect(publishChanges).toHaveBeenCalledWith('publish summary', undefined);
 
     toolbarProps?.onExitEditMode();

@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync, statSync } from 'fs';
 import { join, relative } from 'path';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import type { EditSession } from '@/lib/edit/editSession';
 import { clearTestEditSession, installTestEditSession } from '@/testUtils/editRuntime';
@@ -100,7 +100,7 @@ describe('editable', () => {
   });
 
   afterEach(() => {
-    clearTestEditSession(session);
+    act(() => clearTestEditSession(session));
   });
 
   it('returns stable scoped proxies and tag components', () => {

@@ -7,7 +7,6 @@ import { buildWinRateCharacterLookup } from '@/data/winRates/characterLookup';
 import WinRatesClient from './WinRatesClient';
 
 jest.mock('@/context/DarkModeContext', () => ({ useDarkMode: () => [false] }));
-jest.mock('@/components/ui/MotionButton', () => jest.requireActual('@/components/ui/Button'));
 jest.mock('@/components/Link', () => ({
   __esModule: true,
   default: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,

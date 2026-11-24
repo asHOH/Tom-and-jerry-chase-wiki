@@ -83,6 +83,7 @@ it('prepares in the background without mounting search, then opens prepared code
   fireEvent.click(screen.getByRole('button', { name: '搜索' }));
   expect(screen.getByRole('dialog', { name: '完整搜索' })).toBeInTheDocument();
   expect(screen.queryByText('正在准备搜索…')).not.toBeInTheDocument();
+  await act(async () => {});
 });
 
 it('starts preparation on focus without opening search', () => {

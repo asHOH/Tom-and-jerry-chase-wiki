@@ -199,7 +199,7 @@ describe('PositioningTagsSection editing', () => {
     localStorage.clear();
   });
   afterEach(() => {
-    clearTestEditSession(session);
+    act(() => clearTestEditSession(session));
     mockIsEditMode = false;
   });
 

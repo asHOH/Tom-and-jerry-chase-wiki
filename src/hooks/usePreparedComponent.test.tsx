@@ -55,6 +55,7 @@ it('uses prepared code immediately, without importing when disabled', async () =
   await prepared.load();
   rerender({ enabled: true });
   expect(result.current.Component).toBe(Panel);
+  await act(async () => {});
   expect(importer).toHaveBeenCalledTimes(1);
 });
 

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
@@ -349,10 +349,12 @@ describe('RelationsClient', () => {
       })
     );
 
-    await expect(toolbarProps.onPublish('补充关系')).resolves.toBe(true);
+    await act(async () => {
+      await expect(toolbarProps.onPublish('补充关系')).resolves.toBe(true);
+    });
     expect(mockPublishChanges).toHaveBeenCalledWith('补充关系', undefined);
 
-    toolbarProps.onExitEditMode();
+    act(() => toolbarProps.onExitEditMode());
     expect(mockExitEditMode).toHaveBeenCalledTimes(1);
   });
 });
