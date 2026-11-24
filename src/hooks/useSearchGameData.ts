@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { PUBLISHABLE_ENTITY_TYPES } from '@/lib/gameData/publishableEntityTypes';
 import type {
@@ -38,26 +38,29 @@ function isSearchSnapshot(value: unknown): value is SearchSnapshot {
 
 export function useSearchGameData(enabled: boolean): PublishedGameDataByType {
   const [snapshot, setSnapshot] = useState<SearchSnapshot | null>(null);
+  const retained = useRef<{ revision: string; etag: string | null } | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
     const controller = new AbortController();
     let refreshing = false;
 
-    const install = (next: SearchSnapshot) => {
+    const install = (next: SearchSnapshot, etag: string | null) => {
       if (!controller.signal.aborted) {
-        setSnapshot((current) => (current?.revision === next.revision ? current : next));
+        const previous = retained.current;
+        retained.current = { revision: next.revision, etag };
+        if (previous?.revision !== next.revision) setSnapshot(next);
       }
     };
 
     const restore = async () => {
-      if (typeof caches === 'undefined') return;
+      if (retained.current || typeof caches === 'undefined') return;
       try {
         const cache = await caches.open(CACHE_NAME);
         const response = await cache.match(SNAPSHOT_URL);
         const cached: unknown = response ? await response.json() : null;
-        if (isSearchSnapshot(cached) && !controller.signal.aborted) {
-          setSnapshot((current) => current ?? cached);
+        if (isSearchSnapshot(cached) && !retained.current) {
+          install(cached, response!.headers.get('ETag'));
         }
       } catch (error) {
         console.warn('Unable to restore offline search data:', error);
@@ -68,15 +71,18 @@ export function useSearchGameData(enabled: boolean): PublishedGameDataByType {
       if (!navigator.onLine || refreshing) return;
       refreshing = true;
       try {
+        const etag = retained.current?.etag;
         const response = await fetch(SNAPSHOT_URL, {
           credentials: 'omit',
           cache: 'no-store',
           signal: controller.signal,
+          ...(etag ? { headers: { 'If-None-Match': etag } } : {}),
         });
+        if (response.status === 304) return;
         if (!response.ok) return;
         const next: unknown = await response.clone().json();
         if (!isSearchSnapshot(next) || controller.signal.aborted) return;
-        install(next);
+        install(next, response.headers.get('ETag'));
         if (typeof caches !== 'undefined') {
           try {
             const cache = await caches.open(CACHE_NAME);

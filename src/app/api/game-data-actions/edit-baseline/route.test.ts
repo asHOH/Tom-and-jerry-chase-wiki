@@ -3,12 +3,18 @@ import type { NextRequest } from 'next/server';
 
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import { logPublicGameDataRouteMetric } from '@/lib/gameData/publicRouteMetrics';
-import { getFreshApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
+import {
+  getApprovedActionSnapshot,
+  getFreshApprovedActionSnapshot,
+} from '@/lib/gameData/published/getApprovedActionSnapshot';
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
+import { createPublishedRevision } from '@/lib/gameData/published/revision';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 import { GET, POST } from './route';
 
+jest.mock('server-only', () => ({}));
+jest.mock('@/lib/gameData/published/buildIdentity', () => ({ PRODUCTION_BUILD_IDENTITY: 'build' }));
 jest.mock('@/constants/seo', () => ({
   SITE_URL: 'https://www.tjwiki.com',
 }));
@@ -19,6 +25,7 @@ jest.mock('@/lib/gameData/publicActionsCache', () => ({
   invalidatePublicGameDataActionsCache: jest.fn(),
 }));
 jest.mock('@/lib/gameData/published/getApprovedActionSnapshot', () => ({
+  getApprovedActionSnapshot: jest.fn(),
   getFreshApprovedActionSnapshot: jest.fn(),
 }));
 jest.mock('@/lib/gameData/published/publishedSnapshot', () => ({
@@ -27,16 +34,7 @@ jest.mock('@/lib/gameData/published/publishedSnapshot', () => ({
 jest.mock('@/lib/rateLimit', () => ({
   checkRateLimit: jest.fn(),
 }));
-jest.mock('next/server', () => ({
-  NextResponse: {
-    json: (body: unknown, init?: { status?: number; headers?: Record<string, string> }) => ({
-      status: init?.status ?? 200,
-      json: async () => body,
-      headers: new Headers(init?.headers),
-    }),
-  },
-}));
-
+const mockGetApprovedSnapshot = jest.mocked(getApprovedActionSnapshot);
 const mockGetFreshSnapshot = jest.mocked(getFreshApprovedActionSnapshot);
 const mockGetPublishedSnapshot = jest.mocked(getPublishedGameDataSnapshot);
 const mockCheckRateLimit = jest.mocked(checkRateLimit);
@@ -49,7 +47,7 @@ const freshSnapshot = {
 };
 const revision = (digit: string): `v1:${string}` => `v1:${digit.repeat(64)}`;
 const publishedSnapshot = {
-  revision: 'v1:published' as const,
+  revision: createPublishedRevision('build', freshSnapshot.actionRevision),
   actionRevision: 'v1:fresh-actions' as const,
   buildIdentity: 'build',
   domainRevisions: {
@@ -102,6 +100,7 @@ function createRequest(
 describe('/api/game-data-actions/edit-baseline', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetApprovedSnapshot.mockResolvedValue(freshSnapshot);
     mockGetFreshSnapshot.mockResolvedValue(freshSnapshot);
     mockGetPublishedSnapshot.mockResolvedValue(publishedSnapshot);
     mockCheckRateLimit.mockResolvedValue({ allowed: true });
@@ -112,14 +111,52 @@ describe('/api/game-data-actions/edit-baseline', () => {
     const body = (await response.json()) as Record<string, unknown>;
 
     expect(body).toEqual({
-      revision: 'v1:published',
+      revision: publishedSnapshot.revision,
       domainRevisions: publishedSnapshot.domainRevisions,
       data: expect.objectContaining({ characters: {}, items: {}, maps: {} }),
     });
     expect(response.headers.get('Cache-Control')).toBe('private, no-store');
-    expect(mockGetPublishedSnapshot).toHaveBeenCalledWith(undefined);
+    expect(response.headers.get('ETag')).toBe(`W/"${publishedSnapshot.revision}"`);
+    expect(mockGetApprovedSnapshot).toHaveBeenCalledTimes(1);
+    expect(mockGetPublishedSnapshot).toHaveBeenCalledWith(freshSnapshot);
     expect(mockGetFreshSnapshot).not.toHaveBeenCalled();
     expect(mockCheckRateLimit).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    `W/"${publishedSnapshot.revision}"`,
+    `"${publishedSnapshot.revision}"`,
+    `"older", W/"${publishedSnapshot.revision}"`,
+    '*',
+  ])('returns an empty 304 before composing domains for %s', async (validator) => {
+    const response = await GET(
+      new Request('https://www.tjwiki.com/api/game-data-actions/edit-baseline/', {
+        headers: { 'If-None-Match': validator },
+      }) as NextRequest
+    );
+    expect(response.status).toBe(304);
+    expect(await response.text()).toBe('');
+    expect(response.headers.get('ETag')).toBe(`W/"${publishedSnapshot.revision}"`);
+    expect(response.headers.get('Cache-Control')).toBe('private, no-store');
+    expect(mockGetPublishedSnapshot).not.toHaveBeenCalled();
+    expect(mockGetFreshSnapshot).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    createPublishedRevision('older-build', freshSnapshot.actionRevision),
+    createPublishedRevision('build', 'v1:older-actions'),
+  ])('returns the full body when the build or approved revision changed', async (olderRevision) => {
+    const response = await GET(
+      new Request('https://www.tjwiki.com/api/game-data-actions/edit-baseline/', {
+        headers: { 'If-None-Match': `W/"${olderRevision}"` },
+      }) as NextRequest
+    );
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      revision: publishedSnapshot.revision,
+      data: publishedSnapshot.data,
+    });
+    expect(mockGetPublishedSnapshot).toHaveBeenCalledWith(freshSnapshot);
   });
 
   it.each([
@@ -171,12 +208,14 @@ describe('/api/game-data-actions/edit-baseline', () => {
 
   it('returns a fresh baseline without globally invalidating cached public data', async () => {
     const request = createRequest('http://localhost:3000', 'http://localhost:3000');
+    request.headers.set('If-None-Match', `W/"${publishedSnapshot.revision}"`);
 
     const response = await POST(request);
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toMatchObject({ revision: 'v1:published' });
+    expect(body).toMatchObject({ revision: publishedSnapshot.revision });
+    expect(response.headers.get('ETag')).toBeNull();
     expect(response.headers.get('Cache-Control')).toBe('private, no-store');
     expect(mockCheckRateLimit).toHaveBeenCalledWith(
       request,

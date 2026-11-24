@@ -33,11 +33,13 @@ const published = {
   },
 };
 
-function response(body: unknown, ok = true): Response {
+function response(body: unknown, ok = true, etag: string | null = 'W/"published"'): Response {
   return {
     ok,
+    status: ok ? 200 : 500,
+    headers: new Headers(etag ? { ETag: etag } : {}),
     json: async () => body,
-    clone: () => response(body, ok),
+    clone: () => response(body, ok, etag),
   } as Response;
 }
 
@@ -165,6 +167,72 @@ describe('offline search data', () => {
     rerender({ enabled: true });
     await act(async () => {});
     expect(result.current).toEqual(published.data);
+    jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+    act(() => {
+      window.dispatchEvent(new Event('online'));
+    });
+    expect(jest.mocked(fetch).mock.calls[1]?.[1]?.headers).toEqual({
+      'If-None-Match': 'W/"published"',
+    });
+  });
+
+  it('revalidates retained data on reopening without parsing or storing a 304', async () => {
+    const { result, rerender } = renderHook(({ enabled }) => useSearchGameData(enabled), {
+      initialProps: { enabled: true },
+    });
+    await waitFor(() => expect(put).toHaveBeenCalledTimes(1));
+    expect(jest.mocked(fetch).mock.calls[0]?.[1]?.headers).toBeUndefined();
+    const retainedData = result.current;
+    rerender({ enabled: false });
+    const notModified = {
+      status: 304,
+      ok: false,
+      json: jest.fn(),
+      clone: jest.fn(),
+    } as unknown as Response;
+    jest.mocked(fetch).mockResolvedValueOnce(notModified);
+    rerender({ enabled: true });
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
+    expect(jest.mocked(fetch).mock.calls[1]?.[1]?.headers).toEqual({
+      'If-None-Match': 'W/"published"',
+    });
+    expect(result.current).toBe(retainedData);
+    expect(notModified.json).not.toHaveBeenCalled();
+    expect(notModified.clone).not.toHaveBeenCalled();
+    expect(put).toHaveBeenCalledTimes(1);
+    expect(match).toHaveBeenCalledTimes(1);
+  });
+
+  it('replaces a retained snapshot and its validator when published data changes', async () => {
+    const { result, rerender } = renderHook(({ enabled }) => useSearchGameData(enabled), {
+      initialProps: { enabled: true },
+    });
+    await waitFor(() => expect(put).toHaveBeenCalledTimes(1));
+    rerender({ enabled: false });
+    const updated = { revision: 'v1:updated', data: baseline };
+    jest.mocked(fetch).mockResolvedValueOnce(response(updated, true, 'W/"updated"'));
+    rerender({ enabled: true });
+    await waitFor(() => expect(result.current).toEqual(baseline));
+    rerender({ enabled: false });
+    jest.mocked(fetch).mockResolvedValueOnce({ status: 304 } as Response);
+    rerender({ enabled: true });
+    expect(jest.mocked(fetch).mock.calls[2]?.[1]?.headers).toEqual({
+      'If-None-Match': 'W/"updated"',
+    });
+  });
+
+  it.each(['W/"saved"', null])('restores the saved validator %s for reconnecting', async (etag) => {
+    saved = response(published, true, etag);
+    jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+    const { result } = renderHook(() => useSearchGameData(true));
+    await waitFor(() => expect(result.current).toEqual(published.data));
+    jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+    act(() => {
+      window.dispatchEvent(new Event('online'));
+    });
+    expect(jest.mocked(fetch).mock.calls[0]?.[1]?.headers).toEqual(
+      etag ? { 'If-None-Match': etag } : undefined
+    );
   });
 
   it('does not refresh a closed dialog and aborts a pending refresh on close', async () => {

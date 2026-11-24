@@ -4,8 +4,13 @@ import { z } from 'zod';
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import { logPublicGameDataRouteMetric } from '@/lib/gameData/publicRouteMetrics';
 import { PUBLISHABLE_ENTITY_TYPES } from '@/lib/gameData/publishableEntityTypes';
-import { getFreshApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
+import { PRODUCTION_BUILD_IDENTITY } from '@/lib/gameData/published/buildIdentity';
+import {
+  getApprovedActionSnapshot,
+  getFreshApprovedActionSnapshot,
+} from '@/lib/gameData/published/getApprovedActionSnapshot';
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
+import { createPublishedRevision } from '@/lib/gameData/published/revision';
 import type { PublishedDomainRevision } from '@/lib/gameData/published/types';
 import { PublishPreparationError, readBoundedJsonBody } from '@/lib/gameData/publishPreparation';
 import { checkRateLimit } from '@/lib/rateLimit';
@@ -72,8 +77,23 @@ function errorResponse(error: string, status: number, headers?: Record<string, s
   );
 }
 
-export async function GET() {
-  return baselineResponse();
+export async function GET(request?: NextRequest) {
+  const approvedSnapshot = await getApprovedActionSnapshot();
+  const tag = `"${createPublishedRevision(PRODUCTION_BUILD_IDENTITY, approvedSnapshot.actionRevision)}"`;
+  const etag = `W/${tag}`;
+  const validators = request?.headers.get('if-none-match')?.split(',');
+  if (
+    validators?.some((value) => value.trim() === '*' || value.trim().replace(/^W\//, '') === tag)
+  ) {
+    return new NextResponse(null, {
+      status: 304,
+      headers: { ...NO_STORE_HEADERS, ETag: etag },
+    });
+  }
+
+  const response = await baselineResponse(approvedSnapshot);
+  response.headers.set('ETag', etag);
+  return response;
 }
 
 export async function POST(request: NextRequest) {
