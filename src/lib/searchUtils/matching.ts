@@ -3,6 +3,34 @@ import type { SearchMatch } from './types';
 
 const FIELD_PRIORITY = { name: 40, alias: 30, description: 20, detail: 10 };
 
+// Bound retained source text across queries and published snapshots.
+const MAX_PINYIN_CACHE_CHARACTERS = 1_000_000;
+const pinyinCache = new Map<string, Promise<string>>();
+let cachedCharacters = 0;
+
+function searchPinyin(text: string): Promise<string> {
+  const cached = pinyinCache.get(text);
+  if (cached) return cached;
+
+  const conversion = convertToPinyin(text);
+  if (text.length > MAX_PINYIN_CACHE_CHARACTERS) return conversion;
+
+  while (cachedCharacters + text.length > MAX_PINYIN_CACHE_CHARACTERS) {
+    const oldest = pinyinCache.keys().next().value!;
+    pinyinCache.delete(oldest);
+    cachedCharacters -= oldest.length;
+  }
+  pinyinCache.set(text, conversion);
+  cachedCharacters += text.length;
+  void conversion.catch(() => {
+    if (pinyinCache.get(text) === conversion) {
+      pinyinCache.delete(text);
+      cachedCharacters -= text.length;
+    }
+  });
+  return conversion;
+}
+
 export type SearchField = readonly [
   text: string | undefined,
   kind: keyof typeof FIELD_PRIORITY,
@@ -40,7 +68,7 @@ export function createSearchQuery(query: string) {
       const lowerCaseText = text.toLowerCase();
       const matchIndex = lowerCaseText.indexOf(lowerCaseQuery);
       const isDirectMatch = matchIndex !== -1;
-      const matchedText = isDirectMatch ? lowerCaseText : await convertToPinyin(text);
+      const matchedText = isDirectMatch ? lowerCaseText : await searchPinyin(text);
       const matchedQuery = isDirectMatch ? lowerCaseQuery : pinyinQuery;
       if (!matchedQuery || !matchedText.includes(matchedQuery)) continue;
       const priority =
