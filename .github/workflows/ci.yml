@@ -107,14 +107,6 @@ jobs:
           path: coverage/
           retention-days: 30
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v7
-        with:
-          files: ./coverage/lcov.info
-          disable_search: true
-          flags: unittests
-          name: codecov-umbrella
-
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
