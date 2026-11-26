@@ -17,7 +17,10 @@ export function useCharacterActions() {
   const factionId = localCharacter.factionId!;
 
   function addSecondWeapon() {
-    const firstWeapon = localCharacter.skills.find((char) => char.type == 'weapon1') as Skill;
+    // Snapshot children are readonly, so the new weapon needs an independent mutable copy.
+    const firstWeapon = structuredClone(
+      localCharacter.skills.find((char) => char.type == 'weapon1')!
+    ) as Skill;
     const secondWeapon = {
       ...firstWeapon,
       type: 'weapon2' as const,
@@ -26,7 +29,7 @@ export function useCharacterActions() {
     };
     updateCharacter((character: CharacterWithFaction) => {
       const index = character.skills.findIndex(({ type }) => type == 'weapon1');
-      character.skills.splice(index + 1, 0, secondWeapon as unknown as Skill);
+      character.skills.splice(index + 1, 0, secondWeapon);
     });
   }
 
