@@ -8,7 +8,7 @@ type PhysicalAttributesSectionProps = {
   onChange?: ((mutate: (attributes: PhysicalAttributes) => void) => void) | undefined;
 };
 
-const COLLISION_OPTIONS = ['角色', '道具', '墙壁', '平台', '地面'] as const;
+const COLLISION_OPTIONS = ['角色', '道具', '墙壁', '平台', '地面', '自身'] as const;
 
 const getCollisionClassName = (collisionTarget: string) => {
   if (collisionTarget === '角色') return 'text-red-600 dark:text-red-500';
