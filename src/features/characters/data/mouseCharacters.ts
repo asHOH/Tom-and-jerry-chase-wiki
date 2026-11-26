@@ -2173,6 +2173,39 @@ const mouseCharacterDefinitions = {
         cooldownTiming: '释放时',
       },
       {
+        name: '小牛桩',
+        type: 'weapon2',
+        description:
+          '原地放置{小牛桩(衍生物)}，存在120秒或储备耗尽后消失。友方老鼠可与其交互领取{小牛}跟随自身（若已有，则清除上一只）。\n\n$小牛$font-bold#：具有三种状态，初始为跟随状态，存在30秒后消失。\n$跟随$text-blue-700 dark:text-blue-300 font-bold#：跟随角色移动，并在距离过远时传送回角色身边。每隔[$8$text-blue-500#秒](游戏内原文为10秒，与实际不符，此处进行了修正)丢出一个{奶瓶}，提供恢复。角色可与其交互，将其$抱起$text-orange-700 dark:text-orange-300 font-bold#；角色受到伤害时，立即开始$冲锋$text-red-700 dark:text-red-300 font-bold#。\n$被抱起$text-orange-700 dark:text-orange-300 font-bold#：可被投掷。当自身落地后，开始$冲锋$text-red-700 dark:text-red-300 font-bold#。\n$冲锋$text-red-700 dark:text-red-300 font-bold#：重置存在时间，随后向前方高速冲锋，对命中的敌方造成伤害和大幅击退（有内置CD），会治疗沿途的友方虚弱老鼠，遇到障碍物时提前折返。',
+        detailedDescription:
+          '原地放置{小牛桩(衍生物)}，存在120秒或储备耗尽后消失，友方老鼠可与其[交互](本交互无前后摇)领取{小牛}跟随自身（若已有小牛跟随/已抱起小牛，则清除该小牛）。\n\n$小牛$font-bold#：具有$跟随$text-blue-700 dark:text-blue-300 font-bold#、$被抱起$text-orange-700 dark:text-orange-300 font-bold#、$冲锋$text-red-700 dark:text-red-300 font-bold#三种状态，初始为跟随状态，存在30秒后消失。\n$跟随$text-blue-700 dark:text-blue-300 font-bold#：跟随角色移动，并在距离过远时传送回角色身边。每隔[$8$text-blue-500#秒](游戏内原文为10秒，与实际不符，此处进行了修正)，在[短暂前摇](动画表现：小牛看向上方，并发出“moo”的叫声)后向自身前方丢出一个{奶瓶}，奶瓶存在40秒后消失，被友方接触时提前消失并使其立即回复20Hp，随后获得3.5Hp/秒的恢复，持续8秒。角色可与其[交互](交互时长1秒，可通过跳跃键取消)，交互完成后将其$抱起$text-orange-700 dark:text-orange-300 font-bold#；角色受到伤害时，立即向面朝方向开始$冲锋$text-red-700 dark:text-red-300 font-bold#。\n$被抱起$text-orange-700 dark:text-orange-300 font-bold#：可被投掷。自身被投掷落地后，向被投掷方向开始$冲锋$text-red-700 dark:text-red-300 font-bold#；自身因被角色丢弃或角色道具被击落而落地后，向被抱起前的面朝方向开始$冲锋$text-red-700 dark:text-red-300 font-bold#。\n· 被抱起的小牛继承抱起前的存在时间；角色在抱起小牛后仍可正常进行其它交互；角色抱起小牛期间无法拾取和使用道具，但若在抱起小牛前已拾取其它道具，则在失去小牛后仍可正常使用该道具；角色成功通过商店购买投掷物后，投掷物会替换手中小牛——这会导致小牛开始冲锋。\n$冲锋$text-red-700 dark:text-red-300 font-bold#：重置自身存在时间，随后向前方高速冲锋，对命中的敌方造成{30*,无来源}伤害，同时造成大幅[击退](实际效果：被眩晕（不掉落手中道具和老鼠）并受到水平方向的力，期间保持速度)（敌方被击退时，在10秒内免疫该击退状态）；途径友方虚弱老鼠时，暂停冲锋并开始治疗对方，治疗交互完毕后继续冲锋；遇到障碍物或向同一方向累计冲锋2.5秒时，将调转冲锋方向。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '每个小牛桩可累计被领取2只小牛。',
+            detailedDescription:
+              '每个小牛桩可累计被领取2只小牛。$冲锋$text-red-700 dark:text-red-300 font-bold#持续5秒。',
+            cooldown: 30,
+          },
+          {
+            level: 2,
+            description: '每个小牛桩可累计被领取3只小牛。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description: '小牛冲撞形态存在时间延长。',
+            cooldown: 20,
+            detailedDescription: '$冲锋$text-red-700 dark:text-red-300 font-bold#改为持续15秒。',
+          },
+        ],
+        cueRange: '无音效',
+        cooldownTiming: '释放时',
+      },
+      {
         name: '西部风情',
         type: 'passive',
         skillLevels: [
