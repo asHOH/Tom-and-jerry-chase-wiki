@@ -99,7 +99,7 @@ describe('TextWithHoverTooltips', () => {
     );
     expect(rate.closest('[data-tooltip]')).toHaveAttribute(
       'data-tooltip',
-      expect.stringContaining('角色脚下阴影的横向长度为100单位长')
+      expect.stringContaining('角色脚下阴影的横向长度约为100单位长')
     );
     expect(rate.closest('[data-tooltip]')).toHaveAttribute(
       'data-tooltip',
