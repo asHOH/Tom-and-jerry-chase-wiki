@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, createEvent, fireEvent, render, screen } from '@testing-library/react';
 
 import { scheduleBackgroundPreparation } from '@/lib/scheduleBackgroundPreparation';
 import { searchDialogModule } from '@/components/panelModules';
@@ -135,5 +135,48 @@ it('does not intercept typing / in an input', () => {
   );
   fireEvent.keyDown(screen.getByLabelText('输入'), { key: '/' });
   expect(searchDialogModule.get()).toBeUndefined();
+  expect(mockLoad).not.toHaveBeenCalled();
+});
+
+it.each(['textarea', 'select', 'contenteditable', 'nested-contenteditable', 'textbox'])(
+  'does not intercept typing / in a %s',
+  (targetType) => {
+    render(
+      <>
+        <textarea aria-label='多行输入' />
+        <select aria-label='选择'>
+          <option>选项</option>
+        </select>
+        <div contentEditable suppressContentEditableWarning data-testid='editable'>
+          <span data-testid='nested-editable'>编辑内容</span>
+        </div>
+        <div role='textbox' aria-label='自定义输入' />
+        <SearchBar />
+      </>
+    );
+    const targets = {
+      textarea: screen.getByLabelText('多行输入'),
+      select: screen.getByLabelText('选择'),
+      contenteditable: screen.getByTestId('editable'),
+      'nested-contenteditable': screen.getByTestId('nested-editable'),
+      textbox: screen.getByRole('textbox', { name: '自定义输入' }),
+    };
+    const target = targets[targetType as keyof typeof targets];
+    const event = createEvent.keyDown(target, { key: '/' });
+    fireEvent(target, event);
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(mockLoad).not.toHaveBeenCalled();
+  }
+);
+
+it.each(['ctrlKey', 'metaKey', 'altKey'])('does not intercept / with %s', (modifier) => {
+  render(<SearchBar />);
+  const event = createEvent.keyDown(document, { key: '/', [modifier]: true });
+  fireEvent(document, event);
+
+  expect(event.defaultPrevented).toBe(false);
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   expect(mockLoad).not.toHaveBeenCalled();
 });

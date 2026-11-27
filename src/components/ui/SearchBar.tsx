@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { getNavigationButtonClasses } from '@/lib/design';
+import { shouldIgnorePageNavigationKey } from '@/lib/keyboardNavigation';
 import { scheduleBackgroundPreparation } from '@/lib/scheduleBackgroundPreparation';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { usePreparedComponent } from '@/hooks/usePreparedComponent';
@@ -34,12 +35,7 @@ const SearchBar: React.FC<object> = () => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Check if the key is '/' and if the event target is not an input or textarea
-      if (
-        event.key === '/' &&
-        !(event.target instanceof HTMLInputElement) &&
-        !(event.target instanceof HTMLTextAreaElement)
-      ) {
+      if (event.key === '/' && !shouldIgnorePageNavigationKey(event)) {
         event.preventDefault(); // Prevent the '/' character from being typed
         setHasOpenedSearch(true);
         setShowSearchDialog(true);
