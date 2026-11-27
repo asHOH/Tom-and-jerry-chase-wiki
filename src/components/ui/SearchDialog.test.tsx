@@ -1,5 +1,6 @@
 import React, { type JSX } from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { useReducedMotion } from 'motion/react';
 
 import { performSearch } from '@/lib/searchUtils';
 import type { SearchResult } from '@/lib/searchUtils/types';
@@ -51,7 +52,7 @@ jest.mock('motion/react', () => {
       li: createMotionTag('li'),
       ul: createMotionTag('ul'),
     },
-    useReducedMotion: () => false,
+    useReducedMotion: jest.fn(() => false),
   } satisfies {
     AnimatePresence: (props: { children: React.ReactNode }) => JSX.Element;
     m: {
@@ -71,6 +72,7 @@ describe('SearchDialog', () => {
 
   beforeEach(() => {
     HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.mocked(useReducedMotion).mockReturnValue(false);
     mockNavigate.mockClear();
     jest.mocked(useSearchGameData).mockReturnValue(mockGameData);
     jest.mocked(performSearch).mockResolvedValue([
@@ -140,6 +142,28 @@ describe('SearchDialog', () => {
     } finally {
       global.fetch = originalFetch;
     }
+  });
+
+  it.each([false, true])('respects reduced motion when scrolling results (%s)', async (reduced) => {
+    jest.mocked(useReducedMotion).mockReturnValue(reduced);
+    render(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: '汤姆' } });
+    await screen.findByRole('button', { name: '汤姆 角色' });
+
+    expect(HTMLElement.prototype.scrollIntoView).toHaveBeenLastCalledWith({
+      behavior: reduced ? 'instant' : 'smooth',
+      block: 'nearest',
+    });
+    jest.mocked(HTMLElement.prototype.scrollIntoView).mockClear();
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+
+    expect(screen.getByRole('button', { name: '杰瑞 角色' })).toHaveClass('bg-control');
+    expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(HTMLElement.prototype.scrollIntoView).toHaveBeenLastCalledWith({
+      behavior: reduced ? 'instant' : 'smooth',
+      block: 'nearest',
+    });
   });
 
   it('ignores an older search that resolves after a newer query', async () => {

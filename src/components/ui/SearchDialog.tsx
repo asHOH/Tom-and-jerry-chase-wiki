@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { m } from 'motion/react';
+import { m, useReducedMotion } from 'motion/react';
 
 import { cn, getTypeLabelColors } from '@/lib/design';
 import { performSearch } from '@/lib/searchUtils';
@@ -45,6 +45,7 @@ const renderMatchContext = ({ matchContext, highlightRanges }: SearchResult) => 
 };
 
 const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) => {
+  const reduceMotion = useReducedMotion();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [visibleCount, setVisibleCount] = useState(RESULTS_PER_PAGE);
@@ -175,12 +176,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
       const highlightedElement = resultsListRef.current.children[highlightedIndex] as HTMLElement;
       if (highlightedElement) {
         highlightedElement.scrollIntoView({
-          behavior: 'smooth',
+          behavior: reduceMotion ? 'instant' : 'smooth',
           block: 'nearest',
         });
       }
     }
-  }, [highlightedIndex]);
+  }, [highlightedIndex, reduceMotion]);
 
   useEffect(() => {
     searchIdRef.current += 1;
