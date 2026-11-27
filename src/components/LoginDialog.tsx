@@ -285,6 +285,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onClose, isMobile }) =>
             <FormInput
               type='password'
               placeholder='密码'
+              aria-label='密码'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoFocus
@@ -422,6 +423,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onClose, isMobile }) =>
             <FormInput
               type='text'
               placeholder='用户名，支持汉字、拉丁字母、数字和._-+'
+              aria-label='用户名'
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoFocus

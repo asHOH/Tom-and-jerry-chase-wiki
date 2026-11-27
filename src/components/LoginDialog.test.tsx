@@ -82,6 +82,28 @@ describe('LoginDialog', () => {
     jest.restoreAllMocks();
   });
 
+  it.each([false, true])('labels the login fields when isMobile=%s', async (isMobile) => {
+    jest.mocked(global.fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ status: 'exists_with_password', captchaProof: 'captcha-proof' }),
+    } as Response);
+    render(<LoginDialog open onClose={jest.fn()} isMobile={isMobile} />);
+
+    const username = screen.getByRole('textbox', { name: '用户名' });
+    fireEvent.change(username, { target: { value: 'tester' } });
+    expect(username).toHaveAccessibleName('用户名');
+    fireEvent.click(screen.getByRole('button', { name: '通过验证码' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: '继续' })).toBeEnabled());
+    fireEvent.click(screen.getByRole('button', { name: '继续' }));
+
+    const password = await screen.findByLabelText('密码');
+    expect(password).toHaveAttribute('type', 'password');
+    expect(password).toHaveAccessibleName('密码');
+    fireEvent.change(password, { target: { value: strongPassword } });
+    expect(password).toHaveValue(strongPassword);
+    expect(password).toHaveAccessibleName('密码');
+  });
+
   it('keeps strength feedback separate from live confirmation errors', async () => {
     render(<LoginDialog open onClose={jest.fn()} isMobile={false} />);
     await enterRegistration();
