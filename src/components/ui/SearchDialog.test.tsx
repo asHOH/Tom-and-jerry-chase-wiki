@@ -108,6 +108,18 @@ describe('SearchDialog', () => {
     }
   });
 
+  it.each([false, true])('labels the search input when isMobile=%s', (isMobile) => {
+    render(<SearchDialog open onClose={jest.fn()} isMobile={isMobile} />);
+
+    const input = screen.getByRole('textbox', { name: '搜索内容' });
+    expect(input).toHaveAccessibleName('搜索内容');
+
+    fireEvent.change(input, { target: { value: '汤姆' } });
+
+    expect(input).toHaveValue('汤姆');
+    expect(input).toHaveAccessibleName('搜索内容');
+  });
+
   it('focuses the search input after replacing a loading dialog and restores the trigger on close', async () => {
     const trigger = document.createElement('button');
     document.body.appendChild(trigger);

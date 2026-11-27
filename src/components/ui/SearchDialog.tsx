@@ -255,6 +255,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
       <div className='relative mb-4 shrink-0'>
         <FormInput
           type='text'
+          aria-label='搜索内容'
           placeholder='搜索角色、知识卡、道具、状态、地图、文档...'
           size='sm'
           className='rounded-md p-2 pl-10 text-base'
